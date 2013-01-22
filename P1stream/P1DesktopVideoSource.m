@@ -5,45 +5,9 @@
 
 @synthesize delegate;
 
-- (id)init
-{
-    self = [super init];
-    if (self) {
-        // Colorspace used for the texture.
-        colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-        if (!colorSpace) return nil;
-
-        // Display link used to sync to frames.
-		CVReturn ret = CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
-		if (ret != kCVReturnSuccess) {
-            NSLog(@"Failed to create desktop source display link.");
-            displayLink = NULL;
-            return nil;
-        }
-        CVDisplayLinkSetOutputCallback(displayLink, &displayLinkCallback, (__bridge void *)self);
-    }
-    return self;
-}
-
 - (void)dealloc
 {
     [self cleanupState];
-
-    if (bitmapContext) {
-        CGContextRelease(bitmapContext);
-    }
-
-    if (textureData) {
-        free(textureData);
-    }
-
-    if (colorSpace) {
-        CGColorSpaceRelease(colorSpace);
-    }
-
-    if (displayLink) {
-        CVDisplayLinkRelease(displayLink);
-    }
 }
 
 - (P1VideoSourceSlot *)slot
@@ -61,17 +25,10 @@
         [self cleanupState];
         
         slot = slot_;
-        
-        [slot.context makeCurrentContext];
 
         // Permanently bind this context to the output texture.
+        [slot.context makeCurrentContext];
         glBindTexture(GL_TEXTURE_RECTANGLE, slot.textureName);
-
-        // We'll be using texture ranges, and optimize for streaming texture data.
-		glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_SHARED_APPLE);
-        glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
-
-        // Flush errors at this point.
         checkAndLogGLError(@"desktop source slot init");
 
         [self setupState];
@@ -93,14 +50,6 @@
         [self cleanupState];
 
         displayID = displayID_;
-
-        // Update the display link.
-        CVReturn ret = CVDisplayLinkSetCurrentCGDisplay(displayLink, displayID);
-        if (ret != kCVReturnSuccess) {
-            NSLog(@"Failed to set display on display link (%d)", ret);
-            displayID = kCGNullDirectDisplay;
-            return;
-        }
         
         [self setupState];
     }
@@ -117,40 +66,8 @@
 {
     @synchronized(self) {
         [self cleanupState];
-        if (bitmapContext) {
-            CGContextRelease(bitmapContext);
-            bitmapContext = NULL;
-            free(textureData);
-            textureData = NULL;
-        }
         
         captureArea = captureArea_;
-
-        // Calculate texture memory area size.
-        const CGSize size = captureArea.size;
-        const size_t bpp = 4;
-        textureSize = size.width * size.height * bpp;
-
-        // Repeatedly used in CGContextDrawImage.
-        textureBounds = CGRectMake(0, 0, size.width, size.height);
-
-        // Texture scratch buffer.
-        textureData = malloc(textureSize);
-        if (!textureData) {
-            NSLog(@"Failed to allocate desktop source texture data.");
-            return;
-        }
-
-        // Quartz context used to export to our scratch buffer.
-        bitmapContext = CGBitmapContextCreate(textureData, size.width, size.height,
-                                              8, size.width * bpp, colorSpace,
-                                              kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
-        if (!bitmapContext) {
-            NSLog(@"Failed to create desktop source bitmap.");
-            free(textureData);
-            textureData = NULL;
-            return;
-        }
         
         [self setupState];
     }
@@ -162,17 +79,75 @@
     // Check if all properties are set.
     if (!slot) return;
     if (displayID == kCGNullDirectDisplay) return;
-    if (!bitmapContext) return;
+    if (captureArea.size.width <= 0 && captureArea.size.height <= 0) return;
 
-    // Set texture range to our scratch memory.
+    // FIXME: Does not account for HiDPI displays.
+
+    // Preallocate the texture.
     [slot.context makeCurrentContext];
-    glTextureRangeAPPLE(GL_TEXTURE_RECTANGLE, (GLsizei)textureSize, textureData);
-    checkAndLogGLError(@"desktop source setup");
+    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA,
+                 captureArea.size.width, captureArea.size.height, 0,
+                 GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, captureArea.size.width);
+    if (checkAndLogGLError(@"desktop source setup")) return;
 
     // Start capturing.
-    CVReturn ret = CVDisplayLinkStart(displayLink);
-    if (ret != kCVReturnSuccess) {
-        NSLog(@"Failed to start display link.");
+    NSDictionary *properties = @{
+        (__bridge NSString *)kCGDisplayStreamSourceRect : CFBridgingRelease(CGRectCreateDictionaryRepresentation(captureArea))
+    };
+    displayStream = CGDisplayStreamCreateWithDispatchQueue(
+        displayID, captureArea.size.width, captureArea.size.height,
+        k32BGRAPixelFormat, (__bridge CFDictionaryRef)properties,
+        dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
+        ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef) {
+            if (status == kCGDisplayStreamFrameStatusStopped) return;
+
+            // Check for change.
+            uint32_t seed = IOSurfaceGetSeed(frameSurface);
+            if (status == kCGDisplayStreamFrameStatusFrameComplete && seed != lastSeed) {
+                @synchronized(self) {
+                    // Capture a frame.
+                    IOSurfaceLock(frameSurface, kIOSurfaceLockReadOnly, NULL);
+                    uint32_t *data = IOSurfaceGetBaseAddress(frameSurface);
+
+                    [slot.context makeCurrentContext];
+
+                    // Update dirty areas.
+                    size_t numRects;
+                    const CGRect *i = CGDisplayStreamUpdateGetRects(updateRef, kCGDisplayStreamUpdateReducedDirtyRects, &numRects);
+                    const CGRect *end = i + numRects;
+                    while (i != end) {
+                        size_t offset = i->origin.y * captureArea.size.width + i->origin.x;
+                        glTexSubImage2D(GL_TEXTURE_RECTANGLE, 0,
+                                        i->origin.x, i->origin.y, i->size.width, i->size.height,
+                                        GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data + offset);
+                        i++;
+                    }
+
+                    IOSurfaceUnlock(frameSurface, kIOSurfaceLockReadOnly, &lastSeed);
+
+#ifdef DEBUG_EACH_GL_FRAME
+                    checkAndLogGLError(@"desktop source capture");
+#endif
+                }
+            }
+            
+            // Drive the clock.
+            if (delegate != nil) {
+                [delegate videoSourceClockTick];
+            }
+        }
+    );
+    if (!displayStream) {
+        NSLog(@"Failed to create display stream.");
+        return;
+    }
+
+    CGError error = CGDisplayStreamStart(displayStream);
+    if (error != kCGErrorSuccess) {
+        NSLog(@"Failed to start display stream. (%d)", error);
+        CFRelease(displayStream);
+        displayStream = NULL;
     }
 }
 
@@ -180,76 +155,17 @@
 - (void)cleanupState
 {
     // Stop capturing.
-    if (displayLink && CVDisplayLinkIsRunning(displayLink)) {
-        CVDisplayLinkStop(displayLink);
-    }
-
-    // Remove the texture range.
-    if (slot) {
-        [slot.context makeCurrentContext];
-        glTextureRangeAPPLE(GL_TEXTURE_RECTANGLE, 0, NULL);
+    if (displayStream) {
+        CFRelease(displayStream);
+        displayStream = NULL;
+        lastSeed = 0;
     }
 }
 
 - (BOOL)hasClock;
 {
     @synchronized(self) {
-        return CVDisplayLinkIsRunning(displayLink);
-    }
-}
-
-// Private. Capture and upload a frame.
-- (BOOL)captureFrame
-{
-    @synchronized(self) {
-        // Capture.
-        CGImageRef image = CGDisplayCreateImageForRect(displayID, captureArea);
-        if (!image) {
-            NSLog(@"Failed to capture desktop source frame.");
-            return NO;
-        }
-
-        // Convert.
-        CGContextDrawImage(bitmapContext, textureBounds, image);
-
-        // Upload.
-        [slot.context makeCurrentContext];
-        glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA,
-                     (GLsizei)textureBounds.size.width, (GLsizei)textureBounds.size.height, 0,
-                     GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, textureData);
-
-#ifdef DEBUG_EACH_GL_FRAME
-        checkAndLogGLError(@"desktop source capture");
-#endif
-
-        CGImageRelease(image);
-        return YES;
-    }
-}
-
-// Private. On display link tick.
-- (BOOL)clockTick
-{
-    @synchronized(self) {
-        // Capture a frame.
-        BOOL success = [self captureFrame];
-        
-        // Drive the clock.
-        if (delegate != nil)
-            [delegate videoSourceClockTick];
-
-        return success;
-    }
-}
-
-static CVReturn displayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *inNow,
-                                 const CVTimeStamp *inOutputTime, CVOptionFlags flagsIn,
-                                 CVOptionFlags *flagsOut, void *displayLinkContext)
-{
-    @autoreleasepool {
-        P1DesktopVideoSource *self = (__bridge P1DesktopVideoSource *)displayLinkContext;
-        BOOL success = [self clockTick];
-        return success ? kCVReturnSuccess : kCVReturnError;
+        return displayStream != NULL;
     }
 }
 

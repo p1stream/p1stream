@@ -4,18 +4,12 @@
 @interface P1DesktopVideoSource : NSObject <P1VideoSource>
 {
 @private
-    CVDisplayLinkRef displayLink;
-    CGColorSpaceRef colorSpace;
-
     P1VideoSourceSlot *slot;
-
     CGDirectDisplayID displayID;
-
     CGRect captureArea;
-    CGRect textureBounds;
-    size_t textureSize;
-    GLubyte *textureData;
-    CGContextRef bitmapContext;
+
+    CGDisplayStreamRef displayStream;
+    uint32_t lastSeed;
 }
 
 @property (retain) id delegate;
