@@ -2,6 +2,16 @@
 // Prefix header for all source files of the 'P1stream' target in the 'P1stream' project
 //
 
+#define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
+#define GL3_PROTOTYPES 1
+#include <OpenGL/gl3.h>
+#include <OpenGL/glu.h>
+
+#include <OpenCL/opencl.h>
+
 #ifdef __OBJC__
     #import <Cocoa/Cocoa.h>
+    #import "P1Utils.h"
 #endif
+
+//#define DEBUG_EACH_GL_FRAME 1

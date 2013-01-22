@@ -1,15 +1,20 @@
-//
-//  P1AppDelegate.h
-//  P1stream
-//
-//  Created by Stéphan Kochen on 2013-01-07.
-//  Copyright (c) 2013 Stéphan Kochen. All rights reserved.
-//
-
 #import <Cocoa/Cocoa.h>
+#import "P1VideoCanvas.h"
+#import "P1AudioMixer.h"
 
-@interface P1AppDelegate : NSObject <NSApplicationDelegate>
 
-@property (assign) IBOutlet NSWindow *window;
+@interface P1AppDelegate : NSObject <NSApplicationDelegate, P1VideoCanvasDelegate>
+{
+    P1VideoCanvas *canvas;
+    
+    void *outputBuffer;
+    size_t outputSize;
+    CGSize outputDim;
+}
+
+@property (weak) IBOutlet NSImageView *videoPreview;
+
+- (void *)getVideoCanvasOutputBufferARGB:(size_t)size withDimensions:(CGSize)dim;
+- (void)videoCanvasFrameARGB;
 
 @end
