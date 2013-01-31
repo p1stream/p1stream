@@ -13,9 +13,8 @@
 
 @protocol P1VideoSource <NSObject>
 
-// Setup.
+// Video canvas slot.
 @required
-- (id<P1VideoSource>)init;
 - (void)setSlot:(P1VideoSourceSlot *)slot;
 
 // Clock source.
