@@ -6,6 +6,7 @@
 @interface P1AppDelegate : NSObject <NSApplicationDelegate, P1VideoCanvasDelegate>
 {
     P1VideoCanvas *canvas;
+    P1AudioMixer *mixer;
     
     void *outputBuffer;
     size_t outputSize;

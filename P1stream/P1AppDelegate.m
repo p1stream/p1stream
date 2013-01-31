@@ -1,5 +1,6 @@
 #import "P1AppDelegate.h"
 #import "P1DesktopVideoSource.h"
+#import "P1HALAudioSource.h"
 
 
 @implementation P1AppDelegate
@@ -14,6 +15,7 @@
         return;
     }
     canvas.delegate = self;
+    canvas.frameSize = CGSizeMake(512, 384);
     
     // FIXME
     P1DesktopVideoSource *desktopSource = [[P1DesktopVideoSource alloc] init];
@@ -25,7 +27,18 @@
     desktopSource.captureArea = CGRectMake(0, 0, 2560, 1440);
     [canvas addSource:desktopSource withDrawArea:CGRectMake(-1, -1, 2, 2)];
 
-    canvas.frameSize = CGSizeMake(512, 384);
+    mixer = [[P1AudioMixer alloc] init];
+    if (!mixer) {
+        NSLog(@"Failed to create audio mixer.");
+        return;
+    }
+
+    P1HALAudioSource *halSource = [[P1HALAudioSource alloc] init];
+    if (!halSource) {
+        NSLog(@"Failed to create HAL audio source");
+        return;
+    }
+    
 }
 
 - (void *)getVideoCanvasOutputBufferARGB:(size_t)size withDimensions:(CGSize)dim

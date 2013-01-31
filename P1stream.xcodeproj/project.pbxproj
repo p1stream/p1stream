@@ -12,6 +12,8 @@
 		F60457E116AB4CCD00A5AB58 /* VertexShader.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E016AB4CCD00A5AB58 /* VertexShader.sl */; };
 		F60457E316AB4D5600A5AB58 /* FragmentShader.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E216AB4D5600A5AB58 /* FragmentShader.sl */; };
 		F60F33DC16A08ACB0087DB40 /* P1AudioMixer.m in Sources */ = {isa = PBXBuildFile; fileRef = F60F33DB16A08ACB0087DB40 /* P1AudioMixer.m */; };
+		F64CD43216BB0B01001B1344 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F68E7546169C9F27002FD6E6 /* CoreGraphics.framework */; };
+		F64CD43316BB0B18001B1344 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F64CD43016BB0AF3001B1344 /* CoreAudio.framework */; };
 		F6972026169B85C500F03D6B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6972025169B85C500F03D6B /* Cocoa.framework */; };
 		F6972030169B85C500F03D6B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F697202E169B85C500F03D6B /* InfoPlist.strings */; };
 		F6972032169B85C500F03D6B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F6972031169B85C500F03D6B /* main.m */; };
@@ -21,7 +23,7 @@
 		F6BEA4B216A20B4100F6DEC1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6BEA4B116A20B4100F6DEC1 /* OpenGL.framework */; };
 		F6CE70C016AF10F40005DD3D /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6CE70BF16AF10F40005DD3D /* IOSurface.framework */; };
 		F6D475D616A2DC54003BD4E1 /* P1Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D475D516A2DC54003BD4E1 /* P1Utils.m */; };
-		F6D94168169CCEBD002C8802 /* P1DesktopAudioSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D94167169CCEBD002C8802 /* P1DesktopAudioSource.m */; };
+		F6D94168169CCEBD002C8802 /* P1HALAudioSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D94167169CCEBD002C8802 /* P1HALAudioSource.m */; };
 		F6D9416B169CCECD002C8802 /* P1DesktopVideoSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D9416A169CCECD002C8802 /* P1DesktopVideoSource.m */; };
 		F6D9416E169CCF80002C8802 /* P1VideoCanvas.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D9416D169CCF80002C8802 /* P1VideoCanvas.m */; };
 /* End PBXBuildFile section */
@@ -33,6 +35,7 @@
 		F60457E216AB4D5600A5AB58 /* FragmentShader.sl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = FragmentShader.sl; sourceTree = "<group>"; };
 		F60F33DA16A08ACB0087DB40 /* P1AudioMixer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1AudioMixer.h; sourceTree = "<group>"; };
 		F60F33DB16A08ACB0087DB40 /* P1AudioMixer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1AudioMixer.m; sourceTree = "<group>"; };
+		F64CD43016BB0AF3001B1344 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		F68E7546169C9F27002FD6E6 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F6972021169B85C500F03D6B /* P1stream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = P1stream.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6972025169B85C500F03D6B /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -51,8 +54,8 @@
 		F6CE70BF16AF10F40005DD3D /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		F6D475D416A2DC54003BD4E1 /* P1Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1Utils.h; sourceTree = "<group>"; };
 		F6D475D516A2DC54003BD4E1 /* P1Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1Utils.m; sourceTree = "<group>"; };
-		F6D94166169CCEBD002C8802 /* P1DesktopAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1DesktopAudioSource.h; sourceTree = "<group>"; };
-		F6D94167169CCEBD002C8802 /* P1DesktopAudioSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1DesktopAudioSource.m; sourceTree = "<group>"; };
+		F6D94166169CCEBD002C8802 /* P1HALAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1HALAudioSource.h; sourceTree = "<group>"; };
+		F6D94167169CCEBD002C8802 /* P1HALAudioSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1HALAudioSource.m; sourceTree = "<group>"; };
 		F6D94169169CCECD002C8802 /* P1DesktopVideoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1DesktopVideoSource.h; sourceTree = "<group>"; };
 		F6D9416A169CCECD002C8802 /* P1DesktopVideoSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1DesktopVideoSource.m; sourceTree = "<group>"; };
 		F6D9416C169CCF80002C8802 /* P1VideoCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1VideoCanvas.h; sourceTree = "<group>"; };
@@ -64,10 +67,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6CE70C016AF10F40005DD3D /* IOSurface.framework in Frameworks */,
+				F6972026169B85C500F03D6B /* Cocoa.framework in Frameworks */,
 				F60457DF16AB4B9600A5AB58 /* OpenCL.framework in Frameworks */,
 				F6BEA4B216A20B4100F6DEC1 /* OpenGL.framework in Frameworks */,
-				F6972026169B85C500F03D6B /* Cocoa.framework in Frameworks */,
+				F64CD43316BB0B18001B1344 /* CoreAudio.framework in Frameworks */,
+				F64CD43216BB0B01001B1344 /* CoreGraphics.framework in Frameworks */,
+				F6CE70C016AF10F40005DD3D /* IOSurface.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +102,7 @@
 				F6972025169B85C500F03D6B /* Cocoa.framework */,
 				F60457DE16AB4B9600A5AB58 /* OpenCL.framework */,
 				F6BEA4B116A20B4100F6DEC1 /* OpenGL.framework */,
+				F64CD43016BB0AF3001B1344 /* CoreAudio.framework */,
 				F68E7546169C9F27002FD6E6 /* CoreGraphics.framework */,
 				F6CE70BF16AF10F40005DD3D /* IOSurface.framework */,
 				F6972027169B85C500F03D6B /* Other Frameworks */,
@@ -160,8 +166,8 @@
 			children = (
 				F60F33DA16A08ACB0087DB40 /* P1AudioMixer.h */,
 				F60F33DB16A08ACB0087DB40 /* P1AudioMixer.m */,
-				F6D94166169CCEBD002C8802 /* P1DesktopAudioSource.h */,
-				F6D94167169CCEBD002C8802 /* P1DesktopAudioSource.m */,
+				F6D94166169CCEBD002C8802 /* P1HALAudioSource.h */,
+				F6D94167169CCEBD002C8802 /* P1HALAudioSource.m */,
 			);
 			name = Audio;
 			sourceTree = "<group>";
@@ -235,7 +241,7 @@
 			files = (
 				F6972032169B85C500F03D6B /* main.m in Sources */,
 				F6972039169B85C500F03D6B /* P1AppDelegate.m in Sources */,
-				F6D94168169CCEBD002C8802 /* P1DesktopAudioSource.m in Sources */,
+				F6D94168169CCEBD002C8802 /* P1HALAudioSource.m in Sources */,
 				F6D9416B169CCECD002C8802 /* P1DesktopVideoSource.m in Sources */,
 				F6D9416E169CCF80002C8802 /* P1VideoCanvas.m in Sources */,
 				F60F33DC16A08ACB0087DB40 /* P1AudioMixer.m in Sources */,
