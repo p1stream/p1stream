@@ -112,16 +112,24 @@
 
                     [slot.context makeCurrentContext];
 
-                    // Update dirty areas.
-                    size_t numRects;
-                    const CGRect *i = CGDisplayStreamUpdateGetRects(updateRef, kCGDisplayStreamUpdateReducedDirtyRects, &numRects);
-                    const CGRect *end = i + numRects;
-                    while (i != end) {
-                        size_t offset = i->origin.y * captureArea.size.width + i->origin.x;
+                    if (lastSeed == 0) {
+                        // Update all on first frame.
                         glTexSubImage2D(GL_TEXTURE_RECTANGLE, 0,
-                                        i->origin.x, i->origin.y, i->size.width, i->size.height,
-                                        GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data + offset);
-                        i++;
+                                        0, 0, captureArea.size.width, captureArea.size.height,
+                                        GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data);
+                    }
+                    else {
+                        // Update dirty areas.
+                        size_t numRects;
+                        const CGRect *i = CGDisplayStreamUpdateGetRects(updateRef, kCGDisplayStreamUpdateReducedDirtyRects, &numRects);
+                        const CGRect *end = i + numRects;
+                        while (i != end) {
+                            size_t offset = i->origin.y * captureArea.size.width + i->origin.x;
+                            glTexSubImage2D(GL_TEXTURE_RECTANGLE, 0,
+                                            i->origin.x, i->origin.y, i->size.width, i->size.height,
+                                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data + offset);
+                            i++;
+                        }
                     }
 
                     IOSurfaceUnlock(frameSurface, kIOSurfaceLockReadOnly, &lastSeed);
