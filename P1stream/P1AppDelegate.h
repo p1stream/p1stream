@@ -3,19 +3,19 @@
 #import "P1AudioMixer.h"
 
 
-@interface P1AppDelegate : NSObject <NSApplicationDelegate, P1VideoCanvasDelegate>
+@interface P1AppDelegate : NSObject <NSApplicationDelegate, P1VideoCanvasDelegate, P1AudioMixerDelegate>
 {
     P1VideoCanvas *canvas;
     P1AudioMixer *mixer;
     
-    void *outputBuffer;
-    size_t outputSize;
-    CGSize outputDim;
+    void *videoBuffer;
+    size_t videoBufferSize;
+    CGSize videoDimensions;
+
+    void *audioBuffer;
+    size_t audioBufferSize;
 }
 
 @property (weak) IBOutlet NSImageView *videoPreview;
-
-- (void *)getVideoCanvasOutputBufferARGB:(size_t)size withDimensions:(CGSize)dim;
-- (void)videoCanvasFrameARGB;
 
 @end
