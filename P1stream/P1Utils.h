@@ -5,7 +5,7 @@
 @end
 
 
-@interface NSError (P1ErrorFromGError)
+@interface NSError (P1ErrorWithGError)
 
 + (NSError *)errorWithGError:(GError *)error;
 - (NSError *)initWithGError:(GError *)error;

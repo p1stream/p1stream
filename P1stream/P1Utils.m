@@ -15,7 +15,7 @@
 @end
 
 
-@implementation NSError (P1ErrorFromGError)
+@implementation NSError (P1ErrorWithGError)
 
 + (NSError *)errorWithGError:(GError *)error;
 {
