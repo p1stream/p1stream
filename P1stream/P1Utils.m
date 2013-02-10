@@ -15,6 +15,26 @@
 @end
 
 
+@implementation NSError (P1ErrorFromGError)
+
++ (NSError *)errorWithGError:(GError *)error;
+{
+    return [[NSError alloc] initWithGError:error];
+}
+
+- (NSError *)initWithGError:(GError *)error;
+{
+    const gchar *cDomain = g_quark_to_string(error->domain);
+    NSString *domain = [NSString stringWithUTF8String:cDomain];
+    NSString *message = [NSString stringWithUTF8String:error->message];
+    return [self initWithDomain:domain code:error->code userInfo:@{
+        @"message": message
+    }];
+}
+
+@end
+
+
 BOOL checkAndLogGLError(NSString *action)
 {
     GLenum glError = glGetError();

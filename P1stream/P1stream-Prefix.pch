@@ -9,6 +9,8 @@
 
 #include <OpenCL/opencl.h>
 
+#include <gst/gst.h>
+
 #ifdef __OBJC__
     #import <Cocoa/Cocoa.h>
     #import "P1Utils.h"
