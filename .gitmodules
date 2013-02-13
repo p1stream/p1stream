@@ -1,3 +1,6 @@
 [submodule "GStreamer/gstreamer"]
 	path = GStreamer/gstreamer
 	url = git://anongit.freedesktop.org/gstreamer/gstreamer
+[submodule "GStreamer/gst-plugins-base"]
+	path = GStreamer/gst-plugins-base
+	url = git://anongit.freedesktop.org/gstreamer/gst-plugins-base
