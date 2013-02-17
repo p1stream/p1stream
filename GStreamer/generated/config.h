@@ -3,5 +3,10 @@
  * configure scripts of gstreamer and gst-plugins-base.
  */
 
+#ifndef __GST_AUTOHEADER_H__
+#define __GST_AUTOHEADER_H__
+
 #include "config-gstreamer.h"
 #include "config-gst-plugins-base.h"
+
+#endif /* __GST_AUTOHEADER_H__ */

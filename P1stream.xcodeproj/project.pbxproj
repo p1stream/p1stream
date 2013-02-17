@@ -91,6 +91,10 @@
 		F60457E116AB4CCD00A5AB58 /* VertexShader.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E016AB4CCD00A5AB58 /* VertexShader.sl */; };
 		F60457E316AB4D5600A5AB58 /* FragmentShader.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E216AB4D5600A5AB58 /* FragmentShader.sl */; };
 		F60F33DC16A08ACB0087DB40 /* P1AudioMixer.m in Sources */ = {isa = PBXBuildFile; fileRef = F60F33DB16A08ACB0087DB40 /* P1AudioMixer.m */; };
+		F63399D716D058FC0016E83A /* gstcms.c in Sources */ = {isa = PBXBuildFile; fileRef = F6D6806816C97C46005A03B5 /* gstcms.c */; };
+		F63399D816D059000016E83A /* gstvideoconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = F6D6806A16C97C46005A03B5 /* gstvideoconvert.c */; };
+		F63399D916D059040016E83A /* gstvideoconvertorc.orc in Sources */ = {isa = PBXBuildFile; fileRef = F6D6806E16C97C46005A03B5 /* gstvideoconvertorc.orc */; };
+		F63399DA16D059060016E83A /* videoconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = F6D6807016C97C46005A03B5 /* videoconvert.c */; };
 		F64CD43216BB0B01001B1344 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F68E7546169C9F27002FD6E6 /* CoreGraphics.framework */; };
 		F665FCAD16BD4EA400E64233 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F665FCAC16BD4EA400E64233 /* CoreAudio.framework */; };
 		F666A8E616C7EC04003C2B9C /* gstplugin.c in Sources */ = {isa = PBXBuildFile; fileRef = F666A8E416C7EC00003C2B9C /* gstplugin.c */; };
@@ -561,8 +565,6 @@
 		F6D6806916C97C46005A03B5 /* gstcms.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstcms.h; sourceTree = "<group>"; };
 		F6D6806A16C97C46005A03B5 /* gstvideoconvert.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstvideoconvert.c; sourceTree = "<group>"; };
 		F6D6806B16C97C46005A03B5 /* gstvideoconvert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstvideoconvert.h; sourceTree = "<group>"; };
-		F6D6806C16C97C46005A03B5 /* gstvideoconvertorc-dist.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "gstvideoconvertorc-dist.c"; sourceTree = "<group>"; };
-		F6D6806D16C97C46005A03B5 /* gstvideoconvertorc-dist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "gstvideoconvertorc-dist.h"; sourceTree = "<group>"; };
 		F6D6806E16C97C46005A03B5 /* gstvideoconvertorc.orc */ = {isa = PBXFileReference; lastKnownFileType = text; path = gstvideoconvertorc.orc; sourceTree = "<group>"; };
 		F6D6807016C97C46005A03B5 /* videoconvert.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = videoconvert.c; sourceTree = "<group>"; };
 		F6D6807116C97C46005A03B5 /* videoconvert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = videoconvert.h; sourceTree = "<group>"; };
@@ -1500,8 +1502,6 @@
 				F6D6806916C97C46005A03B5 /* gstcms.h */,
 				F6D6806A16C97C46005A03B5 /* gstvideoconvert.c */,
 				F6D6806B16C97C46005A03B5 /* gstvideoconvert.h */,
-				F6D6806C16C97C46005A03B5 /* gstvideoconvertorc-dist.c */,
-				F6D6806D16C97C46005A03B5 /* gstvideoconvertorc-dist.h */,
 				F6D6806E16C97C46005A03B5 /* gstvideoconvertorc.orc */,
 				F6D6807016C97C46005A03B5 /* videoconvert.c */,
 				F6D6807116C97C46005A03B5 /* videoconvert.h */,
@@ -2099,6 +2099,10 @@
 				F6D681B116C98830005A03B5 /* video.c in Sources */,
 				F6D681B216C98830005A03B5 /* videoorientation.c in Sources */,
 				F6D681B316C98830005A03B5 /* videooverlay.c in Sources */,
+				F63399D716D058FC0016E83A /* gstcms.c in Sources */,
+				F63399D816D059000016E83A /* gstvideoconvert.c in Sources */,
+				F63399D916D059040016E83A /* gstvideoconvertorc.orc in Sources */,
+				F63399DA16D059060016E83A /* videoconvert.c in Sources */,
 				F6D6819916C984E9005A03B5 /* generate_sine_table.c in Sources */,
 				F6D6819816C984E2005A03B5 /* gstvideotestsrc.c in Sources */,
 				F6D6819C16C98543005A03B5 /* gstvideotestsrcorc.orc in Sources */,
@@ -2222,9 +2226,10 @@
 				HEADER_SEARCH_PATHS = (
 					GStreamer/custom,
 					GStreamer/generated,
-					GStreamer/gstreamer,
 					GStreamer/gstreamer/libs,
+					GStreamer/gstreamer,
 					"GStreamer/gst-plugins-base/gst-libs",
+					"GStreamer/gst-plugins-base",
 					/Library/Frameworks/GStreamer.framework/Headers,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
@@ -2255,9 +2260,10 @@
 				HEADER_SEARCH_PATHS = (
 					GStreamer/custom,
 					GStreamer/generated,
-					GStreamer/gstreamer,
 					GStreamer/gstreamer/libs,
+					GStreamer/gstreamer,
 					"GStreamer/gst-plugins-base/gst-libs",
+					"GStreamer/gst-plugins-base",
 					/Library/Frameworks/GStreamer.framework/Headers,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;

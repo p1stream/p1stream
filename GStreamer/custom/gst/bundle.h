@@ -5,4 +5,4 @@
 
 void gst_bundle_init (void);
 
-#endif
+#endif /* __GST_BUNDLE_H__ */
