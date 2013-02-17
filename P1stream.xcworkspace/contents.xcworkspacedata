@@ -2,18 +2,21 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "container:libintl/libintl.xcodeproj">
+      location = "group:libintl/libintl.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:libffi/libffi.xcodeproj">
+      location = "group:libffi/libffi.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:GLib/GLib.xcodeproj">
+      location = "group:GLib/GLib.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:ORC/ORC.xcodeproj">
+      location = "group:ORC/ORC.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:P1stream/P1stream.xcodeproj">
+      location = "group:GStreamer/GStreamer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:P1stream/P1stream.xcodeproj">
    </FileRef>
 </Workspace>

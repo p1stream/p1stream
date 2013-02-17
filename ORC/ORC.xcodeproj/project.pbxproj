@@ -30,24 +30,6 @@
 		F6A0B35E16D0F1980023B9B2 /* orcutils.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34916D0F1980023B9B2 /* orcutils.c */; };
 		F6A0B35F16D0F1980023B9B2 /* orcx86.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34A16D0F1980023B9B2 /* orcx86.c */; };
 		F6A0B36016D0F1980023B9B2 /* orcx86insn.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34B16D0F1980023B9B2 /* orcx86insn.c */; };
-		F6A0B37316D0F25C0023B9B2 /* orc.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36316D0F2250023B9B2 /* orc.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B37416D0F25E0023B9B2 /* orcdebug.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36616D0F2260023B9B2 /* orcdebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B37516D0F2610023B9B2 /* orcprogram.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36E16D0F2260023B9B2 /* orcprogram.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B37616D0F26A0023B9B2 /* orcemulateopcodes.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36716D0F2260023B9B2 /* orcemulateopcodes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B37716D0F2700023B9B2 /* orcfunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36816D0F2260023B9B2 /* orcfunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B37816D0F2740023B9B2 /* orcutils.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B37016D0F2260023B9B2 /* orcutils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B37916D0F2780023B9B2 /* orcparse.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36C16D0F2260023B9B2 /* orcparse.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B37A16D0F27E0023B9B2 /* opcodes.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36116D0F2250023B9B2 /* opcodes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B37B16D0F2890023B9B2 /* orconce.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36B16D0F2260023B9B2 /* orconce.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B37C16D0F28F0023B9B2 /* orcsse.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36F16D0F2260023B9B2 /* orcsse.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B37D16D0F2920023B9B2 /* orcmmx.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36916D0F2260023B9B2 /* orcmmx.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B37E16D0F2950023B9B2 /* orcneon.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36A16D0F2260023B9B2 /* orcneon.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B37F16D0F2970023B9B2 /* orcx86.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B37116D0F2260023B9B2 /* orcx86.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B38016D0F29C0023B9B2 /* orcpowerpc.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36D16D0F2260023B9B2 /* orcpowerpc.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B38116D0F2A10023B9B2 /* orcarm.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36416D0F2260023B9B2 /* orcarm.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B38216D0F2A40023B9B2 /* orcx86insn.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B37216D0F2260023B9B2 /* orcx86insn.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B38316D0F2A80023B9B2 /* orccpuinsn.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36516D0F2260023B9B2 /* orccpuinsn.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B38416D0F2AA0023B9B2 /* orc-stdint.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36216D0F2250023B9B2 /* orc-stdint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F6A0B38616D0F4C50023B9B2 /* orcprogram-mmx.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B38516D0F4C50023B9B2 /* orcprogram-mmx.c */; };
 		F6A0B38816D0F4CE0023B9B2 /* orcrules-mmx.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B38716D0F4CE0023B9B2 /* orcrules-mmx.c */; };
 		F6A0B38A16D0F4D90023B9B2 /* orcmmx.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B38916D0F4D90023B9B2 /* orcmmx.c */; };
@@ -62,18 +44,6 @@
 			remoteInfo = orc;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		F6A0B32516D0F07D0023B9B2 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		F6A0B31916D0F0310023B9B2 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
@@ -237,34 +207,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		F6A0B31C16D0F06E0023B9B2 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F6A0B37316D0F25C0023B9B2 /* orc.h in Headers */,
-				F6A0B37416D0F25E0023B9B2 /* orcdebug.h in Headers */,
-				F6A0B37516D0F2610023B9B2 /* orcprogram.h in Headers */,
-				F6A0B37616D0F26A0023B9B2 /* orcemulateopcodes.h in Headers */,
-				F6A0B37716D0F2700023B9B2 /* orcfunctions.h in Headers */,
-				F6A0B37816D0F2740023B9B2 /* orcutils.h in Headers */,
-				F6A0B37916D0F2780023B9B2 /* orcparse.h in Headers */,
-				F6A0B37A16D0F27E0023B9B2 /* opcodes.h in Headers */,
-				F6A0B37B16D0F2890023B9B2 /* orconce.h in Headers */,
-				F6A0B37C16D0F28F0023B9B2 /* orcsse.h in Headers */,
-				F6A0B37D16D0F2920023B9B2 /* orcmmx.h in Headers */,
-				F6A0B37E16D0F2950023B9B2 /* orcneon.h in Headers */,
-				F6A0B37F16D0F2970023B9B2 /* orcx86.h in Headers */,
-				F6A0B38016D0F29C0023B9B2 /* orcpowerpc.h in Headers */,
-				F6A0B38116D0F2A10023B9B2 /* orcarm.h in Headers */,
-				F6A0B38216D0F2A40023B9B2 /* orcx86insn.h in Headers */,
-				F6A0B38316D0F2A80023B9B2 /* orccpuinsn.h in Headers */,
-				F6A0B38416D0F2AA0023B9B2 /* orc-stdint.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		F6A0B31D16D0F06E0023B9B2 /* orc */ = {
 			isa = PBXNativeTarget;
@@ -272,7 +214,6 @@
 			buildPhases = (
 				F6A0B31A16D0F06E0023B9B2 /* Sources */,
 				F6A0B31B16D0F06E0023B9B2 /* Frameworks */,
-				F6A0B31C16D0F06E0023B9B2 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -289,7 +230,6 @@
 			buildPhases = (
 				F6A0B32316D0F07D0023B9B2 /* Sources */,
 				F6A0B32416D0F07D0023B9B2 /* Frameworks */,
-				F6A0B32516D0F07D0023B9B2 /* CopyFiles */,
 			);
 			buildRules = (
 			);

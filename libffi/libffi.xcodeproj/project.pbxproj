@@ -194,6 +194,7 @@
 					generated,
 					generated/include,
 					libffi/include,
+					libffi/src/x86,
 				);
 			};
 			name = Debug;
@@ -206,6 +207,7 @@
 					generated,
 					generated/include,
 					libffi/include,
+					libffi/src/x86,
 				);
 			};
 			name = Release;

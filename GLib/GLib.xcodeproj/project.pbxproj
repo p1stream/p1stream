@@ -136,6 +136,7 @@
 		F670B72C16D12948001ADAF9 /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B52D16D112FB001ADAF9 /* libglib.dylib */; };
 		F670B72E16D1298A001ADAF9 /* libffi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B72D16D12989001ADAF9 /* libffi.dylib */; };
 		F670B73016D12A27001ADAF9 /* giounix.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B72F16D12A27001ADAF9 /* giounix.c */; };
+		F670B8F016D14148001ADAF9 /* gspawn.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B8EF16D14148001ADAF9 /* gspawn.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -263,7 +264,7 @@
 		F670B5F716D1173A001ADAF9 /* gwakeup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gwakeup.c; path = glib/glib/gwakeup.c; sourceTree = "<group>"; };
 		F670B61316D1176C001ADAF9 /* glib-unix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "glib-unix.c"; path = "glib/glib/glib-unix.c"; sourceTree = "<group>"; };
 		F670B61516D11784001ADAF9 /* gthread-posix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "gthread-posix.c"; path = "glib/glib/gthread-posix.c"; sourceTree = "<group>"; };
-		F670B61916D11C08001ADAF9 /* libintl.dylib */ = {isa = PBXFileReference; lastKnownFileType = file; name = libintl.dylib; path = ../libintl/build/Release/libintl.dylib; sourceTree = "<group>"; };
+		F670B61916D11C08001ADAF9 /* libintl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libintl.dylib; path = ../libintl/build/Release/libintl.dylib; sourceTree = "<group>"; };
 		F670B61B16D11E1B001ADAF9 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		F670B61D16D11E2C001ADAF9 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Carbon.framework; sourceTree = DEVELOPER_DIR; };
 		F670B61F16D11E38001ADAF9 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libiconv.dylib; sourceTree = DEVELOPER_DIR; };
@@ -435,8 +436,9 @@
 		F670B72716D128D8001ADAF9 /* gvaluearray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gvaluearray.h; path = glib/gobject/gvaluearray.h; sourceTree = "<group>"; };
 		F670B72816D128D8001ADAF9 /* gvaluecollector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gvaluecollector.h; path = glib/gobject/gvaluecollector.h; sourceTree = "<group>"; };
 		F670B72916D128D8001ADAF9 /* gvaluetypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gvaluetypes.h; path = glib/gobject/gvaluetypes.h; sourceTree = "<group>"; };
-		F670B72D16D12989001ADAF9 /* libffi.dylib */ = {isa = PBXFileReference; lastKnownFileType = file; name = libffi.dylib; path = ../libffi/build/Release/libffi.dylib; sourceTree = "<group>"; };
+		F670B72D16D12989001ADAF9 /* libffi.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libffi.dylib; path = ../libffi/build/Release/libffi.dylib; sourceTree = "<group>"; };
 		F670B72F16D12A27001ADAF9 /* giounix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = giounix.c; path = glib/glib/giounix.c; sourceTree = "<group>"; };
+		F670B8EF16D14148001ADAF9 /* gspawn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gspawn.c; path = glib/glib/gspawn.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -578,6 +580,7 @@
 				F670B5D016D116DD001ADAF9 /* gshell.c */,
 				F670B5D116D116DD001ADAF9 /* gslice.c */,
 				F670B5D216D116DD001ADAF9 /* gslist.c */,
+				F670B8EF16D14148001ADAF9 /* gspawn.c */,
 				F670B5DE16D1173A001ADAF9 /* gstdio.c */,
 				F670B5DF16D1173A001ADAF9 /* gstrfuncs.c */,
 				F670B5E016D1173A001ADAF9 /* gstring.c */,
@@ -1057,6 +1060,7 @@
 				F670B61416D1176C001ADAF9 /* glib-unix.c in Sources */,
 				F670B61616D11784001ADAF9 /* gthread-posix.c in Sources */,
 				F670B73016D12A27001ADAF9 /* giounix.c in Sources */,
+				F670B8F016D14148001ADAF9 /* gspawn.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1582,6 +1586,7 @@
 				F670B6B216D11F45001ADAF9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F670B6DB16D12072001ADAF9 /* Build configuration list for PBXNativeTarget "charset" */ = {
 			isa = XCConfigurationList;
@@ -1590,6 +1595,7 @@
 				F670B6DD16D12072001ADAF9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

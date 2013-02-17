@@ -1,0 +1,1097 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F670B86816D13D9C001ADAF9 /* gst.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B82E16D13D9C001ADAF9 /* gst.c */; };
+		F670B86916D13D9D001ADAF9 /* gstallocator.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B82F16D13D9C001ADAF9 /* gstallocator.c */; };
+		F670B86A16D13D9D001ADAF9 /* gstatomicqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83016D13D9C001ADAF9 /* gstatomicqueue.c */; };
+		F670B86B16D13D9D001ADAF9 /* gstbin.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83116D13D9C001ADAF9 /* gstbin.c */; };
+		F670B86C16D13D9D001ADAF9 /* gstbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83216D13D9C001ADAF9 /* gstbuffer.c */; };
+		F670B86D16D13D9D001ADAF9 /* gstbufferlist.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83316D13D9C001ADAF9 /* gstbufferlist.c */; };
+		F670B86E16D13D9D001ADAF9 /* gstbufferpool.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83416D13D9C001ADAF9 /* gstbufferpool.c */; };
+		F670B86F16D13D9D001ADAF9 /* gstbus.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83516D13D9C001ADAF9 /* gstbus.c */; };
+		F670B87016D13D9D001ADAF9 /* gstcaps.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83616D13D9C001ADAF9 /* gstcaps.c */; };
+		F670B87116D13D9D001ADAF9 /* gstchildproxy.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83716D13D9C001ADAF9 /* gstchildproxy.c */; };
+		F670B87216D13D9D001ADAF9 /* gstclock.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83816D13D9C001ADAF9 /* gstclock.c */; };
+		F670B87316D13D9D001ADAF9 /* gstcontrolbinding.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83916D13D9C001ADAF9 /* gstcontrolbinding.c */; };
+		F670B87416D13D9D001ADAF9 /* gstcontrolsource.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83A16D13D9C001ADAF9 /* gstcontrolsource.c */; };
+		F670B87516D13D9D001ADAF9 /* gstdatetime.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83B16D13D9C001ADAF9 /* gstdatetime.c */; };
+		F670B87616D13D9D001ADAF9 /* gstdebugutils.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83C16D13D9C001ADAF9 /* gstdebugutils.c */; };
+		F670B87716D13D9D001ADAF9 /* gstelement.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83D16D13D9C001ADAF9 /* gstelement.c */; };
+		F670B87816D13D9D001ADAF9 /* gstelementfactory.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83E16D13D9C001ADAF9 /* gstelementfactory.c */; };
+		F670B87916D13D9D001ADAF9 /* gsterror.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B83F16D13D9C001ADAF9 /* gsterror.c */; };
+		F670B87A16D13D9D001ADAF9 /* gstevent.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84016D13D9C001ADAF9 /* gstevent.c */; };
+		F670B87B16D13D9D001ADAF9 /* gstformat.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84116D13D9C001ADAF9 /* gstformat.c */; };
+		F670B87C16D13D9D001ADAF9 /* gstghostpad.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84216D13D9C001ADAF9 /* gstghostpad.c */; };
+		F670B87D16D13D9D001ADAF9 /* gstinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84316D13D9C001ADAF9 /* gstinfo.c */; };
+		F670B87E16D13D9D001ADAF9 /* gstiterator.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84416D13D9C001ADAF9 /* gstiterator.c */; };
+		F670B87F16D13D9D001ADAF9 /* gstmemory.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84516D13D9C001ADAF9 /* gstmemory.c */; };
+		F670B88016D13D9D001ADAF9 /* gstmessage.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84616D13D9C001ADAF9 /* gstmessage.c */; };
+		F670B88116D13D9D001ADAF9 /* gstmeta.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84716D13D9C001ADAF9 /* gstmeta.c */; };
+		F670B88216D13D9D001ADAF9 /* gstminiobject.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84816D13D9C001ADAF9 /* gstminiobject.c */; };
+		F670B88316D13D9D001ADAF9 /* gstobject.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84916D13D9C001ADAF9 /* gstobject.c */; };
+		F670B88416D13D9D001ADAF9 /* gstpad.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84A16D13D9C001ADAF9 /* gstpad.c */; };
+		F670B88516D13D9D001ADAF9 /* gstpadtemplate.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84B16D13D9C001ADAF9 /* gstpadtemplate.c */; };
+		F670B88616D13D9D001ADAF9 /* gstparamspecs.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84C16D13D9C001ADAF9 /* gstparamspecs.c */; };
+		F670B88716D13D9D001ADAF9 /* gstparse.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84D16D13D9C001ADAF9 /* gstparse.c */; };
+		F670B88816D13D9D001ADAF9 /* gstpipeline.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84E16D13D9C001ADAF9 /* gstpipeline.c */; };
+		F670B88916D13D9D001ADAF9 /* gstplugin.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B84F16D13D9C001ADAF9 /* gstplugin.c */; };
+		F670B88A16D13D9D001ADAF9 /* gstpluginfeature.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85016D13D9C001ADAF9 /* gstpluginfeature.c */; };
+		F670B88B16D13D9D001ADAF9 /* gstpluginloader.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85116D13D9C001ADAF9 /* gstpluginloader.c */; };
+		F670B88C16D13D9D001ADAF9 /* gstpoll.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85216D13D9C001ADAF9 /* gstpoll.c */; };
+		F670B88D16D13D9D001ADAF9 /* gstpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85316D13D9C001ADAF9 /* gstpreset.c */; };
+		F670B88E16D13D9D001ADAF9 /* gstquark.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85416D13D9C001ADAF9 /* gstquark.c */; };
+		F670B88F16D13D9D001ADAF9 /* gstquery.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85516D13D9C001ADAF9 /* gstquery.c */; };
+		F670B89016D13D9D001ADAF9 /* gstregistry.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85616D13D9C001ADAF9 /* gstregistry.c */; };
+		F670B89116D13D9D001ADAF9 /* gstregistrychunks.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85716D13D9C001ADAF9 /* gstregistrychunks.c */; };
+		F670B89216D13D9D001ADAF9 /* gstsample.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85816D13D9C001ADAF9 /* gstsample.c */; };
+		F670B89316D13D9D001ADAF9 /* gstsegment.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85916D13D9C001ADAF9 /* gstsegment.c */; };
+		F670B89416D13D9D001ADAF9 /* gststructure.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85A16D13D9C001ADAF9 /* gststructure.c */; };
+		F670B89516D13D9D001ADAF9 /* gstsystemclock.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85B16D13D9C001ADAF9 /* gstsystemclock.c */; };
+		F670B89616D13D9D001ADAF9 /* gsttaglist.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85C16D13D9C001ADAF9 /* gsttaglist.c */; };
+		F670B89716D13D9D001ADAF9 /* gsttagsetter.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85D16D13D9C001ADAF9 /* gsttagsetter.c */; };
+		F670B89816D13D9D001ADAF9 /* gsttask.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85E16D13D9C001ADAF9 /* gsttask.c */; };
+		F670B89916D13D9D001ADAF9 /* gsttaskpool.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B85F16D13D9C001ADAF9 /* gsttaskpool.c */; };
+		F670B89A16D13D9D001ADAF9 /* gsttoc.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B86016D13D9C001ADAF9 /* gsttoc.c */; };
+		F670B89B16D13D9D001ADAF9 /* gsttocsetter.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B86116D13D9C001ADAF9 /* gsttocsetter.c */; };
+		F670B89C16D13D9D001ADAF9 /* gsttrace.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B86216D13D9C001ADAF9 /* gsttrace.c */; };
+		F670B89D16D13D9D001ADAF9 /* gsttypefind.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B86316D13D9C001ADAF9 /* gsttypefind.c */; };
+		F670B89E16D13D9D001ADAF9 /* gsttypefindfactory.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B86416D13D9C001ADAF9 /* gsttypefindfactory.c */; };
+		F670B89F16D13D9D001ADAF9 /* gsturi.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B86516D13D9C001ADAF9 /* gsturi.c */; };
+		F670B8A016D13D9D001ADAF9 /* gstutils.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B86616D13D9C001ADAF9 /* gstutils.c */; };
+		F670B8A116D13D9D001ADAF9 /* gstvalue.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B86716D13D9C001ADAF9 /* gstvalue.c */; };
+		F670B8E816D13FB7001ADAF9 /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B8E716D13FB7001ADAF9 /* libglib.dylib */; };
+		F670B8EA16D13FBD001ADAF9 /* libgmodule.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B8E916D13FBD001ADAF9 /* libgmodule.dylib */; };
+		F670B8EC16D13FC0001ADAF9 /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B8EB16D13FC0001ADAF9 /* libgobject.dylib */; };
+		F670B8EE16D140CA001ADAF9 /* gstenumtypes.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B73E16D1335A001ADAF9 /* gstenumtypes.c */; };
+		F670B90416D1429A001ADAF9 /* gstadapter.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B8F916D1429A001ADAF9 /* gstadapter.c */; };
+		F670B90516D1429A001ADAF9 /* gstbaseparse.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B8FA16D1429A001ADAF9 /* gstbaseparse.c */; };
+		F670B90616D1429A001ADAF9 /* gstbasesink.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B8FB16D1429A001ADAF9 /* gstbasesink.c */; };
+		F670B90716D1429A001ADAF9 /* gstbasesrc.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B8FC16D1429A001ADAF9 /* gstbasesrc.c */; };
+		F670B90816D1429A001ADAF9 /* gstbasetransform.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B8FD16D1429A001ADAF9 /* gstbasetransform.c */; };
+		F670B90916D1429A001ADAF9 /* gstbitreader.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B8FE16D1429A001ADAF9 /* gstbitreader.c */; };
+		F670B90A16D1429A001ADAF9 /* gstbytereader.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B8FF16D1429A001ADAF9 /* gstbytereader.c */; };
+		F670B90B16D1429A001ADAF9 /* gstbytewriter.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B90016D1429A001ADAF9 /* gstbytewriter.c */; };
+		F670B90C16D1429A001ADAF9 /* gstcollectpads.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B90116D1429A001ADAF9 /* gstcollectpads.c */; };
+		F670B90D16D1429A001ADAF9 /* gstpushsrc.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B90216D1429A001ADAF9 /* gstpushsrc.c */; };
+		F670B90E16D1429A001ADAF9 /* gsttypefindhelper.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B90316D1429A001ADAF9 /* gsttypefindhelper.c */; };
+		F670B91F16D14327001ADAF9 /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B82116D13381001ADAF9 /* libgstreamer.dylib */; };
+		F670B92016D14332001ADAF9 /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B8E716D13FB7001ADAF9 /* libglib.dylib */; };
+		F670B92216D14342001ADAF9 /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B8EB16D13FC0001ADAF9 /* libgobject.dylib */; };
+		F670B96C16D1453B001ADAF9 /* gstcapsfilter.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B95816D1453B001ADAF9 /* gstcapsfilter.c */; };
+		F670B96D16D1453B001ADAF9 /* gstdataqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B95916D1453B001ADAF9 /* gstdataqueue.c */; };
+		F670B96E16D1453B001ADAF9 /* gstelements.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B95A16D1453B001ADAF9 /* gstelements.c */; };
+		F670B96F16D1453B001ADAF9 /* gstfakesink.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B95B16D1453B001ADAF9 /* gstfakesink.c */; };
+		F670B97016D1453B001ADAF9 /* gstfakesrc.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B95C16D1453B001ADAF9 /* gstfakesrc.c */; };
+		F670B97116D1453B001ADAF9 /* gstfdsink.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B95D16D1453B001ADAF9 /* gstfdsink.c */; };
+		F670B97216D1453B001ADAF9 /* gstfdsrc.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B95E16D1453B001ADAF9 /* gstfdsrc.c */; };
+		F670B97316D1453B001ADAF9 /* gstfilesink.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B95F16D1453B001ADAF9 /* gstfilesink.c */; };
+		F670B97416D1453B001ADAF9 /* gstfilesrc.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B96016D1453B001ADAF9 /* gstfilesrc.c */; };
+		F670B97516D1453B001ADAF9 /* gstfunnel.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B96116D1453B001ADAF9 /* gstfunnel.c */; };
+		F670B97616D1453B001ADAF9 /* gstidentity.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B96216D1453B001ADAF9 /* gstidentity.c */; };
+		F670B97716D1453B001ADAF9 /* gstinputselector.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B96316D1453B001ADAF9 /* gstinputselector.c */; };
+		F670B97816D1453B001ADAF9 /* gstmultiqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B96416D1453B001ADAF9 /* gstmultiqueue.c */; };
+		F670B97916D1453B001ADAF9 /* gstoutputselector.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B96516D1453B001ADAF9 /* gstoutputselector.c */; };
+		F670B97A16D1453B001ADAF9 /* gstqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B96616D1453B001ADAF9 /* gstqueue.c */; };
+		F670B97B16D1453B001ADAF9 /* gstqueue2.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B96716D1453B001ADAF9 /* gstqueue2.c */; };
+		F670B97C16D1453B001ADAF9 /* gstqueuearray.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B96816D1453B001ADAF9 /* gstqueuearray.c */; };
+		F670B97D16D1453B001ADAF9 /* gsttee.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B96916D1453B001ADAF9 /* gsttee.c */; };
+		F670B97E16D1453B001ADAF9 /* gsttypefindelement.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B96A16D1453B001ADAF9 /* gsttypefindelement.c */; };
+		F670B97F16D1453B001ADAF9 /* gstvalve.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B96B16D1453B001ADAF9 /* gstvalve.c */; };
+		F670B99716D1456E001ADAF9 /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B82116D13381001ADAF9 /* libgstreamer.dylib */; };
+		F670B99816D14575001ADAF9 /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B8EB16D13FC0001ADAF9 /* libgobject.dylib */; };
+		F670B99916D1457A001ADAF9 /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B8E716D13FB7001ADAF9 /* libglib.dylib */; };
+		F670B99A16D1457F001ADAF9 /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B8F516D14257001ADAF9 /* libgstbase.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F670B91D16D1431D001ADAF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F670B73316D131F9001ADAF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F670B82016D13381001ADAF9;
+			remoteInfo = gstreamer;
+		};
+		F670B99316D14568001ADAF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F670B73316D131F9001ADAF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F670B82016D13381001ADAF9;
+			remoteInfo = gstreamer;
+		};
+		F670B99516D14568001ADAF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F670B73316D131F9001ADAF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F670B8F416D14257001ADAF9;
+			remoteInfo = gstbase;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F670B73916D1335A001ADAF9 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
+		F670B73D16D1335A001ADAF9 /* gstconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gstconfig.h; path = generated/gst/gstconfig.h; sourceTree = "<group>"; };
+		F670B73E16D1335A001ADAF9 /* gstenumtypes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstenumtypes.c; path = generated/gst/gstenumtypes.c; sourceTree = "<group>"; };
+		F670B73F16D1335A001ADAF9 /* gstenumtypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gstenumtypes.h; path = generated/gst/gstenumtypes.h; sourceTree = "<group>"; };
+		F670B74016D1335A001ADAF9 /* gstversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gstversion.h; path = generated/gst/gstversion.h; sourceTree = "<group>"; };
+		F670B82116D13381001ADAF9 /* libgstreamer.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgstreamer.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F670B82A16D133FC001ADAF9 /* libgstcoreelements.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgstcoreelements.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F670B82E16D13D9C001ADAF9 /* gst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gst.c; sourceTree = "<group>"; };
+		F670B82F16D13D9C001ADAF9 /* gstallocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstallocator.c; sourceTree = "<group>"; };
+		F670B83016D13D9C001ADAF9 /* gstatomicqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstatomicqueue.c; sourceTree = "<group>"; };
+		F670B83116D13D9C001ADAF9 /* gstbin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstbin.c; sourceTree = "<group>"; };
+		F670B83216D13D9C001ADAF9 /* gstbuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstbuffer.c; sourceTree = "<group>"; };
+		F670B83316D13D9C001ADAF9 /* gstbufferlist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstbufferlist.c; sourceTree = "<group>"; };
+		F670B83416D13D9C001ADAF9 /* gstbufferpool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstbufferpool.c; sourceTree = "<group>"; };
+		F670B83516D13D9C001ADAF9 /* gstbus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstbus.c; sourceTree = "<group>"; };
+		F670B83616D13D9C001ADAF9 /* gstcaps.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstcaps.c; sourceTree = "<group>"; };
+		F670B83716D13D9C001ADAF9 /* gstchildproxy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstchildproxy.c; sourceTree = "<group>"; };
+		F670B83816D13D9C001ADAF9 /* gstclock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstclock.c; sourceTree = "<group>"; };
+		F670B83916D13D9C001ADAF9 /* gstcontrolbinding.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstcontrolbinding.c; sourceTree = "<group>"; };
+		F670B83A16D13D9C001ADAF9 /* gstcontrolsource.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstcontrolsource.c; sourceTree = "<group>"; };
+		F670B83B16D13D9C001ADAF9 /* gstdatetime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstdatetime.c; sourceTree = "<group>"; };
+		F670B83C16D13D9C001ADAF9 /* gstdebugutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstdebugutils.c; sourceTree = "<group>"; };
+		F670B83D16D13D9C001ADAF9 /* gstelement.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstelement.c; sourceTree = "<group>"; };
+		F670B83E16D13D9C001ADAF9 /* gstelementfactory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstelementfactory.c; sourceTree = "<group>"; };
+		F670B83F16D13D9C001ADAF9 /* gsterror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsterror.c; sourceTree = "<group>"; };
+		F670B84016D13D9C001ADAF9 /* gstevent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstevent.c; sourceTree = "<group>"; };
+		F670B84116D13D9C001ADAF9 /* gstformat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstformat.c; sourceTree = "<group>"; };
+		F670B84216D13D9C001ADAF9 /* gstghostpad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstghostpad.c; sourceTree = "<group>"; };
+		F670B84316D13D9C001ADAF9 /* gstinfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstinfo.c; sourceTree = "<group>"; };
+		F670B84416D13D9C001ADAF9 /* gstiterator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstiterator.c; sourceTree = "<group>"; };
+		F670B84516D13D9C001ADAF9 /* gstmemory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstmemory.c; sourceTree = "<group>"; };
+		F670B84616D13D9C001ADAF9 /* gstmessage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstmessage.c; sourceTree = "<group>"; };
+		F670B84716D13D9C001ADAF9 /* gstmeta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstmeta.c; sourceTree = "<group>"; };
+		F670B84816D13D9C001ADAF9 /* gstminiobject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstminiobject.c; sourceTree = "<group>"; };
+		F670B84916D13D9C001ADAF9 /* gstobject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstobject.c; sourceTree = "<group>"; };
+		F670B84A16D13D9C001ADAF9 /* gstpad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstpad.c; sourceTree = "<group>"; };
+		F670B84B16D13D9C001ADAF9 /* gstpadtemplate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstpadtemplate.c; sourceTree = "<group>"; };
+		F670B84C16D13D9C001ADAF9 /* gstparamspecs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstparamspecs.c; sourceTree = "<group>"; };
+		F670B84D16D13D9C001ADAF9 /* gstparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstparse.c; sourceTree = "<group>"; };
+		F670B84E16D13D9C001ADAF9 /* gstpipeline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstpipeline.c; sourceTree = "<group>"; };
+		F670B84F16D13D9C001ADAF9 /* gstplugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstplugin.c; sourceTree = "<group>"; };
+		F670B85016D13D9C001ADAF9 /* gstpluginfeature.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstpluginfeature.c; sourceTree = "<group>"; };
+		F670B85116D13D9C001ADAF9 /* gstpluginloader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstpluginloader.c; sourceTree = "<group>"; };
+		F670B85216D13D9C001ADAF9 /* gstpoll.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstpoll.c; sourceTree = "<group>"; };
+		F670B85316D13D9C001ADAF9 /* gstpreset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstpreset.c; sourceTree = "<group>"; };
+		F670B85416D13D9C001ADAF9 /* gstquark.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstquark.c; sourceTree = "<group>"; };
+		F670B85516D13D9C001ADAF9 /* gstquery.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstquery.c; sourceTree = "<group>"; };
+		F670B85616D13D9C001ADAF9 /* gstregistry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstregistry.c; sourceTree = "<group>"; };
+		F670B85716D13D9C001ADAF9 /* gstregistrychunks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstregistrychunks.c; sourceTree = "<group>"; };
+		F670B85816D13D9C001ADAF9 /* gstsample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstsample.c; sourceTree = "<group>"; };
+		F670B85916D13D9C001ADAF9 /* gstsegment.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstsegment.c; sourceTree = "<group>"; };
+		F670B85A16D13D9C001ADAF9 /* gststructure.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gststructure.c; sourceTree = "<group>"; };
+		F670B85B16D13D9C001ADAF9 /* gstsystemclock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstsystemclock.c; sourceTree = "<group>"; };
+		F670B85C16D13D9C001ADAF9 /* gsttaglist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsttaglist.c; sourceTree = "<group>"; };
+		F670B85D16D13D9C001ADAF9 /* gsttagsetter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsttagsetter.c; sourceTree = "<group>"; };
+		F670B85E16D13D9C001ADAF9 /* gsttask.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsttask.c; sourceTree = "<group>"; };
+		F670B85F16D13D9C001ADAF9 /* gsttaskpool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsttaskpool.c; sourceTree = "<group>"; };
+		F670B86016D13D9C001ADAF9 /* gsttoc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsttoc.c; sourceTree = "<group>"; };
+		F670B86116D13D9C001ADAF9 /* gsttocsetter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsttocsetter.c; sourceTree = "<group>"; };
+		F670B86216D13D9C001ADAF9 /* gsttrace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsttrace.c; sourceTree = "<group>"; };
+		F670B86316D13D9C001ADAF9 /* gsttypefind.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsttypefind.c; sourceTree = "<group>"; };
+		F670B86416D13D9C001ADAF9 /* gsttypefindfactory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsttypefindfactory.c; sourceTree = "<group>"; };
+		F670B86516D13D9C001ADAF9 /* gsturi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsturi.c; sourceTree = "<group>"; };
+		F670B86616D13D9C001ADAF9 /* gstutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstutils.c; sourceTree = "<group>"; };
+		F670B86716D13D9C001ADAF9 /* gstvalue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstvalue.c; sourceTree = "<group>"; };
+		F670B8A216D13E00001ADAF9 /* gettext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gettext.h; sourceTree = "<group>"; };
+		F670B8A316D13E00001ADAF9 /* glib-compat-private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "glib-compat-private.h"; sourceTree = "<group>"; };
+		F670B8A416D13E00001ADAF9 /* glib-compat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "glib-compat.h"; sourceTree = "<group>"; };
+		F670B8A516D13E00001ADAF9 /* gst_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gst_private.h; sourceTree = "<group>"; };
+		F670B8A616D13E00001ADAF9 /* gst-i18n-app.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "gst-i18n-app.h"; sourceTree = "<group>"; };
+		F670B8A716D13E00001ADAF9 /* gst-i18n-lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "gst-i18n-lib.h"; sourceTree = "<group>"; };
+		F670B8A816D13E00001ADAF9 /* gst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gst.h; sourceTree = "<group>"; };
+		F670B8A916D13E00001ADAF9 /* gstallocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstallocator.h; sourceTree = "<group>"; };
+		F670B8AA16D13E00001ADAF9 /* gstatomicqueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstatomicqueue.h; sourceTree = "<group>"; };
+		F670B8AB16D13E00001ADAF9 /* gstbin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstbin.h; sourceTree = "<group>"; };
+		F670B8AC16D13E00001ADAF9 /* gstbuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstbuffer.h; sourceTree = "<group>"; };
+		F670B8AD16D13E00001ADAF9 /* gstbufferlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstbufferlist.h; sourceTree = "<group>"; };
+		F670B8AE16D13E00001ADAF9 /* gstbufferpool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstbufferpool.h; sourceTree = "<group>"; };
+		F670B8AF16D13E00001ADAF9 /* gstbus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstbus.h; sourceTree = "<group>"; };
+		F670B8B016D13E00001ADAF9 /* gstcaps.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstcaps.h; sourceTree = "<group>"; };
+		F670B8B116D13E00001ADAF9 /* gstchildproxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstchildproxy.h; sourceTree = "<group>"; };
+		F670B8B216D13E00001ADAF9 /* gstclock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstclock.h; sourceTree = "<group>"; };
+		F670B8B316D13E00001ADAF9 /* gstcompat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstcompat.h; sourceTree = "<group>"; };
+		F670B8B416D13E00001ADAF9 /* gstcontrolbinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstcontrolbinding.h; sourceTree = "<group>"; };
+		F670B8B516D13E00001ADAF9 /* gstcontrolsource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstcontrolsource.h; sourceTree = "<group>"; };
+		F670B8B616D13E00001ADAF9 /* gstdatetime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstdatetime.h; sourceTree = "<group>"; };
+		F670B8B716D13E00001ADAF9 /* gstdebugutils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstdebugutils.h; sourceTree = "<group>"; };
+		F670B8B816D13E00001ADAF9 /* gstelement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstelement.h; sourceTree = "<group>"; };
+		F670B8B916D13E00001ADAF9 /* gstelementfactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstelementfactory.h; sourceTree = "<group>"; };
+		F670B8BA16D13E00001ADAF9 /* gstelementmetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstelementmetadata.h; sourceTree = "<group>"; };
+		F670B8BB16D13E00001ADAF9 /* gsterror.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsterror.h; sourceTree = "<group>"; };
+		F670B8BC16D13E00001ADAF9 /* gstevent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstevent.h; sourceTree = "<group>"; };
+		F670B8BD16D13E00001ADAF9 /* gstformat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstformat.h; sourceTree = "<group>"; };
+		F670B8BE16D13E00001ADAF9 /* gstghostpad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstghostpad.h; sourceTree = "<group>"; };
+		F670B8BF16D13E00001ADAF9 /* gstinfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstinfo.h; sourceTree = "<group>"; };
+		F670B8C016D13E00001ADAF9 /* gstiterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstiterator.h; sourceTree = "<group>"; };
+		F670B8C116D13E00001ADAF9 /* gstmacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstmacros.h; sourceTree = "<group>"; };
+		F670B8C216D13E00001ADAF9 /* gstmemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstmemory.h; sourceTree = "<group>"; };
+		F670B8C316D13E00001ADAF9 /* gstmessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstmessage.h; sourceTree = "<group>"; };
+		F670B8C416D13E00001ADAF9 /* gstmeta.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstmeta.h; sourceTree = "<group>"; };
+		F670B8C516D13E00001ADAF9 /* gstminiobject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstminiobject.h; sourceTree = "<group>"; };
+		F670B8C616D13E00001ADAF9 /* gstobject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstobject.h; sourceTree = "<group>"; };
+		F670B8C716D13E00001ADAF9 /* gstpad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstpad.h; sourceTree = "<group>"; };
+		F670B8C816D13E00001ADAF9 /* gstpadtemplate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstpadtemplate.h; sourceTree = "<group>"; };
+		F670B8C916D13E00001ADAF9 /* gstparamspecs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstparamspecs.h; sourceTree = "<group>"; };
+		F670B8CA16D13E00001ADAF9 /* gstparse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstparse.h; sourceTree = "<group>"; };
+		F670B8CB16D13E00001ADAF9 /* gstpipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstpipeline.h; sourceTree = "<group>"; };
+		F670B8CC16D13E00001ADAF9 /* gstplugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstplugin.h; sourceTree = "<group>"; };
+		F670B8CD16D13E00001ADAF9 /* gstpluginfeature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstpluginfeature.h; sourceTree = "<group>"; };
+		F670B8CE16D13E00001ADAF9 /* gstpluginloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstpluginloader.h; sourceTree = "<group>"; };
+		F670B8CF16D13E00001ADAF9 /* gstpoll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstpoll.h; sourceTree = "<group>"; };
+		F670B8D016D13E00001ADAF9 /* gstpreset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstpreset.h; sourceTree = "<group>"; };
+		F670B8D116D13E00001ADAF9 /* gstquark.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstquark.h; sourceTree = "<group>"; };
+		F670B8D216D13E00001ADAF9 /* gstquery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstquery.h; sourceTree = "<group>"; };
+		F670B8D316D13E00001ADAF9 /* gstregistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstregistry.h; sourceTree = "<group>"; };
+		F670B8D416D13E00001ADAF9 /* gstregistrybinary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstregistrybinary.h; sourceTree = "<group>"; };
+		F670B8D516D13E00001ADAF9 /* gstregistrychunks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstregistrychunks.h; sourceTree = "<group>"; };
+		F670B8D616D13E00001ADAF9 /* gstsample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstsample.h; sourceTree = "<group>"; };
+		F670B8D716D13E00001ADAF9 /* gstsegment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstsegment.h; sourceTree = "<group>"; };
+		F670B8D816D13E00001ADAF9 /* gststructure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gststructure.h; sourceTree = "<group>"; };
+		F670B8D916D13E00001ADAF9 /* gstsystemclock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstsystemclock.h; sourceTree = "<group>"; };
+		F670B8DA16D13E00001ADAF9 /* gsttaglist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttaglist.h; sourceTree = "<group>"; };
+		F670B8DB16D13E00001ADAF9 /* gsttagsetter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttagsetter.h; sourceTree = "<group>"; };
+		F670B8DC16D13E00001ADAF9 /* gsttask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttask.h; sourceTree = "<group>"; };
+		F670B8DD16D13E00001ADAF9 /* gsttaskpool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttaskpool.h; sourceTree = "<group>"; };
+		F670B8DE16D13E00001ADAF9 /* gsttoc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttoc.h; sourceTree = "<group>"; };
+		F670B8DF16D13E00001ADAF9 /* gsttocsetter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttocsetter.h; sourceTree = "<group>"; };
+		F670B8E016D13E00001ADAF9 /* gsttrace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttrace.h; sourceTree = "<group>"; };
+		F670B8E116D13E00001ADAF9 /* gsttypefind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttypefind.h; sourceTree = "<group>"; };
+		F670B8E216D13E00001ADAF9 /* gsttypefindfactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttypefindfactory.h; sourceTree = "<group>"; };
+		F670B8E316D13E00001ADAF9 /* gsturi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsturi.h; sourceTree = "<group>"; };
+		F670B8E416D13E00001ADAF9 /* gstutils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstutils.h; sourceTree = "<group>"; };
+		F670B8E516D13E00001ADAF9 /* gstvalue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstvalue.h; sourceTree = "<group>"; };
+		F670B8E616D13E00001ADAF9 /* math-compat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "math-compat.h"; sourceTree = "<group>"; };
+		F670B8E716D13FB7001ADAF9 /* libglib.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglib.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libglib.dylib"; sourceTree = "<group>"; };
+		F670B8E916D13FBD001ADAF9 /* libgmodule.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgmodule.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgmodule.dylib"; sourceTree = "<group>"; };
+		F670B8EB16D13FC0001ADAF9 /* libgobject.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgobject.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgobject.dylib"; sourceTree = "<group>"; };
+		F670B8F516D14257001ADAF9 /* libgstbase.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgstbase.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F670B8F916D1429A001ADAF9 /* gstadapter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstadapter.c; sourceTree = "<group>"; };
+		F670B8FA16D1429A001ADAF9 /* gstbaseparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstbaseparse.c; sourceTree = "<group>"; };
+		F670B8FB16D1429A001ADAF9 /* gstbasesink.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstbasesink.c; sourceTree = "<group>"; };
+		F670B8FC16D1429A001ADAF9 /* gstbasesrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstbasesrc.c; sourceTree = "<group>"; };
+		F670B8FD16D1429A001ADAF9 /* gstbasetransform.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstbasetransform.c; sourceTree = "<group>"; };
+		F670B8FE16D1429A001ADAF9 /* gstbitreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstbitreader.c; sourceTree = "<group>"; };
+		F670B8FF16D1429A001ADAF9 /* gstbytereader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstbytereader.c; sourceTree = "<group>"; };
+		F670B90016D1429A001ADAF9 /* gstbytewriter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstbytewriter.c; sourceTree = "<group>"; };
+		F670B90116D1429A001ADAF9 /* gstcollectpads.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstcollectpads.c; sourceTree = "<group>"; };
+		F670B90216D1429A001ADAF9 /* gstpushsrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstpushsrc.c; sourceTree = "<group>"; };
+		F670B90316D1429A001ADAF9 /* gsttypefindhelper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsttypefindhelper.c; sourceTree = "<group>"; };
+		F670B90F16D142B3001ADAF9 /* gstadapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstadapter.h; sourceTree = "<group>"; };
+		F670B91016D142B3001ADAF9 /* gstbaseparse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstbaseparse.h; sourceTree = "<group>"; };
+		F670B91116D142B3001ADAF9 /* gstbasesink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstbasesink.h; sourceTree = "<group>"; };
+		F670B91216D142B3001ADAF9 /* gstbasesrc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstbasesrc.h; sourceTree = "<group>"; };
+		F670B91316D142B3001ADAF9 /* gstbasetransform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstbasetransform.h; sourceTree = "<group>"; };
+		F670B91416D142B3001ADAF9 /* gstbitreader-docs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "gstbitreader-docs.h"; sourceTree = "<group>"; };
+		F670B91516D142B3001ADAF9 /* gstbitreader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstbitreader.h; sourceTree = "<group>"; };
+		F670B91616D142B3001ADAF9 /* gstbytereader-docs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "gstbytereader-docs.h"; sourceTree = "<group>"; };
+		F670B91716D142B3001ADAF9 /* gstbytereader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstbytereader.h; sourceTree = "<group>"; };
+		F670B91816D142B3001ADAF9 /* gstbytewriter-docs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "gstbytewriter-docs.h"; sourceTree = "<group>"; };
+		F670B91916D142B3001ADAF9 /* gstbytewriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstbytewriter.h; sourceTree = "<group>"; };
+		F670B91A16D142B3001ADAF9 /* gstcollectpads.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstcollectpads.h; sourceTree = "<group>"; };
+		F670B91B16D142B3001ADAF9 /* gstpushsrc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstpushsrc.h; sourceTree = "<group>"; };
+		F670B91C16D142B3001ADAF9 /* gsttypefindhelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttypefindhelper.h; sourceTree = "<group>"; };
+		F670B95816D1453B001ADAF9 /* gstcapsfilter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstcapsfilter.c; sourceTree = "<group>"; };
+		F670B95916D1453B001ADAF9 /* gstdataqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstdataqueue.c; sourceTree = "<group>"; };
+		F670B95A16D1453B001ADAF9 /* gstelements.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstelements.c; sourceTree = "<group>"; };
+		F670B95B16D1453B001ADAF9 /* gstfakesink.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstfakesink.c; sourceTree = "<group>"; };
+		F670B95C16D1453B001ADAF9 /* gstfakesrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstfakesrc.c; sourceTree = "<group>"; };
+		F670B95D16D1453B001ADAF9 /* gstfdsink.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstfdsink.c; sourceTree = "<group>"; };
+		F670B95E16D1453B001ADAF9 /* gstfdsrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstfdsrc.c; sourceTree = "<group>"; };
+		F670B95F16D1453B001ADAF9 /* gstfilesink.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstfilesink.c; sourceTree = "<group>"; };
+		F670B96016D1453B001ADAF9 /* gstfilesrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstfilesrc.c; sourceTree = "<group>"; };
+		F670B96116D1453B001ADAF9 /* gstfunnel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstfunnel.c; sourceTree = "<group>"; };
+		F670B96216D1453B001ADAF9 /* gstidentity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstidentity.c; sourceTree = "<group>"; };
+		F670B96316D1453B001ADAF9 /* gstinputselector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstinputselector.c; sourceTree = "<group>"; };
+		F670B96416D1453B001ADAF9 /* gstmultiqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstmultiqueue.c; sourceTree = "<group>"; };
+		F670B96516D1453B001ADAF9 /* gstoutputselector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstoutputselector.c; sourceTree = "<group>"; };
+		F670B96616D1453B001ADAF9 /* gstqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstqueue.c; sourceTree = "<group>"; };
+		F670B96716D1453B001ADAF9 /* gstqueue2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstqueue2.c; sourceTree = "<group>"; };
+		F670B96816D1453B001ADAF9 /* gstqueuearray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstqueuearray.c; sourceTree = "<group>"; };
+		F670B96916D1453B001ADAF9 /* gsttee.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsttee.c; sourceTree = "<group>"; };
+		F670B96A16D1453B001ADAF9 /* gsttypefindelement.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gsttypefindelement.c; sourceTree = "<group>"; };
+		F670B96B16D1453B001ADAF9 /* gstvalve.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstvalve.c; sourceTree = "<group>"; };
+		F670B98016D14543001ADAF9 /* gstcapsfilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstcapsfilter.h; sourceTree = "<group>"; };
+		F670B98116D14543001ADAF9 /* gstdataqueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstdataqueue.h; sourceTree = "<group>"; };
+		F670B98216D14543001ADAF9 /* gstfakesink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstfakesink.h; sourceTree = "<group>"; };
+		F670B98316D14543001ADAF9 /* gstfakesrc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstfakesrc.h; sourceTree = "<group>"; };
+		F670B98416D14543001ADAF9 /* gstfdsink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstfdsink.h; sourceTree = "<group>"; };
+		F670B98516D14543001ADAF9 /* gstfdsrc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstfdsrc.h; sourceTree = "<group>"; };
+		F670B98616D14543001ADAF9 /* gstfilesink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstfilesink.h; sourceTree = "<group>"; };
+		F670B98716D14543001ADAF9 /* gstfilesrc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstfilesrc.h; sourceTree = "<group>"; };
+		F670B98816D14543001ADAF9 /* gstfunnel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstfunnel.h; sourceTree = "<group>"; };
+		F670B98916D14543001ADAF9 /* gstidentity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstidentity.h; sourceTree = "<group>"; };
+		F670B98A16D14543001ADAF9 /* gstinputselector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstinputselector.h; sourceTree = "<group>"; };
+		F670B98B16D14543001ADAF9 /* gstmultiqueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstmultiqueue.h; sourceTree = "<group>"; };
+		F670B98C16D14543001ADAF9 /* gstoutputselector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstoutputselector.h; sourceTree = "<group>"; };
+		F670B98D16D14543001ADAF9 /* gstqueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstqueue.h; sourceTree = "<group>"; };
+		F670B98E16D14543001ADAF9 /* gstqueue2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstqueue2.h; sourceTree = "<group>"; };
+		F670B98F16D14543001ADAF9 /* gstqueuearray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstqueuearray.h; sourceTree = "<group>"; };
+		F670B99016D14543001ADAF9 /* gsttee.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttee.h; sourceTree = "<group>"; };
+		F670B99116D14543001ADAF9 /* gsttypefindelement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttypefindelement.h; sourceTree = "<group>"; };
+		F670B99216D14543001ADAF9 /* gstvalve.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstvalve.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F670B81E16D13381001ADAF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F670B8E816D13FB7001ADAF9 /* libglib.dylib in Frameworks */,
+				F670B8EA16D13FBD001ADAF9 /* libgmodule.dylib in Frameworks */,
+				F670B8EC16D13FC0001ADAF9 /* libgobject.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B82716D133FC001ADAF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F670B99916D1457A001ADAF9 /* libglib.dylib in Frameworks */,
+				F670B99816D14575001ADAF9 /* libgobject.dylib in Frameworks */,
+				F670B99A16D1457F001ADAF9 /* libgstbase.dylib in Frameworks */,
+				F670B99716D1456E001ADAF9 /* libgstreamer.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B8F216D14257001ADAF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F670B92016D14332001ADAF9 /* libglib.dylib in Frameworks */,
+				F670B92216D14342001ADAF9 /* libgobject.dylib in Frameworks */,
+				F670B91F16D14327001ADAF9 /* libgstreamer.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F670B73216D131F9001ADAF9 = {
+			isa = PBXGroup;
+			children = (
+				F670B74416D1335A001ADAF9 /* generated */,
+				F670B81C16D1335A001ADAF9 /* gstreamer */,
+				F670B8ED16D13FC6001ADAF9 /* Frameworks */,
+				F670B82216D13381001ADAF9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F670B74316D1335A001ADAF9 /* gst */ = {
+			isa = PBXGroup;
+			children = (
+				F670B73D16D1335A001ADAF9 /* gstconfig.h */,
+				F670B73E16D1335A001ADAF9 /* gstenumtypes.c */,
+				F670B73F16D1335A001ADAF9 /* gstenumtypes.h */,
+				F670B74016D1335A001ADAF9 /* gstversion.h */,
+			);
+			name = gst;
+			sourceTree = "<group>";
+		};
+		F670B74416D1335A001ADAF9 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				F670B73916D1335A001ADAF9 /* config.h */,
+				F670B74316D1335A001ADAF9 /* gst */,
+			);
+			name = generated;
+			sourceTree = "<group>";
+		};
+		F670B7C216D1335A001ADAF9 /* gst */ = {
+			isa = PBXGroup;
+			children = (
+				F670B82E16D13D9C001ADAF9 /* gst.c */,
+				F670B82F16D13D9C001ADAF9 /* gstallocator.c */,
+				F670B83016D13D9C001ADAF9 /* gstatomicqueue.c */,
+				F670B83116D13D9C001ADAF9 /* gstbin.c */,
+				F670B83216D13D9C001ADAF9 /* gstbuffer.c */,
+				F670B83316D13D9C001ADAF9 /* gstbufferlist.c */,
+				F670B83416D13D9C001ADAF9 /* gstbufferpool.c */,
+				F670B83516D13D9C001ADAF9 /* gstbus.c */,
+				F670B83616D13D9C001ADAF9 /* gstcaps.c */,
+				F670B83716D13D9C001ADAF9 /* gstchildproxy.c */,
+				F670B83816D13D9C001ADAF9 /* gstclock.c */,
+				F670B83916D13D9C001ADAF9 /* gstcontrolbinding.c */,
+				F670B83A16D13D9C001ADAF9 /* gstcontrolsource.c */,
+				F670B83B16D13D9C001ADAF9 /* gstdatetime.c */,
+				F670B83C16D13D9C001ADAF9 /* gstdebugutils.c */,
+				F670B83D16D13D9C001ADAF9 /* gstelement.c */,
+				F670B83E16D13D9C001ADAF9 /* gstelementfactory.c */,
+				F670B83F16D13D9C001ADAF9 /* gsterror.c */,
+				F670B84016D13D9C001ADAF9 /* gstevent.c */,
+				F670B84116D13D9C001ADAF9 /* gstformat.c */,
+				F670B84216D13D9C001ADAF9 /* gstghostpad.c */,
+				F670B84316D13D9C001ADAF9 /* gstinfo.c */,
+				F670B84416D13D9C001ADAF9 /* gstiterator.c */,
+				F670B84516D13D9C001ADAF9 /* gstmemory.c */,
+				F670B84616D13D9C001ADAF9 /* gstmessage.c */,
+				F670B84716D13D9C001ADAF9 /* gstmeta.c */,
+				F670B84816D13D9C001ADAF9 /* gstminiobject.c */,
+				F670B84916D13D9C001ADAF9 /* gstobject.c */,
+				F670B84A16D13D9C001ADAF9 /* gstpad.c */,
+				F670B84B16D13D9C001ADAF9 /* gstpadtemplate.c */,
+				F670B84C16D13D9C001ADAF9 /* gstparamspecs.c */,
+				F670B84D16D13D9C001ADAF9 /* gstparse.c */,
+				F670B84E16D13D9C001ADAF9 /* gstpipeline.c */,
+				F670B84F16D13D9C001ADAF9 /* gstplugin.c */,
+				F670B85016D13D9C001ADAF9 /* gstpluginfeature.c */,
+				F670B85116D13D9C001ADAF9 /* gstpluginloader.c */,
+				F670B85216D13D9C001ADAF9 /* gstpoll.c */,
+				F670B85316D13D9C001ADAF9 /* gstpreset.c */,
+				F670B85416D13D9C001ADAF9 /* gstquark.c */,
+				F670B85516D13D9C001ADAF9 /* gstquery.c */,
+				F670B85616D13D9C001ADAF9 /* gstregistry.c */,
+				F670B85716D13D9C001ADAF9 /* gstregistrychunks.c */,
+				F670B85816D13D9C001ADAF9 /* gstsample.c */,
+				F670B85916D13D9C001ADAF9 /* gstsegment.c */,
+				F670B85A16D13D9C001ADAF9 /* gststructure.c */,
+				F670B85B16D13D9C001ADAF9 /* gstsystemclock.c */,
+				F670B85C16D13D9C001ADAF9 /* gsttaglist.c */,
+				F670B85D16D13D9C001ADAF9 /* gsttagsetter.c */,
+				F670B85E16D13D9C001ADAF9 /* gsttask.c */,
+				F670B85F16D13D9C001ADAF9 /* gsttaskpool.c */,
+				F670B86016D13D9C001ADAF9 /* gsttoc.c */,
+				F670B86116D13D9C001ADAF9 /* gsttocsetter.c */,
+				F670B86216D13D9C001ADAF9 /* gsttrace.c */,
+				F670B86316D13D9C001ADAF9 /* gsttypefind.c */,
+				F670B86416D13D9C001ADAF9 /* gsttypefindfactory.c */,
+				F670B86516D13D9C001ADAF9 /* gsturi.c */,
+				F670B86616D13D9C001ADAF9 /* gstutils.c */,
+				F670B86716D13D9C001ADAF9 /* gstvalue.c */,
+				F670B8A216D13E00001ADAF9 /* gettext.h */,
+				F670B8A316D13E00001ADAF9 /* glib-compat-private.h */,
+				F670B8A416D13E00001ADAF9 /* glib-compat.h */,
+				F670B8A516D13E00001ADAF9 /* gst_private.h */,
+				F670B8A616D13E00001ADAF9 /* gst-i18n-app.h */,
+				F670B8A716D13E00001ADAF9 /* gst-i18n-lib.h */,
+				F670B8A816D13E00001ADAF9 /* gst.h */,
+				F670B8A916D13E00001ADAF9 /* gstallocator.h */,
+				F670B8AA16D13E00001ADAF9 /* gstatomicqueue.h */,
+				F670B8AB16D13E00001ADAF9 /* gstbin.h */,
+				F670B8AC16D13E00001ADAF9 /* gstbuffer.h */,
+				F670B8AD16D13E00001ADAF9 /* gstbufferlist.h */,
+				F670B8AE16D13E00001ADAF9 /* gstbufferpool.h */,
+				F670B8AF16D13E00001ADAF9 /* gstbus.h */,
+				F670B8B016D13E00001ADAF9 /* gstcaps.h */,
+				F670B8B116D13E00001ADAF9 /* gstchildproxy.h */,
+				F670B8B216D13E00001ADAF9 /* gstclock.h */,
+				F670B8B316D13E00001ADAF9 /* gstcompat.h */,
+				F670B8B416D13E00001ADAF9 /* gstcontrolbinding.h */,
+				F670B8B516D13E00001ADAF9 /* gstcontrolsource.h */,
+				F670B8B616D13E00001ADAF9 /* gstdatetime.h */,
+				F670B8B716D13E00001ADAF9 /* gstdebugutils.h */,
+				F670B8B816D13E00001ADAF9 /* gstelement.h */,
+				F670B8B916D13E00001ADAF9 /* gstelementfactory.h */,
+				F670B8BA16D13E00001ADAF9 /* gstelementmetadata.h */,
+				F670B8BB16D13E00001ADAF9 /* gsterror.h */,
+				F670B8BC16D13E00001ADAF9 /* gstevent.h */,
+				F670B8BD16D13E00001ADAF9 /* gstformat.h */,
+				F670B8BE16D13E00001ADAF9 /* gstghostpad.h */,
+				F670B8BF16D13E00001ADAF9 /* gstinfo.h */,
+				F670B8C016D13E00001ADAF9 /* gstiterator.h */,
+				F670B8C116D13E00001ADAF9 /* gstmacros.h */,
+				F670B8C216D13E00001ADAF9 /* gstmemory.h */,
+				F670B8C316D13E00001ADAF9 /* gstmessage.h */,
+				F670B8C416D13E00001ADAF9 /* gstmeta.h */,
+				F670B8C516D13E00001ADAF9 /* gstminiobject.h */,
+				F670B8C616D13E00001ADAF9 /* gstobject.h */,
+				F670B8C716D13E00001ADAF9 /* gstpad.h */,
+				F670B8C816D13E00001ADAF9 /* gstpadtemplate.h */,
+				F670B8C916D13E00001ADAF9 /* gstparamspecs.h */,
+				F670B8CA16D13E00001ADAF9 /* gstparse.h */,
+				F670B8CB16D13E00001ADAF9 /* gstpipeline.h */,
+				F670B8CC16D13E00001ADAF9 /* gstplugin.h */,
+				F670B8CD16D13E00001ADAF9 /* gstpluginfeature.h */,
+				F670B8CE16D13E00001ADAF9 /* gstpluginloader.h */,
+				F670B8CF16D13E00001ADAF9 /* gstpoll.h */,
+				F670B8D016D13E00001ADAF9 /* gstpreset.h */,
+				F670B8D116D13E00001ADAF9 /* gstquark.h */,
+				F670B8D216D13E00001ADAF9 /* gstquery.h */,
+				F670B8D316D13E00001ADAF9 /* gstregistry.h */,
+				F670B8D416D13E00001ADAF9 /* gstregistrybinary.h */,
+				F670B8D516D13E00001ADAF9 /* gstregistrychunks.h */,
+				F670B8D616D13E00001ADAF9 /* gstsample.h */,
+				F670B8D716D13E00001ADAF9 /* gstsegment.h */,
+				F670B8D816D13E00001ADAF9 /* gststructure.h */,
+				F670B8D916D13E00001ADAF9 /* gstsystemclock.h */,
+				F670B8DA16D13E00001ADAF9 /* gsttaglist.h */,
+				F670B8DB16D13E00001ADAF9 /* gsttagsetter.h */,
+				F670B8DC16D13E00001ADAF9 /* gsttask.h */,
+				F670B8DD16D13E00001ADAF9 /* gsttaskpool.h */,
+				F670B8DE16D13E00001ADAF9 /* gsttoc.h */,
+				F670B8DF16D13E00001ADAF9 /* gsttocsetter.h */,
+				F670B8E016D13E00001ADAF9 /* gsttrace.h */,
+				F670B8E116D13E00001ADAF9 /* gsttypefind.h */,
+				F670B8E216D13E00001ADAF9 /* gsttypefindfactory.h */,
+				F670B8E316D13E00001ADAF9 /* gsturi.h */,
+				F670B8E416D13E00001ADAF9 /* gstutils.h */,
+				F670B8E516D13E00001ADAF9 /* gstvalue.h */,
+				F670B8E616D13E00001ADAF9 /* math-compat.h */,
+			);
+			name = gst;
+			path = gstreamer/gst;
+			sourceTree = "<group>";
+		};
+		F670B7D916D1335A001ADAF9 /* base */ = {
+			isa = PBXGroup;
+			children = (
+				F670B8F916D1429A001ADAF9 /* gstadapter.c */,
+				F670B8FA16D1429A001ADAF9 /* gstbaseparse.c */,
+				F670B8FB16D1429A001ADAF9 /* gstbasesink.c */,
+				F670B8FC16D1429A001ADAF9 /* gstbasesrc.c */,
+				F670B8FD16D1429A001ADAF9 /* gstbasetransform.c */,
+				F670B8FE16D1429A001ADAF9 /* gstbitreader.c */,
+				F670B8FF16D1429A001ADAF9 /* gstbytereader.c */,
+				F670B90016D1429A001ADAF9 /* gstbytewriter.c */,
+				F670B90116D1429A001ADAF9 /* gstcollectpads.c */,
+				F670B90216D1429A001ADAF9 /* gstpushsrc.c */,
+				F670B90316D1429A001ADAF9 /* gsttypefindhelper.c */,
+				F670B90F16D142B3001ADAF9 /* gstadapter.h */,
+				F670B91016D142B3001ADAF9 /* gstbaseparse.h */,
+				F670B91116D142B3001ADAF9 /* gstbasesink.h */,
+				F670B91216D142B3001ADAF9 /* gstbasesrc.h */,
+				F670B91316D142B3001ADAF9 /* gstbasetransform.h */,
+				F670B91416D142B3001ADAF9 /* gstbitreader-docs.h */,
+				F670B91516D142B3001ADAF9 /* gstbitreader.h */,
+				F670B91616D142B3001ADAF9 /* gstbytereader-docs.h */,
+				F670B91716D142B3001ADAF9 /* gstbytereader.h */,
+				F670B91816D142B3001ADAF9 /* gstbytewriter-docs.h */,
+				F670B91916D142B3001ADAF9 /* gstbytewriter.h */,
+				F670B91A16D142B3001ADAF9 /* gstcollectpads.h */,
+				F670B91B16D142B3001ADAF9 /* gstpushsrc.h */,
+				F670B91C16D142B3001ADAF9 /* gsttypefindhelper.h */,
+			);
+			path = base;
+			sourceTree = "<group>";
+		};
+		F670B7F116D1335A001ADAF9 /* gst */ = {
+			isa = PBXGroup;
+			children = (
+				F670B7D916D1335A001ADAF9 /* base */,
+			);
+			path = gst;
+			sourceTree = "<group>";
+		};
+		F670B7F216D1335A001ADAF9 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				F670B7F116D1335A001ADAF9 /* gst */,
+			);
+			name = libs;
+			path = gstreamer/libs;
+			sourceTree = "<group>";
+		};
+		F670B81A16D1335A001ADAF9 /* elements */ = {
+			isa = PBXGroup;
+			children = (
+				F670B95816D1453B001ADAF9 /* gstcapsfilter.c */,
+				F670B95916D1453B001ADAF9 /* gstdataqueue.c */,
+				F670B95A16D1453B001ADAF9 /* gstelements.c */,
+				F670B95B16D1453B001ADAF9 /* gstfakesink.c */,
+				F670B95C16D1453B001ADAF9 /* gstfakesrc.c */,
+				F670B95D16D1453B001ADAF9 /* gstfdsink.c */,
+				F670B95E16D1453B001ADAF9 /* gstfdsrc.c */,
+				F670B95F16D1453B001ADAF9 /* gstfilesink.c */,
+				F670B96016D1453B001ADAF9 /* gstfilesrc.c */,
+				F670B96116D1453B001ADAF9 /* gstfunnel.c */,
+				F670B96216D1453B001ADAF9 /* gstidentity.c */,
+				F670B96316D1453B001ADAF9 /* gstinputselector.c */,
+				F670B96416D1453B001ADAF9 /* gstmultiqueue.c */,
+				F670B96516D1453B001ADAF9 /* gstoutputselector.c */,
+				F670B96616D1453B001ADAF9 /* gstqueue.c */,
+				F670B96716D1453B001ADAF9 /* gstqueue2.c */,
+				F670B96816D1453B001ADAF9 /* gstqueuearray.c */,
+				F670B96916D1453B001ADAF9 /* gsttee.c */,
+				F670B96A16D1453B001ADAF9 /* gsttypefindelement.c */,
+				F670B96B16D1453B001ADAF9 /* gstvalve.c */,
+				F670B98016D14543001ADAF9 /* gstcapsfilter.h */,
+				F670B98116D14543001ADAF9 /* gstdataqueue.h */,
+				F670B98216D14543001ADAF9 /* gstfakesink.h */,
+				F670B98316D14543001ADAF9 /* gstfakesrc.h */,
+				F670B98416D14543001ADAF9 /* gstfdsink.h */,
+				F670B98516D14543001ADAF9 /* gstfdsrc.h */,
+				F670B98616D14543001ADAF9 /* gstfilesink.h */,
+				F670B98716D14543001ADAF9 /* gstfilesrc.h */,
+				F670B98816D14543001ADAF9 /* gstfunnel.h */,
+				F670B98916D14543001ADAF9 /* gstidentity.h */,
+				F670B98A16D14543001ADAF9 /* gstinputselector.h */,
+				F670B98B16D14543001ADAF9 /* gstmultiqueue.h */,
+				F670B98C16D14543001ADAF9 /* gstoutputselector.h */,
+				F670B98D16D14543001ADAF9 /* gstqueue.h */,
+				F670B98E16D14543001ADAF9 /* gstqueue2.h */,
+				F670B98F16D14543001ADAF9 /* gstqueuearray.h */,
+				F670B99016D14543001ADAF9 /* gsttee.h */,
+				F670B99116D14543001ADAF9 /* gsttypefindelement.h */,
+				F670B99216D14543001ADAF9 /* gstvalve.h */,
+			);
+			path = elements;
+			sourceTree = "<group>";
+		};
+		F670B81B16D1335A001ADAF9 /* plugins */ = {
+			isa = PBXGroup;
+			children = (
+				F670B81A16D1335A001ADAF9 /* elements */,
+			);
+			name = plugins;
+			path = gstreamer/plugins;
+			sourceTree = "<group>";
+		};
+		F670B81C16D1335A001ADAF9 /* gstreamer */ = {
+			isa = PBXGroup;
+			children = (
+				F670B7C216D1335A001ADAF9 /* gst */,
+				F670B7F216D1335A001ADAF9 /* libs */,
+				F670B81B16D1335A001ADAF9 /* plugins */,
+			);
+			name = gstreamer;
+			sourceTree = "<group>";
+		};
+		F670B82216D13381001ADAF9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F670B82116D13381001ADAF9 /* libgstreamer.dylib */,
+				F670B82A16D133FC001ADAF9 /* libgstcoreelements.dylib */,
+				F670B8F516D14257001ADAF9 /* libgstbase.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F670B8ED16D13FC6001ADAF9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F670B8EB16D13FC0001ADAF9 /* libgobject.dylib */,
+				F670B8E916D13FBD001ADAF9 /* libgmodule.dylib */,
+				F670B8E716D13FB7001ADAF9 /* libglib.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F670B82016D13381001ADAF9 /* gstreamer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F670B82316D13381001ADAF9 /* Build configuration list for PBXNativeTarget "gstreamer" */;
+			buildPhases = (
+				F670B81D16D13381001ADAF9 /* Sources */,
+				F670B81E16D13381001ADAF9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = gstreamer;
+			productName = gstreamer;
+			productReference = F670B82116D13381001ADAF9 /* libgstreamer.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F670B82916D133FC001ADAF9 /* gstcoreelements */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F670B82B16D133FC001ADAF9 /* Build configuration list for PBXNativeTarget "gstcoreelements" */;
+			buildPhases = (
+				F670B82616D133FC001ADAF9 /* Sources */,
+				F670B82716D133FC001ADAF9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F670B99416D14568001ADAF9 /* PBXTargetDependency */,
+				F670B99616D14568001ADAF9 /* PBXTargetDependency */,
+			);
+			name = gstcoreelements;
+			productName = "gst-plugins-base";
+			productReference = F670B82A16D133FC001ADAF9 /* libgstcoreelements.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F670B8F416D14257001ADAF9 /* gstbase */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F670B8F616D14257001ADAF9 /* Build configuration list for PBXNativeTarget "gstbase" */;
+			buildPhases = (
+				F670B8F116D14257001ADAF9 /* Sources */,
+				F670B8F216D14257001ADAF9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F670B91E16D1431D001ADAF9 /* PBXTargetDependency */,
+			);
+			name = gstbase;
+			productName = gstbase;
+			productReference = F670B8F516D14257001ADAF9 /* libgstbase.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F670B73316D131F9001ADAF9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+			};
+			buildConfigurationList = F670B73616D131F9001ADAF9 /* Build configuration list for PBXProject "GStreamer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F670B73216D131F9001ADAF9;
+			productRefGroup = F670B82216D13381001ADAF9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F670B82016D13381001ADAF9 /* gstreamer */,
+				F670B8F416D14257001ADAF9 /* gstbase */,
+				F670B82916D133FC001ADAF9 /* gstcoreelements */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F670B81D16D13381001ADAF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F670B86816D13D9C001ADAF9 /* gst.c in Sources */,
+				F670B86916D13D9D001ADAF9 /* gstallocator.c in Sources */,
+				F670B86A16D13D9D001ADAF9 /* gstatomicqueue.c in Sources */,
+				F670B86B16D13D9D001ADAF9 /* gstbin.c in Sources */,
+				F670B86C16D13D9D001ADAF9 /* gstbuffer.c in Sources */,
+				F670B86D16D13D9D001ADAF9 /* gstbufferlist.c in Sources */,
+				F670B86E16D13D9D001ADAF9 /* gstbufferpool.c in Sources */,
+				F670B86F16D13D9D001ADAF9 /* gstbus.c in Sources */,
+				F670B87016D13D9D001ADAF9 /* gstcaps.c in Sources */,
+				F670B87116D13D9D001ADAF9 /* gstchildproxy.c in Sources */,
+				F670B87216D13D9D001ADAF9 /* gstclock.c in Sources */,
+				F670B87316D13D9D001ADAF9 /* gstcontrolbinding.c in Sources */,
+				F670B87416D13D9D001ADAF9 /* gstcontrolsource.c in Sources */,
+				F670B87516D13D9D001ADAF9 /* gstdatetime.c in Sources */,
+				F670B87616D13D9D001ADAF9 /* gstdebugutils.c in Sources */,
+				F670B87716D13D9D001ADAF9 /* gstelement.c in Sources */,
+				F670B87816D13D9D001ADAF9 /* gstelementfactory.c in Sources */,
+				F670B87916D13D9D001ADAF9 /* gsterror.c in Sources */,
+				F670B87A16D13D9D001ADAF9 /* gstevent.c in Sources */,
+				F670B87B16D13D9D001ADAF9 /* gstformat.c in Sources */,
+				F670B87C16D13D9D001ADAF9 /* gstghostpad.c in Sources */,
+				F670B87D16D13D9D001ADAF9 /* gstinfo.c in Sources */,
+				F670B87E16D13D9D001ADAF9 /* gstiterator.c in Sources */,
+				F670B87F16D13D9D001ADAF9 /* gstmemory.c in Sources */,
+				F670B88016D13D9D001ADAF9 /* gstmessage.c in Sources */,
+				F670B88116D13D9D001ADAF9 /* gstmeta.c in Sources */,
+				F670B88216D13D9D001ADAF9 /* gstminiobject.c in Sources */,
+				F670B88316D13D9D001ADAF9 /* gstobject.c in Sources */,
+				F670B88416D13D9D001ADAF9 /* gstpad.c in Sources */,
+				F670B88516D13D9D001ADAF9 /* gstpadtemplate.c in Sources */,
+				F670B88616D13D9D001ADAF9 /* gstparamspecs.c in Sources */,
+				F670B88716D13D9D001ADAF9 /* gstparse.c in Sources */,
+				F670B88816D13D9D001ADAF9 /* gstpipeline.c in Sources */,
+				F670B88916D13D9D001ADAF9 /* gstplugin.c in Sources */,
+				F670B88A16D13D9D001ADAF9 /* gstpluginfeature.c in Sources */,
+				F670B88B16D13D9D001ADAF9 /* gstpluginloader.c in Sources */,
+				F670B88C16D13D9D001ADAF9 /* gstpoll.c in Sources */,
+				F670B88D16D13D9D001ADAF9 /* gstpreset.c in Sources */,
+				F670B88E16D13D9D001ADAF9 /* gstquark.c in Sources */,
+				F670B88F16D13D9D001ADAF9 /* gstquery.c in Sources */,
+				F670B89016D13D9D001ADAF9 /* gstregistry.c in Sources */,
+				F670B89116D13D9D001ADAF9 /* gstregistrychunks.c in Sources */,
+				F670B89216D13D9D001ADAF9 /* gstsample.c in Sources */,
+				F670B89316D13D9D001ADAF9 /* gstsegment.c in Sources */,
+				F670B89416D13D9D001ADAF9 /* gststructure.c in Sources */,
+				F670B89516D13D9D001ADAF9 /* gstsystemclock.c in Sources */,
+				F670B89616D13D9D001ADAF9 /* gsttaglist.c in Sources */,
+				F670B89716D13D9D001ADAF9 /* gsttagsetter.c in Sources */,
+				F670B89816D13D9D001ADAF9 /* gsttask.c in Sources */,
+				F670B89916D13D9D001ADAF9 /* gsttaskpool.c in Sources */,
+				F670B89A16D13D9D001ADAF9 /* gsttoc.c in Sources */,
+				F670B89B16D13D9D001ADAF9 /* gsttocsetter.c in Sources */,
+				F670B89C16D13D9D001ADAF9 /* gsttrace.c in Sources */,
+				F670B89D16D13D9D001ADAF9 /* gsttypefind.c in Sources */,
+				F670B89E16D13D9D001ADAF9 /* gsttypefindfactory.c in Sources */,
+				F670B89F16D13D9D001ADAF9 /* gsturi.c in Sources */,
+				F670B8A016D13D9D001ADAF9 /* gstutils.c in Sources */,
+				F670B8A116D13D9D001ADAF9 /* gstvalue.c in Sources */,
+				F670B8EE16D140CA001ADAF9 /* gstenumtypes.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B82616D133FC001ADAF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F670B96C16D1453B001ADAF9 /* gstcapsfilter.c in Sources */,
+				F670B96D16D1453B001ADAF9 /* gstdataqueue.c in Sources */,
+				F670B96E16D1453B001ADAF9 /* gstelements.c in Sources */,
+				F670B96F16D1453B001ADAF9 /* gstfakesink.c in Sources */,
+				F670B97016D1453B001ADAF9 /* gstfakesrc.c in Sources */,
+				F670B97116D1453B001ADAF9 /* gstfdsink.c in Sources */,
+				F670B97216D1453B001ADAF9 /* gstfdsrc.c in Sources */,
+				F670B97316D1453B001ADAF9 /* gstfilesink.c in Sources */,
+				F670B97416D1453B001ADAF9 /* gstfilesrc.c in Sources */,
+				F670B97516D1453B001ADAF9 /* gstfunnel.c in Sources */,
+				F670B97616D1453B001ADAF9 /* gstidentity.c in Sources */,
+				F670B97716D1453B001ADAF9 /* gstinputselector.c in Sources */,
+				F670B97816D1453B001ADAF9 /* gstmultiqueue.c in Sources */,
+				F670B97916D1453B001ADAF9 /* gstoutputselector.c in Sources */,
+				F670B97A16D1453B001ADAF9 /* gstqueue.c in Sources */,
+				F670B97B16D1453B001ADAF9 /* gstqueue2.c in Sources */,
+				F670B97C16D1453B001ADAF9 /* gstqueuearray.c in Sources */,
+				F670B97D16D1453B001ADAF9 /* gsttee.c in Sources */,
+				F670B97E16D1453B001ADAF9 /* gsttypefindelement.c in Sources */,
+				F670B97F16D1453B001ADAF9 /* gstvalve.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B8F116D14257001ADAF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F670B90416D1429A001ADAF9 /* gstadapter.c in Sources */,
+				F670B90516D1429A001ADAF9 /* gstbaseparse.c in Sources */,
+				F670B90616D1429A001ADAF9 /* gstbasesink.c in Sources */,
+				F670B90716D1429A001ADAF9 /* gstbasesrc.c in Sources */,
+				F670B90816D1429A001ADAF9 /* gstbasetransform.c in Sources */,
+				F670B90916D1429A001ADAF9 /* gstbitreader.c in Sources */,
+				F670B90A16D1429A001ADAF9 /* gstbytereader.c in Sources */,
+				F670B90B16D1429A001ADAF9 /* gstbytewriter.c in Sources */,
+				F670B90C16D1429A001ADAF9 /* gstcollectpads.c in Sources */,
+				F670B90D16D1429A001ADAF9 /* gstpushsrc.c in Sources */,
+				F670B90E16D1429A001ADAF9 /* gsttypefindhelper.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F670B91E16D1431D001ADAF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F670B82016D13381001ADAF9 /* gstreamer */;
+			targetProxy = F670B91D16D1431D001ADAF9 /* PBXContainerItemProxy */;
+		};
+		F670B99416D14568001ADAF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F670B82016D13381001ADAF9 /* gstreamer */;
+			targetProxy = F670B99316D14568001ADAF9 /* PBXContainerItemProxy */;
+		};
+		F670B99616D14568001ADAF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F670B8F416D14257001ADAF9 /* gstbase */;
+			targetProxy = F670B99516D14568001ADAF9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		F670B73716D131F9001ADAF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					generated,
+					gstreamer,
+					gstreamer/libs,
+					../GLib/generated/glib,
+					../GLib/glib/glib,
+					../GLib/generated/gmodule,
+					../GLib/glib/gmodule,
+					../GLib/generated,
+					../GLib/glib,
+				);
+			};
+			name = Debug;
+		};
+		F670B73816D131F9001ADAF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					generated,
+					gstreamer,
+					gstreamer/libs,
+					../GLib/generated/glib,
+					../GLib/glib/glib,
+					../GLib/generated/gmodule,
+					../GLib/glib/gmodule,
+					../GLib/generated,
+					../GLib/glib,
+				);
+			};
+			name = Release;
+		};
+		F670B82416D13381001ADAF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F670B82516D13381001ADAF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F670B82C16D133FC001ADAF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "@executable_path/../GStreamerPlugins";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F670B82D16D133FC001ADAF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				INSTALL_PATH = "@executable_path/../GStreamerPlugins";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F670B8F716D14257001ADAF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F670B8F816D14257001ADAF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F670B73616D131F9001ADAF9 /* Build configuration list for PBXProject "GStreamer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F670B73716D131F9001ADAF9 /* Debug */,
+				F670B73816D131F9001ADAF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F670B82316D13381001ADAF9 /* Build configuration list for PBXNativeTarget "gstreamer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F670B82416D13381001ADAF9 /* Debug */,
+				F670B82516D13381001ADAF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F670B82B16D133FC001ADAF9 /* Build configuration list for PBXNativeTarget "gstcoreelements" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F670B82C16D133FC001ADAF9 /* Debug */,
+				F670B82D16D133FC001ADAF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F670B8F616D14257001ADAF9 /* Build configuration list for PBXNativeTarget "gstbase" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F670B8F716D14257001ADAF9 /* Debug */,
+				F670B8F816D14257001ADAF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F670B73316D131F9001ADAF9 /* Project object */;
+}

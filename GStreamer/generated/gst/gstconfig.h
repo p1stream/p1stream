@@ -91,7 +91,7 @@
  * Configures the inclusion of a resource tracing facillity
  * (seems to be unused)
  */
-#define GST_DISABLE_TRACE 1
+/* #undef GST_DISABLE_TRACE */
 
 /**
  * GST_DISABLE_ALLOC_TRACE:
@@ -99,7 +99,7 @@
  * Configures the use of a memory tracer based on the resource tracer
  * if TRACE is disabled, ALLOC_TRACE is disabled as well
  */
-#define GST_DISABLE_ALLOC_TRACE 1
+/* #undef GST_DISABLE_ALLOC_TRACE */
 
 /**
  * GST_DISABLE_REGISTRY:

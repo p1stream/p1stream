@@ -1,9 +1,6 @@
 [submodule "GStreamer/gstreamer"]
 	path = GStreamer/gstreamer
 	url = git://anongit.freedesktop.org/gstreamer/gstreamer
-[submodule "GStreamer/gst-plugins-base"]
-	path = GStreamer/gst-plugins-base
-	url = git://anongit.freedesktop.org/gstreamer/gst-plugins-base
 [submodule "libintl/gettext"]
 	path = libintl/gettext
 	url = git://git.savannah.gnu.org/gettext.git
@@ -16,3 +13,6 @@
 [submodule "GLib/glib"]
 	path = GLib/glib
 	url = git://git.gnome.org/glib
+[submodule "gst-plugins-base/gst-plugins-base"]
+	path = gst-plugins-base/gst-plugins-base
+	url = git://anongit.freedesktop.org/gstreamer/gst-plugins-base
