@@ -17,6 +17,9 @@
       location = "group:GStreamer/GStreamer.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:gst-plugins-base/gst-plugins-base.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:P1stream/P1stream.xcodeproj">
    </FileRef>
 </Workspace>

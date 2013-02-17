@@ -1,0 +1,752 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F60E747C16D1619C00148F06 /* colorbalance.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E746716D1619C00148F06 /* colorbalance.c */; };
+		F60E747D16D1619C00148F06 /* colorbalancechannel.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E746816D1619C00148F06 /* colorbalancechannel.c */; };
+		F60E747E16D1619C00148F06 /* convertframe.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E746916D1619C00148F06 /* convertframe.c */; };
+		F60E747F16D1619C00148F06 /* gstvideodecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E746A16D1619C00148F06 /* gstvideodecoder.c */; };
+		F60E748016D1619C00148F06 /* gstvideoencoder.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E746B16D1619C00148F06 /* gstvideoencoder.c */; };
+		F60E748116D1619C00148F06 /* gstvideofilter.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E746C16D1619C00148F06 /* gstvideofilter.c */; };
+		F60E748216D1619C00148F06 /* gstvideometa.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E746D16D1619C00148F06 /* gstvideometa.c */; };
+		F60E748316D1619C00148F06 /* gstvideopool.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E746E16D1619C00148F06 /* gstvideopool.c */; };
+		F60E748416D1619C00148F06 /* gstvideosink.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E746F16D1619C00148F06 /* gstvideosink.c */; };
+		F60E748516D1619C00148F06 /* gstvideoutils.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E747016D1619C00148F06 /* gstvideoutils.c */; };
+		F60E748616D1619C00148F06 /* navigation.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E747116D1619C00148F06 /* navigation.c */; };
+		F60E748716D1619C00148F06 /* video-blend.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E747216D1619C00148F06 /* video-blend.c */; };
+		F60E748816D1619C00148F06 /* video-color.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E747316D1619C00148F06 /* video-color.c */; };
+		F60E748916D1619C00148F06 /* video-event.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E747416D1619C00148F06 /* video-event.c */; };
+		F60E748A16D1619C00148F06 /* video-format.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E747516D1619C00148F06 /* video-format.c */; };
+		F60E748B16D1619C00148F06 /* video-frame.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E747616D1619C00148F06 /* video-frame.c */; };
+		F60E748C16D1619C00148F06 /* video-info.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E747716D1619C00148F06 /* video-info.c */; };
+		F60E748D16D1619C00148F06 /* video-overlay-composition.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E747816D1619C00148F06 /* video-overlay-composition.c */; };
+		F60E748E16D1619C00148F06 /* video.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E747916D1619C00148F06 /* video.c */; };
+		F60E748F16D1619C00148F06 /* videoorientation.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E747A16D1619C00148F06 /* videoorientation.c */; };
+		F60E749016D1619C00148F06 /* videooverlay.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E747B16D1619C00148F06 /* videooverlay.c */; };
+		F60E749A16D1653E00148F06 /* video-enumtypes.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E749816D1653E00148F06 /* video-enumtypes.c */; };
+		F60E749C16D1656F00148F06 /* video-orc.orc in Sources */ = {isa = PBXBuildFile; fileRef = F60E749316D161C200148F06 /* video-orc.orc */; };
+		F60E74A416D16B6000148F06 /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A316D16B6000148F06 /* libgstreamer.dylib */; };
+		F60E74A616D16B6D00148F06 /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A516D16B6D00148F06 /* libglib.dylib */; };
+		F60E74A816D16B7100148F06 /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A716D16B7100148F06 /* libgobject.dylib */; };
+		F60E74AA16D16B7A00148F06 /* liborc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A916D16B7A00148F06 /* liborc.dylib */; };
+		F60E74AC16D16B8200148F06 /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74AB16D16B8200148F06 /* libgstbase.dylib */; };
+		F60E74C316D16C5300148F06 /* generate_sine_table.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E74B916D16C5300148F06 /* generate_sine_table.c */; };
+		F60E74C416D16C5300148F06 /* gstvideotestsrc.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E74BA16D16C5300148F06 /* gstvideotestsrc.c */; };
+		F60E74C816D16C5300148F06 /* videotestsrc.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E74C016D16C5300148F06 /* videotestsrc.c */; };
+		F60E74CA16D16C6B00148F06 /* gstvideotestsrcorc.orc in Sources */ = {isa = PBXBuildFile; fileRef = F60E74BE16D16C5300148F06 /* gstvideotestsrcorc.orc */; };
+		F60E74CD16D16C7600148F06 /* libgstvideo.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E745816D160FD00148F06 /* libgstvideo.dylib */; };
+		F60E74D016D16D6200148F06 /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A516D16B6D00148F06 /* libglib.dylib */; };
+		F60E74D116D16D6400148F06 /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A716D16B7100148F06 /* libgobject.dylib */; };
+		F60E74D216D16D7500148F06 /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A316D16B6000148F06 /* libgstreamer.dylib */; };
+		F60E74D316D16D7800148F06 /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74AB16D16B8200148F06 /* libgstbase.dylib */; };
+		F60E74D416D16D8400148F06 /* liborc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A916D16B7A00148F06 /* liborc.dylib */; };
+		F60E74DF16D16DBD00148F06 /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A516D16B6D00148F06 /* libglib.dylib */; };
+		F60E74E016D16DBE00148F06 /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A716D16B7100148F06 /* libgobject.dylib */; };
+		F60E74E116D16DC000148F06 /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A316D16B6000148F06 /* libgstreamer.dylib */; };
+		F60E74E216D16DC300148F06 /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74AB16D16B8200148F06 /* libgstbase.dylib */; };
+		F60E74E316D16DC500148F06 /* liborc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A916D16B7A00148F06 /* liborc.dylib */; };
+		F60E74F016D16DE100148F06 /* gstcms.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E74E516D16DE100148F06 /* gstcms.c */; };
+		F60E74F116D16DE100148F06 /* gstvideoconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E74E716D16DE100148F06 /* gstvideoconvert.c */; };
+		F60E74F316D16DE100148F06 /* videoconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E74ED16D16DE100148F06 /* videoconvert.c */; };
+		F60E74F416D16DEF00148F06 /* gstvideoconvertorc.orc in Sources */ = {isa = PBXBuildFile; fileRef = F60E74EB16D16DE100148F06 /* gstvideoconvertorc.orc */; };
+		F60E74F616D16E2100148F06 /* libgstvideo.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E745816D160FD00148F06 /* libgstvideo.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		F60E749516D1628900148F06 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.orc";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_BASE}.h",
+				"${INPUT_FILE_BASE}.c",
+			);
+			script = "exec ${SRCROOT}/../ORC/build_rule.sh";
+		};
+		F60E74CF16D16D2E00148F06 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.orc";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_BASE}.h",
+				"${INPUT_FILE_BASE}.c",
+			);
+			script = "exec ${SRCROOT}/../ORC/build_rule.sh";
+		};
+		F60E74F516D16DFE00148F06 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.orc";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_BASE}.h",
+				"${INPUT_FILE_BASE}.c",
+			);
+			script = "exec ${SRCROOT}/../ORC/build_rule.sh";
+		};
+/* End PBXBuildRule section */
+
+/* Begin PBXContainerItemProxy section */
+		F60E74CB16D16C7300148F06 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F60E744E16D15D2300148F06 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F60E745716D160FD00148F06;
+			remoteInfo = gstvideo;
+		};
+		F60E74DD16D16DAE00148F06 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F60E744E16D15D2300148F06 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F60E745716D160FD00148F06;
+			remoteInfo = gstvideo;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F60E745816D160FD00148F06 /* libgstvideo.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgstvideo.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F60E745E16D1610D00148F06 /* _stdint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _stdint.h; sourceTree = "<group>"; };
+		F60E745F16D1610D00148F06 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		F60E746316D1610D00148F06 /* gstpluginsbaseversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstpluginsbaseversion.h; sourceTree = "<group>"; };
+		F60E746716D1619C00148F06 /* colorbalance.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = colorbalance.c; path = "gst-plugins-base/gst-libs/gst/video/colorbalance.c"; sourceTree = "<group>"; };
+		F60E746816D1619C00148F06 /* colorbalancechannel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = colorbalancechannel.c; path = "gst-plugins-base/gst-libs/gst/video/colorbalancechannel.c"; sourceTree = "<group>"; };
+		F60E746916D1619C00148F06 /* convertframe.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = convertframe.c; path = "gst-plugins-base/gst-libs/gst/video/convertframe.c"; sourceTree = "<group>"; };
+		F60E746A16D1619C00148F06 /* gstvideodecoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstvideodecoder.c; path = "gst-plugins-base/gst-libs/gst/video/gstvideodecoder.c"; sourceTree = "<group>"; };
+		F60E746B16D1619C00148F06 /* gstvideoencoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstvideoencoder.c; path = "gst-plugins-base/gst-libs/gst/video/gstvideoencoder.c"; sourceTree = "<group>"; };
+		F60E746C16D1619C00148F06 /* gstvideofilter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstvideofilter.c; path = "gst-plugins-base/gst-libs/gst/video/gstvideofilter.c"; sourceTree = "<group>"; };
+		F60E746D16D1619C00148F06 /* gstvideometa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstvideometa.c; path = "gst-plugins-base/gst-libs/gst/video/gstvideometa.c"; sourceTree = "<group>"; };
+		F60E746E16D1619C00148F06 /* gstvideopool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstvideopool.c; path = "gst-plugins-base/gst-libs/gst/video/gstvideopool.c"; sourceTree = "<group>"; };
+		F60E746F16D1619C00148F06 /* gstvideosink.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstvideosink.c; path = "gst-plugins-base/gst-libs/gst/video/gstvideosink.c"; sourceTree = "<group>"; };
+		F60E747016D1619C00148F06 /* gstvideoutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstvideoutils.c; path = "gst-plugins-base/gst-libs/gst/video/gstvideoutils.c"; sourceTree = "<group>"; };
+		F60E747116D1619C00148F06 /* navigation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = navigation.c; path = "gst-plugins-base/gst-libs/gst/video/navigation.c"; sourceTree = "<group>"; };
+		F60E747216D1619C00148F06 /* video-blend.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "video-blend.c"; path = "gst-plugins-base/gst-libs/gst/video/video-blend.c"; sourceTree = "<group>"; };
+		F60E747316D1619C00148F06 /* video-color.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "video-color.c"; path = "gst-plugins-base/gst-libs/gst/video/video-color.c"; sourceTree = "<group>"; };
+		F60E747416D1619C00148F06 /* video-event.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "video-event.c"; path = "gst-plugins-base/gst-libs/gst/video/video-event.c"; sourceTree = "<group>"; };
+		F60E747516D1619C00148F06 /* video-format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "video-format.c"; path = "gst-plugins-base/gst-libs/gst/video/video-format.c"; sourceTree = "<group>"; };
+		F60E747616D1619C00148F06 /* video-frame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "video-frame.c"; path = "gst-plugins-base/gst-libs/gst/video/video-frame.c"; sourceTree = "<group>"; };
+		F60E747716D1619C00148F06 /* video-info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "video-info.c"; path = "gst-plugins-base/gst-libs/gst/video/video-info.c"; sourceTree = "<group>"; };
+		F60E747816D1619C00148F06 /* video-overlay-composition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "video-overlay-composition.c"; path = "gst-plugins-base/gst-libs/gst/video/video-overlay-composition.c"; sourceTree = "<group>"; };
+		F60E747916D1619C00148F06 /* video.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = video.c; path = "gst-plugins-base/gst-libs/gst/video/video.c"; sourceTree = "<group>"; };
+		F60E747A16D1619C00148F06 /* videoorientation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = videoorientation.c; path = "gst-plugins-base/gst-libs/gst/video/videoorientation.c"; sourceTree = "<group>"; };
+		F60E747B16D1619C00148F06 /* videooverlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = videooverlay.c; path = "gst-plugins-base/gst-libs/gst/video/videooverlay.c"; sourceTree = "<group>"; };
+		F60E749316D161C200148F06 /* video-orc.orc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "video-orc.orc"; path = "gst-plugins-base/gst-libs/gst/video/video-orc.orc"; sourceTree = "<group>"; };
+		F60E749816D1653E00148F06 /* video-enumtypes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "video-enumtypes.c"; path = "video/video-enumtypes.c"; sourceTree = "<group>"; };
+		F60E749916D1653E00148F06 /* video-enumtypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "video-enumtypes.h"; path = "video/video-enumtypes.h"; sourceTree = "<group>"; };
+		F60E74A316D16B6000148F06 /* libgstreamer.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgstreamer.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstreamer.dylib"; sourceTree = "<group>"; };
+		F60E74A516D16B6D00148F06 /* libglib.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglib.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libglib.dylib"; sourceTree = "<group>"; };
+		F60E74A716D16B7100148F06 /* libgobject.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgobject.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgobject.dylib"; sourceTree = "<group>"; };
+		F60E74A916D16B7A00148F06 /* liborc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liborc.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/liborc.dylib"; sourceTree = "<group>"; };
+		F60E74AB16D16B8200148F06 /* libgstbase.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgstbase.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstbase.dylib"; sourceTree = "<group>"; };
+		F60E74B316D16C2B00148F06 /* libgstvideotestsrc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgstvideotestsrc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F60E74B916D16C5300148F06 /* generate_sine_table.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = generate_sine_table.c; sourceTree = "<group>"; };
+		F60E74BA16D16C5300148F06 /* gstvideotestsrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstvideotestsrc.c; sourceTree = "<group>"; };
+		F60E74BB16D16C5300148F06 /* gstvideotestsrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gstvideotestsrc.h; sourceTree = "<group>"; };
+		F60E74BE16D16C5300148F06 /* gstvideotestsrcorc.orc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gstvideotestsrcorc.orc; sourceTree = "<group>"; };
+		F60E74C016D16C5300148F06 /* videotestsrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = videotestsrc.c; sourceTree = "<group>"; };
+		F60E74C116D16C5300148F06 /* videotestsrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = videotestsrc.h; sourceTree = "<group>"; };
+		F60E74D916D16DA800148F06 /* libgstvideoconvert.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgstvideoconvert.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F60E74E516D16DE100148F06 /* gstcms.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstcms.c; sourceTree = "<group>"; };
+		F60E74E616D16DE100148F06 /* gstcms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gstcms.h; sourceTree = "<group>"; };
+		F60E74E716D16DE100148F06 /* gstvideoconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gstvideoconvert.c; sourceTree = "<group>"; };
+		F60E74E816D16DE100148F06 /* gstvideoconvert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gstvideoconvert.h; sourceTree = "<group>"; };
+		F60E74EB16D16DE100148F06 /* gstvideoconvertorc.orc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gstvideoconvertorc.orc; sourceTree = "<group>"; };
+		F60E74ED16D16DE100148F06 /* videoconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = videoconvert.c; sourceTree = "<group>"; };
+		F60E74EE16D16DE100148F06 /* videoconvert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = videoconvert.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F60E745516D160FD00148F06 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F60E74A616D16B6D00148F06 /* libglib.dylib in Frameworks */,
+				F60E74A816D16B7100148F06 /* libgobject.dylib in Frameworks */,
+				F60E74A416D16B6000148F06 /* libgstreamer.dylib in Frameworks */,
+				F60E74AC16D16B8200148F06 /* libgstbase.dylib in Frameworks */,
+				F60E74AA16D16B7A00148F06 /* liborc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F60E74B016D16C2B00148F06 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F60E74D016D16D6200148F06 /* libglib.dylib in Frameworks */,
+				F60E74D116D16D6400148F06 /* libgobject.dylib in Frameworks */,
+				F60E74D216D16D7500148F06 /* libgstreamer.dylib in Frameworks */,
+				F60E74D316D16D7800148F06 /* libgstbase.dylib in Frameworks */,
+				F60E74D416D16D8400148F06 /* liborc.dylib in Frameworks */,
+				F60E74CD16D16C7600148F06 /* libgstvideo.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F60E74D616D16DA800148F06 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F60E74DF16D16DBD00148F06 /* libglib.dylib in Frameworks */,
+				F60E74E016D16DBE00148F06 /* libgobject.dylib in Frameworks */,
+				F60E74E116D16DC000148F06 /* libgstreamer.dylib in Frameworks */,
+				F60E74E216D16DC300148F06 /* libgstbase.dylib in Frameworks */,
+				F60E74E316D16DC500148F06 /* liborc.dylib in Frameworks */,
+				F60E74F616D16E2100148F06 /* libgstvideo.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F60E744D16D15D2300148F06 = {
+			isa = PBXGroup;
+			children = (
+				F60E745D16D1610D00148F06 /* generated */,
+				F60E746416D1611A00148F06 /* gst-plugins-base */,
+				F60E74AD16D16BA800148F06 /* Frameworks */,
+				F60E745916D160FD00148F06 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F60E745916D160FD00148F06 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F60E745816D160FD00148F06 /* libgstvideo.dylib */,
+				F60E74B316D16C2B00148F06 /* libgstvideotestsrc.dylib */,
+				F60E74D916D16DA800148F06 /* libgstvideoconvert.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F60E745D16D1610D00148F06 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				F60E745E16D1610D00148F06 /* _stdint.h */,
+				F60E745F16D1610D00148F06 /* config.h */,
+				F60E746016D1610D00148F06 /* gst-libs */,
+			);
+			path = generated;
+			sourceTree = "<group>";
+		};
+		F60E746016D1610D00148F06 /* gst-libs */ = {
+			isa = PBXGroup;
+			children = (
+				F60E746116D1610D00148F06 /* gst */,
+			);
+			path = "gst-libs";
+			sourceTree = "<group>";
+		};
+		F60E746116D1610D00148F06 /* gst */ = {
+			isa = PBXGroup;
+			children = (
+				F60E746216D1610D00148F06 /* pbutils */,
+				F60E749716D1650A00148F06 /* video */,
+			);
+			path = gst;
+			sourceTree = "<group>";
+		};
+		F60E746216D1610D00148F06 /* pbutils */ = {
+			isa = PBXGroup;
+			children = (
+				F60E746316D1610D00148F06 /* gstpluginsbaseversion.h */,
+			);
+			path = pbutils;
+			sourceTree = "<group>";
+		};
+		F60E746416D1611A00148F06 /* gst-plugins-base */ = {
+			isa = PBXGroup;
+			children = (
+				F60E746516D1613100148F06 /* gst-libs */,
+				F60E74AE16D16BEB00148F06 /* gst */,
+			);
+			name = "gst-plugins-base";
+			sourceTree = "<group>";
+		};
+		F60E746516D1613100148F06 /* gst-libs */ = {
+			isa = PBXGroup;
+			children = (
+				F60E749616D164FC00148F06 /* gst */,
+			);
+			name = "gst-libs";
+			sourceTree = "<group>";
+		};
+		F60E746616D1613F00148F06 /* video */ = {
+			isa = PBXGroup;
+			children = (
+				F60E749316D161C200148F06 /* video-orc.orc */,
+				F60E746716D1619C00148F06 /* colorbalance.c */,
+				F60E746816D1619C00148F06 /* colorbalancechannel.c */,
+				F60E746916D1619C00148F06 /* convertframe.c */,
+				F60E746A16D1619C00148F06 /* gstvideodecoder.c */,
+				F60E746B16D1619C00148F06 /* gstvideoencoder.c */,
+				F60E746C16D1619C00148F06 /* gstvideofilter.c */,
+				F60E746D16D1619C00148F06 /* gstvideometa.c */,
+				F60E746E16D1619C00148F06 /* gstvideopool.c */,
+				F60E746F16D1619C00148F06 /* gstvideosink.c */,
+				F60E747016D1619C00148F06 /* gstvideoutils.c */,
+				F60E747116D1619C00148F06 /* navigation.c */,
+				F60E747216D1619C00148F06 /* video-blend.c */,
+				F60E747316D1619C00148F06 /* video-color.c */,
+				F60E747416D1619C00148F06 /* video-event.c */,
+				F60E747516D1619C00148F06 /* video-format.c */,
+				F60E747616D1619C00148F06 /* video-frame.c */,
+				F60E747716D1619C00148F06 /* video-info.c */,
+				F60E747816D1619C00148F06 /* video-overlay-composition.c */,
+				F60E747916D1619C00148F06 /* video.c */,
+				F60E747A16D1619C00148F06 /* videoorientation.c */,
+				F60E747B16D1619C00148F06 /* videooverlay.c */,
+			);
+			name = video;
+			sourceTree = "<group>";
+		};
+		F60E749616D164FC00148F06 /* gst */ = {
+			isa = PBXGroup;
+			children = (
+				F60E746616D1613F00148F06 /* video */,
+			);
+			name = gst;
+			sourceTree = "<group>";
+		};
+		F60E749716D1650A00148F06 /* video */ = {
+			isa = PBXGroup;
+			children = (
+				F60E749816D1653E00148F06 /* video-enumtypes.c */,
+				F60E749916D1653E00148F06 /* video-enumtypes.h */,
+			);
+			name = video;
+			sourceTree = "<group>";
+		};
+		F60E74AD16D16BA800148F06 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F60E74A516D16B6D00148F06 /* libglib.dylib */,
+				F60E74A716D16B7100148F06 /* libgobject.dylib */,
+				F60E74A316D16B6000148F06 /* libgstreamer.dylib */,
+				F60E74AB16D16B8200148F06 /* libgstbase.dylib */,
+				F60E74A916D16B7A00148F06 /* liborc.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F60E74AE16D16BEB00148F06 /* gst */ = {
+			isa = PBXGroup;
+			children = (
+				F60E74E416D16DE100148F06 /* videoconvert */,
+				F60E74B716D16C5300148F06 /* videotestsrc */,
+			);
+			name = gst;
+			sourceTree = "<group>";
+		};
+		F60E74B716D16C5300148F06 /* videotestsrc */ = {
+			isa = PBXGroup;
+			children = (
+				F60E74B916D16C5300148F06 /* generate_sine_table.c */,
+				F60E74BA16D16C5300148F06 /* gstvideotestsrc.c */,
+				F60E74BB16D16C5300148F06 /* gstvideotestsrc.h */,
+				F60E74BE16D16C5300148F06 /* gstvideotestsrcorc.orc */,
+				F60E74C016D16C5300148F06 /* videotestsrc.c */,
+				F60E74C116D16C5300148F06 /* videotestsrc.h */,
+			);
+			name = videotestsrc;
+			path = "gst-plugins-base/gst/videotestsrc";
+			sourceTree = "<group>";
+		};
+		F60E74E416D16DE100148F06 /* videoconvert */ = {
+			isa = PBXGroup;
+			children = (
+				F60E74E516D16DE100148F06 /* gstcms.c */,
+				F60E74E616D16DE100148F06 /* gstcms.h */,
+				F60E74E716D16DE100148F06 /* gstvideoconvert.c */,
+				F60E74E816D16DE100148F06 /* gstvideoconvert.h */,
+				F60E74EB16D16DE100148F06 /* gstvideoconvertorc.orc */,
+				F60E74ED16D16DE100148F06 /* videoconvert.c */,
+				F60E74EE16D16DE100148F06 /* videoconvert.h */,
+			);
+			name = videoconvert;
+			path = "gst-plugins-base/gst/videoconvert";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F60E745716D160FD00148F06 /* gstvideo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F60E745C16D160FD00148F06 /* Build configuration list for PBXNativeTarget "gstvideo" */;
+			buildPhases = (
+				F60E745416D160FD00148F06 /* Sources */,
+				F60E745516D160FD00148F06 /* Frameworks */,
+			);
+			buildRules = (
+				F60E749516D1628900148F06 /* PBXBuildRule */,
+			);
+			dependencies = (
+			);
+			name = gstvideo;
+			productName = gstvideo;
+			productReference = F60E745816D160FD00148F06 /* libgstvideo.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F60E74B216D16C2B00148F06 /* gstvideotestsrc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F60E74B416D16C2B00148F06 /* Build configuration list for PBXNativeTarget "gstvideotestsrc" */;
+			buildPhases = (
+				F60E74AF16D16C2B00148F06 /* Sources */,
+				F60E74B016D16C2B00148F06 /* Frameworks */,
+			);
+			buildRules = (
+				F60E74CF16D16D2E00148F06 /* PBXBuildRule */,
+			);
+			dependencies = (
+				F60E74CC16D16C7300148F06 /* PBXTargetDependency */,
+			);
+			name = gstvideotestsrc;
+			productName = gstvideotestsrc;
+			productReference = F60E74B316D16C2B00148F06 /* libgstvideotestsrc.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F60E74D816D16DA800148F06 /* gstvideoconvert */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F60E74DA16D16DA800148F06 /* Build configuration list for PBXNativeTarget "gstvideoconvert" */;
+			buildPhases = (
+				F60E74D516D16DA800148F06 /* Sources */,
+				F60E74D616D16DA800148F06 /* Frameworks */,
+			);
+			buildRules = (
+				F60E74F516D16DFE00148F06 /* PBXBuildRule */,
+			);
+			dependencies = (
+				F60E74DE16D16DAE00148F06 /* PBXTargetDependency */,
+			);
+			name = gstvideoconvert;
+			productName = gstvideoconvert;
+			productReference = F60E74D916D16DA800148F06 /* libgstvideoconvert.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F60E744E16D15D2300148F06 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+			};
+			buildConfigurationList = F60E745116D15D2300148F06 /* Build configuration list for PBXProject "gst-plugins-base" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F60E744D16D15D2300148F06;
+			productRefGroup = F60E745916D160FD00148F06 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F60E745716D160FD00148F06 /* gstvideo */,
+				F60E74B216D16C2B00148F06 /* gstvideotestsrc */,
+				F60E74D816D16DA800148F06 /* gstvideoconvert */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F60E745416D160FD00148F06 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F60E749C16D1656F00148F06 /* video-orc.orc in Sources */,
+				F60E747C16D1619C00148F06 /* colorbalance.c in Sources */,
+				F60E747D16D1619C00148F06 /* colorbalancechannel.c in Sources */,
+				F60E747E16D1619C00148F06 /* convertframe.c in Sources */,
+				F60E747F16D1619C00148F06 /* gstvideodecoder.c in Sources */,
+				F60E748016D1619C00148F06 /* gstvideoencoder.c in Sources */,
+				F60E748116D1619C00148F06 /* gstvideofilter.c in Sources */,
+				F60E748216D1619C00148F06 /* gstvideometa.c in Sources */,
+				F60E748316D1619C00148F06 /* gstvideopool.c in Sources */,
+				F60E748416D1619C00148F06 /* gstvideosink.c in Sources */,
+				F60E748516D1619C00148F06 /* gstvideoutils.c in Sources */,
+				F60E748616D1619C00148F06 /* navigation.c in Sources */,
+				F60E748716D1619C00148F06 /* video-blend.c in Sources */,
+				F60E748816D1619C00148F06 /* video-color.c in Sources */,
+				F60E748916D1619C00148F06 /* video-event.c in Sources */,
+				F60E748A16D1619C00148F06 /* video-format.c in Sources */,
+				F60E748B16D1619C00148F06 /* video-frame.c in Sources */,
+				F60E748C16D1619C00148F06 /* video-info.c in Sources */,
+				F60E748D16D1619C00148F06 /* video-overlay-composition.c in Sources */,
+				F60E748E16D1619C00148F06 /* video.c in Sources */,
+				F60E748F16D1619C00148F06 /* videoorientation.c in Sources */,
+				F60E749016D1619C00148F06 /* videooverlay.c in Sources */,
+				F60E749A16D1653E00148F06 /* video-enumtypes.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F60E74AF16D16C2B00148F06 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F60E74CA16D16C6B00148F06 /* gstvideotestsrcorc.orc in Sources */,
+				F60E74C316D16C5300148F06 /* generate_sine_table.c in Sources */,
+				F60E74C416D16C5300148F06 /* gstvideotestsrc.c in Sources */,
+				F60E74C816D16C5300148F06 /* videotestsrc.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F60E74D516D16DA800148F06 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F60E74F416D16DEF00148F06 /* gstvideoconvertorc.orc in Sources */,
+				F60E74F016D16DE100148F06 /* gstcms.c in Sources */,
+				F60E74F116D16DE100148F06 /* gstvideoconvert.c in Sources */,
+				F60E74F316D16DE100148F06 /* videoconvert.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F60E74CC16D16C7300148F06 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F60E745716D160FD00148F06 /* gstvideo */;
+			targetProxy = F60E74CB16D16C7300148F06 /* PBXContainerItemProxy */;
+		};
+		F60E74DE16D16DAE00148F06 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F60E745716D160FD00148F06 /* gstvideo */;
+			targetProxy = F60E74DD16D16DAE00148F06 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		F60E745216D15D2300148F06 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					generated,
+					"gst-plugins-base",
+					"generated/gst-libs",
+					"gst-plugins-base/gst-libs",
+					"generated/gst-libs/gst/video",
+					"gst-plugins-base/gst-libs/gst/video",
+					../ORC/generated,
+					../ORC/orc,
+					../GStreamer/generated,
+					../GStreamer/gstreamer,
+					../GStreamer/generated/libs,
+					../GStreamer/gstreamer/libs,
+					../GLib/generated/glib,
+					../GLib/glib/glib,
+					../GLib/generated,
+					../GLib/glib,
+				);
+			};
+			name = Debug;
+		};
+		F60E745316D15D2300148F06 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					generated,
+					"gst-plugins-base",
+					"generated/gst-libs",
+					"gst-plugins-base/gst-libs",
+					"generated/gst-libs/gst/video",
+					"gst-plugins-base/gst-libs/gst/video",
+					../ORC/generated,
+					../ORC/orc,
+					../GStreamer/generated,
+					../GStreamer/gstreamer,
+					../GStreamer/generated/libs,
+					../GStreamer/gstreamer/libs,
+					../GLib/generated/glib,
+					../GLib/glib/glib,
+					../GLib/generated,
+					../GLib/glib,
+				);
+			};
+			name = Release;
+		};
+		F60E745A16D160FD00148F06 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "@executable_path";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "generated/gst-libs/gst/video gst-plugins-base/gst-libs/gst/video";
+			};
+			name = Debug;
+		};
+		F60E745B16D160FD00148F06 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				INSTALL_PATH = "@executable_path";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "generated/gst-libs/gst/video gst-plugins-base/gst-libs/gst/video";
+			};
+			name = Release;
+		};
+		F60E74B516D16C2B00148F06 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "@executable_path/../GStreamerPlugins";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F60E74B616D16C2B00148F06 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				INSTALL_PATH = "@executable_path/../GStreamerPlugins";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F60E74DB16D16DA800148F06 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "@executable_path/../GStreamerPlugins";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F60E74DC16D16DA800148F06 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				INSTALL_PATH = "@executable_path/../GStreamerPlugins";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F60E745116D15D2300148F06 /* Build configuration list for PBXProject "gst-plugins-base" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F60E745216D15D2300148F06 /* Debug */,
+				F60E745316D15D2300148F06 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F60E745C16D160FD00148F06 /* Build configuration list for PBXNativeTarget "gstvideo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F60E745A16D160FD00148F06 /* Debug */,
+				F60E745B16D160FD00148F06 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F60E74B416D16C2B00148F06 /* Build configuration list for PBXNativeTarget "gstvideotestsrc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F60E74B516D16C2B00148F06 /* Debug */,
+				F60E74B616D16C2B00148F06 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		F60E74DA16D16DA800148F06 /* Build configuration list for PBXNativeTarget "gstvideoconvert" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F60E74DB16D16DA800148F06 /* Debug */,
+				F60E74DC16D16DA800148F06 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F60E744E16D15D2300148F06 /* Project object */;
+}

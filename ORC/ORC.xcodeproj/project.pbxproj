@@ -46,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F60E74CE16D16CDF00148F06 /* build_rule.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build_rule.sh; sourceTree = "<group>"; };
 		F6A0B31916D0F0310023B9B2 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
 		F6A0B31E16D0F06E0023B9B2 /* liborc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liborc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6A0B32716D0F07D0023B9B2 /* orcc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = orcc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -116,6 +117,7 @@
 		F6A0B30D16D0EB990023B9B2 = {
 			isa = PBXGroup;
 			children = (
+				F60E74CE16D16CDF00148F06 /* build_rule.sh */,
 				F6A0B31716D0F0170023B9B2 /* generated */,
 				F6A0B31816D0F01E0023B9B2 /* orc */,
 				F6A0B31F16D0F06E0023B9B2 /* Products */,
@@ -367,7 +369,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INSTALL_PATH = "@executable_path/../Frameworks";
+				INSTALL_PATH = "@executable_path";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -400,7 +402,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INSTALL_PATH = "@executable_path/../Frameworks";
+				INSTALL_PATH = "@executable_path";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

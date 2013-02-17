@@ -11,6 +11,23 @@
 		F60457DF16AB4B9600A5AB58 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F60457DE16AB4B9600A5AB58 /* OpenCL.framework */; };
 		F60457E116AB4CCD00A5AB58 /* VertexShader.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E016AB4CCD00A5AB58 /* VertexShader.sl */; };
 		F60457E316AB4D5600A5AB58 /* FragmentShader.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E216AB4D5600A5AB58 /* FragmentShader.sl */; };
+		F60E751916D16F9200148F06 /* libintl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E751816D16F9200148F06 /* libintl.dylib */; };
+		F60E751B16D16F9500148F06 /* libffi.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E751A16D16F9500148F06 /* libffi.dylib */; };
+		F60E751E16D16FA200148F06 /* libglib.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E751C16D16F9900148F06 /* libglib.dylib */; };
+		F60E752116D16FAB00148F06 /* libgobject.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E751F16D16FA600148F06 /* libgobject.dylib */; };
+		F60E752316D16FAF00148F06 /* libgmodule.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E752216D16FAF00148F06 /* libgmodule.dylib */; };
+		F60E752516D16FB400148F06 /* liborc.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E752416D16FB400148F06 /* liborc.dylib */; };
+		F60E752716D16FB700148F06 /* libgstreamer.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E752616D16FB700148F06 /* libgstreamer.dylib */; };
+		F60E752916D16FBB00148F06 /* libgstbase.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E752816D16FBB00148F06 /* libgstbase.dylib */; };
+		F60E752B16D16FC200148F06 /* libgstvideo.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E752A16D16FC200148F06 /* libgstvideo.dylib */; };
+		F60E752D16D16FC500148F06 /* libgstcoreelements.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E752C16D16FC500148F06 /* libgstcoreelements.dylib */; };
+		F60E752F16D16FC900148F06 /* libgstvideotestsrc.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E752E16D16FC900148F06 /* libgstvideotestsrc.dylib */; };
+		F60E753116D16FCC00148F06 /* libgstvideoconvert.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E753016D16FCC00148F06 /* libgstvideoconvert.dylib */; };
+		F60E753216D172DF00148F06 /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E751C16D16F9900148F06 /* libglib.dylib */; };
+		F60E753316D172E500148F06 /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E751F16D16FA600148F06 /* libgobject.dylib */; };
+		F60E753416D172EC00148F06 /* libgstvideo.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E752A16D16FC200148F06 /* libgstvideo.dylib */; };
+		F60E753516D172F600148F06 /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E752616D16FB700148F06 /* libgstreamer.dylib */; };
+		F60E753616D1730300148F06 /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E752816D16FBB00148F06 /* libgstbase.dylib */; };
 		F60F33DC16A08ACB0087DB40 /* P1AudioMixer.m in Sources */ = {isa = PBXBuildFile; fileRef = F60F33DB16A08ACB0087DB40 /* P1AudioMixer.m */; };
 		F64CD43216BB0B01001B1344 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F68E7546169C9F27002FD6E6 /* CoreGraphics.framework */; };
 		F665FCAD16BD4EA400E64233 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F665FCAC16BD4EA400E64233 /* CoreAudio.framework */; };
@@ -32,12 +49,33 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		F6FCB49316C7FDA500DC662A /* CopyFiles */ = {
+		F60E750D16D16F4D00148F06 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstSubfolderSpec = 6;
 			files = (
+				F60E751916D16F9200148F06 /* libintl.dylib in CopyFiles */,
+				F60E751B16D16F9500148F06 /* libffi.dylib in CopyFiles */,
+				F60E751E16D16FA200148F06 /* libglib.dylib in CopyFiles */,
+				F60E752116D16FAB00148F06 /* libgobject.dylib in CopyFiles */,
+				F60E752316D16FAF00148F06 /* libgmodule.dylib in CopyFiles */,
+				F60E752516D16FB400148F06 /* liborc.dylib in CopyFiles */,
+				F60E752716D16FB700148F06 /* libgstreamer.dylib in CopyFiles */,
+				F60E752916D16FBB00148F06 /* libgstbase.dylib in CopyFiles */,
+				F60E752B16D16FC200148F06 /* libgstvideo.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6FCB49316C7FDA500DC662A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/GStreamerPlugins;
+			dstSubfolderSpec = 1;
+			files = (
+				F60E752D16D16FC500148F06 /* libgstcoreelements.dylib in CopyFiles */,
+				F60E752F16D16FC900148F06 /* libgstvideotestsrc.dylib in CopyFiles */,
+				F60E753116D16FCC00148F06 /* libgstvideoconvert.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,6 +86,18 @@
 		F60457DE16AB4B9600A5AB58 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		F60457E016AB4CCD00A5AB58 /* VertexShader.sl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = VertexShader.sl; sourceTree = "<group>"; };
 		F60457E216AB4D5600A5AB58 /* FragmentShader.sl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = FragmentShader.sl; sourceTree = "<group>"; };
+		F60E751816D16F9200148F06 /* libintl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libintl.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libintl.dylib"; sourceTree = "<absolute>"; };
+		F60E751A16D16F9500148F06 /* libffi.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libffi.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libffi.dylib"; sourceTree = "<absolute>"; };
+		F60E751C16D16F9900148F06 /* libglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libglib.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libglib.dylib"; sourceTree = "<absolute>"; };
+		F60E751F16D16FA600148F06 /* libgobject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgobject.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgobject.dylib"; sourceTree = "<absolute>"; };
+		F60E752216D16FAF00148F06 /* libgmodule.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgmodule.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgmodule.dylib"; sourceTree = "<absolute>"; };
+		F60E752416D16FB400148F06 /* liborc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = liborc.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/liborc.dylib"; sourceTree = "<absolute>"; };
+		F60E752616D16FB700148F06 /* libgstreamer.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstreamer.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstreamer.dylib"; sourceTree = "<absolute>"; };
+		F60E752816D16FBB00148F06 /* libgstbase.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstbase.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstbase.dylib"; sourceTree = "<absolute>"; };
+		F60E752A16D16FC200148F06 /* libgstvideo.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstvideo.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstvideo.dylib"; sourceTree = "<absolute>"; };
+		F60E752C16D16FC500148F06 /* libgstcoreelements.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstcoreelements.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstcoreelements.dylib"; sourceTree = "<absolute>"; };
+		F60E752E16D16FC900148F06 /* libgstvideotestsrc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstvideotestsrc.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstvideotestsrc.dylib"; sourceTree = "<absolute>"; };
+		F60E753016D16FCC00148F06 /* libgstvideoconvert.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstvideoconvert.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstvideoconvert.dylib"; sourceTree = "<absolute>"; };
 		F60F33DA16A08ACB0087DB40 /* P1AudioMixer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1AudioMixer.h; sourceTree = "<group>"; };
 		F60F33DB16A08ACB0087DB40 /* P1AudioMixer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1AudioMixer.m; sourceTree = "<group>"; };
 		F665FCAC16BD4EA400E64233 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -91,6 +141,11 @@
 				F6CE70C016AF10F40005DD3D /* IOSurface.framework in Frameworks */,
 				F665FCAD16BD4EA400E64233 /* CoreAudio.framework in Frameworks */,
 				F69656DD16BD2F3500DEFF4A /* AudioToolbox.framework in Frameworks */,
+				F60E753216D172DF00148F06 /* libglib.dylib in Frameworks */,
+				F60E753316D172E500148F06 /* libgobject.dylib in Frameworks */,
+				F60E753516D172F600148F06 /* libgstreamer.dylib in Frameworks */,
+				F60E753616D1730300148F06 /* libgstbase.dylib in Frameworks */,
+				F60E753416D172EC00148F06 /* libgstvideo.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +180,18 @@
 				F6CE70BF16AF10F40005DD3D /* IOSurface.framework */,
 				F665FCAC16BD4EA400E64233 /* CoreAudio.framework */,
 				F69656DC16BD2F3500DEFF4A /* AudioToolbox.framework */,
+				F60E751816D16F9200148F06 /* libintl.dylib */,
+				F60E751A16D16F9500148F06 /* libffi.dylib */,
+				F60E751C16D16F9900148F06 /* libglib.dylib */,
+				F60E752216D16FAF00148F06 /* libgmodule.dylib */,
+				F60E751F16D16FA600148F06 /* libgobject.dylib */,
+				F60E752616D16FB700148F06 /* libgstreamer.dylib */,
+				F60E752816D16FBB00148F06 /* libgstbase.dylib */,
+				F60E752C16D16FC500148F06 /* libgstcoreelements.dylib */,
+				F60E752416D16FB400148F06 /* liborc.dylib */,
+				F60E752A16D16FC200148F06 /* libgstvideo.dylib */,
+				F60E753016D16FCC00148F06 /* libgstvideoconvert.dylib */,
+				F60E752E16D16FC900148F06 /* libgstvideotestsrc.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -169,7 +236,7 @@
 				F6A169E716C8575C003096D1 /* P1GCALayerSink.h */,
 				F6A169E816C8575C003096D1 /* P1GCALayerSink.m */,
 			);
-			name = Video;
+			path = Video;
 			sourceTree = "<group>";
 		};
 		F6D94161169CCDD0002C8802 /* Audio */ = {
@@ -180,7 +247,7 @@
 				F6D94166169CCEBD002C8802 /* P1InputAudioSource.h */,
 				F6D94167169CCEBD002C8802 /* P1InputAudioSource.m */,
 			);
-			name = Audio;
+			path = Audio;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -193,8 +260,8 @@
 				F697201D169B85C500F03D6B /* Sources */,
 				F697201E169B85C500F03D6B /* Frameworks */,
 				F697201F169B85C500F03D6B /* Resources */,
+				F60E750D16D16F4D00148F06 /* CopyFiles */,
 				F6FCB49316C7FDA500DC662A /* CopyFiles */,
-				F6FCB4C916C80BBE00DC662A /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -246,22 +313,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		F6FCB4C916C80BBE00DC662A /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n\n# The main application target copies the system libraries from the GStreamer SDK\n# to the 'Frameworks' bundle directory. This fixes the linker references to these.\n\nset -e -x\n\n\n# Build a list of '-change' parameters to run on dependent libs.\nGSTREAMER_SDK_LIB=\"/Library/Frameworks/GStreamer.framework/Versions/0.10/lib\"\nPRIVATE_LIB=\"@executable_path/../Frameworks\"\nLIBS=\"libz.1.2.7 libiconv.2 libintl.8 libffi.5 liborc-0.4.0 libglib-2.0.0 libgmodule-2.0.0 libgthread-2.0.0 libgobject-2.0.0 libgio-2.0.0\"\nPARAMS=\"\"\nfor lib in $LIBS\ndo\n    PARAMS=\"$PARAMS -change ${GSTREAMER_SDK_LIB}/${lib}.dylib ${PRIVATE_LIB}/${lib}.dylib\"\ndone\n\n\n# Run through all binaries and update their dependencies.\nAPP_EXECUTABLE=\"${TARGET_BUILD_DIR}/${EXECUTABLE_PATH}\"\nAPP_DYLIBS=`ls ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/*.dylib`\nfor file in $APP_EXECUTABLE $APP_DYLIBS\ndo\n    install_name_tool $PARAMS $file\ndone\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F697201D169B85C500F03D6B /* Sources */ = {
@@ -335,13 +386,16 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					../GStreamer/custom,
+					../GLib/generated,
+					../GLib/glib,
+					../GLib/generated/glib,
+					../GLib/glib/glib,
 					../GStreamer/generated,
-					../GStreamer/gstreamer/libs,
 					../GStreamer/gstreamer,
-					"../GStreamer/gst-plugins-base/gst-libs",
-					"../GStreamer/gst-plugins-base",
-					/Library/Frameworks/GStreamer.framework/Headers,
+					../GStreamer/generated/libs,
+					../GStreamer/gstreamer/libs,
+					"../gst-plugins-base/generated/gst-libs",
+					"../gst-plugins-base/gst-plugins-base/gst-libs",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
@@ -369,13 +423,16 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					../GStreamer/custom,
+					../GLib/generated,
+					../GLib/glib,
+					../GLib/generated/glib,
+					../GLib/glib/glib,
 					../GStreamer/generated,
-					../GStreamer/gstreamer/libs,
 					../GStreamer/gstreamer,
-					"../GStreamer/gst-plugins-base/gst-libs",
-					"../GStreamer/gst-plugins-base",
-					/Library/Frameworks/GStreamer.framework/Headers,
+					../GStreamer/generated/libs,
+					../GStreamer/gstreamer/libs,
+					"../gst-plugins-base/generated/gst-libs",
+					"../gst-plugins-base/gst-plugins-base/gst-libs",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OPENCL_ARCHS = gpu_32;
@@ -388,12 +445,8 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "P1stream-Prefix.pch";
-				INFOPLIST_FILE = "P1stream-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/Frameworks/GStreamer.framework/Versions/0.10/lib\"",
-				);
+				GCC_PREFIX_HEADER = "P1stream/P1stream-Prefix.pch";
+				INFOPLIST_FILE = "P1stream/P1stream-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -404,12 +457,8 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "P1stream-Prefix.pch";
-				INFOPLIST_FILE = "P1stream-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/Frameworks/GStreamer.framework/Versions/0.10/lib\"",
-				);
+				GCC_PREFIX_HEADER = "P1stream/P1stream-Prefix.pch";
+				INFOPLIST_FILE = "P1stream/P1stream-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
