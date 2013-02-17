@@ -114,7 +114,6 @@
 		F6D6819916C984E9005A03B5 /* generate_sine_table.c in Sources */ = {isa = PBXBuildFile; fileRef = F6D6808D16C97C46005A03B5 /* generate_sine_table.c */; };
 		F6D6819A16C984EC005A03B5 /* videotestsrc.c in Sources */ = {isa = PBXBuildFile; fileRef = F6D6809416C97C46005A03B5 /* videotestsrc.c */; };
 		F6D6819C16C98543005A03B5 /* gstvideotestsrcorc.orc in Sources */ = {isa = PBXBuildFile; fileRef = F6D6819616C98197005A03B5 /* gstvideotestsrcorc.orc */; };
-		F6D6819E16C987DD005A03B5 /* liborc-0.4.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D6819D16C987D5005A03B5 /* liborc-0.4.0.dylib */; };
 		F6D6819F16C98830005A03B5 /* colorbalance.c in Sources */ = {isa = PBXBuildFile; fileRef = F6D6816516C97C46005A03B5 /* colorbalance.c */; };
 		F6D681A016C98830005A03B5 /* colorbalancechannel.c in Sources */ = {isa = PBXBuildFile; fileRef = F6D6816716C97C46005A03B5 /* colorbalancechannel.c */; };
 		F6D681A116C98830005A03B5 /* convertframe.c in Sources */ = {isa = PBXBuildFile; fileRef = F6D6816916C97C46005A03B5 /* convertframe.c */; };
@@ -142,21 +141,6 @@
 		F6D9416E169CCF80002C8802 /* P1VideoCanvas.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D9416D169CCF80002C8802 /* P1VideoCanvas.m */; };
 		F6FCB49116C7FCA200DC662A /* libgstreamer-bundle.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F602D01016C7CF87009449AA /* libgstreamer-bundle.dylib */; };
 		F6FCB49416C7FDB200DC662A /* libgstreamer-bundle.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F602D01016C7CF87009449AA /* libgstreamer-bundle.dylib */; };
-		F6FCB4D416C8159100DC662A /* libz.1.2.7.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6FCB4D216C8150A00DC662A /* libz.1.2.7.dylib */; };
-		F6FCB4D516C8159100DC662A /* libiconv.2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6FCB4D116C8150100DC662A /* libiconv.2.dylib */; };
-		F6FCB4D616C8159100DC662A /* libintl.8.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6FCB4D016C8147700DC662A /* libintl.8.dylib */; };
-		F6FCB4D716C8159100DC662A /* libffi.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6FCB4D316C8153B00DC662A /* libffi.5.dylib */; };
-		F6FCB4D816C8159100DC662A /* libglib-2.0.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6FCB4CA16C813F000DC662A /* libglib-2.0.0.dylib */; };
-		F6FCB4D916C8159100DC662A /* libgmodule-2.0.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6FCB4CB16C813FD00DC662A /* libgmodule-2.0.0.dylib */; };
-		F6FCB4DA16C8159100DC662A /* libgthread-2.0.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6FCB4CD16C8141F00DC662A /* libgthread-2.0.0.dylib */; };
-		F6FCB4DB16C8159100DC662A /* libgobject-2.0.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6FCB4CC16C8140500DC662A /* libgobject-2.0.0.dylib */; };
-		F6FCB4DC16C8159100DC662A /* libgio-2.0.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6FCB4CE16C8142B00DC662A /* libgio-2.0.0.dylib */; };
-		F6FCB4DD16C816C700DC662A /* libglib-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6FCB4CA16C813F000DC662A /* libglib-2.0.0.dylib */; };
-		F6FCB4DE16C816C900DC662A /* libgmodule-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6FCB4CB16C813FD00DC662A /* libgmodule-2.0.0.dylib */; };
-		F6FCB4DF16C816CB00DC662A /* libgobject-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6FCB4CC16C8140500DC662A /* libgobject-2.0.0.dylib */; };
-		F6FCB4E016C816CF00DC662A /* libgio-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6FCB4CE16C8142B00DC662A /* libgio-2.0.0.dylib */; };
-		F6FCB4E316C816E900DC662A /* libglib-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6FCB4CA16C813F000DC662A /* libglib-2.0.0.dylib */; };
-		F6FCB4E416C816EB00DC662A /* libgobject-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6FCB4CC16C8140500DC662A /* libgobject-2.0.0.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -175,6 +159,69 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		F670B52416D10E17001ADAF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F6A0B39816D0F6E50023B9B2 /* libffi.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F6A0B3AD16D0F8420023B9B2;
+			remoteInfo = ffi;
+		};
+		F670B55F16D113E8001ADAF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F670B52016D10E17001ADAF9 /* GLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F670B52D16D112FB001ADAF9;
+			remoteInfo = glib;
+		};
+		F670B56116D113E8001ADAF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F670B52016D10E17001ADAF9 /* GLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F670B53616D11301001ADAF9;
+			remoteInfo = gobject;
+		};
+		F670B56316D113E8001ADAF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F670B52016D10E17001ADAF9 /* GLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F670B53E16D11307001ADAF9;
+			remoteInfo = gmodule;
+		};
+		F670B56516D113E8001ADAF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F670B52016D10E17001ADAF9 /* GLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F670B54616D1130F001ADAF9;
+			remoteInfo = gthread;
+		};
+		F670B56716D113E8001ADAF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F670B52016D10E17001ADAF9 /* GLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F670B54E16D11314001ADAF9;
+			remoteInfo = gio;
+		};
+		F6A0B30316D0E5CB0023B9B2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F6A0B29916D0DF120023B9B2 /* libintl.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F6A0B2A316D0E26E0023B9B2;
+			remoteInfo = intl;
+		};
+		F6A0B38D16D0F5580023B9B2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F6A0B31416D0EB990023B9B2 /* ORC.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F6A0B31E16D0F06E0023B9B2;
+			remoteInfo = orc;
+		};
+		F6A0B38F16D0F5580023B9B2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F6A0B31416D0EB990023B9B2 /* ORC.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F6A0B32716D0F07D0023B9B2;
+			remoteInfo = orcc;
+		};
 		F6FCB48F16C7FC9700DC662A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F6972018169B85C500F03D6B /* Project object */;
@@ -191,15 +238,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F6FCB4D416C8159100DC662A /* libz.1.2.7.dylib in CopyFiles */,
-				F6FCB4D516C8159100DC662A /* libiconv.2.dylib in CopyFiles */,
-				F6FCB4D616C8159100DC662A /* libintl.8.dylib in CopyFiles */,
-				F6FCB4D716C8159100DC662A /* libffi.5.dylib in CopyFiles */,
-				F6FCB4D816C8159100DC662A /* libglib-2.0.0.dylib in CopyFiles */,
-				F6FCB4D916C8159100DC662A /* libgmodule-2.0.0.dylib in CopyFiles */,
-				F6FCB4DA16C8159100DC662A /* libgthread-2.0.0.dylib in CopyFiles */,
-				F6FCB4DB16C8159100DC662A /* libgobject-2.0.0.dylib in CopyFiles */,
-				F6FCB4DC16C8159100DC662A /* libgio-2.0.0.dylib in CopyFiles */,
 				F6FCB49416C7FDB200DC662A /* libgstreamer-bundle.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -427,6 +465,7 @@
 		F665FCAC16BD4EA400E64233 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		F666A8E416C7EC00003C2B9C /* gstplugin.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstplugin.c; sourceTree = "<group>"; };
 		F666A8E516C7EC01003C2B9C /* gstplugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstplugin.h; sourceTree = "<group>"; };
+		F670B52016D10E17001ADAF9 /* GLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GLib.xcodeproj; path = GLib/GLib.xcodeproj; sourceTree = "<group>"; };
 		F68E7546169C9F27002FD6E6 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F69656DC16BD2F3500DEFF4A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6972021169B85C500F03D6B /* P1stream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = P1stream.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -439,6 +478,9 @@
 		F6972037169B85C500F03D6B /* P1AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = P1AppDelegate.h; sourceTree = "<group>"; };
 		F6972038169B85C500F03D6B /* P1AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = P1AppDelegate.m; sourceTree = "<group>"; };
 		F697203B169B85C500F03D6B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		F6A0B29916D0DF120023B9B2 /* libintl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libintl.xcodeproj; path = libintl/libintl.xcodeproj; sourceTree = "<group>"; };
+		F6A0B31416D0EB990023B9B2 /* ORC.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ORC.xcodeproj; path = ORC/ORC.xcodeproj; sourceTree = "<group>"; };
+		F6A0B39816D0F6E50023B9B2 /* libffi.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libffi.xcodeproj; path = libffi/libffi.xcodeproj; sourceTree = "<group>"; };
 		F6A169E716C8575C003096D1 /* P1GCALayerSink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1GCALayerSink.h; sourceTree = "<group>"; };
 		F6A169E816C8575C003096D1 /* P1GCALayerSink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1GCALayerSink.m; sourceTree = "<group>"; };
 		F6A169EA16C85773003096D1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -790,7 +832,6 @@
 		F6D6819216C97C46005A03B5 /* videooverlay.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = videooverlay.c; sourceTree = "<group>"; };
 		F6D6819316C97C46005A03B5 /* videooverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = videooverlay.h; sourceTree = "<group>"; };
 		F6D6819616C98197005A03B5 /* gstvideotestsrcorc.orc */ = {isa = PBXFileReference; lastKnownFileType = text; path = gstvideotestsrcorc.orc; sourceTree = "<group>"; };
-		F6D6819D16C987D5005A03B5 /* liborc-0.4.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "liborc-0.4.0.dylib"; path = "../../../../Library/Frameworks/GStreamer.framework/Versions/0.10/lib/liborc-0.4.0.dylib"; sourceTree = "<group>"; };
 		F6D681B516C98D0B005A03B5 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
 		F6D681BA16C9901C005A03B5 /* bundle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bundle.c; path = custom/gst/bundle.c; sourceTree = "<group>"; };
 		F6D681BC16C9902C005A03B5 /* bundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bundle.h; path = custom/gst/bundle.h; sourceTree = "<group>"; };
@@ -800,15 +841,6 @@
 		F6D9416A169CCECD002C8802 /* P1DesktopVideoSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1DesktopVideoSource.m; sourceTree = "<group>"; };
 		F6D9416C169CCF80002C8802 /* P1VideoCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1VideoCanvas.h; sourceTree = "<group>"; };
 		F6D9416D169CCF80002C8802 /* P1VideoCanvas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1VideoCanvas.m; sourceTree = "<group>"; };
-		F6FCB4CA16C813F000DC662A /* libglib-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libglib-2.0.0.dylib"; path = "../../../../Library/Frameworks/GStreamer.framework/Versions/0.10/lib/libglib-2.0.0.dylib"; sourceTree = "<group>"; };
-		F6FCB4CB16C813FD00DC662A /* libgmodule-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libgmodule-2.0.0.dylib"; path = "../../../../Library/Frameworks/GStreamer.framework/Versions/0.10/lib/libgmodule-2.0.0.dylib"; sourceTree = "<group>"; };
-		F6FCB4CC16C8140500DC662A /* libgobject-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libgobject-2.0.0.dylib"; path = "../../../../Library/Frameworks/GStreamer.framework/Versions/0.10/lib/libgobject-2.0.0.dylib"; sourceTree = "<group>"; };
-		F6FCB4CD16C8141F00DC662A /* libgthread-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libgthread-2.0.0.dylib"; path = "../../../../Library/Frameworks/GStreamer.framework/Versions/0.10/lib/libgthread-2.0.0.dylib"; sourceTree = "<group>"; };
-		F6FCB4CE16C8142B00DC662A /* libgio-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libgio-2.0.0.dylib"; path = "../../../../Library/Frameworks/GStreamer.framework/Versions/0.10/lib/libgio-2.0.0.dylib"; sourceTree = "<group>"; };
-		F6FCB4D016C8147700DC662A /* libintl.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libintl.8.dylib; path = ../../../../Library/Frameworks/GStreamer.framework/Versions/0.10/lib/libintl.8.dylib; sourceTree = "<group>"; };
-		F6FCB4D116C8150100DC662A /* libiconv.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.2.dylib; path = ../../../../Library/Frameworks/GStreamer.framework/Versions/0.10/lib/libiconv.2.dylib; sourceTree = "<group>"; };
-		F6FCB4D216C8150A00DC662A /* libz.1.2.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.7.dylib; path = ../../../../Library/Frameworks/GStreamer.framework/Versions/0.10/lib/libz.1.2.7.dylib; sourceTree = "<group>"; };
-		F6FCB4D316C8153B00DC662A /* libffi.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libffi.5.dylib; path = ../../../../Library/Frameworks/GStreamer.framework/Versions/0.10/lib/libffi.5.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -816,11 +848,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6D6819E16C987DD005A03B5 /* liborc-0.4.0.dylib in Frameworks */,
-				F6FCB4DD16C816C700DC662A /* libglib-2.0.0.dylib in Frameworks */,
-				F6FCB4DE16C816C900DC662A /* libgmodule-2.0.0.dylib in Frameworks */,
-				F6FCB4DF16C816CB00DC662A /* libgobject-2.0.0.dylib in Frameworks */,
-				F6FCB4E016C816CF00DC662A /* libgio-2.0.0.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -828,8 +855,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6FCB4E316C816E900DC662A /* libglib-2.0.0.dylib in Frameworks */,
-				F6FCB4E416C816EB00DC662A /* libgobject-2.0.0.dylib in Frameworks */,
 				F6FCB49116C7FCA200DC662A /* libgstreamer-bundle.dylib in Frameworks */,
 				F6972026169B85C500F03D6B /* Cocoa.framework in Frameworks */,
 				F60457DF16AB4B9600A5AB58 /* OpenCL.framework in Frameworks */,
@@ -1161,13 +1186,28 @@
 			name = gst;
 			sourceTree = "<group>";
 		};
+		F670B52116D10E17001ADAF9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F670B56016D113E8001ADAF9 /* libglib.dylib */,
+				F670B56216D113E8001ADAF9 /* libgobject.dylib */,
+				F670B56416D113E8001ADAF9 /* libgmodule.dylib */,
+				F670B56616D113E8001ADAF9 /* libgthread.dylib */,
+				F670B56816D113E8001ADAF9 /* libgio.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F6972016169B85C500F03D6B = {
 			isa = PBXGroup;
 			children = (
+				F670B52016D10E17001ADAF9 /* GLib.xcodeproj */,
+				F6A0B29916D0DF120023B9B2 /* libintl.xcodeproj */,
+				F6A0B39816D0F6E50023B9B2 /* libffi.xcodeproj */,
+				F6A0B31416D0EB990023B9B2 /* ORC.xcodeproj */,
 				F697202B169B85C500F03D6B /* P1stream */,
 				F602CCAF16C7C25D009449AA /* GStreamer */,
 				F6972024169B85C500F03D6B /* Frameworks */,
-				F6972027169B85C500F03D6B /* Libraries */,
 				F6972022169B85C500F03D6B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -1196,23 +1236,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		F6972027169B85C500F03D6B /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-				F6FCB4D216C8150A00DC662A /* libz.1.2.7.dylib */,
-				F6FCB4D116C8150100DC662A /* libiconv.2.dylib */,
-				F6FCB4D016C8147700DC662A /* libintl.8.dylib */,
-				F6FCB4D316C8153B00DC662A /* libffi.5.dylib */,
-				F6D6819D16C987D5005A03B5 /* liborc-0.4.0.dylib */,
-				F6FCB4CA16C813F000DC662A /* libglib-2.0.0.dylib */,
-				F6FCB4CB16C813FD00DC662A /* libgmodule-2.0.0.dylib */,
-				F6FCB4CD16C8141F00DC662A /* libgthread-2.0.0.dylib */,
-				F6FCB4CC16C8140500DC662A /* libgobject-2.0.0.dylib */,
-				F6FCB4CE16C8142B00DC662A /* libgio-2.0.0.dylib */,
-			);
-			name = Libraries;
-			sourceTree = "<group>";
-		};
 		F697202B169B85C500F03D6B /* P1stream */ = {
 			isa = PBXGroup;
 			children = (
@@ -1238,6 +1261,31 @@
 				F6972034169B85C500F03D6B /* Credits.rtf */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F6A0B29A16D0DF120023B9B2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F6A0B30416D0E5CB0023B9B2 /* libintl.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F6A0B31516D0EB990023B9B2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F6A0B38E16D0F5580023B9B2 /* liborc.dylib */,
+				F6A0B39016D0F5580023B9B2 /* orcc */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F6A0B39916D0F6E50023B9B2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F670B52516D10E17001ADAF9 /* libffi.dylib */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		F6BEA4AF16A209C900F6DEC1 /* Video */ = {
@@ -1954,6 +2002,24 @@
 			mainGroup = F6972016169B85C500F03D6B;
 			productRefGroup = F6972022169B85C500F03D6B /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F670B52116D10E17001ADAF9 /* Products */;
+					ProjectRef = F670B52016D10E17001ADAF9 /* GLib.xcodeproj */;
+				},
+				{
+					ProductGroup = F6A0B39916D0F6E50023B9B2 /* Products */;
+					ProjectRef = F6A0B39816D0F6E50023B9B2 /* libffi.xcodeproj */;
+				},
+				{
+					ProductGroup = F6A0B29A16D0DF120023B9B2 /* Products */;
+					ProjectRef = F6A0B29916D0DF120023B9B2 /* libintl.xcodeproj */;
+				},
+				{
+					ProductGroup = F6A0B31516D0EB990023B9B2 /* Products */;
+					ProjectRef = F6A0B31416D0EB990023B9B2 /* ORC.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				F6972020169B85C500F03D6B /* P1stream */,
@@ -1961,6 +2027,72 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F670B52516D10E17001ADAF9 /* libffi.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libffi.dylib;
+			remoteRef = F670B52416D10E17001ADAF9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F670B56016D113E8001ADAF9 /* libglib.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libglib.dylib;
+			remoteRef = F670B55F16D113E8001ADAF9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F670B56216D113E8001ADAF9 /* libgobject.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libgobject.dylib;
+			remoteRef = F670B56116D113E8001ADAF9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F670B56416D113E8001ADAF9 /* libgmodule.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libgmodule.dylib;
+			remoteRef = F670B56316D113E8001ADAF9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F670B56616D113E8001ADAF9 /* libgthread.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libgthread.dylib;
+			remoteRef = F670B56516D113E8001ADAF9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F670B56816D113E8001ADAF9 /* libgio.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libgio.dylib;
+			remoteRef = F670B56716D113E8001ADAF9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F6A0B30416D0E5CB0023B9B2 /* libintl.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libintl.dylib;
+			remoteRef = F6A0B30316D0E5CB0023B9B2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F6A0B38E16D0F5580023B9B2 /* liborc.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liborc.dylib;
+			remoteRef = F6A0B38D16D0F5580023B9B2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F6A0B39016D0F5580023B9B2 /* orcc */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = orcc;
+			remoteRef = F6A0B38F16D0F5580023B9B2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F697201F169B85C500F03D6B /* Resources */ = {

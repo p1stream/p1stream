@@ -1,0 +1,554 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F6A0B33416D0F0E90023B9B2 /* orcc.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B33316D0F0E90023B9B2 /* orcc.c */; };
+		F6A0B33516D0F0EF0023B9B2 /* liborc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A0B31E16D0F06E0023B9B2 /* liborc.dylib */; };
+		F6A0B34C16D0F1980023B9B2 /* orc.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B33716D0F1980023B9B2 /* orc.c */; };
+		F6A0B34D16D0F1980023B9B2 /* orccode.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B33816D0F1980023B9B2 /* orccode.c */; };
+		F6A0B34E16D0F1980023B9B2 /* orccodemem.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B33916D0F1980023B9B2 /* orccodemem.c */; };
+		F6A0B34F16D0F1980023B9B2 /* orccompiler.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B33A16D0F1980023B9B2 /* orccompiler.c */; };
+		F6A0B35016D0F1980023B9B2 /* orccpu-x86.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B33B16D0F1980023B9B2 /* orccpu-x86.c */; };
+		F6A0B35116D0F1980023B9B2 /* orcdebug.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B33C16D0F1980023B9B2 /* orcdebug.c */; };
+		F6A0B35216D0F1980023B9B2 /* orcemulateopcodes.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B33D16D0F1980023B9B2 /* orcemulateopcodes.c */; };
+		F6A0B35316D0F1980023B9B2 /* orcexecutor.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B33E16D0F1980023B9B2 /* orcexecutor.c */; };
+		F6A0B35416D0F1980023B9B2 /* orcfunctions.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B33F16D0F1980023B9B2 /* orcfunctions.c */; };
+		F6A0B35516D0F1980023B9B2 /* orconce.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34016D0F1980023B9B2 /* orconce.c */; };
+		F6A0B35616D0F1980023B9B2 /* orcopcodes.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34116D0F1980023B9B2 /* orcopcodes.c */; };
+		F6A0B35716D0F1980023B9B2 /* orcparse.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34216D0F1980023B9B2 /* orcparse.c */; };
+		F6A0B35816D0F1980023B9B2 /* orcprogram-c.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34316D0F1980023B9B2 /* orcprogram-c.c */; };
+		F6A0B35916D0F1980023B9B2 /* orcprogram-sse.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34416D0F1980023B9B2 /* orcprogram-sse.c */; };
+		F6A0B35A16D0F1980023B9B2 /* orcprogram.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34516D0F1980023B9B2 /* orcprogram.c */; };
+		F6A0B35B16D0F1980023B9B2 /* orcrule.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34616D0F1980023B9B2 /* orcrule.c */; };
+		F6A0B35C16D0F1980023B9B2 /* orcrules-sse.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34716D0F1980023B9B2 /* orcrules-sse.c */; };
+		F6A0B35D16D0F1980023B9B2 /* orcsse.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34816D0F1980023B9B2 /* orcsse.c */; };
+		F6A0B35E16D0F1980023B9B2 /* orcutils.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34916D0F1980023B9B2 /* orcutils.c */; };
+		F6A0B35F16D0F1980023B9B2 /* orcx86.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34A16D0F1980023B9B2 /* orcx86.c */; };
+		F6A0B36016D0F1980023B9B2 /* orcx86insn.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B34B16D0F1980023B9B2 /* orcx86insn.c */; };
+		F6A0B37316D0F25C0023B9B2 /* orc.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36316D0F2250023B9B2 /* orc.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B37416D0F25E0023B9B2 /* orcdebug.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36616D0F2260023B9B2 /* orcdebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B37516D0F2610023B9B2 /* orcprogram.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36E16D0F2260023B9B2 /* orcprogram.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B37616D0F26A0023B9B2 /* orcemulateopcodes.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36716D0F2260023B9B2 /* orcemulateopcodes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B37716D0F2700023B9B2 /* orcfunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36816D0F2260023B9B2 /* orcfunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B37816D0F2740023B9B2 /* orcutils.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B37016D0F2260023B9B2 /* orcutils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B37916D0F2780023B9B2 /* orcparse.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36C16D0F2260023B9B2 /* orcparse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B37A16D0F27E0023B9B2 /* opcodes.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36116D0F2250023B9B2 /* opcodes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B37B16D0F2890023B9B2 /* orconce.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36B16D0F2260023B9B2 /* orconce.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B37C16D0F28F0023B9B2 /* orcsse.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36F16D0F2260023B9B2 /* orcsse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B37D16D0F2920023B9B2 /* orcmmx.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36916D0F2260023B9B2 /* orcmmx.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B37E16D0F2950023B9B2 /* orcneon.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36A16D0F2260023B9B2 /* orcneon.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B37F16D0F2970023B9B2 /* orcx86.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B37116D0F2260023B9B2 /* orcx86.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B38016D0F29C0023B9B2 /* orcpowerpc.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36D16D0F2260023B9B2 /* orcpowerpc.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B38116D0F2A10023B9B2 /* orcarm.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36416D0F2260023B9B2 /* orcarm.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B38216D0F2A40023B9B2 /* orcx86insn.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B37216D0F2260023B9B2 /* orcx86insn.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B38316D0F2A80023B9B2 /* orccpuinsn.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36516D0F2260023B9B2 /* orccpuinsn.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B38416D0F2AA0023B9B2 /* orc-stdint.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B36216D0F2250023B9B2 /* orc-stdint.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6A0B38616D0F4C50023B9B2 /* orcprogram-mmx.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B38516D0F4C50023B9B2 /* orcprogram-mmx.c */; };
+		F6A0B38816D0F4CE0023B9B2 /* orcrules-mmx.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B38716D0F4CE0023B9B2 /* orcrules-mmx.c */; };
+		F6A0B38A16D0F4D90023B9B2 /* orcmmx.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B38916D0F4D90023B9B2 /* orcmmx.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F6A0B33016D0F0880023B9B2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F6A0B30E16D0EB990023B9B2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F6A0B31D16D0F06E0023B9B2;
+			remoteInfo = orc;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F6A0B32516D0F07D0023B9B2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		F6A0B31916D0F0310023B9B2 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
+		F6A0B31E16D0F06E0023B9B2 /* liborc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liborc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6A0B32716D0F07D0023B9B2 /* orcc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = orcc; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6A0B33316D0F0E90023B9B2 /* orcc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcc.c; path = orc/tools/orcc.c; sourceTree = "<group>"; };
+		F6A0B33716D0F1980023B9B2 /* orc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orc.c; path = orc/orc/orc.c; sourceTree = "<group>"; };
+		F6A0B33816D0F1980023B9B2 /* orccode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orccode.c; path = orc/orc/orccode.c; sourceTree = "<group>"; };
+		F6A0B33916D0F1980023B9B2 /* orccodemem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orccodemem.c; path = orc/orc/orccodemem.c; sourceTree = "<group>"; };
+		F6A0B33A16D0F1980023B9B2 /* orccompiler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orccompiler.c; path = orc/orc/orccompiler.c; sourceTree = "<group>"; };
+		F6A0B33B16D0F1980023B9B2 /* orccpu-x86.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "orccpu-x86.c"; path = "orc/orc/orccpu-x86.c"; sourceTree = "<group>"; };
+		F6A0B33C16D0F1980023B9B2 /* orcdebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcdebug.c; path = orc/orc/orcdebug.c; sourceTree = "<group>"; };
+		F6A0B33D16D0F1980023B9B2 /* orcemulateopcodes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcemulateopcodes.c; path = orc/orc/orcemulateopcodes.c; sourceTree = "<group>"; };
+		F6A0B33E16D0F1980023B9B2 /* orcexecutor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcexecutor.c; path = orc/orc/orcexecutor.c; sourceTree = "<group>"; };
+		F6A0B33F16D0F1980023B9B2 /* orcfunctions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcfunctions.c; path = orc/orc/orcfunctions.c; sourceTree = "<group>"; };
+		F6A0B34016D0F1980023B9B2 /* orconce.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orconce.c; path = orc/orc/orconce.c; sourceTree = "<group>"; };
+		F6A0B34116D0F1980023B9B2 /* orcopcodes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcopcodes.c; path = orc/orc/orcopcodes.c; sourceTree = "<group>"; };
+		F6A0B34216D0F1980023B9B2 /* orcparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcparse.c; path = orc/orc/orcparse.c; sourceTree = "<group>"; };
+		F6A0B34316D0F1980023B9B2 /* orcprogram-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "orcprogram-c.c"; path = "orc/orc/orcprogram-c.c"; sourceTree = "<group>"; };
+		F6A0B34416D0F1980023B9B2 /* orcprogram-sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "orcprogram-sse.c"; path = "orc/orc/orcprogram-sse.c"; sourceTree = "<group>"; };
+		F6A0B34516D0F1980023B9B2 /* orcprogram.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcprogram.c; path = orc/orc/orcprogram.c; sourceTree = "<group>"; };
+		F6A0B34616D0F1980023B9B2 /* orcrule.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcrule.c; path = orc/orc/orcrule.c; sourceTree = "<group>"; };
+		F6A0B34716D0F1980023B9B2 /* orcrules-sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "orcrules-sse.c"; path = "orc/orc/orcrules-sse.c"; sourceTree = "<group>"; };
+		F6A0B34816D0F1980023B9B2 /* orcsse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcsse.c; path = orc/orc/orcsse.c; sourceTree = "<group>"; };
+		F6A0B34916D0F1980023B9B2 /* orcutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcutils.c; path = orc/orc/orcutils.c; sourceTree = "<group>"; };
+		F6A0B34A16D0F1980023B9B2 /* orcx86.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcx86.c; path = orc/orc/orcx86.c; sourceTree = "<group>"; };
+		F6A0B34B16D0F1980023B9B2 /* orcx86insn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcx86insn.c; path = orc/orc/orcx86insn.c; sourceTree = "<group>"; };
+		F6A0B36116D0F2250023B9B2 /* opcodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = opcodes.h; path = orc/orc/opcodes.h; sourceTree = "<group>"; };
+		F6A0B36216D0F2250023B9B2 /* orc-stdint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "orc-stdint.h"; path = "orc/orc/orc-stdint.h"; sourceTree = "<group>"; };
+		F6A0B36316D0F2250023B9B2 /* orc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orc.h; path = orc/orc/orc.h; sourceTree = "<group>"; };
+		F6A0B36416D0F2260023B9B2 /* orcarm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcarm.h; path = orc/orc/orcarm.h; sourceTree = "<group>"; };
+		F6A0B36516D0F2260023B9B2 /* orccpuinsn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orccpuinsn.h; path = orc/orc/orccpuinsn.h; sourceTree = "<group>"; };
+		F6A0B36616D0F2260023B9B2 /* orcdebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcdebug.h; path = orc/orc/orcdebug.h; sourceTree = "<group>"; };
+		F6A0B36716D0F2260023B9B2 /* orcemulateopcodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcemulateopcodes.h; path = orc/orc/orcemulateopcodes.h; sourceTree = "<group>"; };
+		F6A0B36816D0F2260023B9B2 /* orcfunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcfunctions.h; path = orc/orc/orcfunctions.h; sourceTree = "<group>"; };
+		F6A0B36916D0F2260023B9B2 /* orcmmx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcmmx.h; path = orc/orc/orcmmx.h; sourceTree = "<group>"; };
+		F6A0B36A16D0F2260023B9B2 /* orcneon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcneon.h; path = orc/orc/orcneon.h; sourceTree = "<group>"; };
+		F6A0B36B16D0F2260023B9B2 /* orconce.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orconce.h; path = orc/orc/orconce.h; sourceTree = "<group>"; };
+		F6A0B36C16D0F2260023B9B2 /* orcparse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcparse.h; path = orc/orc/orcparse.h; sourceTree = "<group>"; };
+		F6A0B36D16D0F2260023B9B2 /* orcpowerpc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcpowerpc.h; path = orc/orc/orcpowerpc.h; sourceTree = "<group>"; };
+		F6A0B36E16D0F2260023B9B2 /* orcprogram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcprogram.h; path = orc/orc/orcprogram.h; sourceTree = "<group>"; };
+		F6A0B36F16D0F2260023B9B2 /* orcsse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcsse.h; path = orc/orc/orcsse.h; sourceTree = "<group>"; };
+		F6A0B37016D0F2260023B9B2 /* orcutils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcutils.h; path = orc/orc/orcutils.h; sourceTree = "<group>"; };
+		F6A0B37116D0F2260023B9B2 /* orcx86.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcx86.h; path = orc/orc/orcx86.h; sourceTree = "<group>"; };
+		F6A0B37216D0F2260023B9B2 /* orcx86insn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcx86insn.h; path = orc/orc/orcx86insn.h; sourceTree = "<group>"; };
+		F6A0B38516D0F4C50023B9B2 /* orcprogram-mmx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "orcprogram-mmx.c"; path = "orc/orc/orcprogram-mmx.c"; sourceTree = "<group>"; };
+		F6A0B38716D0F4CE0023B9B2 /* orcrules-mmx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "orcrules-mmx.c"; path = "orc/orc/orcrules-mmx.c"; sourceTree = "<group>"; };
+		F6A0B38916D0F4D90023B9B2 /* orcmmx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcmmx.c; path = orc/orc/orcmmx.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F6A0B31B16D0F06E0023B9B2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6A0B32416D0F07D0023B9B2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6A0B33516D0F0EF0023B9B2 /* liborc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F6A0B30D16D0EB990023B9B2 = {
+			isa = PBXGroup;
+			children = (
+				F6A0B31716D0F0170023B9B2 /* generated */,
+				F6A0B31816D0F01E0023B9B2 /* orc */,
+				F6A0B31F16D0F06E0023B9B2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F6A0B31716D0F0170023B9B2 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				F6A0B31916D0F0310023B9B2 /* config.h */,
+			);
+			name = generated;
+			sourceTree = "<group>";
+		};
+		F6A0B31816D0F01E0023B9B2 /* orc */ = {
+			isa = PBXGroup;
+			children = (
+				F6A0B33616D0F10A0023B9B2 /* orc */,
+				F6A0B33216D0F0DE0023B9B2 /* tools */,
+			);
+			name = orc;
+			sourceTree = "<group>";
+		};
+		F6A0B31F16D0F06E0023B9B2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F6A0B31E16D0F06E0023B9B2 /* liborc.dylib */,
+				F6A0B32716D0F07D0023B9B2 /* orcc */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F6A0B33216D0F0DE0023B9B2 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				F6A0B33316D0F0E90023B9B2 /* orcc.c */,
+			);
+			name = tools;
+			sourceTree = "<group>";
+		};
+		F6A0B33616D0F10A0023B9B2 /* orc */ = {
+			isa = PBXGroup;
+			children = (
+				F6A0B33716D0F1980023B9B2 /* orc.c */,
+				F6A0B33816D0F1980023B9B2 /* orccode.c */,
+				F6A0B33916D0F1980023B9B2 /* orccodemem.c */,
+				F6A0B33A16D0F1980023B9B2 /* orccompiler.c */,
+				F6A0B33B16D0F1980023B9B2 /* orccpu-x86.c */,
+				F6A0B33C16D0F1980023B9B2 /* orcdebug.c */,
+				F6A0B33D16D0F1980023B9B2 /* orcemulateopcodes.c */,
+				F6A0B33E16D0F1980023B9B2 /* orcexecutor.c */,
+				F6A0B33F16D0F1980023B9B2 /* orcfunctions.c */,
+				F6A0B38916D0F4D90023B9B2 /* orcmmx.c */,
+				F6A0B34016D0F1980023B9B2 /* orconce.c */,
+				F6A0B34116D0F1980023B9B2 /* orcopcodes.c */,
+				F6A0B34216D0F1980023B9B2 /* orcparse.c */,
+				F6A0B34316D0F1980023B9B2 /* orcprogram-c.c */,
+				F6A0B34416D0F1980023B9B2 /* orcprogram-sse.c */,
+				F6A0B38516D0F4C50023B9B2 /* orcprogram-mmx.c */,
+				F6A0B34516D0F1980023B9B2 /* orcprogram.c */,
+				F6A0B34616D0F1980023B9B2 /* orcrule.c */,
+				F6A0B34716D0F1980023B9B2 /* orcrules-sse.c */,
+				F6A0B38716D0F4CE0023B9B2 /* orcrules-mmx.c */,
+				F6A0B34816D0F1980023B9B2 /* orcsse.c */,
+				F6A0B34916D0F1980023B9B2 /* orcutils.c */,
+				F6A0B34A16D0F1980023B9B2 /* orcx86.c */,
+				F6A0B34B16D0F1980023B9B2 /* orcx86insn.c */,
+				F6A0B36116D0F2250023B9B2 /* opcodes.h */,
+				F6A0B36216D0F2250023B9B2 /* orc-stdint.h */,
+				F6A0B36316D0F2250023B9B2 /* orc.h */,
+				F6A0B36416D0F2260023B9B2 /* orcarm.h */,
+				F6A0B36516D0F2260023B9B2 /* orccpuinsn.h */,
+				F6A0B36616D0F2260023B9B2 /* orcdebug.h */,
+				F6A0B36716D0F2260023B9B2 /* orcemulateopcodes.h */,
+				F6A0B36816D0F2260023B9B2 /* orcfunctions.h */,
+				F6A0B36916D0F2260023B9B2 /* orcmmx.h */,
+				F6A0B36A16D0F2260023B9B2 /* orcneon.h */,
+				F6A0B36B16D0F2260023B9B2 /* orconce.h */,
+				F6A0B36C16D0F2260023B9B2 /* orcparse.h */,
+				F6A0B36D16D0F2260023B9B2 /* orcpowerpc.h */,
+				F6A0B36E16D0F2260023B9B2 /* orcprogram.h */,
+				F6A0B36F16D0F2260023B9B2 /* orcsse.h */,
+				F6A0B37016D0F2260023B9B2 /* orcutils.h */,
+				F6A0B37116D0F2260023B9B2 /* orcx86.h */,
+				F6A0B37216D0F2260023B9B2 /* orcx86insn.h */,
+			);
+			name = orc;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F6A0B31C16D0F06E0023B9B2 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6A0B37316D0F25C0023B9B2 /* orc.h in Headers */,
+				F6A0B37416D0F25E0023B9B2 /* orcdebug.h in Headers */,
+				F6A0B37516D0F2610023B9B2 /* orcprogram.h in Headers */,
+				F6A0B37616D0F26A0023B9B2 /* orcemulateopcodes.h in Headers */,
+				F6A0B37716D0F2700023B9B2 /* orcfunctions.h in Headers */,
+				F6A0B37816D0F2740023B9B2 /* orcutils.h in Headers */,
+				F6A0B37916D0F2780023B9B2 /* orcparse.h in Headers */,
+				F6A0B37A16D0F27E0023B9B2 /* opcodes.h in Headers */,
+				F6A0B37B16D0F2890023B9B2 /* orconce.h in Headers */,
+				F6A0B37C16D0F28F0023B9B2 /* orcsse.h in Headers */,
+				F6A0B37D16D0F2920023B9B2 /* orcmmx.h in Headers */,
+				F6A0B37E16D0F2950023B9B2 /* orcneon.h in Headers */,
+				F6A0B37F16D0F2970023B9B2 /* orcx86.h in Headers */,
+				F6A0B38016D0F29C0023B9B2 /* orcpowerpc.h in Headers */,
+				F6A0B38116D0F2A10023B9B2 /* orcarm.h in Headers */,
+				F6A0B38216D0F2A40023B9B2 /* orcx86insn.h in Headers */,
+				F6A0B38316D0F2A80023B9B2 /* orccpuinsn.h in Headers */,
+				F6A0B38416D0F2AA0023B9B2 /* orc-stdint.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		F6A0B31D16D0F06E0023B9B2 /* orc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F6A0B32016D0F06E0023B9B2 /* Build configuration list for PBXNativeTarget "orc" */;
+			buildPhases = (
+				F6A0B31A16D0F06E0023B9B2 /* Sources */,
+				F6A0B31B16D0F06E0023B9B2 /* Frameworks */,
+				F6A0B31C16D0F06E0023B9B2 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = orc;
+			productName = orc;
+			productReference = F6A0B31E16D0F06E0023B9B2 /* liborc.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F6A0B32616D0F07D0023B9B2 /* orcc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F6A0B32D16D0F07D0023B9B2 /* Build configuration list for PBXNativeTarget "orcc" */;
+			buildPhases = (
+				F6A0B32316D0F07D0023B9B2 /* Sources */,
+				F6A0B32416D0F07D0023B9B2 /* Frameworks */,
+				F6A0B32516D0F07D0023B9B2 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F6A0B33116D0F0880023B9B2 /* PBXTargetDependency */,
+			);
+			name = orcc;
+			productName = orcc;
+			productReference = F6A0B32716D0F07D0023B9B2 /* orcc */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F6A0B30E16D0EB990023B9B2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+			};
+			buildConfigurationList = F6A0B31116D0EB990023B9B2 /* Build configuration list for PBXProject "ORC" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F6A0B30D16D0EB990023B9B2;
+			productRefGroup = F6A0B31F16D0F06E0023B9B2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F6A0B31D16D0F06E0023B9B2 /* orc */,
+				F6A0B32616D0F07D0023B9B2 /* orcc */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F6A0B31A16D0F06E0023B9B2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6A0B34C16D0F1980023B9B2 /* orc.c in Sources */,
+				F6A0B34D16D0F1980023B9B2 /* orccode.c in Sources */,
+				F6A0B34E16D0F1980023B9B2 /* orccodemem.c in Sources */,
+				F6A0B34F16D0F1980023B9B2 /* orccompiler.c in Sources */,
+				F6A0B35016D0F1980023B9B2 /* orccpu-x86.c in Sources */,
+				F6A0B35116D0F1980023B9B2 /* orcdebug.c in Sources */,
+				F6A0B35216D0F1980023B9B2 /* orcemulateopcodes.c in Sources */,
+				F6A0B35316D0F1980023B9B2 /* orcexecutor.c in Sources */,
+				F6A0B35416D0F1980023B9B2 /* orcfunctions.c in Sources */,
+				F6A0B35516D0F1980023B9B2 /* orconce.c in Sources */,
+				F6A0B35616D0F1980023B9B2 /* orcopcodes.c in Sources */,
+				F6A0B35716D0F1980023B9B2 /* orcparse.c in Sources */,
+				F6A0B35816D0F1980023B9B2 /* orcprogram-c.c in Sources */,
+				F6A0B35916D0F1980023B9B2 /* orcprogram-sse.c in Sources */,
+				F6A0B35A16D0F1980023B9B2 /* orcprogram.c in Sources */,
+				F6A0B35B16D0F1980023B9B2 /* orcrule.c in Sources */,
+				F6A0B35C16D0F1980023B9B2 /* orcrules-sse.c in Sources */,
+				F6A0B35D16D0F1980023B9B2 /* orcsse.c in Sources */,
+				F6A0B35E16D0F1980023B9B2 /* orcutils.c in Sources */,
+				F6A0B35F16D0F1980023B9B2 /* orcx86.c in Sources */,
+				F6A0B36016D0F1980023B9B2 /* orcx86insn.c in Sources */,
+				F6A0B38616D0F4C50023B9B2 /* orcprogram-mmx.c in Sources */,
+				F6A0B38816D0F4CE0023B9B2 /* orcrules-mmx.c in Sources */,
+				F6A0B38A16D0F4D90023B9B2 /* orcmmx.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6A0B32316D0F07D0023B9B2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6A0B33416D0F0E90023B9B2 /* orcc.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F6A0B33116D0F0880023B9B2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F6A0B31D16D0F06E0023B9B2 /* orc */;
+			targetProxy = F6A0B33016D0F0880023B9B2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		F6A0B31216D0EB990023B9B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
+				HEADER_SEARCH_PATHS = (
+					ORC/generated,
+					ORC,
+				);
+			};
+			name = Debug;
+		};
+		F6A0B31316D0EB990023B9B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
+				HEADER_SEARCH_PATHS = (
+					ORC/generated,
+					ORC,
+				);
+			};
+			name = Release;
+		};
+		F6A0B32116D0F06E0023B9B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					ORC_ENABLE_UNSTABLE_API,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F6A0B32216D0F06E0023B9B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					ORC_ENABLE_UNSTABLE_API,
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F6A0B32E16D0F07D0023B9B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F6A0B32F16D0F07D0023B9B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F6A0B31116D0EB990023B9B2 /* Build configuration list for PBXProject "ORC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6A0B31216D0EB990023B9B2 /* Debug */,
+				F6A0B31316D0EB990023B9B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F6A0B32016D0F06E0023B9B2 /* Build configuration list for PBXNativeTarget "orc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6A0B32116D0F06E0023B9B2 /* Debug */,
+				F6A0B32216D0F06E0023B9B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		F6A0B32D16D0F07D0023B9B2 /* Build configuration list for PBXNativeTarget "orcc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6A0B32E16D0F07D0023B9B2 /* Debug */,
+				F6A0B32F16D0F07D0023B9B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F6A0B30E16D0EB990023B9B2 /* Project object */;
+}

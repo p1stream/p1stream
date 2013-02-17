@@ -1,0 +1,1096 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F670B57816D115EF001ADAF9 /* gallocator.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B56D16D115E9001ADAF9 /* gallocator.c */; };
+		F670B57916D115EF001ADAF9 /* gcache.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B56F16D115E9001ADAF9 /* gcache.c */; };
+		F670B57A16D115EF001ADAF9 /* gcompletion.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B57116D115E9001ADAF9 /* gcompletion.c */; };
+		F670B57B16D115EF001ADAF9 /* grel.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B57416D115E9001ADAF9 /* grel.c */; };
+		F670B57C16D115EF001ADAF9 /* gthread-deprecated.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B57616D115E9001ADAF9 /* gthread-deprecated.c */; };
+		F670B59516D11673001ADAF9 /* garray.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B57D16D11673001ADAF9 /* garray.c */; };
+		F670B59616D11673001ADAF9 /* gasyncqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B57E16D11673001ADAF9 /* gasyncqueue.c */; };
+		F670B59716D11673001ADAF9 /* gatomic.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B57F16D11673001ADAF9 /* gatomic.c */; };
+		F670B59816D11673001ADAF9 /* gbacktrace.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58016D11673001ADAF9 /* gbacktrace.c */; };
+		F670B59916D11673001ADAF9 /* gbase64.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58116D11673001ADAF9 /* gbase64.c */; };
+		F670B59A16D11673001ADAF9 /* gbitlock.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58216D11673001ADAF9 /* gbitlock.c */; };
+		F670B59B16D11673001ADAF9 /* gbookmarkfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58316D11673001ADAF9 /* gbookmarkfile.c */; };
+		F670B59C16D11673001ADAF9 /* gbytes.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58416D11673001ADAF9 /* gbytes.c */; };
+		F670B59D16D11673001ADAF9 /* gcharset.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58516D11673001ADAF9 /* gcharset.c */; };
+		F670B59E16D11673001ADAF9 /* gchecksum.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58616D11673001ADAF9 /* gchecksum.c */; };
+		F670B59F16D11673001ADAF9 /* gconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58716D11673001ADAF9 /* gconvert.c */; };
+		F670B5A016D11673001ADAF9 /* gdataset.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58816D11673001ADAF9 /* gdataset.c */; };
+		F670B5A116D11673001ADAF9 /* gdate.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58916D11673001ADAF9 /* gdate.c */; };
+		F670B5A216D11673001ADAF9 /* gdatetime.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58A16D11673001ADAF9 /* gdatetime.c */; };
+		F670B5A316D11673001ADAF9 /* gdir.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58B16D11673001ADAF9 /* gdir.c */; };
+		F670B5A416D11673001ADAF9 /* genviron.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58C16D11673001ADAF9 /* genviron.c */; };
+		F670B5A516D11673001ADAF9 /* gerror.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58D16D11673001ADAF9 /* gerror.c */; };
+		F670B5A616D11673001ADAF9 /* gfileutils.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58E16D11673001ADAF9 /* gfileutils.c */; };
+		F670B5A716D11673001ADAF9 /* ggettext.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B58F16D11673001ADAF9 /* ggettext.c */; };
+		F670B5A816D11673001ADAF9 /* ghash.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B59016D11673001ADAF9 /* ghash.c */; };
+		F670B5A916D11673001ADAF9 /* ghmac.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B59116D11673001ADAF9 /* ghmac.c */; };
+		F670B5AA16D11673001ADAF9 /* ghook.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B59216D11673001ADAF9 /* ghook.c */; };
+		F670B5AB16D11673001ADAF9 /* ghostutils.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B59316D11673001ADAF9 /* ghostutils.c */; };
+		F670B5AC16D11673001ADAF9 /* giochannel.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B59416D11673001ADAF9 /* giochannel.c */; };
+		F670B5B016D116A0001ADAF9 /* gkeyfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5AD16D116A0001ADAF9 /* gkeyfile.c */; };
+		F670B5B116D116A0001ADAF9 /* glib-init.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5AE16D116A0001ADAF9 /* glib-init.c */; };
+		F670B5B216D116A0001ADAF9 /* glib-private.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5AF16D116A0001ADAF9 /* glib-private.c */; };
+		F670B5BE16D116C5001ADAF9 /* glist.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5B316D116C5001ADAF9 /* glist.c */; };
+		F670B5BF16D116C5001ADAF9 /* gmain.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5B416D116C5001ADAF9 /* gmain.c */; };
+		F670B5C016D116C5001ADAF9 /* gmappedfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5B516D116C5001ADAF9 /* gmappedfile.c */; };
+		F670B5C116D116C5001ADAF9 /* gmarkup.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5B616D116C5001ADAF9 /* gmarkup.c */; };
+		F670B5C216D116C5001ADAF9 /* gmem.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5B716D116C5001ADAF9 /* gmem.c */; };
+		F670B5C316D116C5001ADAF9 /* gmessages.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5B816D116C5001ADAF9 /* gmessages.c */; };
+		F670B5C416D116C5001ADAF9 /* gnode.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5B916D116C5001ADAF9 /* gnode.c */; };
+		F670B5C516D116C5001ADAF9 /* goption.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5BA16D116C5001ADAF9 /* goption.c */; };
+		F670B5C616D116C5001ADAF9 /* gpattern.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5BB16D116C5001ADAF9 /* gpattern.c */; };
+		F670B5C716D116C5001ADAF9 /* gpoll.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5BC16D116C5001ADAF9 /* gpoll.c */; };
+		F670B5C816D116C5001ADAF9 /* gprimes.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5BD16D116C5001ADAF9 /* gprimes.c */; };
+		F670B5D316D116DD001ADAF9 /* gqsort.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5C916D116DD001ADAF9 /* gqsort.c */; };
+		F670B5D416D116DD001ADAF9 /* gquark.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5CA16D116DD001ADAF9 /* gquark.c */; };
+		F670B5D516D116DD001ADAF9 /* gqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5CB16D116DD001ADAF9 /* gqueue.c */; };
+		F670B5D616D116DD001ADAF9 /* grand.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5CC16D116DD001ADAF9 /* grand.c */; };
+		F670B5D716D116DD001ADAF9 /* gregex.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5CD16D116DD001ADAF9 /* gregex.c */; };
+		F670B5D816D116DD001ADAF9 /* gscanner.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5CE16D116DD001ADAF9 /* gscanner.c */; };
+		F670B5D916D116DD001ADAF9 /* gsequence.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5CF16D116DD001ADAF9 /* gsequence.c */; };
+		F670B5DA16D116DD001ADAF9 /* gshell.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5D016D116DD001ADAF9 /* gshell.c */; };
+		F670B5DB16D116DD001ADAF9 /* gslice.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5D116D116DD001ADAF9 /* gslice.c */; };
+		F670B5DC16D116DD001ADAF9 /* gslist.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5D216D116DD001ADAF9 /* gslist.c */; };
+		F670B5F816D1173A001ADAF9 /* gprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5DD16D1173A001ADAF9 /* gprintf.c */; };
+		F670B5F916D1173A001ADAF9 /* gstdio.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5DE16D1173A001ADAF9 /* gstdio.c */; };
+		F670B5FA16D1173A001ADAF9 /* gstrfuncs.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5DF16D1173A001ADAF9 /* gstrfuncs.c */; };
+		F670B5FB16D1173A001ADAF9 /* gstring.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5E016D1173A001ADAF9 /* gstring.c */; };
+		F670B5FC16D1173A001ADAF9 /* gstringchunk.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5E116D1173A001ADAF9 /* gstringchunk.c */; };
+		F670B5FD16D1173A001ADAF9 /* gtestutils.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5E216D1173A001ADAF9 /* gtestutils.c */; };
+		F670B5FE16D1173A001ADAF9 /* gthread.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5E316D1173A001ADAF9 /* gthread.c */; };
+		F670B5FF16D1173A001ADAF9 /* gthreadpool.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5E416D1173A001ADAF9 /* gthreadpool.c */; };
+		F670B60016D1173A001ADAF9 /* gtimer.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5E516D1173A001ADAF9 /* gtimer.c */; };
+		F670B60116D1173A001ADAF9 /* gtimezone.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5E616D1173A001ADAF9 /* gtimezone.c */; };
+		F670B60216D1173A001ADAF9 /* gtrashstack.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5E716D1173A001ADAF9 /* gtrashstack.c */; };
+		F670B60316D1173A001ADAF9 /* gtree.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5E816D1173A001ADAF9 /* gtree.c */; };
+		F670B60416D1173A001ADAF9 /* gunibreak.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5E916D1173A001ADAF9 /* gunibreak.c */; };
+		F670B60516D1173A001ADAF9 /* gunicollate.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5EA16D1173A001ADAF9 /* gunicollate.c */; };
+		F670B60616D1173A001ADAF9 /* gunidecomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5EB16D1173A001ADAF9 /* gunidecomp.c */; };
+		F670B60716D1173A001ADAF9 /* guniprop.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5EC16D1173A001ADAF9 /* guniprop.c */; };
+		F670B60816D1173A001ADAF9 /* gurifuncs.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5ED16D1173A001ADAF9 /* gurifuncs.c */; };
+		F670B60916D1173A001ADAF9 /* gutf8.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5EE16D1173A001ADAF9 /* gutf8.c */; };
+		F670B60A16D1173A001ADAF9 /* gutils.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5EF16D1173A001ADAF9 /* gutils.c */; };
+		F670B60B16D1173A001ADAF9 /* gvariant-core.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5F016D1173A001ADAF9 /* gvariant-core.c */; };
+		F670B60C16D1173A001ADAF9 /* gvariant-parser.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5F116D1173A001ADAF9 /* gvariant-parser.c */; };
+		F670B60D16D1173A001ADAF9 /* gvariant-serialiser.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5F216D1173A001ADAF9 /* gvariant-serialiser.c */; };
+		F670B60E16D1173A001ADAF9 /* gvariant.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5F316D1173A001ADAF9 /* gvariant.c */; };
+		F670B60F16D1173A001ADAF9 /* gvarianttype.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5F416D1173A001ADAF9 /* gvarianttype.c */; };
+		F670B61016D1173A001ADAF9 /* gvarianttypeinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5F516D1173A001ADAF9 /* gvarianttypeinfo.c */; };
+		F670B61116D1173A001ADAF9 /* gversion.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5F616D1173A001ADAF9 /* gversion.c */; };
+		F670B61216D1173A001ADAF9 /* gwakeup.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5F716D1173A001ADAF9 /* gwakeup.c */; };
+		F670B61416D1176C001ADAF9 /* glib-unix.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B61316D1176C001ADAF9 /* glib-unix.c */; };
+		F670B61616D11784001ADAF9 /* gthread-posix.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B61516D11784001ADAF9 /* gthread-posix.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F670B52D16D112FB001ADAF9 /* libglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F670B53616D11301001ADAF9 /* libgobject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgobject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F670B53E16D11307001ADAF9 /* libgmodule.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgmodule.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F670B54616D1130F001ADAF9 /* libgthread.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgthread.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F670B54E16D11314001ADAF9 /* libgio.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgio.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F670B55316D11359001ADAF9 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
+		F670B56A16D114EE001ADAF9 /* glibconfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = glibconfig.h; sourceTree = "<group>"; };
+		F670B56D16D115E9001ADAF9 /* gallocator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gallocator.c; sourceTree = "<group>"; };
+		F670B56E16D115E9001ADAF9 /* gallocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gallocator.h; sourceTree = "<group>"; };
+		F670B56F16D115E9001ADAF9 /* gcache.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gcache.c; sourceTree = "<group>"; };
+		F670B57016D115E9001ADAF9 /* gcache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gcache.h; sourceTree = "<group>"; };
+		F670B57116D115E9001ADAF9 /* gcompletion.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gcompletion.c; sourceTree = "<group>"; };
+		F670B57216D115E9001ADAF9 /* gcompletion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gcompletion.h; sourceTree = "<group>"; };
+		F670B57316D115E9001ADAF9 /* gmain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gmain.h; sourceTree = "<group>"; };
+		F670B57416D115E9001ADAF9 /* grel.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = grel.c; sourceTree = "<group>"; };
+		F670B57516D115E9001ADAF9 /* grel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = grel.h; sourceTree = "<group>"; };
+		F670B57616D115E9001ADAF9 /* gthread-deprecated.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "gthread-deprecated.c"; sourceTree = "<group>"; };
+		F670B57716D115E9001ADAF9 /* gthread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gthread.h; sourceTree = "<group>"; };
+		F670B57D16D11673001ADAF9 /* garray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = garray.c; path = glib/glib/garray.c; sourceTree = "<group>"; };
+		F670B57E16D11673001ADAF9 /* gasyncqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gasyncqueue.c; path = glib/glib/gasyncqueue.c; sourceTree = "<group>"; };
+		F670B57F16D11673001ADAF9 /* gatomic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gatomic.c; path = glib/glib/gatomic.c; sourceTree = "<group>"; };
+		F670B58016D11673001ADAF9 /* gbacktrace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gbacktrace.c; path = glib/glib/gbacktrace.c; sourceTree = "<group>"; };
+		F670B58116D11673001ADAF9 /* gbase64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gbase64.c; path = glib/glib/gbase64.c; sourceTree = "<group>"; };
+		F670B58216D11673001ADAF9 /* gbitlock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gbitlock.c; path = glib/glib/gbitlock.c; sourceTree = "<group>"; };
+		F670B58316D11673001ADAF9 /* gbookmarkfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gbookmarkfile.c; path = glib/glib/gbookmarkfile.c; sourceTree = "<group>"; };
+		F670B58416D11673001ADAF9 /* gbytes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gbytes.c; path = glib/glib/gbytes.c; sourceTree = "<group>"; };
+		F670B58516D11673001ADAF9 /* gcharset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gcharset.c; path = glib/glib/gcharset.c; sourceTree = "<group>"; };
+		F670B58616D11673001ADAF9 /* gchecksum.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gchecksum.c; path = glib/glib/gchecksum.c; sourceTree = "<group>"; };
+		F670B58716D11673001ADAF9 /* gconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gconvert.c; path = glib/glib/gconvert.c; sourceTree = "<group>"; };
+		F670B58816D11673001ADAF9 /* gdataset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gdataset.c; path = glib/glib/gdataset.c; sourceTree = "<group>"; };
+		F670B58916D11673001ADAF9 /* gdate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gdate.c; path = glib/glib/gdate.c; sourceTree = "<group>"; };
+		F670B58A16D11673001ADAF9 /* gdatetime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gdatetime.c; path = glib/glib/gdatetime.c; sourceTree = "<group>"; };
+		F670B58B16D11673001ADAF9 /* gdir.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gdir.c; path = glib/glib/gdir.c; sourceTree = "<group>"; };
+		F670B58C16D11673001ADAF9 /* genviron.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = genviron.c; path = glib/glib/genviron.c; sourceTree = "<group>"; };
+		F670B58D16D11673001ADAF9 /* gerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gerror.c; path = glib/glib/gerror.c; sourceTree = "<group>"; };
+		F670B58E16D11673001ADAF9 /* gfileutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gfileutils.c; path = glib/glib/gfileutils.c; sourceTree = "<group>"; };
+		F670B58F16D11673001ADAF9 /* ggettext.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ggettext.c; path = glib/glib/ggettext.c; sourceTree = "<group>"; };
+		F670B59016D11673001ADAF9 /* ghash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ghash.c; path = glib/glib/ghash.c; sourceTree = "<group>"; };
+		F670B59116D11673001ADAF9 /* ghmac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ghmac.c; path = glib/glib/ghmac.c; sourceTree = "<group>"; };
+		F670B59216D11673001ADAF9 /* ghook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ghook.c; path = glib/glib/ghook.c; sourceTree = "<group>"; };
+		F670B59316D11673001ADAF9 /* ghostutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ghostutils.c; path = glib/glib/ghostutils.c; sourceTree = "<group>"; };
+		F670B59416D11673001ADAF9 /* giochannel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = giochannel.c; path = glib/glib/giochannel.c; sourceTree = "<group>"; };
+		F670B5AD16D116A0001ADAF9 /* gkeyfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gkeyfile.c; path = glib/glib/gkeyfile.c; sourceTree = "<group>"; };
+		F670B5AE16D116A0001ADAF9 /* glib-init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "glib-init.c"; path = "glib/glib/glib-init.c"; sourceTree = "<group>"; };
+		F670B5AF16D116A0001ADAF9 /* glib-private.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "glib-private.c"; path = "glib/glib/glib-private.c"; sourceTree = "<group>"; };
+		F670B5B316D116C5001ADAF9 /* glist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glist.c; path = glib/glib/glist.c; sourceTree = "<group>"; };
+		F670B5B416D116C5001ADAF9 /* gmain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gmain.c; path = glib/glib/gmain.c; sourceTree = "<group>"; };
+		F670B5B516D116C5001ADAF9 /* gmappedfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gmappedfile.c; path = glib/glib/gmappedfile.c; sourceTree = "<group>"; };
+		F670B5B616D116C5001ADAF9 /* gmarkup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gmarkup.c; path = glib/glib/gmarkup.c; sourceTree = "<group>"; };
+		F670B5B716D116C5001ADAF9 /* gmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gmem.c; path = glib/glib/gmem.c; sourceTree = "<group>"; };
+		F670B5B816D116C5001ADAF9 /* gmessages.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gmessages.c; path = glib/glib/gmessages.c; sourceTree = "<group>"; };
+		F670B5B916D116C5001ADAF9 /* gnode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gnode.c; path = glib/glib/gnode.c; sourceTree = "<group>"; };
+		F670B5BA16D116C5001ADAF9 /* goption.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = goption.c; path = glib/glib/goption.c; sourceTree = "<group>"; };
+		F670B5BB16D116C5001ADAF9 /* gpattern.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gpattern.c; path = glib/glib/gpattern.c; sourceTree = "<group>"; };
+		F670B5BC16D116C5001ADAF9 /* gpoll.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gpoll.c; path = glib/glib/gpoll.c; sourceTree = "<group>"; };
+		F670B5BD16D116C5001ADAF9 /* gprimes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gprimes.c; path = glib/glib/gprimes.c; sourceTree = "<group>"; };
+		F670B5C916D116DD001ADAF9 /* gqsort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gqsort.c; path = glib/glib/gqsort.c; sourceTree = "<group>"; };
+		F670B5CA16D116DD001ADAF9 /* gquark.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gquark.c; path = glib/glib/gquark.c; sourceTree = "<group>"; };
+		F670B5CB16D116DD001ADAF9 /* gqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gqueue.c; path = glib/glib/gqueue.c; sourceTree = "<group>"; };
+		F670B5CC16D116DD001ADAF9 /* grand.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = grand.c; path = glib/glib/grand.c; sourceTree = "<group>"; };
+		F670B5CD16D116DD001ADAF9 /* gregex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gregex.c; path = glib/glib/gregex.c; sourceTree = "<group>"; };
+		F670B5CE16D116DD001ADAF9 /* gscanner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gscanner.c; path = glib/glib/gscanner.c; sourceTree = "<group>"; };
+		F670B5CF16D116DD001ADAF9 /* gsequence.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gsequence.c; path = glib/glib/gsequence.c; sourceTree = "<group>"; };
+		F670B5D016D116DD001ADAF9 /* gshell.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gshell.c; path = glib/glib/gshell.c; sourceTree = "<group>"; };
+		F670B5D116D116DD001ADAF9 /* gslice.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gslice.c; path = glib/glib/gslice.c; sourceTree = "<group>"; };
+		F670B5D216D116DD001ADAF9 /* gslist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gslist.c; path = glib/glib/gslist.c; sourceTree = "<group>"; };
+		F670B5DD16D1173A001ADAF9 /* gprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gprintf.c; path = glib/glib/gprintf.c; sourceTree = "<group>"; };
+		F670B5DE16D1173A001ADAF9 /* gstdio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstdio.c; path = glib/glib/gstdio.c; sourceTree = "<group>"; };
+		F670B5DF16D1173A001ADAF9 /* gstrfuncs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstrfuncs.c; path = glib/glib/gstrfuncs.c; sourceTree = "<group>"; };
+		F670B5E016D1173A001ADAF9 /* gstring.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstring.c; path = glib/glib/gstring.c; sourceTree = "<group>"; };
+		F670B5E116D1173A001ADAF9 /* gstringchunk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstringchunk.c; path = glib/glib/gstringchunk.c; sourceTree = "<group>"; };
+		F670B5E216D1173A001ADAF9 /* gtestutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gtestutils.c; path = glib/glib/gtestutils.c; sourceTree = "<group>"; };
+		F670B5E316D1173A001ADAF9 /* gthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gthread.c; path = glib/glib/gthread.c; sourceTree = "<group>"; };
+		F670B5E416D1173A001ADAF9 /* gthreadpool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gthreadpool.c; path = glib/glib/gthreadpool.c; sourceTree = "<group>"; };
+		F670B5E516D1173A001ADAF9 /* gtimer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gtimer.c; path = glib/glib/gtimer.c; sourceTree = "<group>"; };
+		F670B5E616D1173A001ADAF9 /* gtimezone.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gtimezone.c; path = glib/glib/gtimezone.c; sourceTree = "<group>"; };
+		F670B5E716D1173A001ADAF9 /* gtrashstack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gtrashstack.c; path = glib/glib/gtrashstack.c; sourceTree = "<group>"; };
+		F670B5E816D1173A001ADAF9 /* gtree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gtree.c; path = glib/glib/gtree.c; sourceTree = "<group>"; };
+		F670B5E916D1173A001ADAF9 /* gunibreak.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gunibreak.c; path = glib/glib/gunibreak.c; sourceTree = "<group>"; };
+		F670B5EA16D1173A001ADAF9 /* gunicollate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gunicollate.c; path = glib/glib/gunicollate.c; sourceTree = "<group>"; };
+		F670B5EB16D1173A001ADAF9 /* gunidecomp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gunidecomp.c; path = glib/glib/gunidecomp.c; sourceTree = "<group>"; };
+		F670B5EC16D1173A001ADAF9 /* guniprop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = guniprop.c; path = glib/glib/guniprop.c; sourceTree = "<group>"; };
+		F670B5ED16D1173A001ADAF9 /* gurifuncs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gurifuncs.c; path = glib/glib/gurifuncs.c; sourceTree = "<group>"; };
+		F670B5EE16D1173A001ADAF9 /* gutf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gutf8.c; path = glib/glib/gutf8.c; sourceTree = "<group>"; };
+		F670B5EF16D1173A001ADAF9 /* gutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gutils.c; path = glib/glib/gutils.c; sourceTree = "<group>"; };
+		F670B5F016D1173A001ADAF9 /* gvariant-core.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "gvariant-core.c"; path = "glib/glib/gvariant-core.c"; sourceTree = "<group>"; };
+		F670B5F116D1173A001ADAF9 /* gvariant-parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "gvariant-parser.c"; path = "glib/glib/gvariant-parser.c"; sourceTree = "<group>"; };
+		F670B5F216D1173A001ADAF9 /* gvariant-serialiser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "gvariant-serialiser.c"; path = "glib/glib/gvariant-serialiser.c"; sourceTree = "<group>"; };
+		F670B5F316D1173A001ADAF9 /* gvariant.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gvariant.c; path = glib/glib/gvariant.c; sourceTree = "<group>"; };
+		F670B5F416D1173A001ADAF9 /* gvarianttype.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gvarianttype.c; path = glib/glib/gvarianttype.c; sourceTree = "<group>"; };
+		F670B5F516D1173A001ADAF9 /* gvarianttypeinfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gvarianttypeinfo.c; path = glib/glib/gvarianttypeinfo.c; sourceTree = "<group>"; };
+		F670B5F616D1173A001ADAF9 /* gversion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gversion.c; path = glib/glib/gversion.c; sourceTree = "<group>"; };
+		F670B5F716D1173A001ADAF9 /* gwakeup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gwakeup.c; path = glib/glib/gwakeup.c; sourceTree = "<group>"; };
+		F670B61316D1176C001ADAF9 /* glib-unix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "glib-unix.c"; path = "glib/glib/glib-unix.c"; sourceTree = "<group>"; };
+		F670B61516D11784001ADAF9 /* gthread-posix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "gthread-posix.c"; path = "glib/glib/gthread-posix.c"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F670B52A16D112FB001ADAF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B53316D11301001ADAF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B53B16D11307001ADAF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B54316D1130F001ADAF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B54B16D11314001ADAF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F670B51916D10E17001ADAF9 = {
+			isa = PBXGroup;
+			children = (
+				F670B55216D1134A001ADAF9 /* generated */,
+				F670B55416D1139B001ADAF9 /* glib */,
+				F670B55816D113BE001ADAF9 /* gobject */,
+				F670B55516D113AF001ADAF9 /* gmodule */,
+				F670B55616D113B3001ADAF9 /* gthread */,
+				F670B55716D113B7001ADAF9 /* gio */,
+				F670B55916D113DD001ADAF9 /* Frameworks */,
+				F670B52E16D112FB001ADAF9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F670B52E16D112FB001ADAF9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F670B52D16D112FB001ADAF9 /* libglib.dylib */,
+				F670B53616D11301001ADAF9 /* libgobject.dylib */,
+				F670B53E16D11307001ADAF9 /* libgmodule.dylib */,
+				F670B54616D1130F001ADAF9 /* libgthread.dylib */,
+				F670B54E16D11314001ADAF9 /* libgio.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F670B55216D1134A001ADAF9 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				F670B55316D11359001ADAF9 /* config.h */,
+				F670B56916D114EE001ADAF9 /* glib */,
+			);
+			name = generated;
+			sourceTree = "<group>";
+		};
+		F670B55416D1139B001ADAF9 /* glib */ = {
+			isa = PBXGroup;
+			children = (
+				F670B56C16D115E9001ADAF9 /* deprecated */,
+				F670B57D16D11673001ADAF9 /* garray.c */,
+				F670B57E16D11673001ADAF9 /* gasyncqueue.c */,
+				F670B57F16D11673001ADAF9 /* gatomic.c */,
+				F670B58016D11673001ADAF9 /* gbacktrace.c */,
+				F670B58116D11673001ADAF9 /* gbase64.c */,
+				F670B58216D11673001ADAF9 /* gbitlock.c */,
+				F670B58316D11673001ADAF9 /* gbookmarkfile.c */,
+				F670B58416D11673001ADAF9 /* gbytes.c */,
+				F670B58516D11673001ADAF9 /* gcharset.c */,
+				F670B58616D11673001ADAF9 /* gchecksum.c */,
+				F670B58716D11673001ADAF9 /* gconvert.c */,
+				F670B58816D11673001ADAF9 /* gdataset.c */,
+				F670B58916D11673001ADAF9 /* gdate.c */,
+				F670B58A16D11673001ADAF9 /* gdatetime.c */,
+				F670B58B16D11673001ADAF9 /* gdir.c */,
+				F670B58C16D11673001ADAF9 /* genviron.c */,
+				F670B58D16D11673001ADAF9 /* gerror.c */,
+				F670B58E16D11673001ADAF9 /* gfileutils.c */,
+				F670B58F16D11673001ADAF9 /* ggettext.c */,
+				F670B59016D11673001ADAF9 /* ghash.c */,
+				F670B59116D11673001ADAF9 /* ghmac.c */,
+				F670B59216D11673001ADAF9 /* ghook.c */,
+				F670B59316D11673001ADAF9 /* ghostutils.c */,
+				F670B59416D11673001ADAF9 /* giochannel.c */,
+				F670B5AD16D116A0001ADAF9 /* gkeyfile.c */,
+				F670B5AE16D116A0001ADAF9 /* glib-init.c */,
+				F670B5AF16D116A0001ADAF9 /* glib-private.c */,
+				F670B61316D1176C001ADAF9 /* glib-unix.c */,
+				F670B5B316D116C5001ADAF9 /* glist.c */,
+				F670B5B416D116C5001ADAF9 /* gmain.c */,
+				F670B5B516D116C5001ADAF9 /* gmappedfile.c */,
+				F670B5B616D116C5001ADAF9 /* gmarkup.c */,
+				F670B5B716D116C5001ADAF9 /* gmem.c */,
+				F670B5B816D116C5001ADAF9 /* gmessages.c */,
+				F670B5B916D116C5001ADAF9 /* gnode.c */,
+				F670B5BA16D116C5001ADAF9 /* goption.c */,
+				F670B5BB16D116C5001ADAF9 /* gpattern.c */,
+				F670B5BC16D116C5001ADAF9 /* gpoll.c */,
+				F670B5BD16D116C5001ADAF9 /* gprimes.c */,
+				F670B5DD16D1173A001ADAF9 /* gprintf.c */,
+				F670B5C916D116DD001ADAF9 /* gqsort.c */,
+				F670B5CA16D116DD001ADAF9 /* gquark.c */,
+				F670B5CB16D116DD001ADAF9 /* gqueue.c */,
+				F670B5CC16D116DD001ADAF9 /* grand.c */,
+				F670B5CD16D116DD001ADAF9 /* gregex.c */,
+				F670B5CE16D116DD001ADAF9 /* gscanner.c */,
+				F670B5CF16D116DD001ADAF9 /* gsequence.c */,
+				F670B5D016D116DD001ADAF9 /* gshell.c */,
+				F670B5D116D116DD001ADAF9 /* gslice.c */,
+				F670B5D216D116DD001ADAF9 /* gslist.c */,
+				F670B5DE16D1173A001ADAF9 /* gstdio.c */,
+				F670B5DF16D1173A001ADAF9 /* gstrfuncs.c */,
+				F670B5E016D1173A001ADAF9 /* gstring.c */,
+				F670B5E116D1173A001ADAF9 /* gstringchunk.c */,
+				F670B5E216D1173A001ADAF9 /* gtestutils.c */,
+				F670B61516D11784001ADAF9 /* gthread-posix.c */,
+				F670B5E316D1173A001ADAF9 /* gthread.c */,
+				F670B5E416D1173A001ADAF9 /* gthreadpool.c */,
+				F670B5E516D1173A001ADAF9 /* gtimer.c */,
+				F670B5E616D1173A001ADAF9 /* gtimezone.c */,
+				F670B5E716D1173A001ADAF9 /* gtrashstack.c */,
+				F670B5E816D1173A001ADAF9 /* gtree.c */,
+				F670B5E916D1173A001ADAF9 /* gunibreak.c */,
+				F670B5EA16D1173A001ADAF9 /* gunicollate.c */,
+				F670B5EB16D1173A001ADAF9 /* gunidecomp.c */,
+				F670B5EC16D1173A001ADAF9 /* guniprop.c */,
+				F670B5ED16D1173A001ADAF9 /* gurifuncs.c */,
+				F670B5EE16D1173A001ADAF9 /* gutf8.c */,
+				F670B5EF16D1173A001ADAF9 /* gutils.c */,
+				F670B5F016D1173A001ADAF9 /* gvariant-core.c */,
+				F670B5F116D1173A001ADAF9 /* gvariant-parser.c */,
+				F670B5F216D1173A001ADAF9 /* gvariant-serialiser.c */,
+				F670B5F316D1173A001ADAF9 /* gvariant.c */,
+				F670B5F416D1173A001ADAF9 /* gvarianttype.c */,
+				F670B5F516D1173A001ADAF9 /* gvarianttypeinfo.c */,
+				F670B5F616D1173A001ADAF9 /* gversion.c */,
+				F670B5F716D1173A001ADAF9 /* gwakeup.c */,
+			);
+			name = glib;
+			sourceTree = "<group>";
+		};
+		F670B55516D113AF001ADAF9 /* gmodule */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = gmodule;
+			sourceTree = "<group>";
+		};
+		F670B55616D113B3001ADAF9 /* gthread */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = gthread;
+			sourceTree = "<group>";
+		};
+		F670B55716D113B7001ADAF9 /* gio */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = gio;
+			sourceTree = "<group>";
+		};
+		F670B55816D113BE001ADAF9 /* gobject */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = gobject;
+			sourceTree = "<group>";
+		};
+		F670B55916D113DD001ADAF9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F670B56916D114EE001ADAF9 /* glib */ = {
+			isa = PBXGroup;
+			children = (
+				F670B56A16D114EE001ADAF9 /* glibconfig.h */,
+			);
+			name = glib;
+			path = generated/glib;
+			sourceTree = "<group>";
+		};
+		F670B56C16D115E9001ADAF9 /* deprecated */ = {
+			isa = PBXGroup;
+			children = (
+				F670B56D16D115E9001ADAF9 /* gallocator.c */,
+				F670B56F16D115E9001ADAF9 /* gcache.c */,
+				F670B57116D115E9001ADAF9 /* gcompletion.c */,
+				F670B57416D115E9001ADAF9 /* grel.c */,
+				F670B57616D115E9001ADAF9 /* gthread-deprecated.c */,
+				F670B56E16D115E9001ADAF9 /* gallocator.h */,
+				F670B57016D115E9001ADAF9 /* gcache.h */,
+				F670B57216D115E9001ADAF9 /* gcompletion.h */,
+				F670B57316D115E9001ADAF9 /* gmain.h */,
+				F670B57516D115E9001ADAF9 /* grel.h */,
+				F670B57716D115E9001ADAF9 /* gthread.h */,
+			);
+			name = deprecated;
+			path = glib/glib/deprecated;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F670B52B16D112FB001ADAF9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B53416D11301001ADAF9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B53C16D11307001ADAF9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B54416D1130F001ADAF9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B54C16D11314001ADAF9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		F670B52C16D112FB001ADAF9 /* glib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F670B52F16D112FB001ADAF9 /* Build configuration list for PBXNativeTarget "glib" */;
+			buildPhases = (
+				F670B52916D112FB001ADAF9 /* Sources */,
+				F670B52A16D112FB001ADAF9 /* Frameworks */,
+				F670B52B16D112FB001ADAF9 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = glib;
+			productName = glib;
+			productReference = F670B52D16D112FB001ADAF9 /* libglib.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F670B53516D11301001ADAF9 /* gobject */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F670B53716D11301001ADAF9 /* Build configuration list for PBXNativeTarget "gobject" */;
+			buildPhases = (
+				F670B53216D11301001ADAF9 /* Sources */,
+				F670B53316D11301001ADAF9 /* Frameworks */,
+				F670B53416D11301001ADAF9 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = gobject;
+			productName = gobject;
+			productReference = F670B53616D11301001ADAF9 /* libgobject.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F670B53D16D11307001ADAF9 /* gmodule */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F670B53F16D11307001ADAF9 /* Build configuration list for PBXNativeTarget "gmodule" */;
+			buildPhases = (
+				F670B53A16D11307001ADAF9 /* Sources */,
+				F670B53B16D11307001ADAF9 /* Frameworks */,
+				F670B53C16D11307001ADAF9 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = gmodule;
+			productName = gmodule;
+			productReference = F670B53E16D11307001ADAF9 /* libgmodule.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F670B54516D1130F001ADAF9 /* gthread */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F670B54716D1130F001ADAF9 /* Build configuration list for PBXNativeTarget "gthread" */;
+			buildPhases = (
+				F670B54216D1130F001ADAF9 /* Sources */,
+				F670B54316D1130F001ADAF9 /* Frameworks */,
+				F670B54416D1130F001ADAF9 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = gthread;
+			productName = gthread;
+			productReference = F670B54616D1130F001ADAF9 /* libgthread.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F670B54D16D11314001ADAF9 /* gio */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F670B54F16D11314001ADAF9 /* Build configuration list for PBXNativeTarget "gio" */;
+			buildPhases = (
+				F670B54A16D11314001ADAF9 /* Sources */,
+				F670B54B16D11314001ADAF9 /* Frameworks */,
+				F670B54C16D11314001ADAF9 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = gio;
+			productName = gio;
+			productReference = F670B54E16D11314001ADAF9 /* libgio.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F670B51A16D10E17001ADAF9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+			};
+			buildConfigurationList = F670B51D16D10E17001ADAF9 /* Build configuration list for PBXProject "GLib" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F670B51916D10E17001ADAF9;
+			productRefGroup = F670B52E16D112FB001ADAF9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F670B52C16D112FB001ADAF9 /* glib */,
+				F670B53516D11301001ADAF9 /* gobject */,
+				F670B53D16D11307001ADAF9 /* gmodule */,
+				F670B54516D1130F001ADAF9 /* gthread */,
+				F670B54D16D11314001ADAF9 /* gio */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F670B52916D112FB001ADAF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F670B57816D115EF001ADAF9 /* gallocator.c in Sources */,
+				F670B57916D115EF001ADAF9 /* gcache.c in Sources */,
+				F670B57A16D115EF001ADAF9 /* gcompletion.c in Sources */,
+				F670B57B16D115EF001ADAF9 /* grel.c in Sources */,
+				F670B57C16D115EF001ADAF9 /* gthread-deprecated.c in Sources */,
+				F670B59516D11673001ADAF9 /* garray.c in Sources */,
+				F670B59616D11673001ADAF9 /* gasyncqueue.c in Sources */,
+				F670B59716D11673001ADAF9 /* gatomic.c in Sources */,
+				F670B59816D11673001ADAF9 /* gbacktrace.c in Sources */,
+				F670B59916D11673001ADAF9 /* gbase64.c in Sources */,
+				F670B59A16D11673001ADAF9 /* gbitlock.c in Sources */,
+				F670B59B16D11673001ADAF9 /* gbookmarkfile.c in Sources */,
+				F670B59C16D11673001ADAF9 /* gbytes.c in Sources */,
+				F670B59D16D11673001ADAF9 /* gcharset.c in Sources */,
+				F670B59E16D11673001ADAF9 /* gchecksum.c in Sources */,
+				F670B59F16D11673001ADAF9 /* gconvert.c in Sources */,
+				F670B5A016D11673001ADAF9 /* gdataset.c in Sources */,
+				F670B5A116D11673001ADAF9 /* gdate.c in Sources */,
+				F670B5A216D11673001ADAF9 /* gdatetime.c in Sources */,
+				F670B5A316D11673001ADAF9 /* gdir.c in Sources */,
+				F670B5A416D11673001ADAF9 /* genviron.c in Sources */,
+				F670B5A516D11673001ADAF9 /* gerror.c in Sources */,
+				F670B5A616D11673001ADAF9 /* gfileutils.c in Sources */,
+				F670B5A716D11673001ADAF9 /* ggettext.c in Sources */,
+				F670B5A816D11673001ADAF9 /* ghash.c in Sources */,
+				F670B5A916D11673001ADAF9 /* ghmac.c in Sources */,
+				F670B5AA16D11673001ADAF9 /* ghook.c in Sources */,
+				F670B5AB16D11673001ADAF9 /* ghostutils.c in Sources */,
+				F670B5AC16D11673001ADAF9 /* giochannel.c in Sources */,
+				F670B5B016D116A0001ADAF9 /* gkeyfile.c in Sources */,
+				F670B5B116D116A0001ADAF9 /* glib-init.c in Sources */,
+				F670B5B216D116A0001ADAF9 /* glib-private.c in Sources */,
+				F670B5BE16D116C5001ADAF9 /* glist.c in Sources */,
+				F670B5BF16D116C5001ADAF9 /* gmain.c in Sources */,
+				F670B5C016D116C5001ADAF9 /* gmappedfile.c in Sources */,
+				F670B5C116D116C5001ADAF9 /* gmarkup.c in Sources */,
+				F670B5C216D116C5001ADAF9 /* gmem.c in Sources */,
+				F670B5C316D116C5001ADAF9 /* gmessages.c in Sources */,
+				F670B5C416D116C5001ADAF9 /* gnode.c in Sources */,
+				F670B5C516D116C5001ADAF9 /* goption.c in Sources */,
+				F670B5C616D116C5001ADAF9 /* gpattern.c in Sources */,
+				F670B5C716D116C5001ADAF9 /* gpoll.c in Sources */,
+				F670B5C816D116C5001ADAF9 /* gprimes.c in Sources */,
+				F670B5D316D116DD001ADAF9 /* gqsort.c in Sources */,
+				F670B5D416D116DD001ADAF9 /* gquark.c in Sources */,
+				F670B5D516D116DD001ADAF9 /* gqueue.c in Sources */,
+				F670B5D616D116DD001ADAF9 /* grand.c in Sources */,
+				F670B5D716D116DD001ADAF9 /* gregex.c in Sources */,
+				F670B5D816D116DD001ADAF9 /* gscanner.c in Sources */,
+				F670B5D916D116DD001ADAF9 /* gsequence.c in Sources */,
+				F670B5DA16D116DD001ADAF9 /* gshell.c in Sources */,
+				F670B5DB16D116DD001ADAF9 /* gslice.c in Sources */,
+				F670B5DC16D116DD001ADAF9 /* gslist.c in Sources */,
+				F670B5F816D1173A001ADAF9 /* gprintf.c in Sources */,
+				F670B5F916D1173A001ADAF9 /* gstdio.c in Sources */,
+				F670B5FA16D1173A001ADAF9 /* gstrfuncs.c in Sources */,
+				F670B5FB16D1173A001ADAF9 /* gstring.c in Sources */,
+				F670B5FC16D1173A001ADAF9 /* gstringchunk.c in Sources */,
+				F670B5FD16D1173A001ADAF9 /* gtestutils.c in Sources */,
+				F670B5FE16D1173A001ADAF9 /* gthread.c in Sources */,
+				F670B5FF16D1173A001ADAF9 /* gthreadpool.c in Sources */,
+				F670B60016D1173A001ADAF9 /* gtimer.c in Sources */,
+				F670B60116D1173A001ADAF9 /* gtimezone.c in Sources */,
+				F670B60216D1173A001ADAF9 /* gtrashstack.c in Sources */,
+				F670B60316D1173A001ADAF9 /* gtree.c in Sources */,
+				F670B60416D1173A001ADAF9 /* gunibreak.c in Sources */,
+				F670B60516D1173A001ADAF9 /* gunicollate.c in Sources */,
+				F670B60616D1173A001ADAF9 /* gunidecomp.c in Sources */,
+				F670B60716D1173A001ADAF9 /* guniprop.c in Sources */,
+				F670B60816D1173A001ADAF9 /* gurifuncs.c in Sources */,
+				F670B60916D1173A001ADAF9 /* gutf8.c in Sources */,
+				F670B60A16D1173A001ADAF9 /* gutils.c in Sources */,
+				F670B60B16D1173A001ADAF9 /* gvariant-core.c in Sources */,
+				F670B60C16D1173A001ADAF9 /* gvariant-parser.c in Sources */,
+				F670B60D16D1173A001ADAF9 /* gvariant-serialiser.c in Sources */,
+				F670B60E16D1173A001ADAF9 /* gvariant.c in Sources */,
+				F670B60F16D1173A001ADAF9 /* gvarianttype.c in Sources */,
+				F670B61016D1173A001ADAF9 /* gvarianttypeinfo.c in Sources */,
+				F670B61116D1173A001ADAF9 /* gversion.c in Sources */,
+				F670B61216D1173A001ADAF9 /* gwakeup.c in Sources */,
+				F670B61416D1176C001ADAF9 /* glib-unix.c in Sources */,
+				F670B61616D11784001ADAF9 /* gthread-posix.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B53216D11301001ADAF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B53A16D11307001ADAF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B54216D1130F001ADAF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F670B54A16D11314001ADAF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F670B51E16D10E17001ADAF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"G_LOG_DOMAIN=\\\"g_log_domain_glib\\\"",
+					G_DISABLE_CAST_CHECKS,
+					G_DISABLE_DEPRECATED,
+					GLIB_COMPILATION,
+				);
+				HEADER_SEARCH_PATHS = (
+					generated,
+					glib,
+				);
+			};
+			name = Debug;
+		};
+		F670B51F16D10E17001ADAF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"G_LOG_DOMAIN=\\\"g_log_domain_glib\\\"",
+					G_DISABLE_CAST_CHECKS,
+					G_DISABLE_DEPRECATED,
+					GLIB_COMPILATION,
+				);
+				HEADER_SEARCH_PATHS = (
+					generated,
+					glib,
+				);
+			};
+			name = Release;
+		};
+		F670B53016D112FB001ADAF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					PCRE_STATIC,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					generated/glib,
+					glib/glib,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/P1stream-bwmfazqskavdvccshkaytijzhbne/Build/Products/Debug\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F670B53116D112FB001ADAF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					PCRE_STATIC,
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					generated/glib,
+					glib/glib,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/P1stream-bwmfazqskavdvccshkaytijzhbne/Build/Products/Debug\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F670B53816D11301001ADAF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F670B53916D11301001ADAF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F670B54016D11307001ADAF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F670B54116D11307001ADAF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F670B54816D1130F001ADAF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F670B54916D1130F001ADAF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F670B55016D11314001ADAF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F670B55116D11314001ADAF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F670B51D16D10E17001ADAF9 /* Build configuration list for PBXProject "GLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F670B51E16D10E17001ADAF9 /* Debug */,
+				F670B51F16D10E17001ADAF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F670B52F16D112FB001ADAF9 /* Build configuration list for PBXNativeTarget "glib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F670B53016D112FB001ADAF9 /* Debug */,
+				F670B53116D112FB001ADAF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		F670B53716D11301001ADAF9 /* Build configuration list for PBXNativeTarget "gobject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F670B53816D11301001ADAF9 /* Debug */,
+				F670B53916D11301001ADAF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		F670B53F16D11307001ADAF9 /* Build configuration list for PBXNativeTarget "gmodule" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F670B54016D11307001ADAF9 /* Debug */,
+				F670B54116D11307001ADAF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		F670B54716D1130F001ADAF9 /* Build configuration list for PBXNativeTarget "gthread" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F670B54816D1130F001ADAF9 /* Debug */,
+				F670B54916D1130F001ADAF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		F670B54F16D11314001ADAF9 /* Build configuration list for PBXNativeTarget "gio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F670B55016D11314001ADAF9 /* Debug */,
+				F670B55116D11314001ADAF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F670B51A16D10E17001ADAF9 /* Project object */;
+}

@@ -4,3 +4,15 @@
 [submodule "GStreamer/gst-plugins-base"]
 	path = GStreamer/gst-plugins-base
 	url = git://anongit.freedesktop.org/gstreamer/gst-plugins-base
+[submodule "libintl/gettext"]
+	path = libintl/gettext
+	url = git://git.savannah.gnu.org/gettext.git
+[submodule "ORC/orc"]
+	path = ORC/orc
+	url = git://code.entropywave.com/git/orc.git
+[submodule "libffi/libffi"]
+	path = libffi/libffi
+	url = git://github.com/atgreen/libffi.git
+[submodule "GLib/glib"]
+	path = GLib/glib
+	url = git://git.gnome.org/glib
