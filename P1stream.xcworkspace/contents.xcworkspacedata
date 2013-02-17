@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "container:libintl/libintl.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "container:libffi/libffi.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "container:GLib/GLib.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "container:ORC/ORC.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "container:P1stream/P1stream.xcodeproj">
+   </FileRef>
+</Workspace>

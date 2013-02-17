@@ -36,8 +36,6 @@
 		F6A0B2F616D0E3910023B9B2 /* threadlib.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B2D216D0E27D0023B9B2 /* threadlib.c */; };
 		F6A0B2F716D0E3910023B9B2 /* version.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B2D916D0E27D0023B9B2 /* version.c */; };
 		F6A0B2F916D0E5010023B9B2 /* localename.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B2F816D0E5010023B9B2 /* localename.c */; };
-		F6A0B2FE16D0E5A80023B9B2 /* libintl.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B2FD16D0E5210023B9B2 /* libintl.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6A0B2FF16D0E5AC0023B9B2 /* libgnuintl.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B2FC16D0E5210023B9B2 /* libgnuintl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F6A0B30616D0E8350023B9B2 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A0B30516D0E8350023B9B2 /* libiconv.dylib */; };
 		F6A0B30816D0E83C0023B9B2 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A0B30716D0E83C0023B9B2 /* CoreFoundation.framework */; };
 		F6A0B30916D0E87B0023B9B2 /* printf-args.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B2C916D0E27D0023B9B2 /* printf-args.c */; };
@@ -236,18 +234,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		F6A0B2A116D0E26E0023B9B2 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F6A0B2FF16D0E5AC0023B9B2 /* libgnuintl.h in Headers */,
-				F6A0B2FE16D0E5A80023B9B2 /* libintl.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		F6A0B2A216D0E26E0023B9B2 /* intl */ = {
 			isa = PBXNativeTarget;
@@ -255,7 +241,6 @@
 			buildPhases = (
 				F6A0B29F16D0E26E0023B9B2 /* Sources */,
 				F6A0B2A016D0E26E0023B9B2 /* Frameworks */,
-				F6A0B2A116D0E26E0023B9B2 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -379,6 +364,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = "generated/gettext-runtime";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -416,6 +402,7 @@
 					HAVE_CONFIG_H,
 				);
 				HEADER_SEARCH_PATHS = "generated/gettext-runtime";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

@@ -12,12 +12,10 @@
 		F6A0B3B916D0F8490023B9B2 /* prep_cif.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B3B416D0F8490023B9B2 /* prep_cif.c */; };
 		F6A0B3BA16D0F8490023B9B2 /* raw_api.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B3B516D0F8490023B9B2 /* raw_api.c */; };
 		F6A0B3BB16D0F8490023B9B2 /* types.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B3B616D0F8490023B9B2 /* types.c */; };
-		F6A0B3BC16D0F8600023B9B2 /* ffi.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B39E16D0F7D70023B9B2 /* ffi.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F6A0B3C216D0F8FB0023B9B2 /* darwin.S in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B3BE16D0F8FB0023B9B2 /* darwin.S */; };
 		F6A0B3C316D0F8FB0023B9B2 /* darwin64.S in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B3BF16D0F8FB0023B9B2 /* darwin64.S */; };
 		F6A0B3C416D0F8FB0023B9B2 /* ffi.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B3C016D0F8FB0023B9B2 /* ffi.c */; };
 		F6A0B3C516D0F8FB0023B9B2 /* ffi64.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B3C116D0F8FB0023B9B2 /* ffi64.c */; };
-		F6A0B3C716D0F98D0023B9B2 /* ffitarget.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0B3C616D0F9080023B9B2 /* ffitarget.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -126,18 +124,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		F6A0B3AB16D0F8420023B9B2 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F6A0B3BC16D0F8600023B9B2 /* ffi.h in Headers */,
-				F6A0B3C716D0F98D0023B9B2 /* ffitarget.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		F6A0B3AC16D0F8420023B9B2 /* ffi */ = {
 			isa = PBXNativeTarget;
@@ -145,7 +131,6 @@
 			buildPhases = (
 				F6A0B3A916D0F8420023B9B2 /* Sources */,
 				F6A0B3AA16D0F8420023B9B2 /* Frameworks */,
-				F6A0B3AB16D0F8420023B9B2 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -240,6 +225,7 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -260,6 +246,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
