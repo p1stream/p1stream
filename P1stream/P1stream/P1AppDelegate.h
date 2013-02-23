@@ -1,5 +1,12 @@
-@interface P1AppDelegate : NSObject <NSApplicationDelegate>
+#import "P1GPreview.h"
+#import "P1GPipeline.h"
 
-@property (weak) IBOutlet NSView *toplevel;
+
+@interface P1AppDelegate : NSObject <NSApplicationDelegate>
+{
+    P1GPipeline *pipeline;
+}
+
+@property (weak) IBOutlet P1GPreview *previewView;
 
 @end
