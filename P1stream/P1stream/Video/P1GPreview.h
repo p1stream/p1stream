@@ -32,6 +32,7 @@ GType p1g_preview_sink_get_type();
 @interface P1GPreview : NSView
 {
     CGColorSpaceRef colorspace;
+    NSLayoutConstraint *videoConstraint;
 
     struct P1GPreviewInfo {
         CGBitmapInfo bitmapInfo;
@@ -46,6 +47,10 @@ GType p1g_preview_sink_get_type();
 @property (nonatomic, readonly) P1GPreviewSink *element;
 
 - (struct P1GPreviewInfo *)infoRef;
+
+- (void)updateVideoConstraint;
+- (void)clearVideoConstraint;
+
 - (void)setBuffer:(GstBuffer *)buffer;
 
 @end

@@ -89,6 +89,10 @@ static gboolean p1g_preview_sink_set_caps(GstBaseSink *basesink, GstCaps *caps)
     else
         return FALSE;
 
+    [view performSelectorOnMainThread:@selector(updateVideoConstraint)
+                           withObject:nil
+                        waitUntilDone:TRUE];
+
     return TRUE;
 }
 
@@ -111,8 +115,13 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
     res = GST_ELEMENT_CLASS(parent_class)->change_state(element, transition);
 
     switch (transition) {
-        case GST_STATE_CHANGE_READY_TO_NULL:
+        case GST_STATE_CHANGE_PAUSED_TO_READY:
             view.buffer = NULL;
+            [view performSelectorOnMainThread:@selector(clearVideoConstraint)
+                                   withObject:nil
+                                waitUntilDone:TRUE];
+            break;
+        case GST_STATE_CHANGE_READY_TO_NULL:
             CFRelease(self->viewRef);
             break;
         default:
@@ -161,6 +170,29 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
 - (struct P1GPreviewInfo *)infoRef
 {
     return &info;
+}
+
+- (void)updateVideoConstraint
+{
+    [self clearVideoConstraint];
+
+    CGFloat aspect = (CGFloat)info.width / (CGFloat)info.height;
+    videoConstraint = [NSLayoutConstraint constraintWithItem:self
+                                                   attribute:NSLayoutAttributeWidth
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:self
+                                                   attribute:NSLayoutAttributeHeight
+                                                  multiplier:aspect
+                                                    constant:0];
+    [self addConstraint:videoConstraint];
+}
+
+- (void)clearVideoConstraint
+{
+    if (videoConstraint) {
+        [self removeConstraint:videoConstraint];
+        videoConstraint = nil;
+    }
 }
 
 - (void)setBuffer:(GstBuffer *)buffer
