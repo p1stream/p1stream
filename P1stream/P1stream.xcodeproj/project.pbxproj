@@ -30,6 +30,7 @@
 		F60E753616D1730300148F06 /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E752816D16FBB00148F06 /* libgstbase.dylib */; };
 		F60F33DC16A08ACB0087DB40 /* P1AudioMixer.m in Sources */ = {isa = PBXBuildFile; fileRef = F60F33DB16A08ACB0087DB40 /* P1AudioMixer.m */; };
 		F64CD43216BB0B01001B1344 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F68E7546169C9F27002FD6E6 /* CoreGraphics.framework */; };
+		F6579A4C16D91E6C00423E51 /* P1DummyShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = F6579A4B16D91E6C00423E51 /* P1DummyShapeView.m */; };
 		F66518CA16D2C8FF00A988DE /* P1GMainLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = F66518C916D2C8FF00A988DE /* P1GMainLoop.m */; };
 		F66518CD16D2E0CE00A988DE /* P1GPipeline.m in Sources */ = {isa = PBXBuildFile; fileRef = F66518CC16D2E0CE00A988DE /* P1GPipeline.m */; };
 		F665FCAD16BD4EA400E64233 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F665FCAC16BD4EA400E64233 /* CoreAudio.framework */; };
@@ -45,6 +46,7 @@
 		F6BEA4B216A20B4100F6DEC1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6BEA4B116A20B4100F6DEC1 /* OpenGL.framework */; };
 		F6CE70C016AF10F40005DD3D /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6CE70BF16AF10F40005DD3D /* IOSurface.framework */; };
 		F6D475D616A2DC54003BD4E1 /* P1Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D475D516A2DC54003BD4E1 /* P1Utils.m */; };
+		F6D7E26C16D8F6E0000FDBE9 /* P1MainWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D7E26B16D8F6E0000FDBE9 /* P1MainWindow.m */; };
 		F6D94168169CCEBD002C8802 /* P1InputAudioSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D94167169CCEBD002C8802 /* P1InputAudioSource.m */; };
 		F6D9416B169CCECD002C8802 /* P1DesktopVideoSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D9416A169CCECD002C8802 /* P1DesktopVideoSource.m */; };
 		F6D9416E169CCF80002C8802 /* P1VideoCanvas.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D9416D169CCF80002C8802 /* P1VideoCanvas.m */; };
@@ -102,6 +104,8 @@
 		F60E753016D16FCC00148F06 /* libgstvideoconvert.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstvideoconvert.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstvideoconvert.dylib"; sourceTree = "<absolute>"; };
 		F60F33DA16A08ACB0087DB40 /* P1AudioMixer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1AudioMixer.h; sourceTree = "<group>"; };
 		F60F33DB16A08ACB0087DB40 /* P1AudioMixer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1AudioMixer.m; sourceTree = "<group>"; };
+		F6579A4A16D91E6C00423E51 /* P1DummyShapeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1DummyShapeView.h; sourceTree = "<group>"; };
+		F6579A4B16D91E6C00423E51 /* P1DummyShapeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1DummyShapeView.m; sourceTree = "<group>"; };
 		F66518C816D2C8FF00A988DE /* P1GMainLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1GMainLoop.h; sourceTree = "<group>"; };
 		F66518C916D2C8FF00A988DE /* P1GMainLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1GMainLoop.m; sourceTree = "<group>"; };
 		F66518CB16D2E0CE00A988DE /* P1GPipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1GPipeline.h; sourceTree = "<group>"; };
@@ -126,6 +130,8 @@
 		F6CE70BF16AF10F40005DD3D /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		F6D475D416A2DC54003BD4E1 /* P1Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1Utils.h; sourceTree = "<group>"; };
 		F6D475D516A2DC54003BD4E1 /* P1Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1Utils.m; sourceTree = "<group>"; };
+		F6D7E26A16D8F6E0000FDBE9 /* P1MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1MainWindow.h; sourceTree = "<group>"; };
+		F6D7E26B16D8F6E0000FDBE9 /* P1MainWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1MainWindow.m; sourceTree = "<group>"; };
 		F6D94166169CCEBD002C8802 /* P1InputAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1InputAudioSource.h; sourceTree = "<group>"; };
 		F6D94167169CCEBD002C8802 /* P1InputAudioSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1InputAudioSource.m; sourceTree = "<group>"; };
 		F6D94169169CCECD002C8802 /* P1DesktopVideoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1DesktopVideoSource.h; sourceTree = "<group>"; };
@@ -213,6 +219,10 @@
 				F66518C916D2C8FF00A988DE /* P1GMainLoop.m */,
 				F66518CB16D2E0CE00A988DE /* P1GPipeline.h */,
 				F66518CC16D2E0CE00A988DE /* P1GPipeline.m */,
+				F6D7E26A16D8F6E0000FDBE9 /* P1MainWindow.h */,
+				F6D7E26B16D8F6E0000FDBE9 /* P1MainWindow.m */,
+				F6579A4A16D91E6C00423E51 /* P1DummyShapeView.h */,
+				F6579A4B16D91E6C00423E51 /* P1DummyShapeView.m */,
 				F6D475D416A2DC54003BD4E1 /* P1Utils.h */,
 				F6D475D516A2DC54003BD4E1 /* P1Utils.m */,
 				F697203A169B85C500F03D6B /* MainMenu.xib */,
@@ -340,6 +350,8 @@
 				F6A169E916C8575C003096D1 /* P1GPreview.m in Sources */,
 				F66518CA16D2C8FF00A988DE /* P1GMainLoop.m in Sources */,
 				F66518CD16D2E0CE00A988DE /* P1GPipeline.m in Sources */,
+				F6D7E26C16D8F6E0000FDBE9 /* P1MainWindow.m in Sources */,
+				F6579A4C16D91E6C00423E51 /* P1DummyShapeView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

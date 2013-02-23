@@ -140,7 +140,10 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
         self.layer = layer;
         self.wantsLayer = TRUE;
         layer.delegate = self;
-        [layer setNeedsDisplay];
+        layer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
+        layer.cornerRadius = 5;
+        layer.masksToBounds = TRUE;
+        layer.opaque = TRUE;
 
         element->viewRef = (__bridge CFTypeRef)self;
     }
@@ -176,11 +179,6 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
     }
 }
 
-- (BOOL)isOpaque
-{
-    return TRUE;
-}
-
 - (BOOL)mouseDownCanMoveWindow
 {
     return TRUE;
@@ -193,14 +191,11 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
         if (currentBuffer)
             buffer = gst_buffer_ref(currentBuffer);
     }
-    if (!buffer) {
-        CGContextSetRGBFillColor(ctx, 0, 0, 0, 1);
-        CGContextFillRect(ctx, layer.bounds);
-        return;
-    }
 
     GstMapInfo mapinfo;
-    gboolean mapped = gst_buffer_map(buffer, &mapinfo, GST_MAP_READ);
+    gboolean mapped = FALSE;
+    if (buffer)
+        mapped = gst_buffer_map(buffer, &mapinfo, GST_MAP_READ);
 
     CGDataProviderRef provider = NULL;
     if (mapped)
@@ -222,7 +217,8 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
     if (mapped)
         gst_buffer_unmap(buffer, &mapinfo);
 
-    gst_buffer_unref(buffer);
+    if (buffer)
+        gst_buffer_unref(buffer);
 }
 
 @end
