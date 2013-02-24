@@ -70,21 +70,21 @@ static gboolean p1g_preview_sink_set_caps(GstBaseSink *basesink, GstCaps *caps)
     info->stride = info->width * 4;
 
     const gchar *format = gst_structure_get_string(structure, "format");
-    if (g_strcmp0(format, "BGRA"))
+    if (g_strcmp0(format, "BGRA") == 0)
         info->bitmapInfo = kCGBitmapByteOrder32Little | kCGImageAlphaFirst;
-    else if (g_strcmp0(format, "ABGR"))
+    else if (g_strcmp0(format, "ABGR") == 0)
         info->bitmapInfo = kCGBitmapByteOrder32Little | kCGImageAlphaLast;
-    else if (g_strcmp0(format, "RGBA"))
+    else if (g_strcmp0(format, "RGBA") == 0)
         info->bitmapInfo = kCGBitmapByteOrder32Big | kCGImageAlphaLast;
-    else if (g_strcmp0(format, "ARGB"))
+    else if (g_strcmp0(format, "ARGB") == 0)
         info->bitmapInfo = kCGBitmapByteOrder32Big | kCGImageAlphaFirst;
-    else if (g_strcmp0(format, "BGRx"))
+    else if (g_strcmp0(format, "BGRx") == 0)
         info->bitmapInfo = kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst;
-    else if (g_strcmp0(format, "xBGR"))
+    else if (g_strcmp0(format, "xBGR") == 0)
         info->bitmapInfo = kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipLast;
-    else if (g_strcmp0(format, "RGBx"))
+    else if (g_strcmp0(format, "RGBx") == 0)
         info->bitmapInfo = kCGBitmapByteOrder32Big | kCGImageAlphaNoneSkipLast;
-    else if (g_strcmp0(format, "xRGB"))
+    else if (g_strcmp0(format, "xRGB") == 0)
         info->bitmapInfo = kCGBitmapByteOrder32Big | kCGImageAlphaNoneSkipFirst;
     else
         return FALSE;
