@@ -149,10 +149,8 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
         self.layer = layer;
         self.wantsLayer = TRUE;
         layer.delegate = self;
-        layer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
-        layer.cornerRadius = 5;
-        layer.masksToBounds = TRUE;
         layer.opaque = TRUE;
+        layer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
 
         element->viewRef = (__bridge CFTypeRef)self;
     }
@@ -205,13 +203,14 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
             currentBuffer = gst_buffer_ref(buffer);
         else
             currentBuffer = NULL;
+
         [self.layer performSelectorOnMainThread:@selector(setNeedsDisplay)
                                      withObject:nil
                                   waitUntilDone:FALSE];
     }
 }
 
-- (BOOL)mouseDownCanMoveWindow
+- (BOOL)isOpaque
 {
     return TRUE;
 }
@@ -244,6 +243,9 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
     if (image) {
         CGContextDrawImage(ctx, layer.bounds, image);
         CFRelease(image);
+    }
+    else {
+        CGContextClearRect(ctx, layer.bounds);
     }
     
     if (mapped)
