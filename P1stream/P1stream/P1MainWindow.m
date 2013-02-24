@@ -8,7 +8,7 @@
                   backing:(NSBackingStoreType)backing
                     defer:(BOOL)flag
 {
-    styleMask = NSBorderlessWindowMask | NSResizableWindowMask | NSClosableWindowMask;
+    styleMask = NSBorderlessWindowMask | NSResizableWindowMask;
     self = [super initWithContentRect:contentRect
                             styleMask:styleMask
                               backing:backing
