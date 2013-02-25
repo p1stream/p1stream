@@ -1,4 +1,4 @@
-#import "P1GPreview.h"
+#import "P1Preview.h"
 
 
 static void gstreamerLogCallback(GstDebugCategory *category, GstDebugLevel level,

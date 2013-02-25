@@ -1,15 +1,15 @@
-#import "P1GMainLoop.h"
+#import "P1GLibLoop.h"
 
 
-@implementation P1GMainLoop
+@implementation P1GLibLoop
 
 @synthesize gMainLoop;
 
-+ (P1GMainLoop *)defaultMainLoop
++ (P1GLibLoop *)defaultMainLoop
 {
-    static P1GMainLoop *instance = NULL;
+    static P1GLibLoop *instance = NULL;
     if (!instance)
-        instance = [[P1GMainLoop alloc] init];
+        instance = [[P1GLibLoop alloc] init];
     return instance;
 }
 
@@ -40,7 +40,7 @@
 
 static void *mainLoopThread(void *arg)
 {
-    P1GMainLoop *self = CFBridgingRelease(arg);
+    P1GLibLoop *self = CFBridgingRelease(arg);
     g_main_loop_run(self->gMainLoop);
     return NULL;
 }
@@ -64,7 +64,7 @@ static void *mainLoopThread(void *arg)
 @end
 
 
-@implementation NSObject (P1GObjectWithGMainLoop)
+@implementation NSObject (P1ObjectWithGLibLoop)
 
 struct IdleCallbackData
 {

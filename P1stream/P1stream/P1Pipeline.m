@@ -1,9 +1,9 @@
-#import "P1GPipeline.h"
+#import "P1Pipeline.h"
 
 
-@implementation P1GPipeline
+@implementation P1Pipeline
 
-- (id)initWithPreview:(P1GPreview *)preview
+- (id)initWithPreview:(P1Preview *)preview
 {
     self = [super init];
     if (self) {

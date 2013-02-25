@@ -1,4 +1,4 @@
-#import "P1GPreview.h"
+#import "P1Preview.h"
 
 
 G_DEFINE_TYPE(P1GPreviewSink, p1g_preview_sink, GST_TYPE_VIDEO_SINK)
@@ -48,7 +48,7 @@ static void p1g_preview_sink_init(P1GPreviewSink *self)
 static GstFlowReturn p1g_preview_sink_show_frame(GstVideoSink *videosink, GstBuffer *buf)
 {
     P1GPreviewSink *self = P1G_PREVIEW_SINK(videosink);
-    P1GPreview *view = (__bridge P1GPreview *)self->viewRef;
+    P1Preview *view = (__bridge P1Preview *)self->viewRef;
 
     view.buffer = buf;
 
@@ -58,7 +58,7 @@ static GstFlowReturn p1g_preview_sink_show_frame(GstVideoSink *videosink, GstBuf
 static gboolean p1g_preview_sink_set_caps(GstBaseSink *basesink, GstCaps *caps)
 {
     P1GPreviewSink *self = P1G_PREVIEW_SINK(basesink);
-    P1GPreview *view = (__bridge P1GPreview *)self->viewRef;
+    P1Preview *view = (__bridge P1Preview *)self->viewRef;
     struct P1GPreviewInfo *info = [view infoRef];
 
     GstStructure *structure = gst_caps_get_structure(caps, 0);
@@ -100,7 +100,7 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
 {
     GstStateChangeReturn res;
     P1GPreviewSink *self = P1G_PREVIEW_SINK(element);
-    P1GPreview *view = (__bridge P1GPreview *)self->viewRef;
+    P1Preview *view = (__bridge P1Preview *)self->viewRef;
 
     switch (transition) {
         case GST_STATE_CHANGE_NULL_TO_READY:
@@ -132,7 +132,7 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
 }
 
 
-@implementation P1GPreview
+@implementation P1Preview
 
 @synthesize element;
 

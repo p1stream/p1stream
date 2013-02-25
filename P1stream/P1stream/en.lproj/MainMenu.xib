@@ -1302,7 +1302,7 @@
 				<nil key="NSUserInterfaceItemIdentifier"/>
 				<string key="NSWindowContentMinSize">{400, 300}</string>
 				<object class="NSView" key="NSWindowView" id="439893737">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<array class="NSMutableArray" key="NSSubviews">
 						<object class="NSCustomView" id="573570443">
@@ -1321,11 +1321,10 @@
 							<string key="NSFrameSize">{400, 300}</string>
 							<reference key="NSSuperview" ref="439893737"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
-							<string key="NSClassName">P1GPreview</string>
+							<string key="NSClassName">P1Preview</string>
 						</object>
 					</array>
 					<string key="NSFrameSize">{400, 300}</string>
-					<reference key="NSSuperview"/>
 					<reference key="NSNextKeyView" ref="573570443"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {2560, 1418}}</string>

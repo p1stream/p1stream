@@ -1,7 +1,7 @@
 #include <gst/video/gstvideosink.h>
 #import <QuartzCore/QuartzCore.h>
 
-@class P1GPreview;
+@class P1Preview;
 
 
 #define P1G_TYPE_PREVIEW_SINK  (p1g_preview_sink_get_type())
@@ -29,7 +29,7 @@ struct _P1GPreviewSinkClass
 GType p1g_preview_sink_get_type();
 
 
-@interface P1GPreview : NSView
+@interface P1Preview : NSView
 {
     CGColorSpaceRef colorspace;
     NSLayoutConstraint *videoConstraint;

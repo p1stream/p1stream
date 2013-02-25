@@ -1,5 +1,5 @@
 #import "P1AppDelegate.h"
-#import "P1GMainLoop.h"
+#import "P1GLibLoop.h"
 
 
 @implementation P1AppDelegate
@@ -8,9 +8,9 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    [[P1GMainLoop defaultMainLoop] start];
+    [[P1GLibLoop defaultMainLoop] start];
 
-    pipeline = [[P1GPipeline alloc] initWithPreview:previewView];
+    pipeline = [[P1Pipeline alloc] initWithPreview:previewView];
     [pipeline start];
 }
 
@@ -18,7 +18,7 @@
 {
     [pipeline stop];
 
-    [[P1GMainLoop defaultMainLoop] stop];
+    [[P1GLibLoop defaultMainLoop] stop];
 }
 
 @end
