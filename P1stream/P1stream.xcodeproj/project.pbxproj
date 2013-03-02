@@ -29,6 +29,10 @@
 		F60E753516D172F600148F06 /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E752616D16FB700148F06 /* libgstreamer.dylib */; };
 		F60E753616D1730300148F06 /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E752816D16FBB00148F06 /* libgstbase.dylib */; };
 		F60F33DC16A08ACB0087DB40 /* P1AudioMixer.m in Sources */ = {isa = PBXBuildFile; fileRef = F60F33DB16A08ACB0087DB40 /* P1AudioMixer.m */; };
+		F613CC3F16DC0EA300F57089 /* P1TextureUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = F613CC3E16DC0EA300F57089 /* P1TextureUpload.m */; };
+		F613CC4216DC0EE800F57089 /* P1FrameBufferDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = F613CC4116DC0EE800F57089 /* P1FrameBufferDownload.m */; };
+		F613CC4516DC128B00F57089 /* P1RenderTextures2D.m in Sources */ = {isa = PBXBuildFile; fileRef = F613CC4416DC128B00F57089 /* P1RenderTextures2D.m */; };
+		F62BEF6116DD6AA000E7B319 /* P1IOSurfaceBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = F62BEF6016DD6AA000E7B319 /* P1IOSurfaceBuffer.m */; };
 		F64CD43216BB0B01001B1344 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F68E7546169C9F27002FD6E6 /* CoreGraphics.framework */; };
 		F66518CA16D2C8FF00A988DE /* P1GLibLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = F66518C916D2C8FF00A988DE /* P1GLibLoop.m */; };
 		F66518CD16D2E0CE00A988DE /* P1Pipeline.m in Sources */ = {isa = PBXBuildFile; fileRef = F66518CC16D2E0CE00A988DE /* P1Pipeline.m */; };
@@ -43,6 +47,7 @@
 		F6A169E916C8575C003096D1 /* P1Preview.m in Sources */ = {isa = PBXBuildFile; fileRef = F6A169E816C8575C003096D1 /* P1Preview.m */; };
 		F6A169EB16C85773003096D1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A169EA16C85773003096D1 /* QuartzCore.framework */; };
 		F6BEA4B216A20B4100F6DEC1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6BEA4B116A20B4100F6DEC1 /* OpenGL.framework */; };
+		F6C74B4E16DFCC2600DC25E2 /* P1DisplayStreamSrc.m in Sources */ = {isa = PBXBuildFile; fileRef = F6C74B4D16DFCC2600DC25E2 /* P1DisplayStreamSrc.m */; };
 		F6CE70C016AF10F40005DD3D /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6CE70BF16AF10F40005DD3D /* IOSurface.framework */; };
 		F6D475D616A2DC54003BD4E1 /* P1Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D475D516A2DC54003BD4E1 /* P1Utils.m */; };
 		F6D94168169CCEBD002C8802 /* P1InputAudioSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D94167169CCEBD002C8802 /* P1InputAudioSource.m */; };
@@ -102,6 +107,14 @@
 		F60E753016D16FCC00148F06 /* libgstvideoconvert.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstvideoconvert.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstvideoconvert.dylib"; sourceTree = "<absolute>"; };
 		F60F33DA16A08ACB0087DB40 /* P1AudioMixer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1AudioMixer.h; sourceTree = "<group>"; };
 		F60F33DB16A08ACB0087DB40 /* P1AudioMixer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1AudioMixer.m; sourceTree = "<group>"; };
+		F613CC3D16DC0EA300F57089 /* P1TextureUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1TextureUpload.h; sourceTree = "<group>"; };
+		F613CC3E16DC0EA300F57089 /* P1TextureUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1TextureUpload.m; sourceTree = "<group>"; };
+		F613CC4016DC0EE800F57089 /* P1FrameBufferDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1FrameBufferDownload.h; sourceTree = "<group>"; };
+		F613CC4116DC0EE800F57089 /* P1FrameBufferDownload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1FrameBufferDownload.m; sourceTree = "<group>"; };
+		F613CC4316DC128B00F57089 /* P1RenderTextures2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1RenderTextures2D.h; sourceTree = "<group>"; };
+		F613CC4416DC128B00F57089 /* P1RenderTextures2D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1RenderTextures2D.m; sourceTree = "<group>"; };
+		F62BEF5F16DD6AA000E7B319 /* P1IOSurfaceBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1IOSurfaceBuffer.h; sourceTree = "<group>"; };
+		F62BEF6016DD6AA000E7B319 /* P1IOSurfaceBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1IOSurfaceBuffer.m; sourceTree = "<group>"; };
 		F66518C816D2C8FF00A988DE /* P1GLibLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1GLibLoop.h; sourceTree = "<group>"; };
 		F66518C916D2C8FF00A988DE /* P1GLibLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1GLibLoop.m; sourceTree = "<group>"; };
 		F66518CB16D2E0CE00A988DE /* P1Pipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1Pipeline.h; sourceTree = "<group>"; };
@@ -123,6 +136,8 @@
 		F6A169E816C8575C003096D1 /* P1Preview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1Preview.m; sourceTree = "<group>"; };
 		F6A169EA16C85773003096D1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		F6BEA4B116A20B4100F6DEC1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		F6C74B4C16DFCC2600DC25E2 /* P1DisplayStreamSrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1DisplayStreamSrc.h; sourceTree = "<group>"; };
+		F6C74B4D16DFCC2600DC25E2 /* P1DisplayStreamSrc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1DisplayStreamSrc.m; sourceTree = "<group>"; };
 		F6CE70BF16AF10F40005DD3D /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		F6D475D416A2DC54003BD4E1 /* P1Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1Utils.h; sourceTree = "<group>"; };
 		F6D475D516A2DC54003BD4E1 /* P1Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1Utils.m; sourceTree = "<group>"; };
@@ -243,6 +258,16 @@
 				F6D9416D169CCF80002C8802 /* P1VideoCanvas.m */,
 				F6D94169169CCECD002C8802 /* P1DesktopVideoSource.h */,
 				F6D9416A169CCECD002C8802 /* P1DesktopVideoSource.m */,
+				F62BEF5F16DD6AA000E7B319 /* P1IOSurfaceBuffer.h */,
+				F62BEF6016DD6AA000E7B319 /* P1IOSurfaceBuffer.m */,
+				F6C74B4C16DFCC2600DC25E2 /* P1DisplayStreamSrc.h */,
+				F6C74B4D16DFCC2600DC25E2 /* P1DisplayStreamSrc.m */,
+				F613CC3D16DC0EA300F57089 /* P1TextureUpload.h */,
+				F613CC3E16DC0EA300F57089 /* P1TextureUpload.m */,
+				F613CC4016DC0EE800F57089 /* P1FrameBufferDownload.h */,
+				F613CC4116DC0EE800F57089 /* P1FrameBufferDownload.m */,
+				F613CC4316DC128B00F57089 /* P1RenderTextures2D.h */,
+				F613CC4416DC128B00F57089 /* P1RenderTextures2D.m */,
 				F6A169E716C8575C003096D1 /* P1Preview.h */,
 				F6A169E816C8575C003096D1 /* P1Preview.m */,
 			);
@@ -340,6 +365,11 @@
 				F6A169E916C8575C003096D1 /* P1Preview.m in Sources */,
 				F66518CA16D2C8FF00A988DE /* P1GLibLoop.m in Sources */,
 				F66518CD16D2E0CE00A988DE /* P1Pipeline.m in Sources */,
+				F613CC3F16DC0EA300F57089 /* P1TextureUpload.m in Sources */,
+				F613CC4216DC0EE800F57089 /* P1FrameBufferDownload.m in Sources */,
+				F613CC4516DC128B00F57089 /* P1RenderTextures2D.m in Sources */,
+				F62BEF6116DD6AA000E7B319 /* P1IOSurfaceBuffer.m in Sources */,
+				F6C74B4E16DFCC2600DC25E2 /* P1DisplayStreamSrc.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

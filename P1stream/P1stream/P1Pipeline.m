@@ -1,4 +1,5 @@
 #import "P1Pipeline.h"
+#import "P1DisplayStreamSrc.h"
 
 
 @implementation P1Pipeline
@@ -12,15 +13,14 @@
             g_object_ref(sink);
 
         pipeline = gst_pipeline_new("preview-test");
-        source   = gst_element_factory_make("videotestsrc", "videotestsrc");
-        convert  = gst_element_factory_make("videoconvert", "videoconvert");
-        if (!pipeline || !source || !convert || !sink) {
+        source   = g_object_new(P1G_TYPE_DISPLAY_STREAM_SRC, NULL);
+        if (!pipeline || !source || !sink) {
             [NSException raise:NSGenericException
                         format:@"Could not construct pipeline elements"];
         }
 
-        gst_bin_add_many(GST_BIN(pipeline), source, convert, sink, NULL);
-        gst_element_link_many(source, convert, sink, NULL);
+        gst_bin_add_many(GST_BIN(pipeline), source, sink, NULL);
+        gst_element_link_many(source, sink, NULL);
     }
     return self;
 }
@@ -32,9 +32,6 @@
 
     if (sink)
         g_object_unref(sink);
-
-    if (convert)
-        g_object_unref(convert);
 
     if (source)
         g_object_unref(source);

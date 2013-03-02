@@ -1,3 +1,4 @@
+#import "P1IOSurfaceBuffer.h"
 #import "P1Preview.h"
 
 
@@ -49,8 +50,8 @@ int main(int argc, char *argv[])
     loadGStreamerPlugin(@"videotestsrc");
     loadGStreamerPlugin(@"videoconvert");
 
-    gboolean res = gst_plugin_register_static(
-                                              GST_VERSION_MAJOR, GST_VERSION_MINOR,
+    p1g_iosurface_allocator_static_init();
+    gboolean res = gst_plugin_register_static(GST_VERSION_MAJOR, GST_VERSION_MINOR,
                                               "p1gelements", "P1stream elements", registerGStreamerElements,
                                               "0.1", "Proprietary", "P1stream", "P1stream", "P1stream");
     if (!res) {

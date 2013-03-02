@@ -162,6 +162,26 @@
 		F60E74EB16D16DE100148F06 /* gstvideoconvertorc.orc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gstvideoconvertorc.orc; sourceTree = "<group>"; };
 		F60E74ED16D16DE100148F06 /* videoconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = videoconvert.c; sourceTree = "<group>"; };
 		F60E74EE16D16DE100148F06 /* videoconvert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = videoconvert.h; sourceTree = "<group>"; };
+		F613CC4616DC1DBC00F57089 /* colorbalance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = colorbalance.h; path = "gst-plugins-base/gst-libs/gst/video/colorbalance.h"; sourceTree = "<group>"; };
+		F613CC4716DC1DBC00F57089 /* colorbalancechannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = colorbalancechannel.h; path = "gst-plugins-base/gst-libs/gst/video/colorbalancechannel.h"; sourceTree = "<group>"; };
+		F613CC4816DC1DBC00F57089 /* gstvideodecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gstvideodecoder.h; path = "gst-plugins-base/gst-libs/gst/video/gstvideodecoder.h"; sourceTree = "<group>"; };
+		F613CC4916DC1DBC00F57089 /* gstvideoencoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gstvideoencoder.h; path = "gst-plugins-base/gst-libs/gst/video/gstvideoencoder.h"; sourceTree = "<group>"; };
+		F613CC4A16DC1DBC00F57089 /* gstvideofilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gstvideofilter.h; path = "gst-plugins-base/gst-libs/gst/video/gstvideofilter.h"; sourceTree = "<group>"; };
+		F613CC4B16DC1DBC00F57089 /* gstvideometa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gstvideometa.h; path = "gst-plugins-base/gst-libs/gst/video/gstvideometa.h"; sourceTree = "<group>"; };
+		F613CC4C16DC1DBC00F57089 /* gstvideopool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gstvideopool.h; path = "gst-plugins-base/gst-libs/gst/video/gstvideopool.h"; sourceTree = "<group>"; };
+		F613CC4D16DC1DBC00F57089 /* gstvideosink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gstvideosink.h; path = "gst-plugins-base/gst-libs/gst/video/gstvideosink.h"; sourceTree = "<group>"; };
+		F613CC4E16DC1DBC00F57089 /* gstvideoutils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gstvideoutils.h; path = "gst-plugins-base/gst-libs/gst/video/gstvideoutils.h"; sourceTree = "<group>"; };
+		F613CC4F16DC1DBC00F57089 /* navigation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = navigation.h; path = "gst-plugins-base/gst-libs/gst/video/navigation.h"; sourceTree = "<group>"; };
+		F613CC5016DC1DBC00F57089 /* video-blend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "video-blend.h"; path = "gst-plugins-base/gst-libs/gst/video/video-blend.h"; sourceTree = "<group>"; };
+		F613CC5116DC1DBC00F57089 /* video-color.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "video-color.h"; path = "gst-plugins-base/gst-libs/gst/video/video-color.h"; sourceTree = "<group>"; };
+		F613CC5216DC1DBC00F57089 /* video-event.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "video-event.h"; path = "gst-plugins-base/gst-libs/gst/video/video-event.h"; sourceTree = "<group>"; };
+		F613CC5316DC1DBC00F57089 /* video-format.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "video-format.h"; path = "gst-plugins-base/gst-libs/gst/video/video-format.h"; sourceTree = "<group>"; };
+		F613CC5416DC1DBC00F57089 /* video-frame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "video-frame.h"; path = "gst-plugins-base/gst-libs/gst/video/video-frame.h"; sourceTree = "<group>"; };
+		F613CC5516DC1DBC00F57089 /* video-info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "video-info.h"; path = "gst-plugins-base/gst-libs/gst/video/video-info.h"; sourceTree = "<group>"; };
+		F613CC5616DC1DBC00F57089 /* video-overlay-composition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "video-overlay-composition.h"; path = "gst-plugins-base/gst-libs/gst/video/video-overlay-composition.h"; sourceTree = "<group>"; };
+		F613CC5716DC1DBC00F57089 /* video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = video.h; path = "gst-plugins-base/gst-libs/gst/video/video.h"; sourceTree = "<group>"; };
+		F613CC5816DC1DBC00F57089 /* videoorientation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = videoorientation.h; path = "gst-plugins-base/gst-libs/gst/video/videoorientation.h"; sourceTree = "<group>"; };
+		F613CC5916DC1DBC00F57089 /* videooverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = videooverlay.h; path = "gst-plugins-base/gst-libs/gst/video/videooverlay.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -303,6 +323,26 @@
 				F60E747916D1619C00148F06 /* video.c */,
 				F60E747A16D1619C00148F06 /* videoorientation.c */,
 				F60E747B16D1619C00148F06 /* videooverlay.c */,
+				F613CC4616DC1DBC00F57089 /* colorbalance.h */,
+				F613CC4716DC1DBC00F57089 /* colorbalancechannel.h */,
+				F613CC4816DC1DBC00F57089 /* gstvideodecoder.h */,
+				F613CC4916DC1DBC00F57089 /* gstvideoencoder.h */,
+				F613CC4A16DC1DBC00F57089 /* gstvideofilter.h */,
+				F613CC4B16DC1DBC00F57089 /* gstvideometa.h */,
+				F613CC4C16DC1DBC00F57089 /* gstvideopool.h */,
+				F613CC4D16DC1DBC00F57089 /* gstvideosink.h */,
+				F613CC4E16DC1DBC00F57089 /* gstvideoutils.h */,
+				F613CC4F16DC1DBC00F57089 /* navigation.h */,
+				F613CC5016DC1DBC00F57089 /* video-blend.h */,
+				F613CC5116DC1DBC00F57089 /* video-color.h */,
+				F613CC5216DC1DBC00F57089 /* video-event.h */,
+				F613CC5316DC1DBC00F57089 /* video-format.h */,
+				F613CC5416DC1DBC00F57089 /* video-frame.h */,
+				F613CC5516DC1DBC00F57089 /* video-info.h */,
+				F613CC5616DC1DBC00F57089 /* video-overlay-composition.h */,
+				F613CC5716DC1DBC00F57089 /* video.h */,
+				F613CC5816DC1DBC00F57089 /* videoorientation.h */,
+				F613CC5916DC1DBC00F57089 /* videooverlay.h */,
 			);
 			name = video;
 			sourceTree = "<group>";
@@ -737,6 +777,7 @@
 				F60E74B616D16C2B00148F06 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F60E74DA16D16DA800148F06 /* Build configuration list for PBXNativeTarget "gstvideoconvert" */ = {
 			isa = XCConfigurationList;
@@ -745,6 +786,7 @@
 				F60E74DC16D16DA800148F06 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

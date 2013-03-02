@@ -32,7 +32,6 @@ static void p1g_preview_sink_class_init(P1GPreviewSinkClass *klass)
     GstElementClass *element_class = GST_ELEMENT_CLASS(klass);
     element_class->change_state = p1g_preview_sink_change_state;
     gst_element_class_add_pad_template(element_class, gst_static_pad_template_get(&sink_template));
-
     gst_element_class_set_static_metadata(element_class, "P1stream preview sink",
                                            "Sink/Video",
                                            "The P1stream video preview",
@@ -113,6 +112,8 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
     }
 
     res = GST_ELEMENT_CLASS(parent_class)->change_state(element, transition);
+    if (res == GST_STATE_CHANGE_FAILURE)
+        return res;
 
     switch (transition) {
         case GST_STATE_CHANGE_PAUSED_TO_READY:
