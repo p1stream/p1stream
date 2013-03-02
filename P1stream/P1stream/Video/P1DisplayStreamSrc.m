@@ -54,8 +54,9 @@ static void p1g_display_stream_src_class_init(P1GDisplayStreamSrcClass *klass)
 static void p1g_display_stream_src_init(P1GDisplayStreamSrc *self)
 {
     self->display_stream = NULL;
-    self->current_buffer = NULL;
+    self->buffer = NULL;
     self->flushing = FALSE;
+    self->stopped = FALSE;
     g_cond_init(&self->cond);
 
     GstBaseSrc *basesrc = GST_BASE_SRC(self);
@@ -106,7 +107,7 @@ static gboolean p1g_display_stream_src_start(GstBaseSrc *basesrc)
         }
     }
 
-    return TRUE;
+    return res;
 }
 
 static gboolean p1g_display_stream_src_stop(GstBaseSrc *basesrc)
@@ -117,7 +118,7 @@ static gboolean p1g_display_stream_src_stop(GstBaseSrc *basesrc)
 
     if (CGDisplayStreamStop(self->display_stream) == kCGErrorSuccess) {
         // Join with the display stream before releasing.
-        while (self->current_buffer)
+        while (!self->stopped)
             g_cond_wait(&self->cond, GST_OBJECT_GET_LOCK(self));
 
         CFRelease(self->display_stream);
@@ -160,16 +161,21 @@ static void p1g_display_stream_src_frame_callback(
     GST_OBJECT_LOCK(self);
 
     if (status == kCGDisplayStreamFrameStatusFrameComplete) {
-        if (self->current_buffer)
-            gst_buffer_unref(self->current_buffer);
-        self->current_buffer = gst_buffer_new_with_iosurface(frameSurface, 0);
+        if (self->buffer)
+            gst_buffer_unref(self->buffer);
+
+        self->buffer = p1g_buffer_new_with_iosurface(frameSurface, 0);
+
         g_cond_broadcast(&self->cond);
     }
     else if (status == kCGDisplayStreamFrameStatusStopped) {
-        if (self->current_buffer) {
-            gst_buffer_unref(self->current_buffer);
-            self->current_buffer = NULL;
+        if (self->buffer) {
+            gst_buffer_unref(self->buffer);
+            self->buffer = NULL;
         }
+
+        self->stopped = TRUE;
+
         g_cond_broadcast(&self->cond);
     }
 
@@ -182,17 +188,26 @@ static GstFlowReturn p1g_display_stream_src_create(GstPushSrc *pushsrc, GstBuffe
     P1GDisplayStreamSrc *self = P1G_DISPLAY_STREAM_SRC(pushsrc);
     GST_OBJECT_LOCK(self);
 
-    g_cond_wait(&self->cond, GST_OBJECT_GET_LOCK(self));
-    if (self->flushing) {
-        res = GST_FLOW_FLUSHING;
-    }
-    else if (self->current_buffer) {
-        *outbuf = gst_buffer_ref(self->current_buffer);
-        res = GST_FLOW_OK;
-    }
-    else {
-        res = GST_FLOW_EOS;
-    }
+    do {
+        if (self->stopped) {
+            res = GST_FLOW_EOS;
+            break;
+        }
+
+        if (self->flushing) {
+            res = GST_FLOW_FLUSHING;
+            break;
+        }
+
+        if (self->buffer) {
+            *outbuf = self->buffer;
+            self->buffer = NULL;
+            res = GST_FLOW_OK;
+            break;
+        }
+
+        g_cond_wait(&self->cond, GST_OBJECT_GET_LOCK(self));
+    } while (TRUE);
 
     GST_OBJECT_UNLOCK(self);
     return res;

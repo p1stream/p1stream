@@ -23,8 +23,9 @@ struct _P1GDisplayStreamSrc
 
     /*< private >*/
     CGDisplayStreamRef display_stream;
-    GstBuffer *current_buffer;
+    GstBuffer *buffer;
     gboolean flushing;
+    gboolean stopped;
     GCond cond;
 };
 

@@ -16,7 +16,6 @@
 
 typedef struct _P1GIOSurfaceAllocator P1GIOSurfaceAllocator;
 typedef struct _P1GIOSurfaceAllocatorClass P1GIOSurfaceAllocatorClass;
-typedef struct _P1GMemoryIOSurface P1GMemoryIOSurface;
 
 struct _P1GIOSurfaceAllocator
 {
@@ -30,49 +29,74 @@ struct _P1GIOSurfaceAllocatorClass
 
 GType p1g_iosurface_allocator_get_type();
 
-
 G_DEFINE_TYPE(P1GIOSurfaceAllocator, p1g_iosurface_allocator, GST_TYPE_ALLOCATOR);
 static GstAllocator *allocator_singleton;
+
+static GstMemory *p1g_iosurface_allocator_alloc(GstAllocator *allocator, gsize size, GstAllocationParams *params);
+static void p1g_iosurface_allocator_free(GstAllocator *allocator, GstMemory *mem);
+static gpointer p1g_iosurface_allocator_mem_map(GstMemory *mem, gsize maxsize, GstMapFlags flags);
+static void p1g_iosurface_allocator_mem_unmap(GstMemory *mem);
+static GstMemory *p1g_iosurface_allocator_mem_copy(GstMemory *mem, gssize offset, gssize size);
+static GstMemory *p1g_iosurface_allocator_mem_share(GstMemory *mem, gssize offset, gssize size);
+static gboolean p1g_iosurface_allocator_mem_is_span(GstMemory *mem1, GstMemory *mem2, gsize *offset);
+
+
+typedef struct _P1GMemoryIOSurface P1GMemoryIOSurface;
 
 struct _P1GMemoryIOSurface
 {
     GstMemory mem;
+
     IOSurfaceRef buffer;
-    size_t planeIndex;
+
+    uint32_t lock_flags;
 };
 
-GstMemory *p1g_memory_iosurface_new(IOSurfaceRef buffer, size_t planeIndex);
-static void p1g_iosurface_allocator_free(GstAllocator *allocator, GstMemory *mem);
-static gpointer p1g_iosurface_allocator_mem_map(GstMemory *mem, gsize maxsize, GstMapFlags flags);
-static void p1g_iosurface_allocator_mem_unmap(GstMemory *mem);
-static GstMemory * p1g_iosurface_allocator_mem_copy(GstMemory *mem, gssize offset, gssize size);
 
-
-GstMemory *p1g_memory_iosurface_new(IOSurfaceRef buffer, size_t planeIndex)
+static void p1g_iosurface_allocator_class_init(P1GIOSurfaceAllocatorClass *klass)
 {
-    // FIXME: Custom flags, but need read/write and sharing support.
-    const GstMemoryFlags flags = GST_MEMORY_FLAG_READONLY | GST_MEMORY_FLAG_NO_SHARE;
+    GstAllocatorClass *allocator_klass = GST_ALLOCATOR_CLASS(klass);
+    allocator_klass->free  = p1g_iosurface_allocator_free;
+    allocator_klass->alloc = p1g_iosurface_allocator_alloc;
+}
 
-    size_t stride = IOSurfaceGetBytesPerRowOfPlane(buffer, planeIndex);
-    size_t size = IOSurfaceGetHeightOfPlane(buffer, planeIndex) * stride;
-    g_assert(size != 0);
+static void p1g_iosurface_allocator_init(P1GIOSurfaceAllocator *allocator)
+{
+    GstAllocator *alloc = GST_ALLOCATOR_CAST(allocator);
+    alloc->mem_type    = "IOSurface";
+    alloc->mem_map     = p1g_iosurface_allocator_mem_map;
+    alloc->mem_unmap   = p1g_iosurface_allocator_mem_unmap;
+    alloc->mem_copy    = p1g_iosurface_allocator_mem_copy;
+    alloc->mem_share   = p1g_iosurface_allocator_mem_share;
+    alloc->mem_is_span = p1g_iosurface_allocator_mem_is_span;
+}
+
+static GstMemory *p1g_iosurface_allocator_alloc(GstAllocator *allocator, gsize size, GstAllocationParams *params)
+{
+    CFNumberRef cfSize = CFNumberCreate(NULL, kCFNumberLongType, &size);
+    const void *keys[1] = { kIOSurfaceAllocSize };
+    const void *values[1] = { cfSize };
+    CFDictionaryRef cfProps = CFDictionaryCreate(NULL, keys, values, 1,
+                                                 &kCFTypeDictionaryKeyCallBacks,
+                                                 &kCFTypeDictionaryValueCallBacks);
+    IOSurfaceRef buffer = IOSurfaceCreate(cfProps);
+    CFRelease(cfProps);
+    CFRelease(cfSize);
+    if (!buffer)
+        return NULL;
 
     P1GMemoryIOSurface *memio = g_slice_alloc(sizeof(P1GMemoryIOSurface));
-    gst_memory_init(GST_MEMORY_CAST(memio), flags, allocator_singleton, NULL, size, 0, 0, size);
+    gst_memory_init(GST_MEMORY_CAST(memio), params->flags, allocator_singleton, NULL, size, 0, 0, size);
 
-    CFRetain(buffer);
-    IOSurfaceIncrementUseCount(buffer);
     memio->buffer = buffer;
-    memio->planeIndex = planeIndex;
 
-    return (GstMemory *)memio;
+    return GST_MEMORY_CAST(memio);
 }
 
 static void p1g_iosurface_allocator_free(GstAllocator *allocator, GstMemory *mem)
 {
     P1GMemoryIOSurface *memio = (P1GMemoryIOSurface *)mem;
 
-    IOSurfaceDecrementUseCount(memio->buffer);
     CFRelease(memio->buffer);
 
     g_slice_free1(sizeof(P1GMemoryIOSurface), mem);
@@ -82,15 +106,19 @@ static gpointer p1g_iosurface_allocator_mem_map(GstMemory *mem, gsize maxsize, G
 {
     P1GMemoryIOSurface *memio = (P1GMemoryIOSurface *)mem;
 
-    // FIXME: write support
+    uint32_t lock_flags;
     if (flags & GST_MAP_WRITE)
-        return NULL;
+        lock_flags = 0;
+    else
+        lock_flags = kIOSurfaceLockReadOnly;
 
-    IOReturn ret = IOSurfaceLock(memio->buffer, kIOSurfaceLockReadOnly, NULL);
+    IOReturn ret = IOSurfaceLock(memio->buffer, lock_flags, NULL);
     if (ret != kIOReturnSuccess)
         return NULL;
 
-    void *data = IOSurfaceGetBaseAddressOfPlane(memio->buffer, memio->planeIndex);
+    memio->lock_flags = lock_flags;
+
+    void *data = IOSurfaceGetBaseAddress(memio->buffer);
     if (data == NULL) {
         p1g_iosurface_allocator_mem_unmap(mem);
         return NULL;
@@ -103,7 +131,7 @@ static void p1g_iosurface_allocator_mem_unmap(GstMemory *mem)
 {
     P1GMemoryIOSurface *memio = (P1GMemoryIOSurface *)mem;
 
-    IOReturn ret = IOSurfaceUnlock(memio->buffer, kIOSurfaceLockReadOnly, NULL);
+    IOReturn ret = IOSurfaceUnlock(memio->buffer, memio->lock_flags, NULL);
     g_assert(ret == kIOReturnSuccess);
 }
 
@@ -118,6 +146,7 @@ static GstMemory * p1g_iosurface_allocator_mem_copy(GstMemory *mem, gssize offse
     if (size == -1)
         size = sinfo.size > offset ? sinfo.size - offset : 0;
 
+    // Use the default allocator, don't create another IOSurface.
     copy = gst_allocator_alloc(NULL, size, NULL);
     if (gst_memory_map(copy, &dinfo, GST_MAP_WRITE)) {
         memcpy(dinfo.data, sinfo.data + offset, size);
@@ -133,31 +162,66 @@ static GstMemory * p1g_iosurface_allocator_mem_copy(GstMemory *mem, gssize offse
     return copy;
 }
 
-
-static void p1g_iosurface_allocator_class_init(P1GIOSurfaceAllocatorClass *klass)
+static GstMemory *p1g_iosurface_allocator_mem_share(GstMemory *mem, gssize offset, gssize size)
 {
-    GstAllocatorClass *allocator_klass = GST_ALLOCATOR_CLASS(klass);
-    allocator_klass->free = p1g_iosurface_allocator_free;
-    // FIXME: alloc
+    P1GMemoryIOSurface *memio = (P1GMemoryIOSurface *)mem;
+
+    GstMemory *parent = mem->parent;
+    if (parent == NULL)
+        parent = mem;
+
+    const GstMemoryFlags flags = GST_MINI_OBJECT_FLAGS(parent) | GST_MINI_OBJECT_FLAG_LOCK_READONLY;
+    if (size == -1)
+        size = mem->size - offset;
+    offset += mem->offset;
+
+    P1GMemoryIOSurface *sub = g_slice_alloc(sizeof(P1GMemoryIOSurface));
+    gst_memory_init(GST_MEMORY_CAST(sub), flags, allocator_singleton, parent, mem->maxsize, 0, offset, size);
+
+    CFRetain(memio->buffer);
+    sub->buffer = memio->buffer;
+
+    return GST_MEMORY_CAST(sub);
 }
 
-static void p1g_iosurface_allocator_init(P1GIOSurfaceAllocator *allocator)
+static gboolean p1g_iosurface_allocator_mem_is_span(GstMemory *a, GstMemory *b, gsize *offset)
 {
-    GstAllocator *alloc = GST_ALLOCATOR_CAST(allocator);
-    alloc->mem_type = "IOSurface";
-    alloc->mem_map = p1g_iosurface_allocator_mem_map;
-    alloc->mem_unmap = p1g_iosurface_allocator_mem_unmap;
-    alloc->mem_copy = p1g_iosurface_allocator_mem_copy;
-    // FIXME: mem_copy, mem_share, mem_is_span
+    if (offset)
+        *offset = a->offset;
+
+    if (a->parent == b->parent)
+        return a->offset + a->size == b->offset;
+    else
+        return FALSE;
 }
 
-GstBuffer *gst_buffer_new_with_iosurface(IOSurfaceRef buffer, size_t planeIndex)
+
+GstBuffer *p1g_buffer_new_with_iosurface(IOSurfaceRef buffer, GstMemoryFlags flags)
 {
-    GstMemory *mem = p1g_memory_iosurface_new(buffer, planeIndex);
+    size_t size = IOSurfaceGetAllocSize(buffer);
+    g_assert(size != 0);
+
+    P1GMemoryIOSurface *memio = g_slice_alloc(sizeof(P1GMemoryIOSurface));
+    gst_memory_init(GST_MEMORY_CAST(memio), flags, allocator_singleton, NULL, size, 0, 0, size);
+
+    CFRetain(buffer);
+    memio->buffer = buffer;
+
     GstBuffer *res = gst_buffer_new();
-    gst_buffer_append_memory(res, mem);
+    gst_buffer_append_memory(res, GST_MEMORY_CAST(memio));
     return res;
 }
+
+IOSurfaceRef p1g_buffer_get_iosurface(GstBuffer *buffer)
+{
+    if (gst_buffer_n_memory(buffer) == 1) {
+        GstMemory *mem = gst_buffer_get_memory(buffer, 0);
+        if (mem->allocator == allocator_singleton)
+            return ((P1GMemoryIOSurface *)mem)->buffer;
+    }
+    return NULL;
+}
+
 
 void p1g_iosurface_allocator_static_init()
 {
