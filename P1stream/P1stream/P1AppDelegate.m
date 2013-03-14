@@ -4,20 +4,17 @@
 
 @implementation P1AppDelegate
 
-@synthesize previewView;
+@synthesize mainWindowController;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     [[P1GLibLoop defaultMainLoop] start];
 
-    pipeline = [[P1Pipeline alloc] initWithPreview:previewView];
-    [pipeline start];
+    [mainWindowController showWindow:self];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
-    [pipeline stop];
-
     [[P1GLibLoop defaultMainLoop] stop];
 }
 

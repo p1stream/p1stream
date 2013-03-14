@@ -164,7 +164,7 @@ static void p1g_display_stream_src_frame_callback(
         if (self->buffer)
             gst_buffer_unref(self->buffer);
 
-        self->buffer = p1g_buffer_new_with_iosurface(frameSurface, 0);
+        self->buffer = gst_buffer_new_iosurface(frameSurface, 0);
 
         g_cond_broadcast(&self->cond);
     }

@@ -1,4 +1,5 @@
-#include <gst/video/gstvideofilter.h>
+#include <gst/base/gstbasetransform.h>
+#import "P1OpenGLContext.h"
 
 
 #define P1G_TYPE_TEXTURE_UPLOAD \
@@ -19,12 +20,16 @@ typedef struct _P1GTextureUploadClass P1GTextureUploadClass;
 
 struct _P1GTextureUpload
 {
-    GstVideoFilter parent_instance;
+    GstBaseTransform parent_instance;
+
+    /*< private >*/
+    gint width, height;
+    P1GOpenGLContext *context;
 };
 
 struct _P1GTextureUploadClass
 {
-    GstVideoFilterClass parent_class;
+    GstBaseTransformClass parent_class;
 };
 
 GType p1g_texture_upload_get_type();

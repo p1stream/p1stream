@@ -50,88 +50,6 @@ struct SlotDrawData
 
 @implementation P1VideoCanvas
 
-static GLuint buildShader(GLuint type, NSString *resource)
-{
-    NSString *path = [[NSBundle mainBundle] pathForResource:resource ofType:@"sl"];
-    NSData *data = [NSData dataWithContentsOfFile:path];
-    if (!data) return 0;
-
-    GLuint shader = glCreateShader(type);
-    if (shader) {
-        const char *source = [data bytes];
-        const GLint length = (GLint)[data length];
-        glShaderSource(shader, 1, &source, &length);
-        glCompileShader(shader);
-
-        GLint logSize = 0;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
-        if (logSize) {
-            GLchar *log = malloc(logSize);
-            if (log) {
-                glGetShaderInfoLog(shader, logSize, NULL, log);
-                NSLog(@"Shader compiler log for '%@':\n%s", resource, log);
-                free(log);
-            }
-        }
-
-        GLint success = GL_FALSE;
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-        if (success != GL_TRUE) {
-            NSLog(@"Failed to compile shader '%@'.", resource);
-            glDeleteShader(shader);
-            shader = 0;
-        }
-    }
-    return shader;
-}
-
-static GLuint buildShaderProgram()
-{
-    GLuint vertexShader = buildShader(GL_VERTEX_SHADER, @"VertexShader");
-    GLuint fragmentShader = buildShader(GL_FRAGMENT_SHADER, @"FragmentShader");
-    GLuint program = 0;
-    if (vertexShader && fragmentShader) {
-        program = glCreateProgram();
-        if (program) {
-            glBindAttribLocation(program, 0, "a_Position");
-            glBindAttribLocation(program, 1, "a_TexCoords");
-            glBindFragDataLocation(program, 0, "o_FragColor");
-
-            glAttachShader(program, vertexShader);
-            glAttachShader(program, fragmentShader);
-            glLinkProgram(program);
-            glDetachShader(program, vertexShader);
-            glDetachShader(program, fragmentShader);
-
-            GLint logSize = 0;
-            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logSize);
-            if (logSize) {
-                GLchar *log = malloc(logSize);
-                if (log) {
-                    glGetProgramInfoLog(program, logSize, NULL, log);
-                    NSLog(@"Shader linker log:\n%s", log);
-                    free(log);
-                }
-            }
-
-            GLint success = GL_FALSE;
-            glGetProgramiv(program, GL_LINK_STATUS, &success);
-            if (success != GL_TRUE) {
-                NSLog(@"Failed to link shaders");
-                glDeleteProgram(program);
-                program = 0;
-            }
-        }
-    }
-    if (vertexShader) {
-        glDeleteShader(vertexShader);
-    }
-    if (fragmentShader) {
-        glDeleteShader(fragmentShader);
-    }
-    return program;
-}
-
 @synthesize slots, delegate;
 
 - (id)init
@@ -197,8 +115,11 @@ static GLuint buildShaderProgram()
         }
 
         // Dirt simple shader.
-        shaderProgram = buildShaderProgram();
-        if (!shaderProgram) {
+        shaderProgram = glCreateProgram();
+        glBindAttribLocation(shaderProgram, 0, "a_Position");
+        glBindAttribLocation(shaderProgram, 1, "a_TexCoords");
+        glBindFragDataLocation(shaderProgram, 0, "o_FragColor");
+        if (!buildShaderProgram(shaderProgram, @"simple")) {
             NSLog(@"Failed to build video canvas shader program.");
             return nil;
         }

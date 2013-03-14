@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		F60457DD16AB4A6200A5AB58 /* RGBAtoYUV420.cl in Sources */ = {isa = PBXBuildFile; fileRef = F60457DA16AB4A4E00A5AB58 /* RGBAtoYUV420.cl */; };
 		F60457DF16AB4B9600A5AB58 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F60457DE16AB4B9600A5AB58 /* OpenCL.framework */; };
-		F60457E116AB4CCD00A5AB58 /* VertexShader.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E016AB4CCD00A5AB58 /* VertexShader.sl */; };
-		F60457E316AB4D5600A5AB58 /* FragmentShader.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E216AB4D5600A5AB58 /* FragmentShader.sl */; };
+		F60457E116AB4CCD00A5AB58 /* simple.vert.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E016AB4CCD00A5AB58 /* simple.vert.sl */; };
+		F60457E316AB4D5600A5AB58 /* simple.frag.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E216AB4D5600A5AB58 /* simple.frag.sl */; };
 		F60E751916D16F9200148F06 /* libintl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E751816D16F9200148F06 /* libintl.dylib */; };
 		F60E751B16D16F9500148F06 /* libffi.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E751A16D16F9500148F06 /* libffi.dylib */; };
 		F60E751E16D16FA200148F06 /* libglib.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E751C16D16F9900148F06 /* libglib.dylib */; };
@@ -33,7 +33,10 @@
 		F613CC4216DC0EE800F57089 /* P1FrameBufferDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = F613CC4116DC0EE800F57089 /* P1FrameBufferDownload.m */; };
 		F613CC4516DC128B00F57089 /* P1RenderTextures2D.m in Sources */ = {isa = PBXBuildFile; fileRef = F613CC4416DC128B00F57089 /* P1RenderTextures2D.m */; };
 		F62BEF6116DD6AA000E7B319 /* P1IOSurfaceBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = F62BEF6016DD6AA000E7B319 /* P1IOSurfaceBuffer.m */; };
+		F63DCBF416E68A9C00DBE29D /* P1TextureMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F63DCBF316E68A9C00DBE29D /* P1TextureMeta.m */; };
+		F63DCBF716E698DF00DBE29D /* P1OpenGLContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F63DCBF616E698DF00DBE29D /* P1OpenGLContext.m */; };
 		F64CD43216BB0B01001B1344 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F68E7546169C9F27002FD6E6 /* CoreGraphics.framework */; };
+		F6626F6B16E9343A004C6646 /* P1TexturePool.m in Sources */ = {isa = PBXBuildFile; fileRef = F6626F6A16E9343A004C6646 /* P1TexturePool.m */; };
 		F66518CA16D2C8FF00A988DE /* P1GLibLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = F66518C916D2C8FF00A988DE /* P1GLibLoop.m */; };
 		F66518CD16D2E0CE00A988DE /* P1Pipeline.m in Sources */ = {isa = PBXBuildFile; fileRef = F66518CC16D2E0CE00A988DE /* P1Pipeline.m */; };
 		F665FCAD16BD4EA400E64233 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F665FCAC16BD4EA400E64233 /* CoreAudio.framework */; };
@@ -46,6 +49,7 @@
 		F697203C169B85C500F03D6B /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F697203A169B85C500F03D6B /* MainMenu.xib */; };
 		F6A169E916C8575C003096D1 /* P1Preview.m in Sources */ = {isa = PBXBuildFile; fileRef = F6A169E816C8575C003096D1 /* P1Preview.m */; };
 		F6A169EB16C85773003096D1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A169EA16C85773003096D1 /* QuartzCore.framework */; };
+		F6B62A0F16EE3D99008EBC63 /* P1MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B62A0E16EE3D98008EBC63 /* P1MainWindowController.m */; };
 		F6BEA4B216A20B4100F6DEC1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6BEA4B116A20B4100F6DEC1 /* OpenGL.framework */; };
 		F6C74B4E16DFCC2600DC25E2 /* P1DisplayStreamSrc.m in Sources */ = {isa = PBXBuildFile; fileRef = F6C74B4D16DFCC2600DC25E2 /* P1DisplayStreamSrc.m */; };
 		F6CE70C016AF10F40005DD3D /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6CE70BF16AF10F40005DD3D /* IOSurface.framework */; };
@@ -91,8 +95,8 @@
 /* Begin PBXFileReference section */
 		F60457DA16AB4A4E00A5AB58 /* RGBAtoYUV420.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = RGBAtoYUV420.cl; sourceTree = "<group>"; };
 		F60457DE16AB4B9600A5AB58 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
-		F60457E016AB4CCD00A5AB58 /* VertexShader.sl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = VertexShader.sl; sourceTree = "<group>"; };
-		F60457E216AB4D5600A5AB58 /* FragmentShader.sl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = FragmentShader.sl; sourceTree = "<group>"; };
+		F60457E016AB4CCD00A5AB58 /* simple.vert.sl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = simple.vert.sl; sourceTree = "<group>"; };
+		F60457E216AB4D5600A5AB58 /* simple.frag.sl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = simple.frag.sl; sourceTree = "<group>"; };
 		F60E751816D16F9200148F06 /* libintl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libintl.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libintl.dylib"; sourceTree = "<absolute>"; };
 		F60E751A16D16F9500148F06 /* libffi.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libffi.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libffi.dylib"; sourceTree = "<absolute>"; };
 		F60E751C16D16F9900148F06 /* libglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libglib.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libglib.dylib"; sourceTree = "<absolute>"; };
@@ -115,6 +119,12 @@
 		F613CC4416DC128B00F57089 /* P1RenderTextures2D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1RenderTextures2D.m; sourceTree = "<group>"; };
 		F62BEF5F16DD6AA000E7B319 /* P1IOSurfaceBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1IOSurfaceBuffer.h; sourceTree = "<group>"; };
 		F62BEF6016DD6AA000E7B319 /* P1IOSurfaceBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1IOSurfaceBuffer.m; sourceTree = "<group>"; };
+		F63DCBF216E68A9C00DBE29D /* P1TextureMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1TextureMeta.h; sourceTree = "<group>"; };
+		F63DCBF316E68A9C00DBE29D /* P1TextureMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1TextureMeta.m; sourceTree = "<group>"; };
+		F63DCBF516E698DF00DBE29D /* P1OpenGLContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1OpenGLContext.h; sourceTree = "<group>"; };
+		F63DCBF616E698DF00DBE29D /* P1OpenGLContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1OpenGLContext.m; sourceTree = "<group>"; };
+		F6626F6916E9343A004C6646 /* P1TexturePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1TexturePool.h; sourceTree = "<group>"; };
+		F6626F6A16E9343A004C6646 /* P1TexturePool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1TexturePool.m; sourceTree = "<group>"; };
 		F66518C816D2C8FF00A988DE /* P1GLibLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1GLibLoop.h; sourceTree = "<group>"; };
 		F66518C916D2C8FF00A988DE /* P1GLibLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1GLibLoop.m; sourceTree = "<group>"; };
 		F66518CB16D2E0CE00A988DE /* P1Pipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1Pipeline.h; sourceTree = "<group>"; };
@@ -135,6 +145,8 @@
 		F6A169E716C8575C003096D1 /* P1Preview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1Preview.h; sourceTree = "<group>"; };
 		F6A169E816C8575C003096D1 /* P1Preview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1Preview.m; sourceTree = "<group>"; };
 		F6A169EA16C85773003096D1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		F6B62A0D16EE3D98008EBC63 /* P1MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1MainWindowController.h; sourceTree = "<group>"; };
+		F6B62A0E16EE3D98008EBC63 /* P1MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1MainWindowController.m; sourceTree = "<group>"; };
 		F6BEA4B116A20B4100F6DEC1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		F6C74B4C16DFCC2600DC25E2 /* P1DisplayStreamSrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1DisplayStreamSrc.h; sourceTree = "<group>"; };
 		F6C74B4D16DFCC2600DC25E2 /* P1DisplayStreamSrc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1DisplayStreamSrc.m; sourceTree = "<group>"; };
@@ -224,6 +236,8 @@
 				F6D94161169CCDD0002C8802 /* Audio */,
 				F6972037169B85C500F03D6B /* P1AppDelegate.h */,
 				F6972038169B85C500F03D6B /* P1AppDelegate.m */,
+				F6B62A0D16EE3D98008EBC63 /* P1MainWindowController.h */,
+				F6B62A0E16EE3D98008EBC63 /* P1MainWindowController.m */,
 				F66518C816D2C8FF00A988DE /* P1GLibLoop.h */,
 				F66518C916D2C8FF00A988DE /* P1GLibLoop.m */,
 				F66518CB16D2E0CE00A988DE /* P1Pipeline.h */,
@@ -251,8 +265,8 @@
 		F6BEA4AF16A209C900F6DEC1 /* Video */ = {
 			isa = PBXGroup;
 			children = (
-				F60457E016AB4CCD00A5AB58 /* VertexShader.sl */,
-				F60457E216AB4D5600A5AB58 /* FragmentShader.sl */,
+				F60457E016AB4CCD00A5AB58 /* simple.vert.sl */,
+				F60457E216AB4D5600A5AB58 /* simple.frag.sl */,
 				F60457DA16AB4A4E00A5AB58 /* RGBAtoYUV420.cl */,
 				F6D9416C169CCF80002C8802 /* P1VideoCanvas.h */,
 				F6D9416D169CCF80002C8802 /* P1VideoCanvas.m */,
@@ -260,6 +274,12 @@
 				F6D9416A169CCECD002C8802 /* P1DesktopVideoSource.m */,
 				F62BEF5F16DD6AA000E7B319 /* P1IOSurfaceBuffer.h */,
 				F62BEF6016DD6AA000E7B319 /* P1IOSurfaceBuffer.m */,
+				F63DCBF516E698DF00DBE29D /* P1OpenGLContext.h */,
+				F63DCBF616E698DF00DBE29D /* P1OpenGLContext.m */,
+				F63DCBF216E68A9C00DBE29D /* P1TextureMeta.h */,
+				F63DCBF316E68A9C00DBE29D /* P1TextureMeta.m */,
+				F6626F6916E9343A004C6646 /* P1TexturePool.h */,
+				F6626F6A16E9343A004C6646 /* P1TexturePool.m */,
 				F6C74B4C16DFCC2600DC25E2 /* P1DisplayStreamSrc.h */,
 				F6C74B4D16DFCC2600DC25E2 /* P1DisplayStreamSrc.m */,
 				F613CC3D16DC0EA300F57089 /* P1TextureUpload.h */,
@@ -342,8 +362,8 @@
 				F6972030169B85C500F03D6B /* InfoPlist.strings in Resources */,
 				F6972036169B85C500F03D6B /* Credits.rtf in Resources */,
 				F697203C169B85C500F03D6B /* MainMenu.xib in Resources */,
-				F60457E116AB4CCD00A5AB58 /* VertexShader.sl in Resources */,
-				F60457E316AB4D5600A5AB58 /* FragmentShader.sl in Resources */,
+				F60457E116AB4CCD00A5AB58 /* simple.vert.sl in Resources */,
+				F60457E316AB4D5600A5AB58 /* simple.frag.sl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,6 +390,10 @@
 				F613CC4516DC128B00F57089 /* P1RenderTextures2D.m in Sources */,
 				F62BEF6116DD6AA000E7B319 /* P1IOSurfaceBuffer.m in Sources */,
 				F6C74B4E16DFCC2600DC25E2 /* P1DisplayStreamSrc.m in Sources */,
+				F63DCBF416E68A9C00DBE29D /* P1TextureMeta.m in Sources */,
+				F63DCBF716E698DF00DBE29D /* P1OpenGLContext.m in Sources */,
+				F6626F6B16E9343A004C6646 /* P1TexturePool.m in Sources */,
+				F6B62A0F16EE3D99008EBC63 /* P1MainWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,7 +444,8 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
-					"$(inherited)",
+					G_DISABLE_DEPRECATED,
+					GST_DISABLE_DEPRECATED,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -460,6 +485,10 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					G_DISABLE_DEPRECATED,
+					GST_DISABLE_DEPRECATED,
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;

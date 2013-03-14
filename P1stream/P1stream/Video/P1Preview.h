@@ -35,24 +35,21 @@ struct _P1GPreviewSinkClass
 GType p1g_preview_sink_get_type();
 
 
-@interface P1Preview : NSView
+@interface P1Preview : NSOpenGLView
 {
-    CGColorSpaceRef colorspace;
+    GstBuffer *currentBuffer;
     NSLayoutConstraint *videoConstraint;
 
-    struct P1GPreviewInfo {
-        CGBitmapInfo bitmapInfo;
-        gint width;
-        gint height;
-        gint stride;
-    } info;
-
-    GstBuffer *currentBuffer;
+    GLuint vertexBufferName;
+    GLuint vertexArrayName;
+    GLuint shaderProgram;
+    GLint textureUniform;
 }
 
 @property (nonatomic, readonly) P1GPreviewSink *element;
+@property (nonatomic) CGFloat aspect;
 
-- (struct P1GPreviewInfo *)infoRef;
+- (CGLContextObj)CGLContextObj;
 
 - (void)updateVideoConstraint;
 - (void)clearVideoConstraint;

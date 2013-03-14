@@ -196,7 +196,7 @@ static gboolean p1g_iosurface_allocator_mem_is_span(GstMemory *a, GstMemory *b, 
 }
 
 
-GstBuffer *p1g_buffer_new_with_iosurface(IOSurfaceRef buffer, GstMemoryFlags flags)
+GstBuffer *gst_buffer_new_iosurface(IOSurfaceRef buffer, GstMemoryFlags flags)
 {
     size_t size = IOSurfaceGetAllocSize(buffer);
     g_assert(size != 0);
@@ -212,7 +212,7 @@ GstBuffer *p1g_buffer_new_with_iosurface(IOSurfaceRef buffer, GstMemoryFlags fla
     return res;
 }
 
-IOSurfaceRef p1g_buffer_get_iosurface(GstBuffer *buffer)
+IOSurfaceRef gst_buffer_get_iosurface(GstBuffer *buffer)
 {
     if (gst_buffer_n_memory(buffer) == 1) {
         GstMemory *mem = gst_buffer_get_memory(buffer, 0);
