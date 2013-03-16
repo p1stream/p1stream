@@ -55,27 +55,12 @@ static void p1g_texture_upload_class_init(P1GTextureUploadClass *klass)
                                            "Filter/Video",
                                            "Uploads a frame as a texture to an OpenGL context",
                                            "Stéphan Kochen <stephan@kochen.nl>");
-
-    GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-    gobject_class->dispose = p1g_texture_upload_src_dispose;
 }
 
 static void p1g_texture_upload_init(P1GTextureUpload *self)
 {
     GstBaseTransform *basetransform = GST_BASE_TRANSFORM(self);
     gst_base_transform_set_qos_enabled(basetransform, TRUE);
-
-    self->context = NULL;
-}
-
-static void p1g_texture_upload_src_dispose(GObject *gobject)
-{
-    P1GTextureUpload *self = P1G_TEXTURE_UPLOAD(gobject);
-
-    if (self->context)
-        g_object_unref(self->context);
-
-    G_OBJECT_CLASS(parent_class)->dispose(gobject);
 }
 
 static GstCaps *p1g_texture_upload_transform_caps(
@@ -117,8 +102,6 @@ static gboolean p1g_texture_upload_set_caps(
 static gboolean p1g_texture_upload_decide_allocation(
     GstBaseTransform *trans, GstQuery *query)
 {
-    P1GTextureUpload *self = P1G_TEXTURE_UPLOAD(trans);
-
     P1GTexturePool *pool = NULL;
     guint size = 1, min = 1, max = 1;
 
@@ -152,40 +135,10 @@ static gboolean p1g_texture_upload_decide_allocation(
         }
     }
 
-    // No pool, create our own from a new off-screen context.
+    // No texture pool, create our own (with an off-screen context).
     if (pool == NULL) {
-        if (self->context != NULL) {
-            if (p1g_opengl_context_get_parent(self->context) != NULL) {
-                g_object_unref(self->context);
-                self->context = NULL;
-            }
-        }
-
-        if (self->context == NULL) {
-            self->context = p1g_opengl_context_new(NULL);
-            g_return_val_if_fail(self->context != NULL, FALSE);
-        }
-
-        pool = p1g_texture_pool_new(self->context);
+        pool = p1g_texture_pool_new(NULL);
         g_return_val_if_fail(pool != NULL, FALSE);
-    }
-    // Downstream gave us a pool, upload to it from a shared context.
-    else {
-        P1GOpenGLContext *parent_context = p1g_texture_pool_get_context(pool);
-
-        if (self->context != NULL) {
-            if (!p1g_opengl_context_is_shared_with(self->context, parent_context)) {
-                g_object_unref(self->context);
-                self->context = NULL;
-            }
-        }
-
-        if (self->context == NULL) {
-            self->context = p1g_opengl_context_new(parent_context);
-            g_return_val_if_fail(self->context != NULL, FALSE);
-
-            gst_object_unref(parent_context);
-        }
     }
 
     GstCaps *outcaps;
@@ -210,7 +163,7 @@ static GstFlowReturn p1g_texture_upload_transform(
     P1GTextureUpload *self = P1G_TEXTURE_UPLOAD(trans);
     P1GTextureMeta *meta = gst_buffer_get_texture_meta(outbuf);
 
-    p1g_opengl_context_activate(self->context);
+    CGLContextObj cglContext = p1g_opengl_context_activate(meta->context);
     glBindTexture(GL_TEXTURE_RECTANGLE, meta->texture_name);
 
     // Try for an IOSurface buffer.
@@ -221,7 +174,7 @@ static GstFlowReturn p1g_texture_upload_transform(
             return GST_FLOW_OK;
 
         CGLError err = CGLTexImageIOSurface2D(
-            self->context->context, GL_TEXTURE_RECTANGLE,
+            cglContext, GL_TEXTURE_RECTANGLE,
             GL_RGBA, self->width, self->height,
             GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface, 0);
         g_return_val_if_fail(err == kCGLNoError, GST_FLOW_ERROR);

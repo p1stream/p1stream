@@ -24,7 +24,6 @@ struct _P1GTextureUpload
 
     /*< private >*/
     gint width, height;
-    P1GOpenGLContext *context;
 };
 
 struct _P1GTextureUploadClass

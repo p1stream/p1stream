@@ -21,9 +21,9 @@ struct _P1GOpenGLContext
     GObject parent_instance;
 
     /*< private >*/
-    P1GOpenGLContext *parent;
     CGLPixelFormatObj pixel_format;
-    CGLContextObj context;
+    CGLContextObj main_context;
+    GHashTable *contexts;
 };
 
 struct _P1GOpenGLContextClass
@@ -34,14 +34,6 @@ struct _P1GOpenGLContextClass
 GType p1g_opengl_context_get_type();
 
 
-P1GOpenGLContext *p1g_opengl_context_new(P1GOpenGLContext *parent);
-P1GOpenGLContext *p1g_opengl_context_new_existing(CGLContextObj ctx);
+CGLContextObj p1g_opengl_context_activate(P1GOpenGLContext *self);
 
-#define p1g_opengl_context_get_parent(self) \
-    g_object_ref(P1G_OPENGL_CONTEXT_CAST(self)->parent)
-
-#define p1g_opengl_context_is_shared_with(self, other) \
-    ((P1G_OPENGL_CONTEXT_CAST(self)->parent || (self)) == (P1G_OPENGL_CONTEXT_CAST(other)->parent || (other)))
-
-#define p1g_opengl_context_activate(self) \
-    CGLSetCurrentContext(P1G_OPENGL_CONTEXT_CAST(self)->context)
+P1GOpenGLContext *p1g_opengl_context_new(CGLContextObj context);

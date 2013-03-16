@@ -50,7 +50,7 @@ static gboolean p1g_preview_sink_propose_allocation(GstBaseSink *basesink, GstQu
     P1GPreviewSink *self = P1G_PREVIEW_SINK(basesink);
     P1Preview *view = (__bridge P1Preview *)self->viewRef;
 
-    P1GOpenGLContext *context = p1g_opengl_context_new_existing(view.CGLContextObj);
+    P1GOpenGLContext *context = p1g_opengl_context_new(view.CGLContextObj);
     g_return_val_if_fail(context != NULL, FALSE);
 
     P1GTexturePool *pool = p1g_texture_pool_new(context);
@@ -249,6 +249,8 @@ const void *vboTexCoordsOffset = (void *)(2 * sizeof(GLfloat));
         else
             currentBuffer = NULL;
 
+        // FIXME: ideally, this should use p1g_opengl_context_active, but we
+        // can't control that for drawRect.
         [[self openGLContext] makeCurrentContext];
         [self drawBuffer];
     }
