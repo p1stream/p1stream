@@ -188,6 +188,15 @@ static gboolean p1g_texture_upload_decide_allocation(
         }
     }
 
+    GstCaps *outcaps;
+    gst_query_parse_allocation(query, &outcaps, NULL);
+
+    GstAllocationParams params;
+    GstStructure *config = gst_buffer_pool_get_config(GST_BUFFER_POOL(pool));
+    gst_buffer_pool_config_set_params(config, outcaps, size, min, max);
+    gst_buffer_pool_config_set_allocator(config, NULL, &params);
+    gst_buffer_pool_set_config(GST_BUFFER_POOL(pool), config);
+
     // Fix the pool selection.
     gst_query_set_nth_allocation_pool(query, 0, GST_BUFFER_POOL_CAST(pool), size, min, max);
     gst_object_unref(pool);

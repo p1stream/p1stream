@@ -52,9 +52,5 @@ P1GTexturePool *p1g_texture_pool_new(P1GOpenGLContext *ctx)
 
     pool->context = g_object_ref(ctx);
 
-    // FIXME: We don't need configuration? But it complains. :/
-    GstStructure *config = gst_buffer_pool_get_config(GST_BUFFER_POOL(pool));
-    gst_buffer_pool_set_config(GST_BUFFER_POOL(pool), config);
-
     return pool;
 }
