@@ -57,7 +57,7 @@
 
 
 // The canvas combines video sources into a single image.
-@interface P1VideoCanvas : NSObject <P1VideoSourceDelegate>
+@interface P1OldVideoCanvas : NSObject <P1VideoSourceDelegate>
 {
     NSOpenGLPixelFormat *pixelFormat;
     NSOpenGLContext *context;

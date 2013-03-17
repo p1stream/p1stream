@@ -56,7 +56,7 @@
 		F6D475D616A2DC54003BD4E1 /* P1Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D475D516A2DC54003BD4E1 /* P1Utils.m */; };
 		F6D94168169CCEBD002C8802 /* P1InputAudioSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D94167169CCEBD002C8802 /* P1InputAudioSource.m */; };
 		F6D9416B169CCECD002C8802 /* P1DesktopVideoSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D9416A169CCECD002C8802 /* P1DesktopVideoSource.m */; };
-		F6D9416E169CCF80002C8802 /* P1VideoCanvas.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D9416D169CCF80002C8802 /* P1VideoCanvas.m */; };
+		F6D9416E169CCF80002C8802 /* P1OldVideoCanvas.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D9416D169CCF80002C8802 /* P1OldVideoCanvas.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -157,8 +157,8 @@
 		F6D94167169CCEBD002C8802 /* P1InputAudioSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1InputAudioSource.m; sourceTree = "<group>"; };
 		F6D94169169CCECD002C8802 /* P1DesktopVideoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1DesktopVideoSource.h; sourceTree = "<group>"; };
 		F6D9416A169CCECD002C8802 /* P1DesktopVideoSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1DesktopVideoSource.m; sourceTree = "<group>"; };
-		F6D9416C169CCF80002C8802 /* P1VideoCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1VideoCanvas.h; sourceTree = "<group>"; };
-		F6D9416D169CCF80002C8802 /* P1VideoCanvas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1VideoCanvas.m; sourceTree = "<group>"; };
+		F6D9416C169CCF80002C8802 /* P1OldVideoCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1OldVideoCanvas.h; sourceTree = "<group>"; };
+		F6D9416D169CCF80002C8802 /* P1OldVideoCanvas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1OldVideoCanvas.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -268,8 +268,8 @@
 				F60457E016AB4CCD00A5AB58 /* simple.vert.sl */,
 				F60457E216AB4D5600A5AB58 /* simple.frag.sl */,
 				F60457DA16AB4A4E00A5AB58 /* RGBAtoYUV420.cl */,
-				F6D9416C169CCF80002C8802 /* P1VideoCanvas.h */,
-				F6D9416D169CCF80002C8802 /* P1VideoCanvas.m */,
+				F6D9416C169CCF80002C8802 /* P1OldVideoCanvas.h */,
+				F6D9416D169CCF80002C8802 /* P1OldVideoCanvas.m */,
 				F6D94169169CCECD002C8802 /* P1DesktopVideoSource.h */,
 				F6D9416A169CCECD002C8802 /* P1DesktopVideoSource.m */,
 				F62BEF5F16DD6AA000E7B319 /* P1IOSurfaceBuffer.h */,
@@ -378,7 +378,7 @@
 				F6972039169B85C500F03D6B /* P1AppDelegate.m in Sources */,
 				F6D94168169CCEBD002C8802 /* P1InputAudioSource.m in Sources */,
 				F6D9416B169CCECD002C8802 /* P1DesktopVideoSource.m in Sources */,
-				F6D9416E169CCF80002C8802 /* P1VideoCanvas.m in Sources */,
+				F6D9416E169CCF80002C8802 /* P1OldVideoCanvas.m in Sources */,
 				F60F33DC16A08ACB0087DB40 /* P1AudioMixer.m in Sources */,
 				F6D475D616A2DC54003BD4E1 /* P1Utils.m in Sources */,
 				F60457DD16AB4A6200A5AB58 /* RGBAtoYUV420.cl in Sources */,

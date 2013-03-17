@@ -1,4 +1,4 @@
-#import "P1VideoCanvas.h"
+#import "P1OldVideoCanvas.h"
 #import "P1DesktopVideoSource.h"
 
 #include "RGBAtoYUV420.cl.h"
@@ -48,7 +48,7 @@ struct SlotDrawData
 @end
 
 
-@implementation P1VideoCanvas
+@implementation P1OldVideoCanvas
 
 @synthesize slots, delegate;
 

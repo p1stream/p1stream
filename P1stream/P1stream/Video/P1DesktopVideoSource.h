@@ -1,4 +1,4 @@
-#import "P1VideoCanvas.h"
+#import "P1OldVideoCanvas.h"
 
 
 @interface P1DesktopVideoSource : NSObject <P1VideoSource>
