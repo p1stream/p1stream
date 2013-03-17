@@ -245,10 +245,10 @@ const void *vboTexCoordsOffset = (void *)(2 * sizeof(GLfloat));
         else
             currentBuffer = NULL;
 
-        // FIXME: ideally, this should use p1g_opengl_context_active, but we
-        // can't control that for drawRect.
+        [self lockFocus];
         [[self openGLContext] makeCurrentContext];
         [self drawBuffer];
+        [self unlockFocus];
     }
 }
 
@@ -259,9 +259,7 @@ const void *vboTexCoordsOffset = (void *)(2 * sizeof(GLfloat));
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    @synchronized(self) {
-        [self drawBuffer];
-    }
+    [self drawBuffer];
 }
 
 - (void)drawBuffer
