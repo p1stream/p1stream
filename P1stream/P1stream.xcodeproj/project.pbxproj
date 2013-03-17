@@ -280,8 +280,6 @@
 				F63DCBF316E68A9C00DBE29D /* P1TextureMeta.m */,
 				F6626F6916E9343A004C6646 /* P1TexturePool.h */,
 				F6626F6A16E9343A004C6646 /* P1TexturePool.m */,
-				F6C74B4C16DFCC2600DC25E2 /* P1DisplayStreamSrc.h */,
-				F6C74B4D16DFCC2600DC25E2 /* P1DisplayStreamSrc.m */,
 				F613CC3D16DC0EA300F57089 /* P1TextureUpload.h */,
 				F613CC3E16DC0EA300F57089 /* P1TextureUpload.m */,
 				F613CC4016DC0EE800F57089 /* P1FrameBufferDownload.h */,
@@ -290,6 +288,8 @@
 				F613CC4416DC128B00F57089 /* P1RenderTextures2D.m */,
 				F6A169E716C8575C003096D1 /* P1Preview.h */,
 				F6A169E816C8575C003096D1 /* P1Preview.m */,
+				F6C74B4C16DFCC2600DC25E2 /* P1DisplayStreamSrc.h */,
+				F6C74B4D16DFCC2600DC25E2 /* P1DisplayStreamSrc.m */,
 			);
 			path = Video;
 			sourceTree = "<group>";

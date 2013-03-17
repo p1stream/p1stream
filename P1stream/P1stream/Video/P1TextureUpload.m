@@ -179,6 +179,8 @@ static GstFlowReturn p1g_texture_upload_transform(
             GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface, 0);
         g_return_val_if_fail(err == kCGLNoError, GST_FLOW_ERROR);
 
+        if (meta->dependency)
+            gst_buffer_unref(meta->dependency);
         meta->dependency = gst_buffer_ref(inbuf);
     }
     // Normal buffer to texture upload.

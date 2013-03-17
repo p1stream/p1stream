@@ -168,10 +168,6 @@ const void *vboTexCoordsOffset = (void *)(2 * sizeof(GLfloat));
         NSOpenGLContext *context = self.openGLContext;
         [context makeCurrentContext];
 
-        // Vsync
-        GLint swapInterval = 1;
-        [context setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
-
         // Black background.
         glClearColor(0, 0, 0, 1);
 

@@ -32,8 +32,10 @@ static void p1_texture_meta_free(GstMeta *meta, GstBuffer *buffer)
 {
     P1GTextureMeta *self = (P1GTextureMeta *)meta;
 
-    if (self->dependency)
+    if (self->dependency) {
         gst_buffer_unref(self->dependency);
+        self->dependency = NULL;
+    }
 
     g_object_unref(self->context);
 }

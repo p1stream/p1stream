@@ -161,10 +161,16 @@ static void p1g_display_stream_src_frame_callback(
     GST_OBJECT_LOCK(self);
 
     if (status == kCGDisplayStreamFrameStatusFrameComplete) {
-        if (self->buffer)
-            gst_buffer_unref(self->buffer);
+        if (self->buffer) {
+            if (gst_buffer_get_iosurface(self->buffer) != frameSurface) {
+                gst_buffer_unref(self->buffer);
+                self->buffer = NULL;
+            }
+        }
 
-        self->buffer = gst_buffer_new_iosurface(frameSurface, 0);
+        if (!self->buffer) {
+            self->buffer = gst_buffer_new_iosurface(frameSurface, 0);
+        }
 
         g_cond_broadcast(&self->cond);
     }
