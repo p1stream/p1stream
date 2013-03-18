@@ -6,6 +6,7 @@ G_DEFINE_TYPE(P1GDisplayStreamSrc, p1g_display_stream_src, GST_TYPE_PUSH_SRC)
 static GstPushSrcClass *parent_class = NULL;
 
 static void p1g_display_stream_src_dispose(GObject *gobject);
+static void p1g_display_stream_src_finalize(GObject *gobject);
 static GstCaps *p1g_display_stream_src_get_caps(GstBaseSrc *src, GstCaps *filter);
 static gboolean p1g_display_stream_src_start(GstBaseSrc *basesrc);
 static gboolean p1g_display_stream_src_stop(GstBaseSrc *basesrc);
@@ -48,7 +49,8 @@ static void p1g_display_stream_src_class_init(P1GDisplayStreamSrcClass *klass)
                                            "Stéphan Kochen <stephan@kochen.nl>");
 
     GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-    gobject_class->dispose = p1g_display_stream_src_dispose;
+    gobject_class->dispose  = p1g_display_stream_src_dispose;
+    gobject_class->finalize = p1g_display_stream_src_finalize;
 }
 
 static void p1g_display_stream_src_init(P1GDisplayStreamSrc *self)
@@ -68,9 +70,19 @@ static void p1g_display_stream_src_dispose(GObject* gobject)
 {
     P1GDisplayStreamSrc *self = P1G_DISPLAY_STREAM_SRC(gobject);
 
-    g_cond_clear(&self->cond);
+    g_assert(self->display_stream == NULL);
+    g_assert(self->buffer == NULL);
 
     G_OBJECT_CLASS(parent_class)->dispose(gobject);
+}
+
+static void p1g_display_stream_src_finalize(GObject* gobject)
+{
+    P1GDisplayStreamSrc *self = P1G_DISPLAY_STREAM_SRC(gobject);
+
+    g_cond_clear(&self->cond);
+
+    G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
 static GstCaps *p1g_display_stream_src_get_caps(GstBaseSrc *src, GstCaps *filter)
@@ -175,11 +187,6 @@ static void p1g_display_stream_src_frame_callback(
         g_cond_broadcast(&self->cond);
     }
     else if (status == kCGDisplayStreamFrameStatusStopped) {
-        if (self->buffer) {
-            gst_buffer_unref(self->buffer);
-            self->buffer = NULL;
-        }
-
         self->stopped = TRUE;
 
         g_cond_broadcast(&self->cond);
@@ -206,14 +213,22 @@ static GstFlowReturn p1g_display_stream_src_create(GstPushSrc *pushsrc, GstBuffe
         }
 
         if (self->buffer) {
+            // Transfer ownership to outbuf.
             *outbuf = self->buffer;
             self->buffer = NULL;
+
             res = GST_FLOW_OK;
             break;
         }
 
         g_cond_wait(&self->cond, GST_OBJECT_GET_LOCK(self));
     } while (TRUE);
+
+    // Flushing or stopped, make sure the buffer is gone.
+    if (self->buffer) {
+        gst_buffer_unref(self->buffer);
+        self->buffer = NULL;
+    }
 
     GST_OBJECT_UNLOCK(self);
     return res;
