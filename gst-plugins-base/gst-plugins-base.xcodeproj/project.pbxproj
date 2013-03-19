@@ -7,6 +7,61 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F6037ABC16F8DB7A0045433B /* gstaudiopack.orc in Sources */ = {isa = PBXBuildFile; fileRef = F6037AA916F8DB160045433B /* gstaudiopack.orc */; };
+		F6037ABD16F8DB7A0045433B /* audio-channels.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037A8A16F8DB160045433B /* audio-channels.c */; };
+		F6037ABE16F8DB7A0045433B /* audio-format.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037A8C16F8DB160045433B /* audio-format.c */; };
+		F6037ABF16F8DB7A0045433B /* audio-info.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037A8E16F8DB160045433B /* audio-info.c */; };
+		F6037AC016F8DB7A0045433B /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037A9016F8DB160045433B /* audio.c */; };
+		F6037AC116F8DB7A0045433B /* gstaudiobasesink.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037A9516F8DB160045433B /* gstaudiobasesink.c */; };
+		F6037AC216F8DB7A0045433B /* gstaudiobasesrc.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037A9716F8DB160045433B /* gstaudiobasesrc.c */; };
+		F6037AC316F8DB7A0045433B /* gstaudiocdsrc.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037A9916F8DB160045433B /* gstaudiocdsrc.c */; };
+		F6037AC416F8DB7A0045433B /* gstaudioclock.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037A9B16F8DB160045433B /* gstaudioclock.c */; };
+		F6037AC516F8DB7A0045433B /* gstaudiodecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037A9D16F8DB160045433B /* gstaudiodecoder.c */; };
+		F6037AC616F8DB7A0045433B /* gstaudioencoder.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037A9F16F8DB160045433B /* gstaudioencoder.c */; };
+		F6037AC716F8DB7A0045433B /* gstaudiofilter.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037AA116F8DB160045433B /* gstaudiofilter.c */; };
+		F6037AC816F8DB7A0045433B /* gstaudioiec61937.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037AA316F8DB160045433B /* gstaudioiec61937.c */; };
+		F6037AC916F8DB7A0045433B /* gstaudiometa.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037AA516F8DB160045433B /* gstaudiometa.c */; };
+		F6037ACA16F8DB7A0045433B /* gstaudioringbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037AAA16F8DB160045433B /* gstaudioringbuffer.c */; };
+		F6037ACB16F8DB7A0045433B /* gstaudiosink.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037AAC16F8DB160045433B /* gstaudiosink.c */; };
+		F6037ACC16F8DB7A0045433B /* gstaudiosrc.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037AAE16F8DB160045433B /* gstaudiosrc.c */; };
+		F6037ACD16F8DB7A0045433B /* streamvolume.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037AB116F8DB160045433B /* streamvolume.c */; };
+		F6037ACE16F8DB900045433B /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A516D16B6D00148F06 /* libglib.dylib */; };
+		F6037ACF16F8DB970045433B /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A716D16B7100148F06 /* libgobject.dylib */; };
+		F6037AD016F8DB9B0045433B /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A316D16B6000148F06 /* libgstreamer.dylib */; };
+		F6037AD116F8DB9E0045433B /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74AB16D16B8200148F06 /* libgstbase.dylib */; };
+		F6037AD216F8DBA60045433B /* liborc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A916D16B7A00148F06 /* liborc.dylib */; };
+		F6037AD516F8DBBE0045433B /* gstadder.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037A7D16F8DA820045433B /* gstadder.c */; };
+		F6037AD616F8DBBE0045433B /* gstadderorc.orc in Sources */ = {isa = PBXBuildFile; fileRef = F6037A7F16F8DA820045433B /* gstadderorc.orc */; };
+		F6037AD716F8DBCD0045433B /* libgstaudio.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6037AB816F8DB6B0045433B /* libgstaudio.dylib */; };
+		F6037AD816F8DBD10045433B /* liborc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A916D16B7A00148F06 /* liborc.dylib */; };
+		F6037AD916F8DBD50045433B /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74AB16D16B8200148F06 /* libgstbase.dylib */; };
+		F6037ADA16F8DBD90045433B /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A316D16B6000148F06 /* libgstreamer.dylib */; };
+		F6037ADB16F8DBDF0045433B /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A716D16B7100148F06 /* libgobject.dylib */; };
+		F6037ADC16F8DBE30045433B /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A516D16B6D00148F06 /* libglib.dylib */; };
+		F6037AF616F8DE070045433B /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A516D16B6D00148F06 /* libglib.dylib */; };
+		F6037AF716F8DE070045433B /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A716D16B7100148F06 /* libgobject.dylib */; };
+		F6037AF816F8DE070045433B /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A316D16B6000148F06 /* libgstreamer.dylib */; };
+		F6037AF916F8DE070045433B /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74AB16D16B8200148F06 /* libgstbase.dylib */; };
+		F6037AFA16F8DE070045433B /* liborc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A916D16B7A00148F06 /* liborc.dylib */; };
+		F6037B0016F8DE380045433B /* gstcms.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E74E516D16DE100148F06 /* gstcms.c */; };
+		F6037B0116F8DE3A0045433B /* gstvideoconvertorc.orc in Sources */ = {isa = PBXBuildFile; fileRef = F60E74EB16D16DE100148F06 /* gstvideoconvertorc.orc */; };
+		F6037B0216F8DE3B0045433B /* gstvideoconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E74E716D16DE100148F06 /* gstvideoconvert.c */; };
+		F6037B0316F8DE3E0045433B /* videoconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E74ED16D16DE100148F06 /* videoconvert.c */; };
+		F6037B2116F8DF1E0045433B /* gstexiftag.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B0516F8DE740045433B /* gstexiftag.c */; };
+		F6037B2216F8DF1E0045433B /* gstid3tag.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B0616F8DE740045433B /* gstid3tag.c */; };
+		F6037B2316F8DF1E0045433B /* gsttagdemux.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B0716F8DE740045433B /* gsttagdemux.c */; };
+		F6037B2416F8DF1E0045433B /* gsttageditingprivate.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B0916F8DE740045433B /* gsttageditingprivate.c */; };
+		F6037B2516F8DF1E0045433B /* gsttagmux.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B0B16F8DE740045433B /* gsttagmux.c */; };
+		F6037B2616F8DF1E0045433B /* gstvorbistag.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B0D16F8DE740045433B /* gstvorbistag.c */; };
+		F6037B2716F8DF1E0045433B /* gstxmptag.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B0E16F8DE740045433B /* gstxmptag.c */; };
+		F6037B2816F8DF1E0045433B /* id3v2.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B1216F8DE740045433B /* id3v2.c */; };
+		F6037B2916F8DF1E0045433B /* id3v2frames.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B1416F8DE740045433B /* id3v2frames.c */; };
+		F6037B2A16F8DF1E0045433B /* lang.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B1616F8DE740045433B /* lang.c */; };
+		F6037B2B16F8DF1E0045433B /* licenses.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B1916F8DE740045433B /* licenses.c */; };
+		F6037B2C16F8DF1E0045433B /* tags.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B1E16F8DE740045433B /* tags.c */; };
+		F6037B2D16F8DF1E0045433B /* xmpwriter.c in Sources */ = {isa = PBXBuildFile; fileRef = F6037B1F16F8DE740045433B /* xmpwriter.c */; };
+		F6037B3016F8DF550045433B /* libgsttag.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6037AFF16F8DE070045433B /* libgsttag.dylib */; };
+		F6037B3216F8DF7A0045433B /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6037B3116F8DF7A0045433B /* libz.dylib */; };
 		F60E747C16D1619C00148F06 /* colorbalance.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E746716D1619C00148F06 /* colorbalance.c */; };
 		F60E747D16D1619C00148F06 /* colorbalancechannel.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E746816D1619C00148F06 /* colorbalancechannel.c */; };
 		F60E747E16D1619C00148F06 /* convertframe.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E746916D1619C00148F06 /* convertframe.c */; };
@@ -50,14 +105,46 @@
 		F60E74E116D16DC000148F06 /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A316D16B6000148F06 /* libgstreamer.dylib */; };
 		F60E74E216D16DC300148F06 /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74AB16D16B8200148F06 /* libgstbase.dylib */; };
 		F60E74E316D16DC500148F06 /* liborc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A916D16B7A00148F06 /* liborc.dylib */; };
-		F60E74F016D16DE100148F06 /* gstcms.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E74E516D16DE100148F06 /* gstcms.c */; };
-		F60E74F116D16DE100148F06 /* gstvideoconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E74E716D16DE100148F06 /* gstvideoconvert.c */; };
-		F60E74F316D16DE100148F06 /* videoconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = F60E74ED16D16DE100148F06 /* videoconvert.c */; };
-		F60E74F416D16DEF00148F06 /* gstvideoconvertorc.orc in Sources */ = {isa = PBXBuildFile; fileRef = F60E74EB16D16DE100148F06 /* gstvideoconvertorc.orc */; };
 		F60E74F616D16E2100148F06 /* libgstvideo.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E745816D160FD00148F06 /* libgstvideo.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
+		F6037AE016F8DDB30045433B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.orc";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_BASE}.h",
+				"${INPUT_FILE_BASE}.c",
+			);
+			script = "exec ${SRCROOT}/../ORC/build_rule.sh";
+		};
+		F6037AFB16F8DE070045433B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.orc";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_BASE}.h",
+				"${INPUT_FILE_BASE}.c",
+			);
+			script = "exec ${SRCROOT}/../ORC/build_rule.sh";
+		};
+		F6037B3316F8DF8D0045433B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.orc";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_BASE}.h",
+				"${INPUT_FILE_BASE}.c",
+			);
+			script = "exec ${SRCROOT}/../ORC/build_rule.sh";
+		};
 		F60E749516D1628900148F06 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
@@ -97,6 +184,20 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		F6037AD316F8DBB40045433B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F60E744E16D15D2300148F06 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F6037AB716F8DB6B0045433B;
+			remoteInfo = gstaudio;
+		};
+		F6037B2E16F8DF270045433B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F60E744E16D15D2300148F06 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F6037AE116F8DE070045433B;
+			remoteInfo = gsttag;
+		};
 		F60E74CB16D16C7300148F06 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F60E744E16D15D2300148F06 /* Project object */;
@@ -114,6 +215,74 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F6037A7D16F8DA820045433B /* gstadder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gstadder.c; path = "gst-plugins-base/gst/adder/gstadder.c"; sourceTree = "<group>"; };
+		F6037A7E16F8DA820045433B /* gstadder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gstadder.h; path = "gst-plugins-base/gst/adder/gstadder.h"; sourceTree = "<group>"; };
+		F6037A7F16F8DA820045433B /* gstadderorc.orc */ = {isa = PBXFileReference; lastKnownFileType = text; name = gstadderorc.orc; path = "gst-plugins-base/gst/adder/gstadderorc.orc"; sourceTree = "<group>"; };
+		F6037A8416F8DAC80045433B /* libgstadder.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgstadder.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6037A8A16F8DB160045433B /* audio-channels.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "audio-channels.c"; sourceTree = "<group>"; };
+		F6037A8B16F8DB160045433B /* audio-channels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "audio-channels.h"; sourceTree = "<group>"; };
+		F6037A8C16F8DB160045433B /* audio-format.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "audio-format.c"; sourceTree = "<group>"; };
+		F6037A8D16F8DB160045433B /* audio-format.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "audio-format.h"; sourceTree = "<group>"; };
+		F6037A8E16F8DB160045433B /* audio-info.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "audio-info.c"; sourceTree = "<group>"; };
+		F6037A8F16F8DB160045433B /* audio-info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "audio-info.h"; sourceTree = "<group>"; };
+		F6037A9016F8DB160045433B /* audio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
+		F6037A9216F8DB160045433B /* audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
+		F6037A9516F8DB160045433B /* gstaudiobasesink.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstaudiobasesink.c; sourceTree = "<group>"; };
+		F6037A9616F8DB160045433B /* gstaudiobasesink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstaudiobasesink.h; sourceTree = "<group>"; };
+		F6037A9716F8DB160045433B /* gstaudiobasesrc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstaudiobasesrc.c; sourceTree = "<group>"; };
+		F6037A9816F8DB160045433B /* gstaudiobasesrc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstaudiobasesrc.h; sourceTree = "<group>"; };
+		F6037A9916F8DB160045433B /* gstaudiocdsrc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstaudiocdsrc.c; sourceTree = "<group>"; };
+		F6037A9A16F8DB160045433B /* gstaudiocdsrc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstaudiocdsrc.h; sourceTree = "<group>"; };
+		F6037A9B16F8DB160045433B /* gstaudioclock.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstaudioclock.c; sourceTree = "<group>"; };
+		F6037A9C16F8DB160045433B /* gstaudioclock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstaudioclock.h; sourceTree = "<group>"; };
+		F6037A9D16F8DB160045433B /* gstaudiodecoder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstaudiodecoder.c; sourceTree = "<group>"; };
+		F6037A9E16F8DB160045433B /* gstaudiodecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstaudiodecoder.h; sourceTree = "<group>"; };
+		F6037A9F16F8DB160045433B /* gstaudioencoder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstaudioencoder.c; sourceTree = "<group>"; };
+		F6037AA016F8DB160045433B /* gstaudioencoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstaudioencoder.h; sourceTree = "<group>"; };
+		F6037AA116F8DB160045433B /* gstaudiofilter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstaudiofilter.c; sourceTree = "<group>"; };
+		F6037AA216F8DB160045433B /* gstaudiofilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstaudiofilter.h; sourceTree = "<group>"; };
+		F6037AA316F8DB160045433B /* gstaudioiec61937.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstaudioiec61937.c; sourceTree = "<group>"; };
+		F6037AA416F8DB160045433B /* gstaudioiec61937.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstaudioiec61937.h; sourceTree = "<group>"; };
+		F6037AA516F8DB160045433B /* gstaudiometa.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstaudiometa.c; sourceTree = "<group>"; };
+		F6037AA616F8DB160045433B /* gstaudiometa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstaudiometa.h; sourceTree = "<group>"; };
+		F6037AA916F8DB160045433B /* gstaudiopack.orc */ = {isa = PBXFileReference; lastKnownFileType = text; path = gstaudiopack.orc; sourceTree = "<group>"; };
+		F6037AAA16F8DB160045433B /* gstaudioringbuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstaudioringbuffer.c; sourceTree = "<group>"; };
+		F6037AAB16F8DB160045433B /* gstaudioringbuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstaudioringbuffer.h; sourceTree = "<group>"; };
+		F6037AAC16F8DB160045433B /* gstaudiosink.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstaudiosink.c; sourceTree = "<group>"; };
+		F6037AAD16F8DB160045433B /* gstaudiosink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstaudiosink.h; sourceTree = "<group>"; };
+		F6037AAE16F8DB160045433B /* gstaudiosrc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstaudiosrc.c; sourceTree = "<group>"; };
+		F6037AAF16F8DB160045433B /* gstaudiosrc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstaudiosrc.h; sourceTree = "<group>"; };
+		F6037AB116F8DB160045433B /* streamvolume.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = streamvolume.c; sourceTree = "<group>"; };
+		F6037AB216F8DB160045433B /* streamvolume.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = streamvolume.h; sourceTree = "<group>"; };
+		F6037AB816F8DB6B0045433B /* libgstaudio.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgstaudio.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6037ADE16F8DD730045433B /* audio-enumtypes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "audio-enumtypes.c"; sourceTree = "<group>"; };
+		F6037ADF16F8DD730045433B /* audio-enumtypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "audio-enumtypes.h"; sourceTree = "<group>"; };
+		F6037AFF16F8DE070045433B /* libgsttag.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgsttag.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6037B0516F8DE740045433B /* gstexiftag.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstexiftag.c; sourceTree = "<group>"; };
+		F6037B0616F8DE740045433B /* gstid3tag.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstid3tag.c; sourceTree = "<group>"; };
+		F6037B0716F8DE740045433B /* gsttagdemux.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gsttagdemux.c; sourceTree = "<group>"; };
+		F6037B0816F8DE740045433B /* gsttagdemux.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttagdemux.h; sourceTree = "<group>"; };
+		F6037B0916F8DE740045433B /* gsttageditingprivate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gsttageditingprivate.c; sourceTree = "<group>"; };
+		F6037B0A16F8DE740045433B /* gsttageditingprivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttageditingprivate.h; sourceTree = "<group>"; };
+		F6037B0B16F8DE740045433B /* gsttagmux.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gsttagmux.c; sourceTree = "<group>"; };
+		F6037B0C16F8DE740045433B /* gsttagmux.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttagmux.h; sourceTree = "<group>"; };
+		F6037B0D16F8DE740045433B /* gstvorbistag.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstvorbistag.c; sourceTree = "<group>"; };
+		F6037B0E16F8DE740045433B /* gstxmptag.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gstxmptag.c; sourceTree = "<group>"; };
+		F6037B1216F8DE740045433B /* id3v2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = id3v2.c; sourceTree = "<group>"; };
+		F6037B1316F8DE740045433B /* id3v2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = id3v2.h; sourceTree = "<group>"; };
+		F6037B1416F8DE740045433B /* id3v2frames.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = id3v2frames.c; sourceTree = "<group>"; };
+		F6037B1516F8DE740045433B /* lang-tables.dat */ = {isa = PBXFileReference; lastKnownFileType = text; path = "lang-tables.dat"; sourceTree = "<group>"; };
+		F6037B1616F8DE740045433B /* lang.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lang.c; sourceTree = "<group>"; };
+		F6037B1716F8DE740045433B /* license-translations.dict */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "license-translations.dict"; sourceTree = "<group>"; };
+		F6037B1816F8DE740045433B /* licenses-tables.dat */ = {isa = PBXFileReference; lastKnownFileType = text; path = "licenses-tables.dat"; sourceTree = "<group>"; };
+		F6037B1916F8DE740045433B /* licenses.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = licenses.c; sourceTree = "<group>"; };
+		F6037B1B16F8DE740045433B /* mklangtables.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mklangtables.c; sourceTree = "<group>"; };
+		F6037B1C16F8DE740045433B /* mklicensestables.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mklicensestables.c; sourceTree = "<group>"; };
+		F6037B1D16F8DE740045433B /* tag.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tag.h; sourceTree = "<group>"; };
+		F6037B1E16F8DE740045433B /* tags.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tags.c; sourceTree = "<group>"; };
+		F6037B1F16F8DE740045433B /* xmpwriter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = xmpwriter.c; sourceTree = "<group>"; };
+		F6037B2016F8DE740045433B /* xmpwriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = xmpwriter.h; sourceTree = "<group>"; };
+		F6037B3116F8DF7A0045433B /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
 		F60E745816D160FD00148F06 /* libgstvideo.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgstvideo.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F60E745E16D1610D00148F06 /* _stdint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _stdint.h; sourceTree = "<group>"; };
 		F60E745F16D1610D00148F06 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
@@ -185,6 +354,45 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		F6037A8116F8DAC80045433B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6037ADC16F8DBE30045433B /* libglib.dylib in Frameworks */,
+				F6037ADB16F8DBDF0045433B /* libgobject.dylib in Frameworks */,
+				F6037ADA16F8DBD90045433B /* libgstreamer.dylib in Frameworks */,
+				F6037AD916F8DBD50045433B /* libgstbase.dylib in Frameworks */,
+				F6037AD816F8DBD10045433B /* liborc.dylib in Frameworks */,
+				F6037AD716F8DBCD0045433B /* libgstaudio.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6037AB516F8DB6B0045433B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6037ACE16F8DB900045433B /* libglib.dylib in Frameworks */,
+				F6037ACF16F8DB970045433B /* libgobject.dylib in Frameworks */,
+				F6037AD016F8DB9B0045433B /* libgstreamer.dylib in Frameworks */,
+				F6037AD116F8DB9E0045433B /* libgstbase.dylib in Frameworks */,
+				F6037AD216F8DBA60045433B /* liborc.dylib in Frameworks */,
+				F6037B3016F8DF550045433B /* libgsttag.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6037AF516F8DE070045433B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6037B3216F8DF7A0045433B /* libz.dylib in Frameworks */,
+				F6037AF616F8DE070045433B /* libglib.dylib in Frameworks */,
+				F6037AF716F8DE070045433B /* libgobject.dylib in Frameworks */,
+				F6037AF816F8DE070045433B /* libgstreamer.dylib in Frameworks */,
+				F6037AF916F8DE070045433B /* libgstbase.dylib in Frameworks */,
+				F6037AFA16F8DE070045433B /* liborc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F60E745516D160FD00148F06 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -226,6 +434,100 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F6037A7C16F8DA750045433B /* adder */ = {
+			isa = PBXGroup;
+			children = (
+				F6037A7F16F8DA820045433B /* gstadderorc.orc */,
+				F6037A7D16F8DA820045433B /* gstadder.c */,
+				F6037A7E16F8DA820045433B /* gstadder.h */,
+			);
+			name = adder;
+			sourceTree = "<group>";
+		};
+		F6037A8816F8DB160045433B /* audio */ = {
+			isa = PBXGroup;
+			children = (
+				F6037AA916F8DB160045433B /* gstaudiopack.orc */,
+				F6037A8A16F8DB160045433B /* audio-channels.c */,
+				F6037A8C16F8DB160045433B /* audio-format.c */,
+				F6037A8E16F8DB160045433B /* audio-info.c */,
+				F6037A9016F8DB160045433B /* audio.c */,
+				F6037A9516F8DB160045433B /* gstaudiobasesink.c */,
+				F6037A9716F8DB160045433B /* gstaudiobasesrc.c */,
+				F6037A9916F8DB160045433B /* gstaudiocdsrc.c */,
+				F6037A9B16F8DB160045433B /* gstaudioclock.c */,
+				F6037A9D16F8DB160045433B /* gstaudiodecoder.c */,
+				F6037A9F16F8DB160045433B /* gstaudioencoder.c */,
+				F6037AA116F8DB160045433B /* gstaudiofilter.c */,
+				F6037AA316F8DB160045433B /* gstaudioiec61937.c */,
+				F6037AA516F8DB160045433B /* gstaudiometa.c */,
+				F6037AAA16F8DB160045433B /* gstaudioringbuffer.c */,
+				F6037AAC16F8DB160045433B /* gstaudiosink.c */,
+				F6037AAE16F8DB160045433B /* gstaudiosrc.c */,
+				F6037AB116F8DB160045433B /* streamvolume.c */,
+				F6037A8B16F8DB160045433B /* audio-channels.h */,
+				F6037A8D16F8DB160045433B /* audio-format.h */,
+				F6037A8F16F8DB160045433B /* audio-info.h */,
+				F6037A9216F8DB160045433B /* audio.h */,
+				F6037A9616F8DB160045433B /* gstaudiobasesink.h */,
+				F6037A9816F8DB160045433B /* gstaudiobasesrc.h */,
+				F6037A9A16F8DB160045433B /* gstaudiocdsrc.h */,
+				F6037A9C16F8DB160045433B /* gstaudioclock.h */,
+				F6037A9E16F8DB160045433B /* gstaudiodecoder.h */,
+				F6037AA016F8DB160045433B /* gstaudioencoder.h */,
+				F6037AA216F8DB160045433B /* gstaudiofilter.h */,
+				F6037AA416F8DB160045433B /* gstaudioiec61937.h */,
+				F6037AA616F8DB160045433B /* gstaudiometa.h */,
+				F6037AAB16F8DB160045433B /* gstaudioringbuffer.h */,
+				F6037AAD16F8DB160045433B /* gstaudiosink.h */,
+				F6037AAF16F8DB160045433B /* gstaudiosrc.h */,
+				F6037AB216F8DB160045433B /* streamvolume.h */,
+			);
+			name = audio;
+			path = "gst-plugins-base/gst-libs/gst/audio";
+			sourceTree = "<group>";
+		};
+		F6037ADD16F8DD730045433B /* audio */ = {
+			isa = PBXGroup;
+			children = (
+				F6037ADE16F8DD730045433B /* audio-enumtypes.c */,
+				F6037ADF16F8DD730045433B /* audio-enumtypes.h */,
+			);
+			path = audio;
+			sourceTree = "<group>";
+		};
+		F6037B0416F8DE740045433B /* tag */ = {
+			isa = PBXGroup;
+			children = (
+				F6037B1716F8DE740045433B /* license-translations.dict */,
+				F6037B1816F8DE740045433B /* licenses-tables.dat */,
+				F6037B1516F8DE740045433B /* lang-tables.dat */,
+				F6037B0516F8DE740045433B /* gstexiftag.c */,
+				F6037B0616F8DE740045433B /* gstid3tag.c */,
+				F6037B0716F8DE740045433B /* gsttagdemux.c */,
+				F6037B0916F8DE740045433B /* gsttageditingprivate.c */,
+				F6037B0B16F8DE740045433B /* gsttagmux.c */,
+				F6037B0D16F8DE740045433B /* gstvorbistag.c */,
+				F6037B0E16F8DE740045433B /* gstxmptag.c */,
+				F6037B1216F8DE740045433B /* id3v2.c */,
+				F6037B1416F8DE740045433B /* id3v2frames.c */,
+				F6037B1616F8DE740045433B /* lang.c */,
+				F6037B1916F8DE740045433B /* licenses.c */,
+				F6037B1B16F8DE740045433B /* mklangtables.c */,
+				F6037B1C16F8DE740045433B /* mklicensestables.c */,
+				F6037B1E16F8DE740045433B /* tags.c */,
+				F6037B1F16F8DE740045433B /* xmpwriter.c */,
+				F6037B0816F8DE740045433B /* gsttagdemux.h */,
+				F6037B0A16F8DE740045433B /* gsttageditingprivate.h */,
+				F6037B0C16F8DE740045433B /* gsttagmux.h */,
+				F6037B1316F8DE740045433B /* id3v2.h */,
+				F6037B1D16F8DE740045433B /* tag.h */,
+				F6037B2016F8DE740045433B /* xmpwriter.h */,
+			);
+			name = tag;
+			path = "gst-plugins-base/gst-libs/gst/tag";
+			sourceTree = "<group>";
+		};
 		F60E744D16D15D2300148F06 = {
 			isa = PBXGroup;
 			children = (
@@ -242,6 +544,9 @@
 				F60E745816D160FD00148F06 /* libgstvideo.dylib */,
 				F60E74B316D16C2B00148F06 /* libgstvideotestsrc.dylib */,
 				F60E74D916D16DA800148F06 /* libgstvideoconvert.dylib */,
+				F6037A8416F8DAC80045433B /* libgstadder.dylib */,
+				F6037AB816F8DB6B0045433B /* libgstaudio.dylib */,
+				F6037AFF16F8DE070045433B /* libgsttag.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -268,6 +573,7 @@
 			isa = PBXGroup;
 			children = (
 				F60E746216D1610D00148F06 /* pbutils */,
+				F6037ADD16F8DD730045433B /* audio */,
 				F60E749716D1650A00148F06 /* video */,
 			);
 			path = gst;
@@ -350,6 +656,8 @@
 		F60E749616D164FC00148F06 /* gst */ = {
 			isa = PBXGroup;
 			children = (
+				F6037A8816F8DB160045433B /* audio */,
+				F6037B0416F8DE740045433B /* tag */,
 				F60E746616D1613F00148F06 /* video */,
 			);
 			name = gst;
@@ -367,6 +675,7 @@
 		F60E74AD16D16BA800148F06 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F6037B3116F8DF7A0045433B /* libz.dylib */,
 				F60E74A516D16B6D00148F06 /* libglib.dylib */,
 				F60E74A716D16B7100148F06 /* libgobject.dylib */,
 				F60E74A316D16B6000148F06 /* libgstreamer.dylib */,
@@ -379,6 +688,7 @@
 		F60E74AE16D16BEB00148F06 /* gst */ = {
 			isa = PBXGroup;
 			children = (
+				F6037A7C16F8DA750045433B /* adder */,
 				F60E74E416D16DE100148F06 /* videoconvert */,
 				F60E74B716D16C5300148F06 /* videotestsrc */,
 			);
@@ -388,11 +698,11 @@
 		F60E74B716D16C5300148F06 /* videotestsrc */ = {
 			isa = PBXGroup;
 			children = (
+				F60E74BE16D16C5300148F06 /* gstvideotestsrcorc.orc */,
 				F60E74B916D16C5300148F06 /* generate_sine_table.c */,
 				F60E74BA16D16C5300148F06 /* gstvideotestsrc.c */,
-				F60E74BB16D16C5300148F06 /* gstvideotestsrc.h */,
-				F60E74BE16D16C5300148F06 /* gstvideotestsrcorc.orc */,
 				F60E74C016D16C5300148F06 /* videotestsrc.c */,
+				F60E74BB16D16C5300148F06 /* gstvideotestsrc.h */,
 				F60E74C116D16C5300148F06 /* videotestsrc.h */,
 			);
 			name = videotestsrc;
@@ -402,12 +712,12 @@
 		F60E74E416D16DE100148F06 /* videoconvert */ = {
 			isa = PBXGroup;
 			children = (
-				F60E74E516D16DE100148F06 /* gstcms.c */,
-				F60E74E616D16DE100148F06 /* gstcms.h */,
-				F60E74E716D16DE100148F06 /* gstvideoconvert.c */,
-				F60E74E816D16DE100148F06 /* gstvideoconvert.h */,
 				F60E74EB16D16DE100148F06 /* gstvideoconvertorc.orc */,
+				F60E74E516D16DE100148F06 /* gstcms.c */,
+				F60E74E716D16DE100148F06 /* gstvideoconvert.c */,
 				F60E74ED16D16DE100148F06 /* videoconvert.c */,
+				F60E74E616D16DE100148F06 /* gstcms.h */,
+				F60E74E816D16DE100148F06 /* gstvideoconvert.h */,
 				F60E74EE16D16DE100148F06 /* videoconvert.h */,
 			);
 			name = videoconvert;
@@ -417,6 +727,59 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		F6037A8316F8DAC80045433B /* gstadder */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F6037A8516F8DAC80045433B /* Build configuration list for PBXNativeTarget "gstadder" */;
+			buildPhases = (
+				F6037A8016F8DAC80045433B /* Sources */,
+				F6037A8116F8DAC80045433B /* Frameworks */,
+			);
+			buildRules = (
+				F6037B3316F8DF8D0045433B /* PBXBuildRule */,
+			);
+			dependencies = (
+				F6037AD416F8DBB40045433B /* PBXTargetDependency */,
+			);
+			name = gstadder;
+			productName = gstadder;
+			productReference = F6037A8416F8DAC80045433B /* libgstadder.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F6037AB716F8DB6B0045433B /* gstaudio */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F6037AB916F8DB6C0045433B /* Build configuration list for PBXNativeTarget "gstaudio" */;
+			buildPhases = (
+				F6037AB416F8DB6B0045433B /* Sources */,
+				F6037AB516F8DB6B0045433B /* Frameworks */,
+			);
+			buildRules = (
+				F6037AE016F8DDB30045433B /* PBXBuildRule */,
+			);
+			dependencies = (
+				F6037B2F16F8DF270045433B /* PBXTargetDependency */,
+			);
+			name = gstaudio;
+			productName = gstaudio;
+			productReference = F6037AB816F8DB6B0045433B /* libgstaudio.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F6037AE116F8DE070045433B /* gsttag */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F6037AFC16F8DE070045433B /* Build configuration list for PBXNativeTarget "gsttag" */;
+			buildPhases = (
+				F6037AE216F8DE070045433B /* Sources */,
+				F6037AF516F8DE070045433B /* Frameworks */,
+			);
+			buildRules = (
+				F6037AFB16F8DE070045433B /* PBXBuildRule */,
+			);
+			dependencies = (
+			);
+			name = gsttag;
+			productName = gstaudio;
+			productReference = F6037AFF16F8DE070045433B /* libgsttag.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		F60E745716D160FD00148F06 /* gstvideo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F60E745C16D160FD00148F06 /* Build configuration list for PBXNativeTarget "gstvideo" */;
@@ -490,6 +853,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				F6037A8316F8DAC80045433B /* gstadder */,
+				F6037AB716F8DB6B0045433B /* gstaudio */,
+				F6037AE116F8DE070045433B /* gsttag */,
 				F60E745716D160FD00148F06 /* gstvideo */,
 				F60E74B216D16C2B00148F06 /* gstvideotestsrc */,
 				F60E74D816D16DA800148F06 /* gstvideoconvert */,
@@ -498,6 +864,60 @@
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		F6037A8016F8DAC80045433B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6037AD616F8DBBE0045433B /* gstadderorc.orc in Sources */,
+				F6037AD516F8DBBE0045433B /* gstadder.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6037AB416F8DB6B0045433B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6037ABC16F8DB7A0045433B /* gstaudiopack.orc in Sources */,
+				F6037ABD16F8DB7A0045433B /* audio-channels.c in Sources */,
+				F6037ABE16F8DB7A0045433B /* audio-format.c in Sources */,
+				F6037ABF16F8DB7A0045433B /* audio-info.c in Sources */,
+				F6037AC016F8DB7A0045433B /* audio.c in Sources */,
+				F6037AC116F8DB7A0045433B /* gstaudiobasesink.c in Sources */,
+				F6037AC216F8DB7A0045433B /* gstaudiobasesrc.c in Sources */,
+				F6037AC316F8DB7A0045433B /* gstaudiocdsrc.c in Sources */,
+				F6037AC416F8DB7A0045433B /* gstaudioclock.c in Sources */,
+				F6037AC516F8DB7A0045433B /* gstaudiodecoder.c in Sources */,
+				F6037AC616F8DB7A0045433B /* gstaudioencoder.c in Sources */,
+				F6037AC716F8DB7A0045433B /* gstaudiofilter.c in Sources */,
+				F6037AC816F8DB7A0045433B /* gstaudioiec61937.c in Sources */,
+				F6037AC916F8DB7A0045433B /* gstaudiometa.c in Sources */,
+				F6037ACA16F8DB7A0045433B /* gstaudioringbuffer.c in Sources */,
+				F6037ACB16F8DB7A0045433B /* gstaudiosink.c in Sources */,
+				F6037ACC16F8DB7A0045433B /* gstaudiosrc.c in Sources */,
+				F6037ACD16F8DB7A0045433B /* streamvolume.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6037AE216F8DE070045433B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6037B2116F8DF1E0045433B /* gstexiftag.c in Sources */,
+				F6037B2216F8DF1E0045433B /* gstid3tag.c in Sources */,
+				F6037B2316F8DF1E0045433B /* gsttagdemux.c in Sources */,
+				F6037B2416F8DF1E0045433B /* gsttageditingprivate.c in Sources */,
+				F6037B2516F8DF1E0045433B /* gsttagmux.c in Sources */,
+				F6037B2616F8DF1E0045433B /* gstvorbistag.c in Sources */,
+				F6037B2716F8DF1E0045433B /* gstxmptag.c in Sources */,
+				F6037B2816F8DF1E0045433B /* id3v2.c in Sources */,
+				F6037B2916F8DF1E0045433B /* id3v2frames.c in Sources */,
+				F6037B2A16F8DF1E0045433B /* lang.c in Sources */,
+				F6037B2B16F8DF1E0045433B /* licenses.c in Sources */,
+				F6037B2C16F8DF1E0045433B /* tags.c in Sources */,
+				F6037B2D16F8DF1E0045433B /* xmpwriter.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F60E745416D160FD00148F06 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -543,16 +963,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F60E74F416D16DEF00148F06 /* gstvideoconvertorc.orc in Sources */,
-				F60E74F016D16DE100148F06 /* gstcms.c in Sources */,
-				F60E74F116D16DE100148F06 /* gstvideoconvert.c in Sources */,
-				F60E74F316D16DE100148F06 /* videoconvert.c in Sources */,
+				F6037B0116F8DE3A0045433B /* gstvideoconvertorc.orc in Sources */,
+				F6037B0016F8DE380045433B /* gstcms.c in Sources */,
+				F6037B0216F8DE3B0045433B /* gstvideoconvert.c in Sources */,
+				F6037B0316F8DE3E0045433B /* videoconvert.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		F6037AD416F8DBB40045433B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F6037AB716F8DB6B0045433B /* gstaudio */;
+			targetProxy = F6037AD316F8DBB40045433B /* PBXContainerItemProxy */;
+		};
+		F6037B2F16F8DF270045433B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F6037AE116F8DE070045433B /* gsttag */;
+			targetProxy = F6037B2E16F8DF270045433B /* PBXContainerItemProxy */;
+		};
 		F60E74CC16D16C7300148F06 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F60E745716D160FD00148F06 /* gstvideo */;
@@ -566,6 +996,135 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		F6037A8616F8DAC80045433B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "@executable_path/../GStreamerPlugins";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F6037A8716F8DAC80045433B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				INSTALL_PATH = "@executable_path/../GStreamerPlugins";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F6037ABA16F8DB6C0045433B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "@executable_path";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F6037ABB16F8DB6C0045433B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				INSTALL_PATH = "@executable_path";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F6037AFD16F8DE070045433B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "@executable_path";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F6037AFE16F8DE070045433B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				INSTALL_PATH = "@executable_path";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		F60E745216D15D2300148F06 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -638,7 +1197,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "generated/gst-libs/gst/video gst-plugins-base/gst-libs/gst/video";
 			};
 			name = Debug;
 		};
@@ -659,7 +1217,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "generated/gst-libs/gst/video gst-plugins-base/gst-libs/gst/video";
 			};
 			name = Release;
 		};
@@ -752,6 +1309,30 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		F6037A8516F8DAC80045433B /* Build configuration list for PBXNativeTarget "gstadder" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6037A8616F8DAC80045433B /* Debug */,
+				F6037A8716F8DAC80045433B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		F6037AB916F8DB6C0045433B /* Build configuration list for PBXNativeTarget "gstaudio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6037ABA16F8DB6C0045433B /* Debug */,
+				F6037ABB16F8DB6C0045433B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		F6037AFC16F8DE070045433B /* Build configuration list for PBXNativeTarget "gsttag" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6037AFD16F8DE070045433B /* Debug */,
+				F6037AFE16F8DE070045433B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		F60E745116D15D2300148F06 /* Build configuration list for PBXProject "gst-plugins-base" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
