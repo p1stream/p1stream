@@ -187,6 +187,11 @@ static void p1g_display_stream_src_frame_callback(
         g_cond_broadcast(&self->cond);
     }
     else if (status == kCGDisplayStreamFrameStatusStopped) {
+        if (self->buffer) {
+            gst_buffer_unref(self->buffer);
+            self->buffer = NULL;
+        }
+
         self->stopped = TRUE;
 
         g_cond_broadcast(&self->cond);
