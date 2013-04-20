@@ -37,4 +37,4 @@ GType p1g_texture_pool_get_type();
 P1GTexturePool *p1g_texture_pool_new(P1GOpenGLContext *ctx);
 
 #define p1g_texture_pool_get_context(self) \
-    g_object_ref(P1G_TEXTURE_POOL_CAST(self)->context)
+    (P1G_TEXTURE_POOL_CAST(self)->context)

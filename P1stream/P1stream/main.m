@@ -1,4 +1,6 @@
 #import "P1IOSurfaceBuffer.h"
+#import "P1DisplayStreamSrc.h"
+#import "P1RenderTextures.h"
 #import "P1Preview.h"
 
 
@@ -32,9 +34,11 @@ static void loadGStreamerPlugin(NSString *pluginName)
 
 static gboolean registerGStreamerElements(GstPlugin *plugin)
 {
-    gboolean ok;
+    gboolean ok = TRUE;
 
-    ok = gst_element_register(plugin, "previewsink", GST_RANK_NONE, P1G_TYPE_PREVIEW_SINK);
+    ok = ok && gst_element_register(plugin, "displaystreamsrc", GST_RANK_NONE, P1G_TYPE_DISPLAY_STREAM_SRC);
+    ok = ok && gst_element_register(plugin, "rendertextures", GST_RANK_NONE, P1G_TYPE_RENDER_TEXTURES);
+    ok = ok && gst_element_register(plugin, "previewsink", GST_RANK_NONE, P1G_TYPE_PREVIEW_SINK);
 
     return ok;
 }

@@ -50,7 +50,7 @@ static gboolean p1g_preview_sink_propose_allocation(GstBaseSink *basesink, GstQu
     P1GPreviewSink *self = P1G_PREVIEW_SINK(basesink);
     P1Preview *view = (__bridge P1Preview *)self->viewRef;
 
-    P1GOpenGLContext *context = p1g_opengl_context_new(view.CGLContextObj);
+    P1GOpenGLContext *context = p1g_opengl_context_new_existing(view.CGLContextObj);
     g_return_val_if_fail(context != NULL, FALSE);
 
     P1GTexturePool *pool = p1g_texture_pool_new(context);
@@ -136,11 +136,11 @@ static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, G
 @synthesize element, aspect;
 
 // VBO data for a square with texture coordinates flipped.
-static const GLfloat vboData[16] = {
-    -1, +1, 0, 0,
-    -1, -1, 0, 1,
-    +1, +1, 1, 0,
-    +1, -1, 1, 1
+static const GLfloat vboData[4 * 4] = {
+    -1, -1, 0, 0,
+    -1, +1, 0, 1,
+    +1, -1, 1, 0,
+    +1, +1, 1, 1
 };
 const GLsizei vboSize = sizeof(vboData);
 const GLsizei vboStride = 4 * sizeof(GLfloat);
@@ -171,29 +171,21 @@ const void *vboTexCoordsOffset = (void *)(2 * sizeof(GLfloat));
         // Black background.
         glClearColor(0, 0, 0, 1);
 
-        // VBO for all drawing area vertex coordinates.
+        // VBO and VAO for all drawing area vertex coordinates.
+        glGenVertexArrays(1, &vertexArrayName);
         glGenBuffers(1, &vertexBufferName);
         glBindBuffer(GL_ARRAY_BUFFER, vertexBufferName);
         glBufferData(GL_ARRAY_BUFFER, vboSize, vboData, GL_STATIC_DRAW);
-
-        // VAO for the above, with interleaved position and texture coordinates.
-        glGenVertexArrays(1, &vertexArrayName);
-        glBindVertexArray(vertexArrayName);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, vboStride, 0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, vboStride, vboTexCoordsOffset);
 
         // Dirt simple shader.
         shaderProgram = glCreateProgram();
         glBindAttribLocation(shaderProgram, 0, "a_Position");
         glBindAttribLocation(shaderProgram, 1, "a_TexCoords");
         glBindFragDataLocation(shaderProgram, 0, "o_FragColor");
-        if (!buildShaderProgram(shaderProgram, @"simple")) {
-            NSLog(@"Failed to build video preview shader program.");
-            return nil;
-        }
+        buildShaderProgram(shaderProgram, @"simple");
         textureUniform = glGetUniformLocation(shaderProgram, "u_Texture");
 
-        if (checkAndLogGLError(@"video preview init")) return nil;
+        g_assert(glGetError() == GL_NO_ERROR);
     }
     return self;
 }
@@ -246,7 +238,7 @@ const void *vboTexCoordsOffset = (void *)(2 * sizeof(GLfloat));
             currentBuffer = NULL;
 
         [self lockFocus];
-        [[self openGLContext] makeCurrentContext];
+        [self.openGLContext makeCurrentContext];
         [self drawBuffer];
         [self unlockFocus];
     }
@@ -264,32 +256,43 @@ const void *vboTexCoordsOffset = (void *)(2 * sizeof(GLfloat));
 
 - (void)drawBuffer
 {
+    CGLError err;
+
+    CGLContextObj context = self.openGLContext.CGLContextObj;
+    err = CGLLockContext(context);
+    assert(err == kCGLNoError);
     glClear(GL_COLOR_BUFFER_BIT);
 
     GstBuffer *buf = self->currentBuffer;
-    if (buf == NULL) return;
-    P1GTextureMeta *meta = gst_buffer_get_texture_meta(buf);
+    if (buf != NULL) {
+        P1GTextureMeta *texture = gst_buffer_get_texture_meta(buf);
+        g_assert(p1g_opengl_context_get_raw(texture->context) == context);
 
-    const NSRect bounds = self.bounds;
-    glViewport(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
+        const NSRect bounds = self.bounds;
+        glViewport(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
 
-    glUseProgram(shaderProgram);
+        glUseProgram(shaderProgram);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_RECTANGLE, meta->texture_name);
-    glUniform1i(textureUniform, 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_RECTANGLE, texture->name);
+        glUniform1i(textureUniform, 0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferName);
-    glBindVertexArray(vertexArrayName);
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
+        glBindVertexArray(vertexArrayName);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBufferName);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, vboStride, 0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, vboStride, vboTexCoordsOffset);
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
 
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+    }
 
     glFlush();
+    err = CGLUnlockContext(context);
+    assert(err == kCGLNoError);
 }
 
 @end

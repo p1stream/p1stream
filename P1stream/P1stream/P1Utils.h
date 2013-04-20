@@ -13,5 +13,4 @@
 @end
 
 GLuint buildShader(GLuint type, NSString *resource, NSString *ext);
-BOOL buildShaderProgram(GLuint program, NSString *resource);
-BOOL checkAndLogGLError(NSString *action);
+void buildShaderProgram(GLuint program, NSString *resource);

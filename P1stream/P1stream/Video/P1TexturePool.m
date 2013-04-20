@@ -43,7 +43,7 @@ static gboolean p1g_texture_pool_start(GstBufferPool *bufferpool)
     P1GTexturePool *self = P1G_TEXTURE_POOL(bufferpool);
 
     if (self->context == NULL) {
-        self->context = p1g_opengl_context_new(NULL);
+        self->context = p1g_opengl_context_new();
         g_return_val_if_fail(self->context != NULL, FALSE);
     }
 

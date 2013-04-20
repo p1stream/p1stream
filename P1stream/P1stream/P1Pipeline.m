@@ -1,6 +1,7 @@
 #import "P1Pipeline.h"
 #import "P1DisplayStreamSrc.h"
 #import "P1TextureUpload.h"
+#import "P1RenderTextures.h"
 
 
 @implementation P1Pipeline
@@ -16,13 +17,13 @@
         pipeline = gst_pipeline_new("test");
         source = g_object_new(P1G_TYPE_DISPLAY_STREAM_SRC, NULL);
         upload = g_object_new(P1G_TYPE_TEXTURE_UPLOAD, NULL);
-        if (!pipeline || !source || !upload || !sink) {
-            [NSException raise:NSGenericException
-                        format:@"Could not construct pipeline elements"];
-        }
+        render = g_object_new(P1G_TYPE_RENDER_TEXTURES, NULL);
+        g_assert(pipeline && source && upload && render && sink);
 
-        gst_bin_add_many(GST_BIN(pipeline), source, upload, sink, NULL);
-        gst_element_link_many(source, upload, sink, NULL);
+        gboolean success;
+        gst_bin_add_many(GST_BIN(pipeline), source, upload, render, sink, NULL);
+        success = gst_element_link_many(source, upload, render, sink, NULL);
+        g_assert(success);
 
         [self stop];
     }

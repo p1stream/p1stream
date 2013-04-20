@@ -21,9 +21,7 @@ struct _P1GOpenGLContext
     GObject parent_instance;
 
     /*< private >*/
-    CGLPixelFormatObj pixel_format;
-    CGLContextObj main_context;
-    GHashTable *contexts;
+    CGLContextObj context;
 };
 
 struct _P1GOpenGLContextClass
@@ -34,6 +32,25 @@ struct _P1GOpenGLContextClass
 GType p1g_opengl_context_get_type();
 
 
-CGLContextObj p1g_opengl_context_activate(P1GOpenGLContext *self);
+#define p1g_opengl_context_lock(self) do { \
+    CGLError __err; \
+    const CGLContextObj __ctx = P1G_OPENGL_CONTEXT_CAST(self)->context; \
+    __err = CGLLockContext(__ctx); g_assert(__err == kCGLNoError); \
+    __err = CGLSetCurrentContext(__ctx); g_assert(__err == kCGLNoError); \
+} while (0)
 
-P1GOpenGLContext *p1g_opengl_context_new(CGLContextObj context);
+#define p1g_opengl_context_unlock(self) do { \
+    CGLError __err; \
+    const CGLContextObj __ctx = P1G_OPENGL_CONTEXT_CAST(self)->context; \
+    __err = CGLUnlockContext(__ctx); g_assert(__err == kCGLNoError); \
+} while (0)
+
+#define p1g_opengl_context_get_raw(self) \
+    (P1G_OPENGL_CONTEXT_CAST(self)->context)
+
+#define p1g_opengl_context_is_shared(a, b) \
+    (CGLGetShareGroup(a->context) == CGLGetShareGroup(b->context))
+
+P1GOpenGLContext *p1g_opengl_context_new();
+P1GOpenGLContext *p1g_opengl_context_new_shared(P1GOpenGLContext *other);
+P1GOpenGLContext *p1g_opengl_context_new_existing(CGLContextObj context);

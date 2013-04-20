@@ -27,7 +27,6 @@ static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE(
     )
 );
 
-// FIXME: different internal formats
 static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE(
     "src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS(
         "video/x-gl-texture, "
@@ -128,15 +127,14 @@ static gboolean p1g_texture_upload_decide_allocation(
             size = i_size;
             min = i_min;
             max = i_max;
+            break;
         }
-        else {
-            gst_object_unref(i_pool);
-            gst_query_set_nth_allocation_pool(query, n_pools, NULL, 0, 0, 0);
-        }
+        gst_object_unref(i_pool);
     }
 
     // No texture pool, create our own (with an off-screen context).
     if (pool == NULL) {
+        GST_DEBUG_OBJECT(trans, "allocating off-screen context");
         pool = p1g_texture_pool_new(NULL);
         g_return_val_if_fail(pool != NULL, FALSE);
     }
@@ -151,7 +149,10 @@ static gboolean p1g_texture_upload_decide_allocation(
     gst_buffer_pool_set_config(GST_BUFFER_POOL(pool), config);
 
     // Fix the pool selection.
-    gst_query_set_nth_allocation_pool(query, 0, GST_BUFFER_POOL_CAST(pool), size, min, max);
+    if (gst_query_get_n_allocation_pools(query) == 0)
+        gst_query_add_allocation_pool(query, GST_BUFFER_POOL_CAST(pool), size, min, max);
+    else
+        gst_query_set_nth_allocation_pool(query, 0, GST_BUFFER_POOL_CAST(pool), size, min, max);
     gst_object_unref(pool);
 
     return TRUE;
@@ -160,42 +161,47 @@ static gboolean p1g_texture_upload_decide_allocation(
 static GstFlowReturn p1g_texture_upload_transform(
     GstBaseTransform *trans, GstBuffer *inbuf, GstBuffer *outbuf)
 {
+    gboolean success;
     P1GTextureUpload *self = P1G_TEXTURE_UPLOAD(trans);
     P1GTextureMeta *meta = gst_buffer_get_texture_meta(outbuf);
 
-    CGLContextObj cglContext = p1g_opengl_context_activate(meta->context);
-    glBindTexture(GL_TEXTURE_RECTANGLE, meta->texture_name);
+    // FIXME: upload in a shared context.
+    p1g_opengl_context_lock(meta->context);
+    glBindTexture(GL_TEXTURE_RECTANGLE, meta->name);
 
     // Try for an IOSurface buffer.
+    // FIXME: we can just add the meta to the existing buffer. But we need to
+    // trigger in-place mode in GstBaseTransform.
     IOSurfaceRef surface = gst_buffer_get_iosurface(inbuf);
     if (surface != NULL) {
         // Check if the texture is already linked to this IOSurface.
-        if (meta->dependency == inbuf)
-            return GST_FLOW_OK;
-
-        CGLError err = CGLTexImageIOSurface2D(
-            cglContext, GL_TEXTURE_RECTANGLE,
-            GL_RGBA, self->width, self->height,
-            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface, 0);
-        g_return_val_if_fail(err == kCGLNoError, GST_FLOW_ERROR);
-
-        if (meta->dependency)
-            gst_buffer_unref(meta->dependency);
-        meta->dependency = gst_buffer_ref(inbuf);
+        if (meta->dependency != inbuf) {
+            CGLContextObj cglContext = p1g_opengl_context_get_raw(meta->context);
+            CGLError err = CGLTexImageIOSurface2D(
+                cglContext, GL_TEXTURE_RECTANGLE,
+                GL_RGBA, self->width, self->height,
+                GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface, 0);
+            success = (err == kCGLNoError);
+            if (success) {
+                if (meta->dependency)
+                    gst_buffer_unref(meta->dependency);
+                meta->dependency = gst_buffer_ref(inbuf);
+            }
+        }
     }
     // Normal buffer to texture upload.
     else {
         GstMapInfo mapinfo;
-        gboolean success = gst_buffer_map(inbuf, &mapinfo, GST_MAP_READ);
-        g_return_val_if_fail(success, GST_FLOW_ERROR);
-
-        glTexImage2D(
-            GL_TEXTURE_RECTANGLE, 0,
-            GL_RGBA, self->width, self->height, 0,
-            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, mapinfo.data);
-
-        gst_buffer_unmap(inbuf, &mapinfo);
+        success = gst_buffer_map(inbuf, &mapinfo, GST_MAP_READ);
+        if (success) {
+            glTexImage2D(
+                GL_TEXTURE_RECTANGLE, 0,
+                GL_RGBA, self->width, self->height, 0,
+                GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, mapinfo.data);
+            gst_buffer_unmap(inbuf, &mapinfo);
+        }
     }
 
-    return GST_FLOW_OK;
+    p1g_opengl_context_unlock(meta->context);
+    return success ? GST_FLOW_OK : GST_FLOW_ERROR;
 }

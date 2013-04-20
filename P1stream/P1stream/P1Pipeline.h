@@ -3,7 +3,7 @@
 
 @interface P1Pipeline : NSObject
 {
-    GstElement *pipeline, *source, *upload, *sink;
+    GstElement *pipeline, *source, *upload, *render, *sink;
 }
 
 @property (retain, nonatomic, readonly) CALayer *layer;

@@ -40,10 +40,10 @@ GType p1g_preview_sink_get_type();
     GstBuffer *currentBuffer;
     NSLayoutConstraint *videoConstraint;
 
-    GLuint vertexBufferName;
-    GLuint vertexArrayName;
     GLuint shaderProgram;
     GLint textureUniform;
+    GLuint vertexArrayName;
+    GLuint vertexBufferName;
 }
 
 @property (nonatomic, readonly) P1GPreviewSink *element;
@@ -57,4 +57,3 @@ GType p1g_preview_sink_get_type();
 - (void)setBuffer:(GstBuffer *)buffer;
 
 @end
-
