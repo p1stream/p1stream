@@ -52,7 +52,7 @@
 #define GST_API_VERSION "1.0"
 
 /* system wide data directory */
-#define GST_DATADIR "/usr/local/Cellar/gstreamer/1.0.5/share"
+#define GST_DATADIR "/usr/local/Cellar/gstreamer/1.0.6/share"
 
 /* set to disable libxml2-dependent code in subparse */
 #define GST_DISABLE_XML 1
@@ -317,7 +317,7 @@
 #define PACKAGE_NAME "GStreamer Base Plug-ins"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GStreamer Base Plug-ins 1.0.5"
+#define PACKAGE_STRING "GStreamer Base Plug-ins 1.0.6"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gst-plugins-base"
@@ -326,7 +326,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.0.5"
+#define PACKAGE_VERSION "1.0.6"
 
 /* directory where plugins are located */
 #define PLUGINDIR "/usr/local/lib/gstreamer-1.0"
@@ -356,7 +356,7 @@
 /* #undef USE_TREMOLO */
 
 /* Version number of package */
-#define VERSION "1.0.5"
+#define VERSION "1.0.6"
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */

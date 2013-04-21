@@ -41,7 +41,7 @@ G_BEGIN_DECLS
  *
  * The micro version of GStreamer's gst-plugins-base libraries at compile time.
  */
-#define GST_PLUGINS_BASE_VERSION_MICRO (5)
+#define GST_PLUGINS_BASE_VERSION_MICRO (6)
 /**
  * GST_PLUGINS_BASE_VERSION_NANO:
  *
