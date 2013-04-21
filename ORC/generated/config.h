@@ -13,6 +13,9 @@
 /* Enable c64x backend */
 /* #undef ENABLE_BACKEND_C64X */
 
+/* Enable MIPS backend */
+/* #undef ENABLE_BACKEND_MIPS */
+
 /* Enable MMX backend */
 #define ENABLE_BACKEND_MMX 1
 
@@ -138,7 +141,7 @@
 #define PACKAGE_NAME "orc"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "orc 0.4.16"
+#define PACKAGE_STRING "orc 0.4.17"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "orc"
@@ -147,13 +150,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.4.16"
+#define PACKAGE_VERSION "0.4.17"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.4.16"
+#define VERSION "0.4.17"
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */

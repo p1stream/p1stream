@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F60A26FC1723E5CC001AC6C3 /* orcbytecode.c in Sources */ = {isa = PBXBuildFile; fileRef = F60A26FB1723E5CC001AC6C3 /* orcbytecode.c */; };
 		F6A0B33416D0F0E90023B9B2 /* orcc.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B33316D0F0E90023B9B2 /* orcc.c */; };
 		F6A0B33516D0F0EF0023B9B2 /* liborc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A0B31E16D0F06E0023B9B2 /* liborc.dylib */; };
 		F6A0B34C16D0F1980023B9B2 /* orc.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A0B33716D0F1980023B9B2 /* orc.c */; };
@@ -46,6 +47,25 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F60A26FB1723E5CC001AC6C3 /* orcbytecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcbytecode.c; path = orc/orc/orcbytecode.c; sourceTree = "<group>"; };
+		F60A26FD1723E5D6001AC6C3 /* orcbytecode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcbytecode.h; path = orc/orc/orcbytecode.h; sourceTree = "<group>"; };
+		F60A26FE1723E5F0001AC6C3 /* orcmips.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcmips.h; path = orc/orc/orcmips.h; sourceTree = "<group>"; };
+		F60A26FF1723E60D001AC6C3 /* orccode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orccode.h; path = orc/orc/orccode.h; sourceTree = "<group>"; };
+		F60A27001723E61A001AC6C3 /* orcbytecodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcbytecodes.h; path = orc/orc/orcbytecodes.h; sourceTree = "<group>"; };
+		F60A27021723E658001AC6C3 /* orccompiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orccompiler.h; path = orc/orc/orccompiler.h; sourceTree = "<group>"; };
+		F60A27031723E658001AC6C3 /* orcconstant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcconstant.h; path = orc/orc/orcconstant.h; sourceTree = "<group>"; };
+		F60A27041723E658001AC6C3 /* orccpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orccpu.h; path = orc/orc/orccpu.h; sourceTree = "<group>"; };
+		F60A27061723E658001AC6C3 /* orcexecutor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcexecutor.h; path = orc/orc/orcexecutor.h; sourceTree = "<group>"; };
+		F60A27071723E658001AC6C3 /* orcinstruction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcinstruction.h; path = orc/orc/orcinstruction.h; sourceTree = "<group>"; };
+		F60A27081723E658001AC6C3 /* orcinternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcinternal.h; path = orc/orc/orcinternal.h; sourceTree = "<group>"; };
+		F60A27091723E658001AC6C3 /* orclimits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orclimits.h; path = orc/orc/orclimits.h; sourceTree = "<group>"; };
+		F60A270B1723E658001AC6C3 /* orcopcode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcopcode.h; path = orc/orc/orcopcode.h; sourceTree = "<group>"; };
+		F60A270D1723E672001AC6C3 /* orc-stdint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "orc-stdint.h"; path = "orc/orc/orc-stdint.h"; sourceTree = "<group>"; };
+		F60A270E1723E699001AC6C3 /* orccpuinsn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orccpuinsn.h; path = orc/orc/orccpuinsn.h; sourceTree = "<group>"; };
+		F60A270F1723E6C0001AC6C3 /* orconce.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orconce.h; path = orc/orc/orconce.h; sourceTree = "<group>"; };
+		F60A27101723E744001AC6C3 /* orcrule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcrule.h; path = orc/orc/orcrule.h; sourceTree = "<group>"; };
+		F60A27111723E74E001AC6C3 /* orctarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orctarget.h; path = orc/orc/orctarget.h; sourceTree = "<group>"; };
+		F60A27121723E753001AC6C3 /* orcvariable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcvariable.h; path = orc/orc/orcvariable.h; sourceTree = "<group>"; };
 		F60E74CE16D16CDF00148F06 /* build_rule.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build_rule.sh; sourceTree = "<group>"; };
 		F6A0B31916D0F0310023B9B2 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
 		F6A0B31E16D0F06E0023B9B2 /* liborc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liborc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,16 +93,13 @@
 		F6A0B34A16D0F1980023B9B2 /* orcx86.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcx86.c; path = orc/orc/orcx86.c; sourceTree = "<group>"; };
 		F6A0B34B16D0F1980023B9B2 /* orcx86insn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcx86insn.c; path = orc/orc/orcx86insn.c; sourceTree = "<group>"; };
 		F6A0B36116D0F2250023B9B2 /* opcodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = opcodes.h; path = orc/orc/opcodes.h; sourceTree = "<group>"; };
-		F6A0B36216D0F2250023B9B2 /* orc-stdint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "orc-stdint.h"; path = "orc/orc/orc-stdint.h"; sourceTree = "<group>"; };
 		F6A0B36316D0F2250023B9B2 /* orc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orc.h; path = orc/orc/orc.h; sourceTree = "<group>"; };
 		F6A0B36416D0F2260023B9B2 /* orcarm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcarm.h; path = orc/orc/orcarm.h; sourceTree = "<group>"; };
-		F6A0B36516D0F2260023B9B2 /* orccpuinsn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orccpuinsn.h; path = orc/orc/orccpuinsn.h; sourceTree = "<group>"; };
 		F6A0B36616D0F2260023B9B2 /* orcdebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcdebug.h; path = orc/orc/orcdebug.h; sourceTree = "<group>"; };
 		F6A0B36716D0F2260023B9B2 /* orcemulateopcodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcemulateopcodes.h; path = orc/orc/orcemulateopcodes.h; sourceTree = "<group>"; };
 		F6A0B36816D0F2260023B9B2 /* orcfunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcfunctions.h; path = orc/orc/orcfunctions.h; sourceTree = "<group>"; };
 		F6A0B36916D0F2260023B9B2 /* orcmmx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcmmx.h; path = orc/orc/orcmmx.h; sourceTree = "<group>"; };
 		F6A0B36A16D0F2260023B9B2 /* orcneon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcneon.h; path = orc/orc/orcneon.h; sourceTree = "<group>"; };
-		F6A0B36B16D0F2260023B9B2 /* orconce.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orconce.h; path = orc/orc/orconce.h; sourceTree = "<group>"; };
 		F6A0B36C16D0F2260023B9B2 /* orcparse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcparse.h; path = orc/orc/orcparse.h; sourceTree = "<group>"; };
 		F6A0B36D16D0F2260023B9B2 /* orcpowerpc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcpowerpc.h; path = orc/orc/orcpowerpc.h; sourceTree = "<group>"; };
 		F6A0B36E16D0F2260023B9B2 /* orcprogram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcprogram.h; path = orc/orc/orcprogram.h; sourceTree = "<group>"; };
@@ -162,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				F6A0B33716D0F1980023B9B2 /* orc.c */,
+				F60A26FB1723E5CC001AC6C3 /* orcbytecode.c */,
 				F6A0B33816D0F1980023B9B2 /* orccode.c */,
 				F6A0B33916D0F1980023B9B2 /* orccodemem.c */,
 				F6A0B33A16D0F1980023B9B2 /* orccompiler.c */,
@@ -186,21 +204,36 @@
 				F6A0B34A16D0F1980023B9B2 /* orcx86.c */,
 				F6A0B34B16D0F1980023B9B2 /* orcx86insn.c */,
 				F6A0B36116D0F2250023B9B2 /* opcodes.h */,
-				F6A0B36216D0F2250023B9B2 /* orc-stdint.h */,
+				F60A270D1723E672001AC6C3 /* orc-stdint.h */,
 				F6A0B36316D0F2250023B9B2 /* orc.h */,
 				F6A0B36416D0F2260023B9B2 /* orcarm.h */,
-				F6A0B36516D0F2260023B9B2 /* orccpuinsn.h */,
+				F60A26FD1723E5D6001AC6C3 /* orcbytecode.h */,
+				F60A27001723E61A001AC6C3 /* orcbytecodes.h */,
+				F60A26FF1723E60D001AC6C3 /* orccode.h */,
+				F60A27021723E658001AC6C3 /* orccompiler.h */,
+				F60A27031723E658001AC6C3 /* orcconstant.h */,
+				F60A27041723E658001AC6C3 /* orccpu.h */,
+				F60A270E1723E699001AC6C3 /* orccpuinsn.h */,
 				F6A0B36616D0F2260023B9B2 /* orcdebug.h */,
 				F6A0B36716D0F2260023B9B2 /* orcemulateopcodes.h */,
+				F60A27061723E658001AC6C3 /* orcexecutor.h */,
 				F6A0B36816D0F2260023B9B2 /* orcfunctions.h */,
+				F60A27071723E658001AC6C3 /* orcinstruction.h */,
+				F60A27081723E658001AC6C3 /* orcinternal.h */,
+				F60A27091723E658001AC6C3 /* orclimits.h */,
+				F60A26FE1723E5F0001AC6C3 /* orcmips.h */,
 				F6A0B36916D0F2260023B9B2 /* orcmmx.h */,
 				F6A0B36A16D0F2260023B9B2 /* orcneon.h */,
-				F6A0B36B16D0F2260023B9B2 /* orconce.h */,
+				F60A270F1723E6C0001AC6C3 /* orconce.h */,
+				F60A270B1723E658001AC6C3 /* orcopcode.h */,
 				F6A0B36C16D0F2260023B9B2 /* orcparse.h */,
 				F6A0B36D16D0F2260023B9B2 /* orcpowerpc.h */,
 				F6A0B36E16D0F2260023B9B2 /* orcprogram.h */,
+				F60A27101723E744001AC6C3 /* orcrule.h */,
 				F6A0B36F16D0F2260023B9B2 /* orcsse.h */,
+				F60A27111723E74E001AC6C3 /* orctarget.h */,
 				F6A0B37016D0F2260023B9B2 /* orcutils.h */,
+				F60A27121723E753001AC6C3 /* orcvariable.h */,
 				F6A0B37116D0F2260023B9B2 /* orcx86.h */,
 				F6A0B37216D0F2260023B9B2 /* orcx86insn.h */,
 			);
@@ -298,6 +331,7 @@
 				F6A0B38616D0F4C50023B9B2 /* orcprogram-mmx.c in Sources */,
 				F6A0B38816D0F4CE0023B9B2 /* orcrules-mmx.c in Sources */,
 				F6A0B38A16D0F4D90023B9B2 /* orcmmx.c in Sources */,
+				F60A26FC1723E5CC001AC6C3 /* orcbytecode.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
