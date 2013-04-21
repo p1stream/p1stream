@@ -171,6 +171,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F60A27131723F012001AC6C3 /* gcharsetprivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gcharsetprivate.h; path = glib/glib/gcharsetprivate.h; sourceTree = "<group>"; };
 		F670B52D16D112FB001ADAF9 /* libglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F670B53616D11301001ADAF9 /* libgobject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgobject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F670B53E16D11307001ADAF9 /* libgmodule.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgmodule.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -620,6 +621,7 @@
 				F670B62A16D11E6A001ADAF9 /* gbsearcharray.h */,
 				F670B62B16D11E6A001ADAF9 /* gbytes.h */,
 				F670B62C16D11E6A001ADAF9 /* gcharset.h */,
+				F60A27131723F012001AC6C3 /* gcharsetprivate.h */,
 				F670B62D16D11E6A001ADAF9 /* gchecksum.h */,
 				F670B62E16D11E6A001ADAF9 /* gconstructor.h */,
 				F670B62F16D11E6A001ADAF9 /* gconvert.h */,

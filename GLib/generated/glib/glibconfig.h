@@ -103,8 +103,8 @@ typedef unsigned long guintptr;
 #define g_memmove(dest,src,len) G_STMT_START { memmove ((dest), (src), (len)); } G_STMT_END
 
 #define GLIB_MAJOR_VERSION 2
-#define GLIB_MINOR_VERSION 34
-#define GLIB_MICRO_VERSION 3
+#define GLIB_MINOR_VERSION 36
+#define GLIB_MICRO_VERSION 1
 
 #define G_OS_UNIX
 
@@ -142,7 +142,7 @@ typedef unsigned long guintptr;
 #endif
 
 #define G_HAVE_GNUC_VARARGS 1
-#define G_HAVE_GROWING_STACK 1
+#define G_HAVE_GROWING_STACK 0
 
 #if defined(__SUNPRO_C) && (__SUNPRO_C >= 0x590)
 #define G_GNUC_INTERNAL __attribute__((visibility("hidden")))
@@ -156,6 +156,8 @@ typedef unsigned long guintptr;
 
 #define G_THREADS_ENABLED
 #define G_THREADS_IMPL_POSIX
+
+#define G_ATOMIC_LOCK_FREE
 
 #define GINT16_TO_LE(val)	((gint16) (val))
 #define GUINT16_TO_LE(val)	((guint16) (val))

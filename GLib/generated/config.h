@@ -37,10 +37,10 @@
 #define GETTEXT_PACKAGE "glib20"
 
 /* Define to the GLIB binary age */
-#define GLIB_BINARY_AGE 3403
+#define GLIB_BINARY_AGE 3601
 
 /* Define to the GLIB interface age */
-#define GLIB_INTERFACE_AGE 3
+#define GLIB_INTERFACE_AGE 1
 
 /* Define the location where the catalogs will be installed */
 #define GLIB_LOCALE_DIR "/usr/local/share/locale"
@@ -49,10 +49,10 @@
 #define GLIB_MAJOR_VERSION 2
 
 /* Define to the GLIB micro version */
-#define GLIB_MICRO_VERSION 3
+#define GLIB_MICRO_VERSION 1
 
 /* Define to the GLIB minor version */
-#define GLIB_MINOR_VERSION 34
+#define GLIB_MINOR_VERSION 36
 
 /* Have inline keyword */
 #define G_HAVE_INLINE 1
@@ -75,9 +75,6 @@
 /* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
    */
 #define HAVE_ALLOCA_H 1
-
-/* Define to 1 if you have the <arpa/nameser_compat.h> header file. */
-#define HAVE_ARPA_NAMESER_COMPAT_H 1
 
 /* Define to 1 if you have the `atexit' function. */
 #define HAVE_ATEXIT 1
@@ -242,6 +239,12 @@
 /* Define to 1 if you have the `issetugid' function. */
 #define HAVE_ISSETUGID 1
 
+/* Define to 1 if you have the `kevent' function. */
+#define HAVE_KEVENT 1
+
+/* Define to 1 if you have the `kqueue' function. */
+#define HAVE_KQUEUE 1
+
 /* Define if you have <langinfo.h> and nl_langinfo(CODESET). */
 #define HAVE_LANGINFO_CODESET 1
 
@@ -316,9 +319,6 @@
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 /* #undef HAVE_NDIR_H */
-
-/* Define to 1 if you have the <netdb.h> header file. */
-#define HAVE_NETDB_H 1
 
 /* We have AF_NETLINK sockets */
 /* #undef HAVE_NETLINK */
@@ -495,9 +495,15 @@
 /* Define to 1 if you have the `symlink' function. */
 #define HAVE_SYMLINK 1
 
+/* Define to 1 if you have the `sysctlbyname' function. */
+#define HAVE_SYSCTLBYNAME 1
+
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */
 /* #undef HAVE_SYS_DIR_H */
+
+/* Define to 1 if you have the <sys/event.h> header file. */
+#define HAVE_SYS_EVENT_H 1
 
 /* Define to 1 if you have the <sys/filio.h> header file. */
 #define HAVE_SYS_FILIO_H 1
@@ -621,9 +627,6 @@
 /* Have a working bcopy */
 /* #undef HAVE_WORKING_BCOPY */
 
-/* Define to 1 if you have the <wspiapi.h> header file. */
-/* #undef HAVE_WSPIAPI_H */
-
 /* Define to 1 if xattr is available */
 #define HAVE_XATTR 1
 
@@ -656,7 +659,7 @@
 #define PACKAGE_NAME "glib"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "glib 2.34.3"
+#define PACKAGE_STRING "glib 2.36.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "glib"
@@ -665,7 +668,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.34.3"
+#define PACKAGE_VERSION "2.36.1"
 
 /* define if posix_memalign() can allocate any size */
 #define POSIX_MEMALIGN_WITH_COMPLIANT_ALLOCS 1
@@ -749,11 +752,17 @@
 /* Number of bits in a file offset, on hosts where this is settable. */
 /* #undef _FILE_OFFSET_BITS */
 
+/* defines how to decorate public symbols while building */
+/* #undef _GLIB_EXTERN */
+
 /* Make all glibc extensions visible */
 /* #undef _GNU_SOURCE */
 
 /* Define for large files, on AIX-style hosts. */
 /* #undef _LARGE_FILES */
+
+/* Target the Windows XP API */
+/* #undef _WIN32_WINNT */
 
 /* Needed to get declarations for msg_control and msg_controllen on Solaris */
 /* #undef _XOPEN_SOURCE */
@@ -763,6 +772,9 @@
 
 /* Needed to get declarations for msg_control and msg_controllen on Solaris */
 /* #undef __EXTENSIONS__ */
+
+/* compiler supports atomic operations */
+#define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4 1
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */

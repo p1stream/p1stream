@@ -1,4 +1,5 @@
 #import "P1GLibLoop.h"
+#include <pthread.h>
 
 
 @implementation P1GLibLoop
