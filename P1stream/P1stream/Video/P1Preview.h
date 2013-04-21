@@ -1,5 +1,4 @@
 #include <gst/video/gstvideosink.h>
-#import <QuartzCore/QuartzCore.h>
 
 @class P1Preview;
 

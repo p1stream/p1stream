@@ -1,5 +1,4 @@
 #include <gst/base/gstbasetransform.h>
-#import "P1GLContext.h"
 
 
 #define P1_TYPE_TEXTURE_UPLOAD \

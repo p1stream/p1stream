@@ -15,5 +15,3 @@
     #import <Cocoa/Cocoa.h>
     #import "P1Utils.h"
 #endif
-
-//#define DEBUG_EACH_GL_FRAME 1

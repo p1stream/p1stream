@@ -443,13 +443,9 @@ static GstFlowReturn p1_render_textures_collected(
     };
 
     // FIXME: sort
-    GSList *collected, *next;
-    for (collected = collect->data; collected; collected = next) {
+    for (GSList *collected = collect->data; collected != NULL; collected = g_slist_next(collected)) {
         GstCollectData *collect_data;
         GstBuffer *inbuf;
-
-        /* take next to see if this is the last collectdata */
-        next = g_slist_next(collected);
 
         collect_data = (GstCollectData *)collected->data;
         inbuf = gst_collect_pads_pop(collect, collect_data);
