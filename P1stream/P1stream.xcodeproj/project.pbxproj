@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F60457DD16AB4A6200A5AB58 /* RGBAtoYUV420.cl in Sources */ = {isa = PBXBuildFile; fileRef = F60457DA16AB4A4E00A5AB58 /* RGBAtoYUV420.cl */; };
+		F60457DD16AB4A6200A5AB58 /* yuv420.cl in Sources */ = {isa = PBXBuildFile; fileRef = F60457DA16AB4A4E00A5AB58 /* yuv420.cl */; };
 		F60457DF16AB4B9600A5AB58 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F60457DE16AB4B9600A5AB58 /* OpenCL.framework */; };
 		F60457E116AB4CCD00A5AB58 /* simple.vert.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E016AB4CCD00A5AB58 /* simple.vert.sl */; };
 		F60457E316AB4D5600A5AB58 /* simple.frag.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E216AB4D5600A5AB58 /* simple.frag.sl */; };
@@ -92,7 +92,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		F60457DA16AB4A4E00A5AB58 /* RGBAtoYUV420.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = RGBAtoYUV420.cl; sourceTree = "<group>"; };
+		F60457DA16AB4A4E00A5AB58 /* yuv420.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = yuv420.cl; sourceTree = "<group>"; };
 		F60457DE16AB4B9600A5AB58 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		F60457E016AB4CCD00A5AB58 /* simple.vert.sl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = simple.vert.sl; sourceTree = "<group>"; };
 		F60457E216AB4D5600A5AB58 /* simple.frag.sl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = simple.frag.sl; sourceTree = "<group>"; };
@@ -156,10 +156,6 @@
 		F6D475D516A2DC54003BD4E1 /* P1Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1Utils.m; sourceTree = "<group>"; };
 		F6D94166169CCEBD002C8802 /* P1InputAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1InputAudioSource.h; sourceTree = "<group>"; };
 		F6D94167169CCEBD002C8802 /* P1InputAudioSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1InputAudioSource.m; sourceTree = "<group>"; };
-		F6D94169169CCECD002C8802 /* P1DesktopVideoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1DesktopVideoSource.h; sourceTree = "<group>"; };
-		F6D9416A169CCECD002C8802 /* P1DesktopVideoSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1DesktopVideoSource.m; sourceTree = "<group>"; };
-		F6D9416C169CCF80002C8802 /* P1OldVideoCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1OldVideoCanvas.h; sourceTree = "<group>"; };
-		F6D9416D169CCF80002C8802 /* P1OldVideoCanvas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1OldVideoCanvas.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -268,11 +264,7 @@
 			children = (
 				F60457E016AB4CCD00A5AB58 /* simple.vert.sl */,
 				F60457E216AB4D5600A5AB58 /* simple.frag.sl */,
-				F60457DA16AB4A4E00A5AB58 /* RGBAtoYUV420.cl */,
-				F6D9416C169CCF80002C8802 /* P1OldVideoCanvas.h */,
-				F6D9416D169CCF80002C8802 /* P1OldVideoCanvas.m */,
-				F6D94169169CCECD002C8802 /* P1DesktopVideoSource.h */,
-				F6D9416A169CCECD002C8802 /* P1DesktopVideoSource.m */,
+				F60457DA16AB4A4E00A5AB58 /* yuv420.cl */,
 				F62BEF5F16DD6AA000E7B319 /* P1IOSurfaceBuffer.h */,
 				F62BEF6016DD6AA000E7B319 /* P1IOSurfaceBuffer.m */,
 				F63DCBF516E698DF00DBE29D /* P1OpenGLContext.h */,
@@ -382,7 +374,7 @@
 				F6D94168169CCEBD002C8802 /* P1InputAudioSource.m in Sources */,
 				F60F33DC16A08ACB0087DB40 /* P1AudioMixer.m in Sources */,
 				F6D475D616A2DC54003BD4E1 /* P1Utils.m in Sources */,
-				F60457DD16AB4A6200A5AB58 /* RGBAtoYUV420.cl in Sources */,
+				F60457DD16AB4A6200A5AB58 /* yuv420.cl in Sources */,
 				F6A169E916C8575C003096D1 /* P1Preview.m in Sources */,
 				F66518CA16D2C8FF00A988DE /* P1GLibLoop.m in Sources */,
 				F66518CD16D2E0CE00A988DE /* P1Pipeline.m in Sources */,
