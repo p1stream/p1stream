@@ -6,4 +6,4 @@ IOSurfaceRef gst_buffer_get_iosurface(GstBuffer *buffer);
 
 
 // Static initialization to be called once.
-void p1g_iosurface_allocator_static_init();
+void p1_iosurface_allocator_static_init();

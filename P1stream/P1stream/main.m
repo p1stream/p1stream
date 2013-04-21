@@ -36,9 +36,9 @@ static gboolean registerGStreamerElements(GstPlugin *plugin)
 {
     gboolean ok = TRUE;
 
-    ok = ok && gst_element_register(plugin, "displaystreamsrc", GST_RANK_NONE, P1G_TYPE_DISPLAY_STREAM_SRC);
-    ok = ok && gst_element_register(plugin, "rendertextures", GST_RANK_NONE, P1G_TYPE_RENDER_TEXTURES);
-    ok = ok && gst_element_register(plugin, "previewsink", GST_RANK_NONE, P1G_TYPE_PREVIEW_SINK);
+    ok = ok && gst_element_register(plugin, "displaystreamsrc", GST_RANK_NONE, P1_TYPE_DISPLAY_STREAM_SRC);
+    ok = ok && gst_element_register(plugin, "rendertextures", GST_RANK_NONE, P1_TYPE_RENDER_TEXTURES);
+    ok = ok && gst_element_register(plugin, "previewsink", GST_RANK_NONE, P1_TYPE_PREVIEW_SINK);
 
     return ok;
 }
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     loadGStreamerPlugin(@"videotestsrc");
     loadGStreamerPlugin(@"videoconvert");
 
-    p1g_iosurface_allocator_static_init();
+    p1_iosurface_allocator_static_init();
     gboolean res = gst_plugin_register_static(GST_VERSION_MAJOR, GST_VERSION_MINOR,
                                               "p1gelements", "P1stream elements", registerGStreamerElements,
                                               "0.1", "Proprietary", "P1stream", "P1stream", "P1stream");

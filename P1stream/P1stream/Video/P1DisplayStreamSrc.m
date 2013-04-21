@@ -2,20 +2,20 @@
 #import "P1IOSurfaceBuffer.h"
 
 
-G_DEFINE_TYPE(P1GDisplayStreamSrc, p1g_display_stream_src, GST_TYPE_PUSH_SRC)
+G_DEFINE_TYPE(P1DisplayStreamSrc, p1_display_stream_src, GST_TYPE_PUSH_SRC)
 static GstPushSrcClass *parent_class = NULL;
 
-static void p1g_display_stream_src_dispose(GObject *gobject);
-static void p1g_display_stream_src_finalize(GObject *gobject);
-static GstCaps *p1g_display_stream_src_get_caps(GstBaseSrc *src, GstCaps *filter);
-static gboolean p1g_display_stream_src_start(GstBaseSrc *basesrc);
-static gboolean p1g_display_stream_src_stop(GstBaseSrc *basesrc);
-static gboolean p1g_display_stream_src_unlock(GstBaseSrc *basesrc);
-static gboolean p1g_display_stream_src_unlock_stop(GstBaseSrc *basesrc);
-static void p1g_display_stream_src_frame_callback(
-    P1GDisplayStreamSrc *self, CGDisplayStreamFrameStatus status, uint64_t displayTime,
+static void p1_display_stream_src_dispose(GObject *gobject);
+static void p1_display_stream_src_finalize(GObject *gobject);
+static GstCaps *p1_display_stream_src_get_caps(GstBaseSrc *src, GstCaps *filter);
+static gboolean p1_display_stream_src_start(GstBaseSrc *basesrc);
+static gboolean p1_display_stream_src_stop(GstBaseSrc *basesrc);
+static gboolean p1_display_stream_src_unlock(GstBaseSrc *basesrc);
+static gboolean p1_display_stream_src_unlock_stop(GstBaseSrc *basesrc);
+static void p1_display_stream_src_frame_callback(
+    P1DisplayStreamSrc *self, CGDisplayStreamFrameStatus status, uint64_t displayTime,
     IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef);
-static GstFlowReturn p1g_display_stream_src_create(GstPushSrc *pushsrc, GstBuffer **outbuf);
+static GstFlowReturn p1_display_stream_src_create(GstPushSrc *pushsrc, GstBuffer **outbuf);
 
 static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE(
     "src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS(
@@ -27,19 +27,19 @@ static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE(
 );
 
 
-static void p1g_display_stream_src_class_init(P1GDisplayStreamSrcClass *klass)
+static void p1_display_stream_src_class_init(P1DisplayStreamSrcClass *klass)
 {
     parent_class = g_type_class_ref(GST_TYPE_PUSH_SRC);
 
     GstPushSrcClass *pushsrc_class = GST_PUSH_SRC_CLASS(klass);
-    pushsrc_class->create = p1g_display_stream_src_create;
+    pushsrc_class->create = p1_display_stream_src_create;
 
     GstBaseSrcClass *basesrc_class = GST_BASE_SRC_CLASS(klass);
-    basesrc_class->get_caps    = p1g_display_stream_src_get_caps;
-    basesrc_class->start       = p1g_display_stream_src_start;
-    basesrc_class->stop        = p1g_display_stream_src_stop;
-    basesrc_class->unlock      = p1g_display_stream_src_unlock;
-    basesrc_class->unlock_stop = p1g_display_stream_src_unlock_stop;
+    basesrc_class->get_caps    = p1_display_stream_src_get_caps;
+    basesrc_class->start       = p1_display_stream_src_start;
+    basesrc_class->stop        = p1_display_stream_src_stop;
+    basesrc_class->unlock      = p1_display_stream_src_unlock;
+    basesrc_class->unlock_stop = p1_display_stream_src_unlock_stop;
 
     GstElementClass *element_class = GST_ELEMENT_CLASS(klass);
     gst_element_class_add_pad_template(element_class, gst_static_pad_template_get(&src_template));
@@ -49,11 +49,11 @@ static void p1g_display_stream_src_class_init(P1GDisplayStreamSrcClass *klass)
                                            "Stéphan Kochen <stephan@kochen.nl>");
 
     GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-    gobject_class->dispose  = p1g_display_stream_src_dispose;
-    gobject_class->finalize = p1g_display_stream_src_finalize;
+    gobject_class->dispose  = p1_display_stream_src_dispose;
+    gobject_class->finalize = p1_display_stream_src_finalize;
 }
 
-static void p1g_display_stream_src_init(P1GDisplayStreamSrc *self)
+static void p1_display_stream_src_init(P1DisplayStreamSrc *self)
 {
     self->display_stream = NULL;
     self->buffer = NULL;
@@ -66,9 +66,9 @@ static void p1g_display_stream_src_init(P1GDisplayStreamSrc *self)
     gst_base_src_set_format(basesrc, GST_FORMAT_BUFFERS);
 }
 
-static void p1g_display_stream_src_dispose(GObject* gobject)
+static void p1_display_stream_src_dispose(GObject* gobject)
 {
-    P1GDisplayStreamSrc *self = P1G_DISPLAY_STREAM_SRC(gobject);
+    P1DisplayStreamSrc *self = P1_DISPLAY_STREAM_SRC(gobject);
 
     g_assert(self->display_stream == NULL);
     g_assert(self->buffer == NULL);
@@ -76,16 +76,16 @@ static void p1g_display_stream_src_dispose(GObject* gobject)
     G_OBJECT_CLASS(parent_class)->dispose(gobject);
 }
 
-static void p1g_display_stream_src_finalize(GObject* gobject)
+static void p1_display_stream_src_finalize(GObject* gobject)
 {
-    P1GDisplayStreamSrc *self = P1G_DISPLAY_STREAM_SRC(gobject);
+    P1DisplayStreamSrc *self = P1_DISPLAY_STREAM_SRC(gobject);
 
     g_cond_clear(&self->cond);
 
     G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
-static GstCaps *p1g_display_stream_src_get_caps(GstBaseSrc *src, GstCaps *filter)
+static GstCaps *p1_display_stream_src_get_caps(GstBaseSrc *src, GstCaps *filter)
 {
     const CGDirectDisplayID display_id = kCGDirectMainDisplay;
     size_t width  = CGDisplayPixelsWide(display_id);
@@ -96,10 +96,10 @@ static GstCaps *p1g_display_stream_src_get_caps(GstBaseSrc *src, GstCaps *filter
                                "height", G_TYPE_INT, height, NULL);
 }
 
-static gboolean p1g_display_stream_src_start(GstBaseSrc *basesrc)
+static gboolean p1_display_stream_src_start(GstBaseSrc *basesrc)
 {
     gboolean res = FALSE;
-    P1GDisplayStreamSrc *self = P1G_DISPLAY_STREAM_SRC(basesrc);
+    P1DisplayStreamSrc *self = P1_DISPLAY_STREAM_SRC(basesrc);
 
     dispatch_queue_t global_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     const CGDirectDisplayID display_id = kCGDirectMainDisplay;
@@ -109,7 +109,7 @@ static gboolean p1g_display_stream_src_start(GstBaseSrc *basesrc)
     self->display_stream = CGDisplayStreamCreateWithDispatchQueue(
         display_id, width, height, k32BGRAPixelFormat, NULL, global_queue,
         ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef) {
-            p1g_display_stream_src_frame_callback(self, status, displayTime, frameSurface, updateRef);
+            p1_display_stream_src_frame_callback(self, status, displayTime, frameSurface, updateRef);
     });
     if (self->display_stream) {
         res = CGDisplayStreamStart(self->display_stream) == kCGErrorSuccess;
@@ -122,10 +122,10 @@ static gboolean p1g_display_stream_src_start(GstBaseSrc *basesrc)
     return res;
 }
 
-static gboolean p1g_display_stream_src_stop(GstBaseSrc *basesrc)
+static gboolean p1_display_stream_src_stop(GstBaseSrc *basesrc)
 {
     gboolean res = FALSE;
-    P1GDisplayStreamSrc *self = P1G_DISPLAY_STREAM_SRC(basesrc);
+    P1DisplayStreamSrc *self = P1_DISPLAY_STREAM_SRC(basesrc);
     GST_OBJECT_LOCK(self);
 
     if (CGDisplayStreamStop(self->display_stream) == kCGErrorSuccess) {
@@ -143,9 +143,9 @@ static gboolean p1g_display_stream_src_stop(GstBaseSrc *basesrc)
     return res;
 }
 
-static gboolean p1g_display_stream_src_unlock(GstBaseSrc *basesrc)
+static gboolean p1_display_stream_src_unlock(GstBaseSrc *basesrc)
 {
-    P1GDisplayStreamSrc *self = P1G_DISPLAY_STREAM_SRC(basesrc);
+    P1DisplayStreamSrc *self = P1_DISPLAY_STREAM_SRC(basesrc);
     GST_OBJECT_LOCK(self);
 
     self->flushing = TRUE;
@@ -155,9 +155,9 @@ static gboolean p1g_display_stream_src_unlock(GstBaseSrc *basesrc)
     return TRUE;
 }
 
-static gboolean p1g_display_stream_src_unlock_stop(GstBaseSrc *basesrc)
+static gboolean p1_display_stream_src_unlock_stop(GstBaseSrc *basesrc)
 {
-    P1GDisplayStreamSrc *self = P1G_DISPLAY_STREAM_SRC(basesrc);
+    P1DisplayStreamSrc *self = P1_DISPLAY_STREAM_SRC(basesrc);
     GST_OBJECT_LOCK(self);
 
     self->flushing = FALSE;
@@ -166,8 +166,8 @@ static gboolean p1g_display_stream_src_unlock_stop(GstBaseSrc *basesrc)
     return TRUE;
 }
 
-static void p1g_display_stream_src_frame_callback(
-    P1GDisplayStreamSrc *self, CGDisplayStreamFrameStatus status, uint64_t displayTime,
+static void p1_display_stream_src_frame_callback(
+    P1DisplayStreamSrc *self, CGDisplayStreamFrameStatus status, uint64_t displayTime,
     IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
 {
     GST_OBJECT_LOCK(self);
@@ -200,10 +200,10 @@ static void p1g_display_stream_src_frame_callback(
     GST_OBJECT_UNLOCK(self);
 }
 
-static GstFlowReturn p1g_display_stream_src_create(GstPushSrc *pushsrc, GstBuffer **outbuf)
+static GstFlowReturn p1_display_stream_src_create(GstPushSrc *pushsrc, GstBuffer **outbuf)
 {
     GstFlowReturn res;
-    P1GDisplayStreamSrc *self = P1G_DISPLAY_STREAM_SRC(pushsrc);
+    P1DisplayStreamSrc *self = P1_DISPLAY_STREAM_SRC(pushsrc);
     GST_OBJECT_LOCK(self);
 
     do {

@@ -34,7 +34,7 @@
 		F613CC4516DC128B00F57089 /* P1RenderTextures.m in Sources */ = {isa = PBXBuildFile; fileRef = F613CC4416DC128B00F57089 /* P1RenderTextures.m */; };
 		F62BEF6116DD6AA000E7B319 /* P1IOSurfaceBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = F62BEF6016DD6AA000E7B319 /* P1IOSurfaceBuffer.m */; };
 		F63DCBF416E68A9C00DBE29D /* P1TextureMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F63DCBF316E68A9C00DBE29D /* P1TextureMeta.m */; };
-		F63DCBF716E698DF00DBE29D /* P1OpenGLContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F63DCBF616E698DF00DBE29D /* P1OpenGLContext.m */; };
+		F63DCBF716E698DF00DBE29D /* P1GLContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F63DCBF616E698DF00DBE29D /* P1GLContext.m */; };
 		F64254491719602800CF14F4 /* P1FrameBufferMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F64254481719602800CF14F4 /* P1FrameBufferMeta.m */; };
 		F64CD43216BB0B01001B1344 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F68E7546169C9F27002FD6E6 /* CoreGraphics.framework */; };
 		F6626F6B16E9343A004C6646 /* P1TexturePool.m in Sources */ = {isa = PBXBuildFile; fileRef = F6626F6A16E9343A004C6646 /* P1TexturePool.m */; };
@@ -120,8 +120,8 @@
 		F62BEF6016DD6AA000E7B319 /* P1IOSurfaceBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1IOSurfaceBuffer.m; sourceTree = "<group>"; };
 		F63DCBF216E68A9C00DBE29D /* P1TextureMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1TextureMeta.h; sourceTree = "<group>"; };
 		F63DCBF316E68A9C00DBE29D /* P1TextureMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1TextureMeta.m; sourceTree = "<group>"; };
-		F63DCBF516E698DF00DBE29D /* P1OpenGLContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1OpenGLContext.h; sourceTree = "<group>"; };
-		F63DCBF616E698DF00DBE29D /* P1OpenGLContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1OpenGLContext.m; sourceTree = "<group>"; };
+		F63DCBF516E698DF00DBE29D /* P1GLContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1GLContext.h; sourceTree = "<group>"; };
+		F63DCBF616E698DF00DBE29D /* P1GLContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1GLContext.m; sourceTree = "<group>"; };
 		F64254471719602800CF14F4 /* P1FrameBufferMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1FrameBufferMeta.h; sourceTree = "<group>"; };
 		F64254481719602800CF14F4 /* P1FrameBufferMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1FrameBufferMeta.m; sourceTree = "<group>"; };
 		F6626F6916E9343A004C6646 /* P1TexturePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1TexturePool.h; sourceTree = "<group>"; };
@@ -229,8 +229,10 @@
 		F697202B169B85C500F03D6B /* P1stream */ = {
 			isa = PBXGroup;
 			children = (
+				F697202C169B85C500F03D6B /* Supporting Files */,
 				F6BEA4AF16A209C900F6DEC1 /* Video */,
 				F6D94161169CCDD0002C8802 /* Audio */,
+				F6972033169B85C500F03D6B /* P1stream-Prefix.pch */,
 				F6972037169B85C500F03D6B /* P1AppDelegate.h */,
 				F6972038169B85C500F03D6B /* P1AppDelegate.m */,
 				F6B62A0D16EE3D98008EBC63 /* P1MainWindowController.h */,
@@ -242,7 +244,7 @@
 				F6D475D416A2DC54003BD4E1 /* P1Utils.h */,
 				F6D475D516A2DC54003BD4E1 /* P1Utils.m */,
 				F697203A169B85C500F03D6B /* MainMenu.xib */,
-				F697202C169B85C500F03D6B /* Supporting Files */,
+				F6972031169B85C500F03D6B /* main.m */,
 			);
 			path = P1stream;
 			sourceTree = "<group>";
@@ -252,8 +254,6 @@
 			children = (
 				F697202D169B85C500F03D6B /* P1stream-Info.plist */,
 				F697202E169B85C500F03D6B /* InfoPlist.strings */,
-				F6972031169B85C500F03D6B /* main.m */,
-				F6972033169B85C500F03D6B /* P1stream-Prefix.pch */,
 				F6972034169B85C500F03D6B /* Credits.rtf */,
 			);
 			name = "Supporting Files";
@@ -267,8 +267,8 @@
 				F60457DA16AB4A4E00A5AB58 /* yuv420.cl */,
 				F62BEF5F16DD6AA000E7B319 /* P1IOSurfaceBuffer.h */,
 				F62BEF6016DD6AA000E7B319 /* P1IOSurfaceBuffer.m */,
-				F63DCBF516E698DF00DBE29D /* P1OpenGLContext.h */,
-				F63DCBF616E698DF00DBE29D /* P1OpenGLContext.m */,
+				F63DCBF516E698DF00DBE29D /* P1GLContext.h */,
+				F63DCBF616E698DF00DBE29D /* P1GLContext.m */,
 				F63DCBF216E68A9C00DBE29D /* P1TextureMeta.h */,
 				F63DCBF316E68A9C00DBE29D /* P1TextureMeta.m */,
 				F6626F6916E9343A004C6646 /* P1TexturePool.h */,
@@ -384,7 +384,7 @@
 				F62BEF6116DD6AA000E7B319 /* P1IOSurfaceBuffer.m in Sources */,
 				F6C74B4E16DFCC2600DC25E2 /* P1DisplayStreamSrc.m in Sources */,
 				F63DCBF416E68A9C00DBE29D /* P1TextureMeta.m in Sources */,
-				F63DCBF716E698DF00DBE29D /* P1OpenGLContext.m in Sources */,
+				F63DCBF716E698DF00DBE29D /* P1GLContext.m in Sources */,
 				F6626F6B16E9343A004C6646 /* P1TexturePool.m in Sources */,
 				F6B62A0F16EE3D99008EBC63 /* P1MainWindowController.m in Sources */,
 				F64254491719602800CF14F4 /* P1FrameBufferMeta.m in Sources */,

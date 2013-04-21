@@ -3,30 +3,30 @@
 #import "P1FrameBufferMeta.h"
 
 
-G_DEFINE_TYPE(P1GRenderTextures, p1g_render_textures, GST_TYPE_ELEMENT)
+G_DEFINE_TYPE(P1RenderTextures, p1_render_textures, GST_TYPE_ELEMENT)
 static GstElementClass *parent_class = NULL;
 
-static void p1g_render_textures_dispose(
+static void p1_render_textures_dispose(
     GObject *self);
-static void p1g_render_textures_set_property(
+static void p1_render_textures_set_property(
     GObject *gobject, guint property_id, const GValue *value, GParamSpec *pspec);
-static void p1g_render_textures_get_property(
+static void p1_render_textures_get_property(
     GObject *gobject, guint property_id, GValue *value, GParamSpec *pspec);
-static GstStateChangeReturn p1g_render_textures_change_state(
+static GstStateChangeReturn p1_render_textures_change_state(
     GstElement *element, GstStateChange transition);
-static GstPad *p1g_render_textures_request_new_pad(
+static GstPad *p1_render_textures_request_new_pad(
     GstElement *element, GstPadTemplate *templ, const gchar* name, const GstCaps *caps);
-static void p1g_render_textures_release_pad(
+static void p1_render_textures_release_pad(
     GstElement *element, GstPad *pad);
-static gboolean p1g_render_textures_src_query(
+static gboolean p1_render_textures_src_query(
     GstPad *pad, GstObject *parent, GstQuery *query);
-static gboolean p1g_render_textures_src_event(
+static gboolean p1_render_textures_src_event(
     GstPad *pad, GstObject *parent, GstEvent *event);
-static gboolean p1g_render_textures_sink_query(
+static gboolean p1_render_textures_sink_query(
     GstCollectPads *collect, GstCollectData *data, GstQuery *query, gpointer user_data);
-static gboolean p1g_render_textures_sink_event(
+static gboolean p1_render_textures_sink_event(
     GstCollectPads *collect, GstCollectData *data, GstEvent *event, gpointer user_data);
-static GstFlowReturn p1g_render_textures_collected(
+static GstFlowReturn p1_render_textures_collected(
     GstCollectPads *collect, gpointer user_data);
 
 enum
@@ -57,14 +57,14 @@ const GLsizei vbo_size = 4 * vbo_stride;
 const void *vbo_tex_coord_offset = (void *)(2 * sizeof(GLfloat));
 
 
-static void p1g_render_textures_class_init(P1GRenderTexturesClass *klass)
+static void p1_render_textures_class_init(P1RenderTexturesClass *klass)
 {
     parent_class = g_type_class_ref(GST_TYPE_ELEMENT);
 
     GstElementClass *element_class = GST_ELEMENT_CLASS(klass);
-    element_class->change_state    = p1g_render_textures_change_state;
-    element_class->request_new_pad = p1g_render_textures_request_new_pad;
-    element_class->release_pad     = p1g_render_textures_release_pad;
+    element_class->change_state    = p1_render_textures_change_state;
+    element_class->request_new_pad = p1_render_textures_request_new_pad;
+    element_class->release_pad     = p1_render_textures_release_pad;
     gst_element_class_add_pad_template(element_class, gst_static_pad_template_get(&sink_template));
     gst_element_class_add_pad_template(element_class, gst_static_pad_template_get(&src_template));
     gst_element_class_set_static_metadata(element_class, "P1stream render textures",
@@ -73,9 +73,9 @@ static void p1g_render_textures_class_init(P1GRenderTexturesClass *klass)
                                           "Stéphan Kochen <stephan@kochen.nl>");
 
     GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-    gobject_class->dispose = p1g_render_textures_dispose;
-    gobject_class->set_property = p1g_render_textures_set_property;
-    gobject_class->get_property = p1g_render_textures_get_property;
+    gobject_class->dispose = p1_render_textures_dispose;
+    gobject_class->set_property = p1_render_textures_set_property;
+    gobject_class->get_property = p1_render_textures_get_property;
     g_object_class_install_property(gobject_class, PROP_WIDTH,
         g_param_spec_int("width", "Output width", "Output video width",
                          16, 8192, 1280, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
@@ -84,26 +84,26 @@ static void p1g_render_textures_class_init(P1GRenderTexturesClass *klass)
                          16, 8192,  720, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
-static void p1g_render_textures_init(P1GRenderTextures *self)
+static void p1_render_textures_init(P1RenderTextures *self)
 {
     GstPad *src = gst_pad_new_from_static_template(&src_template, "src");
-    gst_pad_set_query_function(src, p1g_render_textures_src_query);
-    gst_pad_set_event_function(src, p1g_render_textures_src_event);
+    gst_pad_set_query_function(src, p1_render_textures_src_query);
+    gst_pad_set_event_function(src, p1_render_textures_src_event);
     gst_element_add_pad(GST_ELEMENT(self), src);
     self->src = src;
 
     self->collect = gst_collect_pads_new();
-    gst_collect_pads_set_query_function(self->collect, p1g_render_textures_sink_query, self);
-    gst_collect_pads_set_event_function(self->collect, p1g_render_textures_sink_event, self);
-    gst_collect_pads_set_function(self->collect, p1g_render_textures_collected, self);
+    gst_collect_pads_set_query_function(self->collect, p1_render_textures_sink_query, self);
+    gst_collect_pads_set_event_function(self->collect, p1_render_textures_sink_event, self);
+    gst_collect_pads_set_function(self->collect, p1_render_textures_collected, self);
 
     self->width  = 1280;
     self->height =  720;
 }
 
-static void p1g_render_textures_dispose(GObject *gobject)
+static void p1_render_textures_dispose(GObject *gobject)
 {
-    P1GRenderTextures *self = P1G_RENDER_TEXTURES(gobject);
+    P1RenderTextures *self = P1_RENDER_TEXTURES(gobject);
 
     if (self->collect) {
         gst_object_unref(self->collect);
@@ -113,10 +113,10 @@ static void p1g_render_textures_dispose(GObject *gobject)
     G_OBJECT_CLASS(parent_class)->dispose(gobject);
 }
 
-static void p1g_render_textures_set_property(
+static void p1_render_textures_set_property(
     GObject *gobject, guint property_id, const GValue *value, GParamSpec *pspec)
 {
-    P1GRenderTextures *self = P1G_RENDER_TEXTURES(gobject);
+    P1RenderTextures *self = P1_RENDER_TEXTURES(gobject);
 
     GST_OBJECT_LOCK(self);
     switch (property_id) {
@@ -135,10 +135,10 @@ static void p1g_render_textures_set_property(
     GST_OBJECT_UNLOCK(self);
 }
 
-static void p1g_render_textures_get_property(
+static void p1_render_textures_get_property(
     GObject *gobject, guint property_id, GValue *value, GParamSpec *pspec)
 {
-    P1GRenderTextures *self = P1G_RENDER_TEXTURES(gobject);
+    P1RenderTextures *self = P1_RENDER_TEXTURES(gobject);
 
     switch (property_id) {
         case PROP_WIDTH:
@@ -153,24 +153,24 @@ static void p1g_render_textures_get_property(
     }
 }
 
-static void p1g_render_textures_set_allocation(
-    P1GRenderTextures *self, P1GTexturePool *pool)
+static void p1_render_textures_set_allocation(
+    P1RenderTextures *self, P1TexturePool *pool)
 {
-    P1GOpenGLContext *context;
+    P1GLContext *context;
 
     if (self->pool == pool)
         return;
 
     if (self->pool) {
         context = self->context;
-        p1g_opengl_context_lock(context);
+        p1_gl_context_lock(context);
 
         glDeleteBuffers(1, &self->vbo_name);
         glDeleteVertexArrays(1, &self->vao_name);
         glDeleteProgram(self->program_name);
 
         g_assert(glGetError() == GL_NO_ERROR);
-        p1g_opengl_context_unlock(context);
+        p1_gl_context_unlock(context);
 
         g_object_unref(self->context);
         self->context = NULL;
@@ -184,8 +184,8 @@ static void p1g_render_textures_set_allocation(
         ret = gst_buffer_pool_set_active(GST_BUFFER_POOL_CAST(pool), TRUE);
         g_return_if_fail(ret);
 
-        context = p1g_texture_pool_get_context(pool);
-        p1g_opengl_context_lock(context);
+        context = p1_texture_pool_get_context(pool);
+        p1_gl_context_lock(context);
 
         // VBO and VAO for all drawing area vertex coordinates.
         glGenVertexArrays(1, &self->vao_name);
@@ -200,17 +200,17 @@ static void p1g_render_textures_set_allocation(
         self->texture_uniform = glGetUniformLocation(self->program_name, "u_Texture");
 
         g_assert(glGetError() == GL_NO_ERROR);
-        p1g_opengl_context_unlock(context);
+        p1_gl_context_unlock(context);
 
         self->pool = gst_object_ref(pool);
         self->context = g_object_ref(context);
     }
 }
 
-static GstStateChangeReturn p1g_render_textures_change_state(
+static GstStateChangeReturn p1_render_textures_change_state(
     GstElement *element, GstStateChange transition)
 {
-    P1GRenderTextures *self = P1G_RENDER_TEXTURES(element);
+    P1RenderTextures *self = P1_RENDER_TEXTURES(element);
 
     switch (transition) {
         case GST_STATE_CHANGE_NULL_TO_READY:
@@ -224,7 +224,7 @@ static GstStateChangeReturn p1g_render_textures_change_state(
             break;
         case GST_STATE_CHANGE_PAUSED_TO_READY:
             gst_collect_pads_stop(self->collect);
-            p1g_render_textures_set_allocation(self, NULL);
+            p1_render_textures_set_allocation(self, NULL);
             break;
         default:
             break;
@@ -233,10 +233,10 @@ static GstStateChangeReturn p1g_render_textures_change_state(
     return parent_class->change_state(element, transition);
 }
 
-static GstPad *p1g_render_textures_request_new_pad(
+static GstPad *p1_render_textures_request_new_pad(
     GstElement *element, GstPadTemplate *templ, const gchar* name, const GstCaps *caps)
 {
-    P1GRenderTextures *self = P1G_RENDER_TEXTURES(element);
+    P1RenderTextures *self = P1_RENDER_TEXTURES(element);
 
     GstPad *sink = gst_pad_new_from_template(templ, name);
     GST_PAD_SET_PROXY_ALLOCATION(sink);
@@ -255,9 +255,9 @@ static GstPad *p1g_render_textures_request_new_pad(
     return sink;
 }
 
-static void p1g_render_textures_release_pad(GstElement *element, GstPad *pad)
+static void p1_render_textures_release_pad(GstElement *element, GstPad *pad)
 {
-    P1GRenderTextures *self = P1G_RENDER_TEXTURES(element);
+    P1RenderTextures *self = P1_RENDER_TEXTURES(element);
 
     if (self->collect) {
         gst_collect_pads_remove_pad(self->collect, pad);
@@ -266,7 +266,7 @@ static void p1g_render_textures_release_pad(GstElement *element, GstPad *pad)
     gst_element_remove_pad(element, pad);
 }
 
-static gboolean p1g_render_textures_src_query(
+static gboolean p1_render_textures_src_query(
     GstPad *pad, GstObject *parent, GstQuery *query)
 {
     switch (GST_QUERY_TYPE(query)) {
@@ -292,7 +292,7 @@ static gboolean p1g_render_textures_src_query(
     }
 }
 
-static gboolean p1g_render_textures_src_event(
+static gboolean p1_render_textures_src_event(
     GstPad *pad, GstObject *parent, GstEvent *event)
 {
     switch (GST_EVENT_TYPE(event)) {
@@ -301,7 +301,7 @@ static gboolean p1g_render_textures_src_event(
     }
 }
 
-static gboolean p1g_render_textures_sink_query(
+static gboolean p1_render_textures_sink_query(
     GstCollectPads *collect, GstCollectData *data, GstQuery *query, gpointer user_data)
 {
     switch (GST_QUERY_TYPE(query)) {
@@ -310,7 +310,7 @@ static gboolean p1g_render_textures_sink_query(
     }
 }
 
-static gboolean p1g_render_textures_sink_event(
+static gboolean p1_render_textures_sink_event(
     GstCollectPads *collect, GstCollectData *data, GstEvent *event, gpointer user_data)
 {
     switch (GST_EVENT_TYPE(event)) {
@@ -319,10 +319,10 @@ static gboolean p1g_render_textures_sink_event(
     }
 }
 
-static GstFlowReturn p1g_render_textures_collected(
+static GstFlowReturn p1_render_textures_collected(
     GstCollectPads *collect, gpointer user_data)
 {
-    P1GRenderTextures *self = P1G_RENDER_TEXTURES(user_data);
+    P1RenderTextures *self = P1_RENDER_TEXTURES(user_data);
     GstFlowReturn ret;
 
     if (self->send_stream_start) {
@@ -352,7 +352,7 @@ static GstFlowReturn p1g_render_textures_collected(
         gst_segment_init(&segment, GST_FORMAT_DEFAULT);
         gst_pad_push_event(self->src, gst_event_new_segment(&segment));
 
-        P1GTexturePool *pool = NULL;
+        P1TexturePool *pool = NULL;
         guint size = 1, min = 1, max = 1;
 
         // Query for a texture pool
@@ -363,8 +363,8 @@ static GstFlowReturn p1g_render_textures_collected(
             guint i, num = gst_query_get_n_allocation_pools(query);
             for (i = 0; i < num; i++) {
                 gst_query_parse_nth_allocation_pool(query, i, &i_pool, &i_size, &i_min, &i_max);
-                if (P1G_IS_TEXTURE_POOL(i_pool)) {
-                    pool = P1G_TEXTURE_POOL_CAST(i_pool);
+                if (P1_IS_TEXTURE_POOL(i_pool)) {
+                    pool = P1_TEXTURE_POOL_CAST(i_pool);
                     size = i_size;
                     min = i_min;
                     max = i_max;
@@ -378,7 +378,7 @@ static GstFlowReturn p1g_render_textures_collected(
         // No texture pool, create our own (with an off-screen context)
         if (pool == NULL) {
             GST_DEBUG_OBJECT(self, "allocating off-screen context");
-            pool = p1g_texture_pool_new(NULL);
+            pool = p1_texture_pool_new(NULL);
             g_return_val_if_fail(pool != NULL, FALSE);
         }
 
@@ -388,29 +388,29 @@ static GstFlowReturn p1g_render_textures_collected(
         gst_buffer_pool_config_set_allocator(config, NULL, &params);
         gst_buffer_pool_set_config(GST_BUFFER_POOL(pool), config);
 
-        p1g_render_textures_set_allocation(self, pool);
+        p1_render_textures_set_allocation(self, pool);
         gst_object_unref(pool);
     }
 
     // Setup output
     if (!self->pool)
         return GST_FLOW_ERROR;
-    P1GOpenGLContext *context = p1g_texture_pool_get_context(self->pool);
-    p1g_opengl_context_lock(context);
+    P1GLContext *context = p1_texture_pool_get_context(self->pool);
+    p1_gl_context_lock(context);
 
     GstBuffer *outbuf;
     ret = gst_buffer_pool_acquire_buffer(GST_BUFFER_POOL(self->pool), &outbuf, NULL);
     if (ret != GST_FLOW_OK) {
-        p1g_opengl_context_unlock(context);
+        p1_gl_context_unlock(context);
         return ret;
     }
 
-    P1GTextureMeta *texture = gst_buffer_get_texture_meta(outbuf);
+    P1TextureMeta *texture = gst_buffer_get_texture_meta(outbuf);
     glBindTexture(GL_TEXTURE_RECTANGLE, texture->name);
     glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, width, height,
                  0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
 
-    P1GFrameBufferMeta *fbo = gst_buffer_get_frame_buffer_meta(outbuf);
+    P1FrameBufferMeta *fbo = gst_buffer_get_frame_buffer_meta(outbuf);
     if (fbo != NULL) {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo->name);
     }
@@ -457,7 +457,7 @@ static GstFlowReturn p1g_render_textures_collected(
             continue;
 
         texture = gst_buffer_get_texture_meta(inbuf);
-        g_assert(p1g_opengl_context_is_shared(texture->context, context));
+        g_assert(p1_gl_context_is_shared(texture->context, context));
         glBindTexture(GL_TEXTURE_RECTANGLE, texture->name);
 
         // FIXME: set coordinates in vbo_data
@@ -470,7 +470,7 @@ static GstFlowReturn p1g_render_textures_collected(
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    p1g_opengl_context_unlock(context);
+    p1_gl_context_unlock(context);
 
     return gst_pad_push(self->src, outbuf);
 }

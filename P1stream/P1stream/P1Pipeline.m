@@ -15,9 +15,9 @@
             gst_object_ref(sink);
 
         pipeline = gst_pipeline_new("test");
-        source = g_object_new(P1G_TYPE_DISPLAY_STREAM_SRC, NULL);
-        upload = g_object_new(P1G_TYPE_TEXTURE_UPLOAD, NULL);
-        render = g_object_new(P1G_TYPE_RENDER_TEXTURES, NULL);
+        source = g_object_new(P1_TYPE_DISPLAY_STREAM_SRC, NULL);
+        upload = g_object_new(P1_TYPE_TEXTURE_UPLOAD, NULL);
+        render = g_object_new(P1_TYPE_RENDER_TEXTURES, NULL);
         g_assert(pipeline && source && upload && render && sink);
 
         gboolean success;

@@ -3,13 +3,13 @@
 #import "P1TexturePool.h"
 
 
-G_DEFINE_TYPE(P1GPreviewSink, p1g_preview_sink, GST_TYPE_VIDEO_SINK)
+G_DEFINE_TYPE(P1PreviewSink, p1_preview_sink, GST_TYPE_VIDEO_SINK)
 static GstVideoSinkClass *parent_class = NULL;
 
-static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, GstStateChange transition);
-static gboolean p1g_preview_sink_propose_allocation(GstBaseSink *sink, GstQuery *query);
-static gboolean p1g_preview_sink_set_caps(GstBaseSink *sink, GstCaps *caps);
-static GstFlowReturn p1g_preview_sink_show_frame(GstVideoSink *video_sink, GstBuffer *buf);
+static GstStateChangeReturn p1_preview_sink_change_state(GstElement *element, GstStateChange transition);
+static gboolean p1_preview_sink_propose_allocation(GstBaseSink *sink, GstQuery *query);
+static gboolean p1_preview_sink_set_caps(GstBaseSink *sink, GstCaps *caps);
+static GstFlowReturn p1_preview_sink_show_frame(GstVideoSink *video_sink, GstBuffer *buf);
 
 static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE(
     "sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS(
@@ -20,19 +20,19 @@ static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE(
 );
 
 
-static void p1g_preview_sink_class_init(P1GPreviewSinkClass *klass)
+static void p1_preview_sink_class_init(P1PreviewSinkClass *klass)
 {
     parent_class = g_type_class_ref(GST_TYPE_VIDEO_SINK);
 
     GstVideoSinkClass *videosink_class = GST_VIDEO_SINK_CLASS(klass);
-    videosink_class->show_frame = p1g_preview_sink_show_frame;
+    videosink_class->show_frame = p1_preview_sink_show_frame;
 
     GstBaseSinkClass *basesink_class = GST_BASE_SINK_CLASS(klass);
-    basesink_class->propose_allocation = p1g_preview_sink_propose_allocation;
-    basesink_class->set_caps           = p1g_preview_sink_set_caps;
+    basesink_class->propose_allocation = p1_preview_sink_propose_allocation;
+    basesink_class->set_caps           = p1_preview_sink_set_caps;
 
     GstElementClass *element_class = GST_ELEMENT_CLASS(klass);
-    element_class->change_state = p1g_preview_sink_change_state;
+    element_class->change_state = p1_preview_sink_change_state;
     gst_element_class_add_pad_template(element_class, gst_static_pad_template_get(&sink_template));
     gst_element_class_set_static_metadata(element_class, "P1stream preview sink",
                                            "Sink/Video",
@@ -40,20 +40,20 @@ static void p1g_preview_sink_class_init(P1GPreviewSinkClass *klass)
                                            "Stéphan Kochen <stephan@kochen.nl>");
 }
 
-static void p1g_preview_sink_init(P1GPreviewSink *self)
+static void p1_preview_sink_init(P1PreviewSink *self)
 {
     self->viewRef = NULL;
 }
 
-static gboolean p1g_preview_sink_propose_allocation(GstBaseSink *basesink, GstQuery *query)
+static gboolean p1_preview_sink_propose_allocation(GstBaseSink *basesink, GstQuery *query)
 {
-    P1GPreviewSink *self = P1G_PREVIEW_SINK(basesink);
+    P1PreviewSink *self = P1_PREVIEW_SINK(basesink);
     P1Preview *view = (__bridge P1Preview *)self->viewRef;
 
-    P1GOpenGLContext *context = p1g_opengl_context_new_existing(view.CGLContextObj);
+    P1GLContext *context = p1_gl_context_new_existing(view.CGLContextObj);
     g_return_val_if_fail(context != NULL, FALSE);
 
-    P1GTexturePool *pool = p1g_texture_pool_new(context);
+    P1TexturePool *pool = p1_texture_pool_new(context);
     g_object_unref(context);
     g_return_val_if_fail(pool != NULL, FALSE);
 
@@ -63,9 +63,9 @@ static gboolean p1g_preview_sink_propose_allocation(GstBaseSink *basesink, GstQu
     return TRUE;
 }
 
-static GstFlowReturn p1g_preview_sink_show_frame(GstVideoSink *videosink, GstBuffer *buf)
+static GstFlowReturn p1_preview_sink_show_frame(GstVideoSink *videosink, GstBuffer *buf)
 {
-    P1GPreviewSink *self = P1G_PREVIEW_SINK(videosink);
+    P1PreviewSink *self = P1_PREVIEW_SINK(videosink);
     P1Preview *view = (__bridge P1Preview *)self->viewRef;
 
     view.buffer = buf;
@@ -73,9 +73,9 @@ static GstFlowReturn p1g_preview_sink_show_frame(GstVideoSink *videosink, GstBuf
     return GST_FLOW_OK;
 }
 
-static gboolean p1g_preview_sink_set_caps(GstBaseSink *basesink, GstCaps *caps)
+static gboolean p1_preview_sink_set_caps(GstBaseSink *basesink, GstCaps *caps)
 {
-    P1GPreviewSink *self = P1G_PREVIEW_SINK(basesink);
+    P1PreviewSink *self = P1_PREVIEW_SINK(basesink);
     P1Preview *view = (__bridge P1Preview *)self->viewRef;
 
     gint width, height;
@@ -93,10 +93,10 @@ static gboolean p1g_preview_sink_set_caps(GstBaseSink *basesink, GstCaps *caps)
     return TRUE;
 }
 
-static GstStateChangeReturn p1g_preview_sink_change_state(GstElement *element, GstStateChange transition)
+static GstStateChangeReturn p1_preview_sink_change_state(GstElement *element, GstStateChange transition)
 {
     GstStateChangeReturn res;
-    P1GPreviewSink *self = P1G_PREVIEW_SINK(element);
+    P1PreviewSink *self = P1_PREVIEW_SINK(element);
     P1Preview *view = (__bridge P1Preview *)self->viewRef;
 
     switch (transition) {
@@ -160,7 +160,7 @@ const void *vboTexCoordsOffset = (void *)(2 * sizeof(GLfloat));
     self = [super initWithFrame:frameRect pixelFormat:pixelFormat];
     if (self) {
         // Create the GStreamer element.
-        element = g_object_new(P1G_TYPE_PREVIEW_SINK, NULL);
+        element = g_object_new(P1_TYPE_PREVIEW_SINK, NULL);
         g_assert(element != NULL);
         element->viewRef = (__bridge CFTypeRef)self;
 
@@ -265,8 +265,8 @@ const void *vboTexCoordsOffset = (void *)(2 * sizeof(GLfloat));
 
     GstBuffer *buf = self->currentBuffer;
     if (buf != NULL) {
-        P1GTextureMeta *texture = gst_buffer_get_texture_meta(buf);
-        g_assert(p1g_opengl_context_get_raw(texture->context) == context);
+        P1TextureMeta *texture = gst_buffer_get_texture_meta(buf);
+        g_assert(p1_gl_context_get_raw(texture->context) == context);
 
         const NSRect bounds = self.bounds;
         glViewport(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);

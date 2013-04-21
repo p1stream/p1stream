@@ -4,17 +4,17 @@
 #import "P1IOSurfaceBuffer.h"
 
 
-G_DEFINE_TYPE(P1GTextureUpload, p1g_texture_upload, GST_TYPE_BASE_TRANSFORM)
+G_DEFINE_TYPE(P1TextureUpload, p1_texture_upload, GST_TYPE_BASE_TRANSFORM)
 static GstBaseTransformClass *parent_class = NULL;
 
-static void p1g_texture_upload_src_dispose(GObject *gobject);
-static GstCaps *p1g_texture_upload_transform_caps(
+static void p1_texture_upload_src_dispose(GObject *gobject);
+static GstCaps *p1_texture_upload_transform_caps(
     GstBaseTransform *trans, GstPadDirection direction, GstCaps *caps, GstCaps *filter);
-static gboolean p1g_texture_upload_set_caps(
+static gboolean p1_texture_upload_set_caps(
     GstBaseTransform *trans, GstCaps *incaps, GstCaps *outcaps);
-static gboolean p1g_texture_upload_decide_allocation(
+static gboolean p1_texture_upload_decide_allocation(
     GstBaseTransform *trans, GstQuery *query);
-static GstFlowReturn p1g_texture_upload_transform(
+static GstFlowReturn p1_texture_upload_transform(
     GstBaseTransform *trans, GstBuffer *inbuf, GstBuffer *outbuf);
 
 // FIXME: different formats
@@ -36,16 +36,16 @@ static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE(
 );
 
 
-static void p1g_texture_upload_class_init(P1GTextureUploadClass *klass)
+static void p1_texture_upload_class_init(P1TextureUploadClass *klass)
 {
     parent_class = g_type_class_ref(GST_TYPE_BASE_TRANSFORM);
 
     GstBaseTransformClass *basetransform_class = GST_BASE_TRANSFORM_CLASS(klass);
-    basetransform_class->transform_caps    = p1g_texture_upload_transform_caps;
-    basetransform_class->set_caps          = p1g_texture_upload_set_caps;
-    basetransform_class->decide_allocation = p1g_texture_upload_decide_allocation;
+    basetransform_class->transform_caps    = p1_texture_upload_transform_caps;
+    basetransform_class->set_caps          = p1_texture_upload_set_caps;
+    basetransform_class->decide_allocation = p1_texture_upload_decide_allocation;
     // FIXME: propose_allocation with iosurface allocation
-    basetransform_class->transform         = p1g_texture_upload_transform;
+    basetransform_class->transform         = p1_texture_upload_transform;
 
     GstElementClass *element_class = GST_ELEMENT_CLASS(klass);
     gst_element_class_add_pad_template(element_class, gst_static_pad_template_get(&sink_template));
@@ -56,13 +56,13 @@ static void p1g_texture_upload_class_init(P1GTextureUploadClass *klass)
                                            "Stéphan Kochen <stephan@kochen.nl>");
 }
 
-static void p1g_texture_upload_init(P1GTextureUpload *self)
+static void p1_texture_upload_init(P1TextureUpload *self)
 {
     GstBaseTransform *basetransform = GST_BASE_TRANSFORM(self);
     gst_base_transform_set_qos_enabled(basetransform, TRUE);
 }
 
-static GstCaps *p1g_texture_upload_transform_caps(
+static GstCaps *p1_texture_upload_transform_caps(
     GstBaseTransform *trans, GstPadDirection direction, GstCaps *caps, GstCaps *filter)
 {
     GstCaps *out = gst_caps_copy(caps);
@@ -84,10 +84,10 @@ static GstCaps *p1g_texture_upload_transform_caps(
     return out;
 }
 
-static gboolean p1g_texture_upload_set_caps(
+static gboolean p1_texture_upload_set_caps(
     GstBaseTransform *trans, GstCaps *incaps, GstCaps *outcaps)
 {
-    P1GTextureUpload *self = P1G_TEXTURE_UPLOAD(trans);
+    P1TextureUpload *self = P1_TEXTURE_UPLOAD(trans);
 
     GstStructure *structure = gst_caps_get_structure(incaps, 0);
     if (!gst_structure_get_int(structure, "width",  &self->width))
@@ -98,10 +98,10 @@ static gboolean p1g_texture_upload_set_caps(
     return TRUE;
 }
 
-static gboolean p1g_texture_upload_decide_allocation(
+static gboolean p1_texture_upload_decide_allocation(
     GstBaseTransform *trans, GstQuery *query)
 {
-    P1GTexturePool *pool = NULL;
+    P1TexturePool *pool = NULL;
     guint size = 1, min = 1, max = 1;
 
     // Strip of all metas.
@@ -122,8 +122,8 @@ static gboolean p1g_texture_upload_decide_allocation(
     guint n_pools = gst_query_get_n_allocation_pools(query);
     while (n_pools--) {
         gst_query_parse_nth_allocation_pool(query, n_pools, &i_pool, &i_size, &i_min, &i_max);
-        if (P1G_IS_TEXTURE_POOL(i_pool)) {
-            pool = P1G_TEXTURE_POOL_CAST(i_pool);
+        if (P1_IS_TEXTURE_POOL(i_pool)) {
+            pool = P1_TEXTURE_POOL_CAST(i_pool);
             size = i_size;
             min = i_min;
             max = i_max;
@@ -135,7 +135,7 @@ static gboolean p1g_texture_upload_decide_allocation(
     // No texture pool, create our own (with an off-screen context).
     if (pool == NULL) {
         GST_DEBUG_OBJECT(trans, "allocating off-screen context");
-        pool = p1g_texture_pool_new(NULL);
+        pool = p1_texture_pool_new(NULL);
         g_return_val_if_fail(pool != NULL, FALSE);
     }
 
@@ -158,15 +158,15 @@ static gboolean p1g_texture_upload_decide_allocation(
     return TRUE;
 }
 
-static GstFlowReturn p1g_texture_upload_transform(
+static GstFlowReturn p1_texture_upload_transform(
     GstBaseTransform *trans, GstBuffer *inbuf, GstBuffer *outbuf)
 {
     gboolean success;
-    P1GTextureUpload *self = P1G_TEXTURE_UPLOAD(trans);
-    P1GTextureMeta *meta = gst_buffer_get_texture_meta(outbuf);
+    P1TextureUpload *self = P1_TEXTURE_UPLOAD(trans);
+    P1TextureMeta *meta = gst_buffer_get_texture_meta(outbuf);
 
     // FIXME: upload in a shared context.
-    p1g_opengl_context_lock(meta->context);
+    p1_gl_context_lock(meta->context);
     glBindTexture(GL_TEXTURE_RECTANGLE, meta->name);
 
     // Try for an IOSurface buffer.
@@ -176,7 +176,7 @@ static GstFlowReturn p1g_texture_upload_transform(
     if (surface != NULL) {
         // Check if the texture is already linked to this IOSurface.
         if (meta->dependency != inbuf) {
-            CGLContextObj cglContext = p1g_opengl_context_get_raw(meta->context);
+            CGLContextObj cglContext = p1_gl_context_get_raw(meta->context);
             CGLError err = CGLTexImageIOSurface2D(
                 cglContext, GL_TEXTURE_RECTANGLE,
                 GL_RGBA, self->width, self->height,
@@ -202,6 +202,6 @@ static GstFlowReturn p1g_texture_upload_transform(
         }
     }
 
-    p1g_opengl_context_unlock(meta->context);
+    p1_gl_context_unlock(meta->context);
     return success ? GST_FLOW_OK : GST_FLOW_ERROR;
 }
