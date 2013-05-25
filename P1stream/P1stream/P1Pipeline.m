@@ -1,7 +1,8 @@
 #import "P1Pipeline.h"
-#import "P1DisplayStreamSrc.h"
+#import "P1TextureDownload.h"
 #import "P1TextureUpload.h"
 #import "P1RenderTextures.h"
+#import "P1DisplayStreamSrc.h"
 
 
 @implementation P1Pipeline

@@ -24,14 +24,15 @@ struct _P1RenderTextures
 
     /*< private >*/
     GstPad *src;
-    GstCollectPads *collect;
 
-    P1TexturePool *pool;
     P1GLContext *context;
     GLuint vao_name;
     GLuint vbo_name;
     GLuint program_name;
     GLuint texture_uniform;
+
+    GstBufferPool *pool;
+    GstCollectPads *collect;
 
     gint width;
     gint height;

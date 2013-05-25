@@ -25,6 +25,7 @@ struct _P1TexturePool
 
     /*< private >*/
     P1GLContext *context;
+    gint width, height;
 };
 
 struct _P1TexturePoolClass
@@ -34,7 +35,4 @@ struct _P1TexturePoolClass
 
 GType p1_texture_pool_get_type();
 
-P1TexturePool *p1_texture_pool_new(P1GLContext *ctx);
-
-#define p1_texture_pool_get_context(self) \
-    (P1_TEXTURE_POOL_CAST(self)->context)
+P1TexturePool *p1_texture_pool_new();

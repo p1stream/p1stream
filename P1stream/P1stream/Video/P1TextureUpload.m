@@ -2,12 +2,18 @@
 #import "P1TexturePool.h"
 #import "P1TextureMeta.h"
 #import "P1IOSurfaceBuffer.h"
+#import "P1Utils.h"
 
 
 G_DEFINE_TYPE(P1TextureUpload, p1_texture_upload, GST_TYPE_BASE_TRANSFORM)
 static GstBaseTransformClass *parent_class = NULL;
 
-static void p1_texture_upload_src_dispose(GObject *gobject);
+static void p1_texture_upload_dispose(
+    GObject *gobject);
+static gboolean p1_texture_upload_stop(
+    GstBaseTransform *trans);
+static void p1_texture_upload_set_context(
+    P1TextureUpload *self, P1GLContext *context);
 static GstCaps *p1_texture_upload_transform_caps(
     GstBaseTransform *trans, GstPadDirection direction, GstCaps *caps, GstCaps *filter);
 static gboolean p1_texture_upload_set_caps(
@@ -41,6 +47,7 @@ static void p1_texture_upload_class_init(P1TextureUploadClass *klass)
     parent_class = g_type_class_ref(GST_TYPE_BASE_TRANSFORM);
 
     GstBaseTransformClass *basetransform_class = GST_BASE_TRANSFORM_CLASS(klass);
+    basetransform_class->stop              = p1_texture_upload_stop;
     basetransform_class->transform_caps    = p1_texture_upload_transform_caps;
     basetransform_class->set_caps          = p1_texture_upload_set_caps;
     basetransform_class->decide_allocation = p1_texture_upload_decide_allocation;
@@ -52,19 +59,72 @@ static void p1_texture_upload_class_init(P1TextureUploadClass *klass)
     gst_element_class_add_pad_template(element_class, gst_static_pad_template_get(&src_template));
     gst_element_class_set_static_metadata(element_class, "P1stream texture upload",
                                            "Filter/Video",
-                                           "Uploads a frame as a texture to an OpenGL context",
+                                           "Uploads a frame to an OpenGL texture",
                                            "Stéphan Kochen <stephan@kochen.nl>");
+
+    GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+    gobject_class->dispose = p1_texture_upload_dispose;
 }
 
 static void p1_texture_upload_init(P1TextureUpload *self)
 {
+    self->context = NULL;
+    self->width   = -1;
+    self->height  = -1;
+
     GstBaseTransform *basetransform = GST_BASE_TRANSFORM(self);
     gst_base_transform_set_qos_enabled(basetransform, TRUE);
+}
+
+static void p1_texture_upload_dispose(GObject *gobject)
+{
+    P1TextureUpload *self = P1_TEXTURE_UPLOAD(gobject);
+
+    p1_texture_upload_set_context(self, NULL);
+
+    G_OBJECT_CLASS(parent_class)->dispose(gobject);
+}
+
+static gboolean p1_texture_upload_stop(GstBaseTransform *trans)
+{
+    P1TextureUpload *self = P1_TEXTURE_UPLOAD(trans);
+
+    p1_texture_upload_set_context(self, NULL);
+
+    return TRUE;
+}
+
+static void p1_texture_upload_set_context(P1TextureUpload *self, P1GLContext *context)
+{
+    if (context == self->context)
+        return;
+
+    if (self->context != NULL) {
+        g_object_unref(self->context);
+        self->context = NULL;
+    }
+
+    if (self->upload_context != NULL) {
+        g_object_unref(self->upload_context);
+        self->upload_context = NULL;
+    }
+
+    if (context != NULL) {
+        GST_DEBUG_OBJECT(self, "setting context to %p", context);
+        self->context = context;
+        self->upload_context = p1_gl_context_new_shared(context);
+    }
 }
 
 static GstCaps *p1_texture_upload_transform_caps(
     GstBaseTransform *trans, GstPadDirection direction, GstCaps *caps, GstCaps *filter)
 {
+    // Prepare BGRA string value
+    GValue bgra_value = G_VALUE_INIT;
+    g_value_init(&bgra_value, G_TYPE_STRING);
+    g_value_set_static_string(&bgra_value, "BGRA");
+
+    // Transform each structure
     GstCaps *out = gst_caps_copy(caps);
     guint size = gst_caps_get_size(out);
     for (guint i = 0; i < size; i++) {
@@ -74,13 +134,13 @@ static GstCaps *p1_texture_upload_transform_caps(
             gst_structure_remove_field(cap, "format");
         }
         else {
-            GValue bgra_value = G_VALUE_INIT;
-            g_value_init(&bgra_value, G_TYPE_STRING);
-            g_value_set_static_string(&bgra_value, "BGRA");
             gst_structure_set_name(cap, "video/x-raw");
-            gst_structure_take_value(cap, "format", &bgra_value);
+            gst_structure_set_value(cap, "format", &bgra_value);
+            gst_structure_remove_field(cap, "context");
         }
     }
+
+    g_value_unset(&bgra_value);
     return out;
 }
 
@@ -88,8 +148,32 @@ static gboolean p1_texture_upload_set_caps(
     GstBaseTransform *trans, GstCaps *incaps, GstCaps *outcaps)
 {
     P1TextureUpload *self = P1_TEXTURE_UPLOAD(trans);
+    GstStructure *structure = gst_caps_get_structure(outcaps, 0);
 
-    GstStructure *structure = gst_caps_get_structure(incaps, 0);
+    // Determine the context to use
+    GstQuery *query = gst_query_new_gl_context();
+    gst_pad_peer_query(GST_BASE_TRANSFORM(self)->srcpad, query);
+    P1GLContext *context = gst_query_get_gl_context(query);
+    if (context != NULL) {
+        if (self->context == NULL) {
+            p1_texture_upload_set_context(self, g_object_ref(context));
+        }
+        else if (context != self->context) {
+            GST_ERROR_OBJECT(self, "downstream tried to change context mid-stream");
+            return FALSE;
+        }
+    }
+    else if (self->context == NULL) {
+        p1_texture_upload_set_context(self, p1_gl_context_new());
+    }
+
+    // Add the context to the downstream caps
+    GValue context_value = G_VALUE_INIT;
+    g_value_init(&context_value, G_TYPE_OBJECT);
+    g_value_set_object(&context_value, self->context);
+    gst_structure_take_value(structure, "context", &context_value);
+
+    // Take width and height from the caps
     if (!gst_structure_get_int(structure, "width",  &self->width))
         return FALSE;
     if (!gst_structure_get_int(structure, "height", &self->height))
@@ -101,61 +185,7 @@ static gboolean p1_texture_upload_set_caps(
 static gboolean p1_texture_upload_decide_allocation(
     GstBaseTransform *trans, GstQuery *query)
 {
-    P1TexturePool *pool = NULL;
-    guint size = 1, min = 1, max = 1;
-
-    // Strip of all metas.
-    guint n_metas = gst_query_get_n_allocation_metas(query);
-    while (n_metas--) {
-        gst_query_remove_nth_allocation_meta(query, n_metas);
-    }
-
-    // Strip of all allocators.
-    guint n_params = gst_query_get_n_allocation_params(query);
-    while (n_params--) {
-        gst_query_set_nth_allocation_param(query, n_params, NULL, NULL);
-    }
-
-    // Keep only texture pools, and select the first in the list.
-    GstBufferPool *i_pool;
-    guint i_size, i_min, i_max;
-    guint n_pools = gst_query_get_n_allocation_pools(query);
-    while (n_pools--) {
-        gst_query_parse_nth_allocation_pool(query, n_pools, &i_pool, &i_size, &i_min, &i_max);
-        if (P1_IS_TEXTURE_POOL(i_pool)) {
-            pool = P1_TEXTURE_POOL_CAST(i_pool);
-            size = i_size;
-            min = i_min;
-            max = i_max;
-            break;
-        }
-        gst_object_unref(i_pool);
-    }
-
-    // No texture pool, create our own (with an off-screen context).
-    if (pool == NULL) {
-        GST_DEBUG_OBJECT(trans, "allocating off-screen context");
-        pool = p1_texture_pool_new(NULL);
-        g_return_val_if_fail(pool != NULL, FALSE);
-    }
-
-    GstCaps *outcaps;
-    gst_query_parse_allocation(query, &outcaps, NULL);
-
-    GstAllocationParams params;
-    GstStructure *config = gst_buffer_pool_get_config(GST_BUFFER_POOL(pool));
-    gst_buffer_pool_config_set_params(config, outcaps, size, min, max);
-    gst_buffer_pool_config_set_allocator(config, NULL, &params);
-    gst_buffer_pool_set_config(GST_BUFFER_POOL(pool), config);
-
-    // Fix the pool selection.
-    if (gst_query_get_n_allocation_pools(query) == 0)
-        gst_query_add_allocation_pool(query, GST_BUFFER_POOL_CAST(pool), size, min, max);
-    else
-        gst_query_set_nth_allocation_pool(query, 0, GST_BUFFER_POOL_CAST(pool), size, min, max);
-    gst_object_unref(pool);
-
-    return TRUE;
+    return p1_decide_texture_allocation(query);
 }
 
 static GstFlowReturn p1_texture_upload_transform(
@@ -165,8 +195,7 @@ static GstFlowReturn p1_texture_upload_transform(
     P1TextureUpload *self = P1_TEXTURE_UPLOAD(trans);
     P1TextureMeta *meta = gst_buffer_get_texture_meta(outbuf);
 
-    // FIXME: upload in a shared context.
-    p1_gl_context_lock(meta->context);
+    p1_gl_context_lock(self->upload_context);
     glBindTexture(GL_TEXTURE_RECTANGLE, meta->name);
 
     // Try for an IOSurface buffer.
@@ -176,7 +205,7 @@ static GstFlowReturn p1_texture_upload_transform(
     if (surface != NULL) {
         // Check if the texture is already linked to this IOSurface.
         if (meta->dependency != inbuf) {
-            CGLContextObj cglContext = p1_gl_context_get_raw(meta->context);
+            CGLContextObj cglContext = p1_gl_context_get_raw(self->upload_context);
             CGLError err = CGLTexImageIOSurface2D(
                 cglContext, GL_TEXTURE_RECTANGLE,
                 GL_RGBA, self->width, self->height,
@@ -202,6 +231,6 @@ static GstFlowReturn p1_texture_upload_transform(
         }
     }
 
-    p1_gl_context_unlock(meta->context);
+    p1_gl_context_unlock(self->upload_context);
     return success ? GST_FLOW_OK : GST_FLOW_ERROR;
 }

@@ -63,7 +63,7 @@ P1GLContext *p1_gl_context_new_shared(P1GLContext *other)
     g_return_val_if_fail(pixel_format != NULL, NULL);
 
     CGLContextObj context;
-    err = CGLCreateContext(pixel_format, NULL, &context);
+    err = CGLCreateContext(pixel_format, other->context, &context);
     g_return_val_if_fail(err == kCGLNoError, NULL);
 
     P1GLContext *obj = g_object_new(P1_TYPE_GL_CONTEXT, NULL);

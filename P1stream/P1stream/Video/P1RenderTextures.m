@@ -12,6 +12,10 @@ static void p1_render_textures_set_property(
     GObject *gobject, guint property_id, const GValue *value, GParamSpec *pspec);
 static void p1_render_textures_get_property(
     GObject *gobject, guint property_id, GValue *value, GParamSpec *pspec);
+static void p1_render_textures_set_context(
+    P1RenderTextures *self, P1GLContext *context);
+static void p1_render_textures_set_pool(
+    P1RenderTextures *self, GstBufferPool *pool);
 static GstStateChangeReturn p1_render_textures_change_state(
     GstElement *element, GstStateChange transition);
 static GstPad *p1_render_textures_request_new_pad(
@@ -110,6 +114,9 @@ static void p1_render_textures_dispose(GObject *gobject)
         self->collect = NULL;
     }
 
+    p1_render_textures_set_pool(self, NULL);
+    p1_render_textures_set_context(self, NULL);
+
     G_OBJECT_CLASS(parent_class)->dispose(gobject);
 }
 
@@ -153,38 +160,28 @@ static void p1_render_textures_get_property(
     }
 }
 
-static void p1_render_textures_set_allocation(
-    P1RenderTextures *self, P1TexturePool *pool)
+static void p1_render_textures_set_context(
+    P1RenderTextures *self, P1GLContext *context)
 {
-    P1GLContext *context;
-
-    if (self->pool == pool)
+    if (context == self->context)
         return;
 
-    if (self->pool) {
-        context = self->context;
-        p1_gl_context_lock(context);
+    if (self->context != NULL) {
+        p1_gl_context_lock(self->context);
 
         glDeleteBuffers(1, &self->vbo_name);
         glDeleteVertexArrays(1, &self->vao_name);
         glDeleteProgram(self->program_name);
 
         g_assert(glGetError() == GL_NO_ERROR);
-        p1_gl_context_unlock(context);
+        p1_gl_context_unlock(self->context);
 
         g_object_unref(self->context);
         self->context = NULL;
-
-        gst_object_unref(self->pool);
-        self->pool = NULL;
     }
 
-    if (pool) {
-        gboolean ret;
-        ret = gst_buffer_pool_set_active(GST_BUFFER_POOL_CAST(pool), TRUE);
-        g_return_if_fail(ret);
-
-        context = p1_texture_pool_get_context(pool);
+    if (context != NULL) {
+        GST_DEBUG_OBJECT(self, "setting context to %p", context);
         p1_gl_context_lock(context);
 
         // VBO and VAO for all drawing area vertex coordinates.
@@ -196,14 +193,28 @@ static void p1_render_textures_set_allocation(
         glBindAttribLocation(self->program_name, 0, "a_Position");
         glBindAttribLocation(self->program_name, 1, "a_TexCoords");
         glBindFragDataLocation(self->program_name, 0, "o_FragColor");
-        buildShaderProgram(self->program_name, @"simple");
+        p1_build_shader_program(self->program_name, @"simple");
         self->texture_uniform = glGetUniformLocation(self->program_name, "u_Texture");
 
         g_assert(glGetError() == GL_NO_ERROR);
         p1_gl_context_unlock(context);
 
-        self->pool = gst_object_ref(pool);
         self->context = g_object_ref(context);
+    }
+}
+
+static void p1_render_textures_set_pool(
+    P1RenderTextures *self, GstBufferPool *pool)
+{
+    if (self->pool) {
+        gst_buffer_pool_set_active(self->pool, FALSE);
+        gst_object_unref(self->pool);
+        self->pool = NULL;
+    }
+
+    if (pool) {
+        gst_buffer_pool_set_active(pool, TRUE);
+        self->pool = gst_object_ref(pool);
     }
 }
 
@@ -224,7 +235,7 @@ static GstStateChangeReturn p1_render_textures_change_state(
             break;
         case GST_STATE_CHANGE_PAUSED_TO_READY:
             gst_collect_pads_stop(self->collect);
-            p1_render_textures_set_allocation(self, NULL);
+            p1_render_textures_set_context(self, NULL);
             break;
         default:
             break;
@@ -313,12 +324,47 @@ static gboolean p1_render_textures_sink_query(
 static gboolean p1_render_textures_sink_event(
     GstCollectPads *collect, GstCollectData *data, GstEvent *event, gpointer user_data)
 {
+    P1RenderTextures *self = (P1RenderTextures *)user_data;
+    gboolean res = FALSE;
+
     switch (GST_EVENT_TYPE(event)) {
+        case GST_EVENT_CAPS: {
+            GstCaps *caps;
+            gst_event_parse_caps(event, &caps);
+
+            GstStructure *structure = gst_caps_get_structure(caps, 0);
+            if (structure == NULL) {
+                GST_ERROR_OBJECT(self, "missing context field in caps");
+                break;
+            }
+
+            const GValue *context_value = gst_structure_get_value(structure, "context");
+            if (context_value == NULL) {
+                GST_ERROR_OBJECT(self, "no context specified in caps");
+                break;
+            }
+
+            P1GLContext *context = g_value_get_object(context_value);
+            if (self->context && context != self->context) {
+                GST_ERROR_OBJECT(self, "upstream tried to change context mid-stream");
+                break;
+            }
+
+            p1_render_textures_set_context(self, context);
+            res = TRUE;
+            break;
+        }
         default:
-            return gst_collect_pads_event_default(collect, data, event, FALSE);
+            gst_event_ref(event);
+            res = gst_collect_pads_event_default(collect, data, event, FALSE);
+            break;
     }
+
+    gst_event_unref(event);
+    return res;
 }
 
+// FIXME: split this up
 static GstFlowReturn p1_render_textures_collected(
     GstCollectPads *collect, gpointer user_data)
 {
@@ -337,69 +383,48 @@ static GstFlowReturn p1_render_textures_collected(
     GST_OBJECT_LOCK(self);
     const gint width  = self->width;
     const gint height = self->height;
+    P1GLContext *context = self->context;
     gboolean send_caps = self->send_caps;
     self->send_caps = FALSE;
     GST_OBJECT_UNLOCK(self);
 
     if (send_caps) {
+        // Build and send the caps event
         GstCaps *caps = gst_caps_new_simple("video/x-gl-texture",
             "width",  G_TYPE_INT, width,
             "height", G_TYPE_INT, height, NULL);
+
+        GstStructure *structure = gst_caps_get_structure(caps, 0);
+        GValue context_value = G_VALUE_INIT;
+        g_value_init(&context_value, G_TYPE_OBJECT);
+        g_value_set_object(&context_value, context);
+        gst_structure_take_value(structure, "context", &context_value);
+
         gst_pad_push_event(self->src, gst_event_new_caps(caps));
         gst_caps_unref(caps);
 
+        // Send an empty segment event
         GstSegment segment;
         gst_segment_init(&segment, GST_FORMAT_DEFAULT);
         gst_pad_push_event(self->src, gst_event_new_segment(&segment));
 
-        P1TexturePool *pool = NULL;
-        guint size = 1, min = 1, max = 1;
-
         // Query for a texture pool
-        GstBufferPool *i_pool;
-        guint i_size, i_min, i_max;
         GstQuery *query = gst_query_new_allocation(caps, TRUE);
-        if (gst_pad_peer_query(self->src, query)) {
-            guint i, num = gst_query_get_n_allocation_pools(query);
-            for (i = 0; i < num; i++) {
-                gst_query_parse_nth_allocation_pool(query, i, &i_pool, &i_size, &i_min, &i_max);
-                if (P1_IS_TEXTURE_POOL(i_pool)) {
-                    pool = P1_TEXTURE_POOL_CAST(i_pool);
-                    size = i_size;
-                    min = i_min;
-                    max = i_max;
-                    break;
-                }
-                gst_object_unref(i_pool);
-            }
-        }
-        gst_query_unref(query);
+        gst_pad_peer_query(self->src, query);
+        p1_decide_texture_allocation(query);
 
-        // No texture pool, create our own (with an off-screen context)
-        if (pool == NULL) {
-            GST_DEBUG_OBJECT(self, "allocating off-screen context");
-            pool = p1_texture_pool_new(NULL);
-            g_return_val_if_fail(pool != NULL, FALSE);
-        }
-
-        GstAllocationParams params;
-        GstStructure *config = gst_buffer_pool_get_config(GST_BUFFER_POOL(pool));
-        gst_buffer_pool_config_set_params(config, caps, size, min, max);
-        gst_buffer_pool_config_set_allocator(config, NULL, &params);
-        gst_buffer_pool_set_config(GST_BUFFER_POOL(pool), config);
-
-        p1_render_textures_set_allocation(self, pool);
-        gst_object_unref(pool);
+        GstBufferPool *pool = NULL;
+        gst_query_parse_nth_allocation_pool(query, 0, &pool, NULL, NULL, NULL);
+        p1_render_textures_set_pool(self, pool);
     }
 
     // Setup output
     if (!self->pool)
         return GST_FLOW_ERROR;
-    P1GLContext *context = p1_texture_pool_get_context(self->pool);
     p1_gl_context_lock(context);
 
     GstBuffer *outbuf;
-    ret = gst_buffer_pool_acquire_buffer(GST_BUFFER_POOL(self->pool), &outbuf, NULL);
+    ret = gst_buffer_pool_acquire_buffer(self->pool, &outbuf, NULL);
     if (ret != GST_FLOW_OK) {
         p1_gl_context_unlock(context);
         return ret;

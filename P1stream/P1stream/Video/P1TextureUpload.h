@@ -1,4 +1,5 @@
 #include <gst/base/gstbasetransform.h>
+#import "P1GLContext.h"
 
 
 #define P1_TYPE_TEXTURE_UPLOAD \
@@ -22,6 +23,7 @@ struct _P1TextureUpload
     GstBaseTransform parent_instance;
 
     /*< private >*/
+    P1GLContext *context, *upload_context;
     gint width, height;
 };
 

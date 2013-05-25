@@ -36,6 +36,8 @@ GType p1_preview_sink_get_type();
 
 @interface P1Preview : NSOpenGLView
 {
+    P1GLContext *gobjContext;
+
     GstBuffer *currentBuffer;
     NSLayoutConstraint *videoConstraint;
 
@@ -49,6 +51,7 @@ GType p1_preview_sink_get_type();
 @property (nonatomic) CGFloat aspect;
 
 - (CGLContextObj)CGLContextObj;
+- (P1GLContext *)gobjContext;
 
 - (void)updateVideoConstraint;
 - (void)clearVideoConstraint;
