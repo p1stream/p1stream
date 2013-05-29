@@ -1,29 +1,37 @@
 #import "P1Pipeline.h"
-#import "P1TextureDownload.h"
-#import "P1TextureUpload.h"
-#import "P1RenderTextures.h"
-#import "P1DisplayStreamSrc.h"
 
 
 @implementation P1Pipeline
 
-- (id)initWithPreview:(P1Preview *)preview
+- (id)initWithPreview:(P1Preview *)previewObj
 {
     self = [super init];
     if (self) {
-        sink = GST_ELEMENT(preview.element);
-        if (sink)
-            gst_object_ref(sink);
+        preview = GST_ELEMENT(previewObj.element);
+        if (preview)
+            gst_object_ref(preview);
 
         pipeline = gst_pipeline_new("test");
-        source = g_object_new(P1_TYPE_DISPLAY_STREAM_SRC, NULL);
-        upload = g_object_new(P1_TYPE_TEXTURE_UPLOAD, NULL);
-        render = g_object_new(P1_TYPE_RENDER_TEXTURES, NULL);
-        g_assert(pipeline && source && upload && render && sink);
+        source   = gst_element_factory_make("displaystreamsrc", "source");
+        upload   = gst_element_factory_make("textureupload",    "upload");
+        render   = gst_element_factory_make("rendertextures",   "render");
+        download = gst_element_factory_make("texturedownload",  "download");
+        tee      = gst_element_factory_make("tee",              "tee");
+        upload2  = gst_element_factory_make("textureupload",    "upload2");
+        convert  = gst_element_factory_make("videoconvert",     "convert");
+        x264enc  = gst_element_factory_make("x264enc",          "x264enc");
+        flvmux   = gst_element_factory_make("flvmux",           "flvmux");
+        rtmp     = gst_element_factory_make("rtmpsink",         "rtmp");
+        g_assert(pipeline && source && upload && render && download &&
+            tee && upload2 && preview && convert && x264enc && flvmux && rtmp);
 
-        gboolean success;
-        gst_bin_add_many(GST_BIN(pipeline), source, upload, render, sink, NULL);
-        success = gst_element_link_many(source, upload, render, sink, NULL);
+        gst_bin_add_many(GST_BIN(pipeline), source, upload, render, download,
+            tee, upload2, preview, convert, x264enc, flvmux, rtmp, NULL);
+
+        gboolean success =
+            gst_element_link_many(source, upload, render, download, tee, NULL) &&
+            gst_element_link_many(tee, upload2, preview, NULL) &&
+            gst_element_link_many(tee, convert, x264enc, flvmux, rtmp, NULL);
         g_assert(success);
 
         [self stop];
