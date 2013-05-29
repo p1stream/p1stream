@@ -11,6 +11,9 @@
 		F60457DF16AB4B9600A5AB58 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F60457DE16AB4B9600A5AB58 /* OpenCL.framework */; };
 		F60457E116AB4CCD00A5AB58 /* simple.vert.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E016AB4CCD00A5AB58 /* simple.vert.sl */; };
 		F60457E316AB4D5600A5AB58 /* simple.frag.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E216AB4D5600A5AB58 /* simple.frag.sl */; };
+		F60A271517243D15001AC6C3 /* P1CLMemoryMeta.m in Resources */ = {isa = PBXBuildFile; fileRef = F60A271417243D15001AC6C3 /* P1CLMemoryMeta.m */; };
+		F60A271817243F37001AC6C3 /* P1CLContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F60A271717243F37001AC6C3 /* P1CLContext.m */; };
+		F60A271B17244B41001AC6C3 /* P1CLMemoryUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = F60A271A17244B41001AC6C3 /* P1CLMemoryUpload.m */; };
 		F60E751916D16F9200148F06 /* libintl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E751816D16F9200148F06 /* libintl.dylib */; };
 		F60E751B16D16F9500148F06 /* libffi.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E751A16D16F9500148F06 /* libffi.dylib */; };
 		F60E751E16D16FA200148F06 /* libglib.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E751C16D16F9900148F06 /* libglib.dylib */; };
@@ -94,6 +97,12 @@
 		F60457DE16AB4B9600A5AB58 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		F60457E016AB4CCD00A5AB58 /* simple.vert.sl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = simple.vert.sl; sourceTree = "<group>"; };
 		F60457E216AB4D5600A5AB58 /* simple.frag.sl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = simple.frag.sl; sourceTree = "<group>"; };
+		F60A271417243D15001AC6C3 /* P1CLMemoryMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1CLMemoryMeta.m; sourceTree = "<group>"; };
+		F60A271617243D26001AC6C3 /* P1CLMemoryMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1CLMemoryMeta.h; sourceTree = "<group>"; };
+		F60A271717243F37001AC6C3 /* P1CLContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1CLContext.m; sourceTree = "<group>"; };
+		F60A271917243F40001AC6C3 /* P1CLContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1CLContext.h; sourceTree = "<group>"; };
+		F60A271A17244B41001AC6C3 /* P1CLMemoryUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1CLMemoryUpload.m; sourceTree = "<group>"; };
+		F60A271C17244B4F001AC6C3 /* P1CLMemoryUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1CLMemoryUpload.h; sourceTree = "<group>"; };
 		F60E751816D16F9200148F06 /* libintl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libintl.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libintl.dylib"; sourceTree = "<absolute>"; };
 		F60E751A16D16F9500148F06 /* libffi.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libffi.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libffi.dylib"; sourceTree = "<absolute>"; };
 		F60E751C16D16F9900148F06 /* libglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libglib.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libglib.dylib"; sourceTree = "<absolute>"; };
@@ -275,6 +284,12 @@
 				F64254481719602800CF14F4 /* P1FrameBufferMeta.m */,
 				F613CC4316DC128B00F57089 /* P1RenderTextures.h */,
 				F613CC4416DC128B00F57089 /* P1RenderTextures.m */,
+				F60A271917243F40001AC6C3 /* P1CLContext.h */,
+				F60A271717243F37001AC6C3 /* P1CLContext.m */,
+				F60A271617243D26001AC6C3 /* P1CLMemoryMeta.h */,
+				F60A271417243D15001AC6C3 /* P1CLMemoryMeta.m */,
+				F60A271C17244B4F001AC6C3 /* P1CLMemoryUpload.h */,
+				F60A271A17244B41001AC6C3 /* P1CLMemoryUpload.m */,
 				F6A169E716C8575C003096D1 /* P1Preview.h */,
 				F6A169E816C8575C003096D1 /* P1Preview.m */,
 				F6C74B4C16DFCC2600DC25E2 /* P1DisplayStreamSrc.h */,
@@ -349,6 +364,7 @@
 				F697203C169B85C500F03D6B /* MainMenu.xib in Resources */,
 				F60457E116AB4CCD00A5AB58 /* simple.vert.sl in Resources */,
 				F60457E316AB4D5600A5AB58 /* simple.frag.sl in Resources */,
+				F60A271517243D15001AC6C3 /* P1CLMemoryMeta.m in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,6 +391,8 @@
 				F6626F6B16E9343A004C6646 /* P1TexturePool.m in Sources */,
 				F6B62A0F16EE3D99008EBC63 /* P1MainWindowController.m in Sources */,
 				F64254491719602800CF14F4 /* P1FrameBufferMeta.m in Sources */,
+				F60A271817243F37001AC6C3 /* P1CLContext.m in Sources */,
+				F60A271B17244B41001AC6C3 /* P1CLMemoryUpload.m in Sources */,
 				F655F4A51729C7AC00020A70 /* P1TextureDownload.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
