@@ -55,6 +55,7 @@
 		F6B62A0F16EE3D99008EBC63 /* P1MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B62A0E16EE3D98008EBC63 /* P1MainWindowController.m */; };
 		F6BEA4B216A20B4100F6DEC1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6BEA4B116A20B4100F6DEC1 /* OpenGL.framework */; };
 		F6C74B4E16DFCC2600DC25E2 /* P1DisplayStreamSrc.m in Sources */ = {isa = PBXBuildFile; fileRef = F6C74B4D16DFCC2600DC25E2 /* P1DisplayStreamSrc.m */; };
+		F6CBB68F1757F1C100362F38 /* common.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = F6CBB68E1757F1C100362F38 /* common.xcconfig */; };
 		F6CE70C016AF10F40005DD3D /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6CE70BF16AF10F40005DD3D /* IOSurface.framework */; };
 		F6D475D616A2DC54003BD4E1 /* P1Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D475D516A2DC54003BD4E1 /* P1Utils.m */; };
 /* End PBXBuildFile section */
@@ -156,6 +157,7 @@
 		F6BEA4B116A20B4100F6DEC1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		F6C74B4C16DFCC2600DC25E2 /* P1DisplayStreamSrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1DisplayStreamSrc.h; sourceTree = "<group>"; };
 		F6C74B4D16DFCC2600DC25E2 /* P1DisplayStreamSrc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1DisplayStreamSrc.m; sourceTree = "<group>"; };
+		F6CBB68E1757F1C100362F38 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
 		F6CE70BF16AF10F40005DD3D /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		F6D475D416A2DC54003BD4E1 /* P1Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1Utils.h; sourceTree = "<group>"; };
 		F6D475D516A2DC54003BD4E1 /* P1Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1Utils.m; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 		F6972016169B85C500F03D6B = {
 			isa = PBXGroup;
 			children = (
+				F6CBB68E1757F1C100362F38 /* common.xcconfig */,
 				F697202B169B85C500F03D6B /* P1stream */,
 				F6972024169B85C500F03D6B /* Frameworks */,
 				F6972022169B85C500F03D6B /* Products */,
@@ -365,6 +368,7 @@
 				F60457E116AB4CCD00A5AB58 /* simple.vert.sl in Resources */,
 				F60457E316AB4D5600A5AB58 /* simple.frag.sl in Resources */,
 				F60A271517243D15001AC6C3 /* P1CLMemoryMeta.m in Resources */,
+				F6CBB68F1757F1C100362F38 /* common.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -429,25 +433,15 @@
 /* Begin XCBuildConfiguration section */
 		F697203D169B85C500F03D6B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6CBB68E1757F1C100362F38 /* common.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					G_DISABLE_DEPRECATED,
 					GST_DISABLE_DEPRECATED,
 				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -464,27 +458,16 @@
 					"../gst-plugins-base/generated/gst-libs",
 					"../gst-plugins-base/gst-plugins-base/gst-libs",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				ONLY_ACTIVE_ARCH = YES;
 				OPENCL_ARCHS = gpu_32;
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
 		F697203E169B85C500F03D6B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6CBB68E1757F1C100362F38 /* common.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					G_DISABLE_DEPRECATED,
 					GST_DISABLE_DEPRECATED,
@@ -505,9 +488,7 @@
 					"../gst-plugins-base/generated/gst-libs",
 					"../gst-plugins-base/gst-plugins-base/gst-libs",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OPENCL_ARCHS = gpu_32;
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -518,7 +499,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "P1stream/P1stream-Prefix.pch";
 				INFOPLIST_FILE = "P1stream/P1stream-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -530,7 +510,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "P1stream/P1stream-Prefix.pch";
 				INFOPLIST_FILE = "P1stream/P1stream-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

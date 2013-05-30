@@ -33,6 +33,7 @@
 		F6A0B3C116D0F8FB0023B9B2 /* ffi64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ffi64.c; path = libffi/src/x86/ffi64.c; sourceTree = "<group>"; };
 		F6A0B3C616D0F9080023B9B2 /* ffitarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ffitarget.h; path = libffi/src/x86/ffitarget.h; sourceTree = "<group>"; };
 		F6A0B3CA16D0FADF0023B9B2 /* ffi_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ffi_common.h; path = libffi/include/ffi_common.h; sourceTree = "<group>"; };
+		F6CBB68A1757F1AF00362F38 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +50,7 @@
 		F6A0B39116D0F6E50023B9B2 = {
 			isa = PBXGroup;
 			children = (
+				F6CBB68A1757F1AF00362F38 /* common.xcconfig */,
 				F6A0B39B16D0F7D70023B9B2 /* generated */,
 				F6A0B39F16D0F7E10023B9B2 /* libffi */,
 				F6A0B3AE16D0F8420023B9B2 /* Products */,
@@ -188,6 +190,7 @@
 /* Begin XCBuildConfiguration section */
 		F6A0B39616D0F6E50023B9B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6CBB68A1757F1AF00362F38 /* common.xcconfig */;
 			buildSettings = {
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -201,6 +204,7 @@
 		};
 		F6A0B39716D0F6E50023B9B2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6CBB68A1757F1AF00362F38 /* common.xcconfig */;
 			buildSettings = {
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -215,43 +219,16 @@
 		F6A0B3B016D0F8420023B9B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INSTALL_PATH = "@executable_path";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
 		F6A0B3B116D0F8420023B9B2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				INSTALL_PATH = "@executable_path";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
