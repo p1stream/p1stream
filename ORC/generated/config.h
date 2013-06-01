@@ -7,9 +7,6 @@
 /* Enable Altivec backend */
 /* #undef ENABLE_BACKEND_ALTIVEC */
 
-/* Enable Arm backend */
-/* #undef ENABLE_BACKEND_ARM */
-
 /* Enable c64x backend */
 /* #undef ENABLE_BACKEND_C64X */
 
@@ -60,6 +57,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
+
+/* Defined if host is mipsel */
+/* #undef HAVE_MIPSEL */
 
 /* Define to 1 if you have a working `mmap' system call. */
 #define HAVE_MMAP 1
