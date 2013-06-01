@@ -35,10 +35,14 @@ tar -xzf "${TARBALL}"
 cd "${BASENAME}/gettext-runtime"
 
 # Run configure and make on specific files.
-./configure --enable-shared --disable-static --enable-relocatable --disable-nls --disable-c++ --disable-java
-pushd intl
-make libintl.h libgnuintl.h
-popd
+./configure \
+    --enable-shared \
+    --disable-static \
+    --enable-relocatable \
+    --disable-nls \
+    --disable-c++ \
+    --disable-java
+make -C intl libintl.h libgnuintl.h
 
 # Copy generated files.
 OUT="../../../libintl/generated/gettext-runtime"

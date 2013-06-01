@@ -49,12 +49,11 @@ cd "${BASENAME}"
     --disable-check \
     --disable-gtk-doc \
     --disable-docbook
-pushd gst
-make gstenumtypes.c gstenumtypes.h
-popd
+make -C gst gstenumtypes.{c,h}
 
 # Copy generated files.
 OUT="../../GStreamer/generated"
 mkdir -p "${OUT}/gst/"
 cp config.h "${OUT}/"
-cp gst/gstconfig.h gst/gstenumtypes.c gst/gstenumtypes.h gst/gstversion.h "${OUT}/gst/"
+cp gst/gstconfig.h gst/gstversion.h "${OUT}/gst/"
+cp gst/gstenumtypes.{c,h} "${OUT}/gst/"

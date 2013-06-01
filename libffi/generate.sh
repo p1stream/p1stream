@@ -35,7 +35,10 @@ tar -xzf "${TARBALL}"
 cd "${BASENAME}"
 
 # Run configure.
-./configure --enable-shared --disable-static --disable-builddir
+./configure \
+    --enable-shared \
+    --disable-static \
+    --disable-builddir
 
 # Copy generated files.
 OUT="../../libffi/generated"

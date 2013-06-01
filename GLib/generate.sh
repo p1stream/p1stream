@@ -40,15 +40,22 @@ tar -xJf "${TARBALL}"
 cd "${BASENAME}"
 
 # Run configure.
-export PKG_CONFIG_PATH="/usr/local/Cellar/libffi/${LIBFFI_VERSION}/lib/pkgconfig"
-export CFLAGS="-I/usr/local/Cellar/gettext/${GETTEXT_VERSION}/include"
-export LDFLAGS="-L/usr/local/Cellar/gettext/${GETTEXT_VERSION}/lib"
-export PATH="$PATH:/usr/local/Cellar/gettext/${GETTEXT_VERSION}/bin"
-./configure --enable-shared --disable-static --disable-gtk-doc --disable-man
+export \
+    PKG_CONFIG_PATH="/usr/local/Cellar/libffi/${LIBFFI_VERSION}/lib/pkgconfig" \
+    CFLAGS="-I/usr/local/Cellar/gettext/${GETTEXT_VERSION}/include" \
+    LDFLAGS="-L/usr/local/Cellar/gettext/${GETTEXT_VERSION}/lib" \
+    PATH="$PATH:/usr/local/Cellar/gettext/${GETTEXT_VERSION}/bin"
+./configure \
+    --enable-shared \
+    --disable-static \
+    --disable-gtk-doc \
+    --disable-man
 
 # Copy generated files.
 OUT="../../GLib/generated"
-mkdir -p "${OUT}/glib/" "${OUT}/gmodule/"
+mkdir -p \
+    "${OUT}/glib/" \
+    "${OUT}/gmodule/"
 cp config.h "${OUT}/"
 cp glib/glibconfig.h "${OUT}/glib/"
 cp gmodule/gmoduleconf.h "${OUT}/gmodule/"

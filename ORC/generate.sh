@@ -35,10 +35,16 @@ tar -xzf "${TARBALL}"
 cd "${BASENAME}"
 
 # Run configure.
-./configure --disable-gtk-doc --enable-shared --disable-static --enable-backend=sse
+./configure \
+    --disable-gtk-doc \
+    --enable-shared \
+    --disable-static \
+    --enable-backend=sse
 
 # Selecting just the SSE backend actually breaks the build. :(
-sed -i '' -e 's/^.*ENABLE_BACKEND_MMX.*$/#define ENABLE_BACKEND_MMX 1/' config.h
+sed -i '' \
+    -e 's/^.*ENABLE_BACKEND_MMX.*$/#define ENABLE_BACKEND_MMX 1/' \
+    config.h
 
 # Copy generated files.
 OUT="../../ORC/generated"

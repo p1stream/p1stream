@@ -24,7 +24,9 @@ git clone --shared ../x264/x264
 cd x264
 
 # Run configure and make on specific files.
-./configure --disable-cli --enable-shared
+./configure \
+    --disable-cli \
+    --enable-shared
 make common/oclobj.h
 
 # Copy generated files.

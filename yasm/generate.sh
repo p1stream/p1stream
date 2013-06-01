@@ -38,7 +38,9 @@ cd "${BASENAME}"
 TOMAKE="
     gas-token.c license.c module.c nasm-macros.c nasm-token.c nasm-version.c
     x86cpu.c x86insn_gas.c x86insn_nasm.c x86insns.c x86regtmod.c"
-./configure --disable-python --disable-nls
+./configure \
+    --disable-python \
+    --disable-nls
 make $TOMAKE
 
 # Strip modules we don't build.
@@ -49,4 +51,5 @@ mv _module.c module.c
 # Copy generated files.
 OUT="../../yasm/generated"
 mkdir -p "${OUT}/"
-cp config.h libyasm-stdint.h $TOMAKE "${OUT}/"
+cp config.h libyasm-stdint.h "${OUT}/"
+cp $TOMAKE "${OUT}/"
