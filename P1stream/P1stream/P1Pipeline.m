@@ -36,6 +36,27 @@
             gst_element_link_many(tee, queue2, convert, x264enc, flvmux, rtmp, NULL);
         g_assert(success);
 
+        GValue val = G_VALUE_INIT;
+
+        g_value_init(&val, G_TYPE_STRING);
+        g_value_set_static_string(&val, "rtmp://127.0.0.1/app/test");
+        g_object_set_property(G_OBJECT(rtmp), "location", &val);
+        g_value_unset(&val);
+
+        g_value_init(&val, G_TYPE_INT);
+        g_value_set_int(&val, 128 * 1024 * 1024);
+        g_object_set_property(G_OBJECT(queue2), "max-size-bytes", &val);
+        g_value_set_int(&val, 5);
+        g_object_set_property(G_OBJECT(x264enc), "rc-lookahead", &val);
+        g_value_unset(&val);
+
+        g_value_init(&val, G_TYPE_BOOLEAN);
+        g_value_set_boolean(&val, TRUE);
+        g_object_set_property(G_OBJECT(queue1), "leaky", &val);
+        g_object_set_property(G_OBJECT(queue2), "leaky", &val);
+        g_object_set_property(G_OBJECT(flvmux), "streamable", &val);
+        g_value_unset(&val);
+
         [self stop];
     }
     return self;
