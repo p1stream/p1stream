@@ -1,0 +1,234 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F6B39227175A389700AC15E5 /* amf.c in Sources */ = {isa = PBXBuildFile; fileRef = F6B39210175A37AC00AC15E5 /* amf.c */; };
+		F6B39228175A389700AC15E5 /* hashswf.c in Sources */ = {isa = PBXBuildFile; fileRef = F6B39215175A37AC00AC15E5 /* hashswf.c */; };
+		F6B39229175A389700AC15E5 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = F6B39217175A37AC00AC15E5 /* log.c */; };
+		F6B3922A175A389700AC15E5 /* parseurl.c in Sources */ = {isa = PBXBuildFile; fileRef = F6B39219175A37AC00AC15E5 /* parseurl.c */; };
+		F6B3922B175A389700AC15E5 /* rtmp.c in Sources */ = {isa = PBXBuildFile; fileRef = F6B3921B175A37AC00AC15E5 /* rtmp.c */; };
+		F6B3922F175A3A5700AC15E5 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B3922C175A3A1700AC15E5 /* libssl.dylib */; };
+		F6B39231175A3A8F00AC15E5 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B39230175A3A8F00AC15E5 /* libcrypto.dylib */; };
+		F6B39233175A3A9700AC15E5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B39232175A3A9700AC15E5 /* libz.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F6B3920D175A375E00AC15E5 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
+		F6B3920E175A375E00AC15E5 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
+		F6B39210175A37AC00AC15E5 /* amf.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = amf.c; path = rtmpdump/librtmp/amf.c; sourceTree = "<group>"; };
+		F6B39211175A37AC00AC15E5 /* amf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = amf.h; path = rtmpdump/librtmp/amf.h; sourceTree = "<group>"; };
+		F6B39212175A37AC00AC15E5 /* bytes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bytes.h; path = rtmpdump/librtmp/bytes.h; sourceTree = "<group>"; };
+		F6B39213175A37AC00AC15E5 /* dh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = dh.h; path = rtmpdump/librtmp/dh.h; sourceTree = "<group>"; };
+		F6B39214175A37AC00AC15E5 /* handshake.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = handshake.h; path = rtmpdump/librtmp/handshake.h; sourceTree = "<group>"; };
+		F6B39215175A37AC00AC15E5 /* hashswf.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = hashswf.c; path = rtmpdump/librtmp/hashswf.c; sourceTree = "<group>"; };
+		F6B39216175A37AC00AC15E5 /* http.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = http.h; path = rtmpdump/librtmp/http.h; sourceTree = "<group>"; };
+		F6B39217175A37AC00AC15E5 /* log.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = log.c; path = rtmpdump/librtmp/log.c; sourceTree = "<group>"; };
+		F6B39218175A37AC00AC15E5 /* log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = log.h; path = rtmpdump/librtmp/log.h; sourceTree = "<group>"; };
+		F6B39219175A37AC00AC15E5 /* parseurl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = parseurl.c; path = rtmpdump/librtmp/parseurl.c; sourceTree = "<group>"; };
+		F6B3921A175A37AC00AC15E5 /* rtmp_sys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = rtmp_sys.h; path = rtmpdump/librtmp/rtmp_sys.h; sourceTree = "<group>"; };
+		F6B3921B175A37AC00AC15E5 /* rtmp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rtmp.c; path = rtmpdump/librtmp/rtmp.c; sourceTree = "<group>"; };
+		F6B3921C175A37AC00AC15E5 /* rtmp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = rtmp.h; path = rtmpdump/librtmp/rtmp.h; sourceTree = "<group>"; };
+		F6B3921D175A37C300AC15E5 /* dhgroups.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = dhgroups.h; path = rtmpdump/librtmp/dhgroups.h; sourceTree = "<group>"; };
+		F6B39222175A37D700AC15E5 /* librtmp.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librtmp.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6B3922C175A3A1700AC15E5 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libssl.dylib; sourceTree = DEVELOPER_DIR; };
+		F6B39230175A3A8F00AC15E5 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libcrypto.dylib; sourceTree = DEVELOPER_DIR; };
+		F6B39232175A3A9700AC15E5 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F6B3921F175A37D700AC15E5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6B39233175A3A9700AC15E5 /* libz.dylib in Frameworks */,
+				F6B39231175A3A8F00AC15E5 /* libcrypto.dylib in Frameworks */,
+				F6B3922F175A3A5700AC15E5 /* libssl.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F6B39205175A367000AC15E5 = {
+			isa = PBXGroup;
+			children = (
+				F6B39232175A3A9700AC15E5 /* libz.dylib */,
+				F6B39230175A3A8F00AC15E5 /* libcrypto.dylib */,
+				F6B3920D175A375E00AC15E5 /* common.xcconfig */,
+				F6B3920E175A375E00AC15E5 /* library.xcconfig */,
+				F6B3920C175A374F00AC15E5 /* rtmpdump */,
+				F6B3922E175A3A1B00AC15E5 /* Frameworks */,
+				F6B39223175A37D700AC15E5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F6B3920C175A374F00AC15E5 /* rtmpdump */ = {
+			isa = PBXGroup;
+			children = (
+				F6B3920F175A376100AC15E5 /* librtmp */,
+			);
+			name = rtmpdump;
+			sourceTree = "<group>";
+		};
+		F6B3920F175A376100AC15E5 /* librtmp */ = {
+			isa = PBXGroup;
+			children = (
+				F6B39210175A37AC00AC15E5 /* amf.c */,
+				F6B39211175A37AC00AC15E5 /* amf.h */,
+				F6B39212175A37AC00AC15E5 /* bytes.h */,
+				F6B39213175A37AC00AC15E5 /* dh.h */,
+				F6B3921D175A37C300AC15E5 /* dhgroups.h */,
+				F6B39214175A37AC00AC15E5 /* handshake.h */,
+				F6B39215175A37AC00AC15E5 /* hashswf.c */,
+				F6B39216175A37AC00AC15E5 /* http.h */,
+				F6B39217175A37AC00AC15E5 /* log.c */,
+				F6B39218175A37AC00AC15E5 /* log.h */,
+				F6B39219175A37AC00AC15E5 /* parseurl.c */,
+				F6B3921A175A37AC00AC15E5 /* rtmp_sys.h */,
+				F6B3921B175A37AC00AC15E5 /* rtmp.c */,
+				F6B3921C175A37AC00AC15E5 /* rtmp.h */,
+			);
+			name = librtmp;
+			sourceTree = "<group>";
+		};
+		F6B39223175A37D700AC15E5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F6B39222175A37D700AC15E5 /* librtmp.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F6B3922E175A3A1B00AC15E5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F6B3922C175A3A1700AC15E5 /* libssl.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F6B39221175A37D700AC15E5 /* rtmp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F6B39224175A37D700AC15E5 /* Build configuration list for PBXNativeTarget "rtmp" */;
+			buildPhases = (
+				F6B3921E175A37D700AC15E5 /* Sources */,
+				F6B3921F175A37D700AC15E5 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = rtmp;
+			productName = rtmp;
+			productReference = F6B39222175A37D700AC15E5 /* librtmp.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F6B39206175A367000AC15E5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+			};
+			buildConfigurationList = F6B39209175A367000AC15E5 /* Build configuration list for PBXProject "librtmp" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F6B39205175A367000AC15E5;
+			productRefGroup = F6B39223175A37D700AC15E5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F6B39221175A37D700AC15E5 /* rtmp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F6B3921E175A37D700AC15E5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6B39227175A389700AC15E5 /* amf.c in Sources */,
+				F6B39228175A389700AC15E5 /* hashswf.c in Sources */,
+				F6B39229175A389700AC15E5 /* log.c in Sources */,
+				F6B3922A175A389700AC15E5 /* parseurl.c in Sources */,
+				F6B3922B175A389700AC15E5 /* rtmp.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F6B3920A175A367000AC15E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+			};
+			name = Debug;
+		};
+		F6B3920B175A367000AC15E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+			};
+			name = Release;
+		};
+		F6B39225175A37D700AC15E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6B3920E175A375E00AC15E5 /* library.xcconfig */;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"RTMPDUMP_VERSION=v2.4",
+					USE_OPENSSL,
+				);
+			};
+			name = Debug;
+		};
+		F6B39226175A37D700AC15E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6B3920E175A375E00AC15E5 /* library.xcconfig */;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"RTMPDUMP_VERSION=v2.4",
+					USE_OPENSSL,
+				);
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F6B39209175A367000AC15E5 /* Build configuration list for PBXProject "librtmp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6B3920A175A367000AC15E5 /* Debug */,
+				F6B3920B175A367000AC15E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F6B39224175A37D700AC15E5 /* Build configuration list for PBXNativeTarget "rtmp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6B39225175A37D700AC15E5 /* Debug */,
+				F6B39226175A37D700AC15E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F6B39206175A367000AC15E5 /* Project object */;
+}

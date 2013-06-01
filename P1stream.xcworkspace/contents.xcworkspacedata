@@ -17,6 +17,9 @@
       location = "group:x264/x264.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:librtmp/librtmp.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:GLib/GLib.xcodeproj">
    </FileRef>
    <FileRef
@@ -27,6 +30,9 @@
    </FileRef>
    <FileRef
       location = "group:gst-plugins-good/gst-plugins-good.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:gst-plugins-bad/gst-plugins-bad.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:gst-plugins-ugly/gst-plugins-ugly.xcodeproj">

@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
     loadGStreamerPlugin(@"videoconvert");
     loadGStreamerPlugin(@"x264enc");
     loadGStreamerPlugin(@"flv");
+    loadGStreamerPlugin(@"rtmp");
 
     p1_utils_static_init();
     p1_iosurface_allocator_static_init();

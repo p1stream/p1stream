@@ -28,3 +28,9 @@
 [submodule "gst-plugins-good/gst-plugins-good"]
 	path = gst-plugins-good/gst-plugins-good
 	url = git://anongit.freedesktop.org/gstreamer/gst-plugins-good
+[submodule "gst-plugins-bad/gst-plugins-bad"]
+	path = gst-plugins-bad/gst-plugins-bad
+	url = git://anongit.freedesktop.org/gstreamer/gst-plugins-bad
+[submodule "librtmp/rtmpdump"]
+	path = librtmp/rtmpdump
+	url = git://git.ffmpeg.org/rtmpdump

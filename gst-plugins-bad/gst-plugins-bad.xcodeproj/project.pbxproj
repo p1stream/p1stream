@@ -1,0 +1,286 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F6B39202175A35E700AC15E5 /* gstrtmp.c in Sources */ = {isa = PBXBuildFile; fileRef = F6B391F4175A35D000AC15E5 /* gstrtmp.c */; };
+		F6B39203175A35E700AC15E5 /* gstrtmpsink.c in Sources */ = {isa = PBXBuildFile; fileRef = F6B391F5175A35D000AC15E5 /* gstrtmpsink.c */; };
+		F6B39204175A35E700AC15E5 /* gstrtmpsrc.c in Sources */ = {isa = PBXBuildFile; fileRef = F6B391F7175A35D000AC15E5 /* gstrtmpsrc.c */; };
+		F6B39237175A3AC400AC15E5 /* librtmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B39234175A3AB600AC15E5 /* librtmp.dylib */; };
+		F6B39239175A3B5C00AC15E5 /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B39238175A3B5C00AC15E5 /* libglib.dylib */; };
+		F6B3923B175A3B5F00AC15E5 /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B3923A175A3B5F00AC15E5 /* libgobject.dylib */; };
+		F6B3923D175A3B6200AC15E5 /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B3923C175A3B6200AC15E5 /* libgstreamer.dylib */; };
+		F6B3923F175A3B7100AC15E5 /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B3923E175A3B7100AC15E5 /* libgstbase.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F6B391E9175A355900AC15E5 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
+		F6B391EA175A355900AC15E5 /* gst-plugin.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "gst-plugin.xcconfig"; path = "../gst-plugin.xcconfig"; sourceTree = "<group>"; };
+		F6B391EB175A355900AC15E5 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
+		F6B391F0175A35B600AC15E5 /* _stdint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = _stdint.h; path = generated/_stdint.h; sourceTree = "<group>"; };
+		F6B391F1175A35B600AC15E5 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
+		F6B391F4175A35D000AC15E5 /* gstrtmp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gstrtmp.c; path = "gst-plugins-bad/ext/rtmp/gstrtmp.c"; sourceTree = "<group>"; };
+		F6B391F5175A35D000AC15E5 /* gstrtmpsink.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gstrtmpsink.c; path = "gst-plugins-bad/ext/rtmp/gstrtmpsink.c"; sourceTree = "<group>"; };
+		F6B391F6175A35D000AC15E5 /* gstrtmpsink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gstrtmpsink.h; path = "gst-plugins-bad/ext/rtmp/gstrtmpsink.h"; sourceTree = "<group>"; };
+		F6B391F7175A35D000AC15E5 /* gstrtmpsrc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gstrtmpsrc.c; path = "gst-plugins-bad/ext/rtmp/gstrtmpsrc.c"; sourceTree = "<group>"; };
+		F6B391F8175A35D000AC15E5 /* gstrtmpsrc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gstrtmpsrc.h; path = "gst-plugins-bad/ext/rtmp/gstrtmpsrc.h"; sourceTree = "<group>"; };
+		F6B391FD175A35DD00AC15E5 /* libgstrtmp.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgstrtmp.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6B39234175A3AB600AC15E5 /* librtmp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = librtmp.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/librtmp.dylib"; sourceTree = "<group>"; };
+		F6B39238175A3B5C00AC15E5 /* libglib.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglib.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libglib.dylib"; sourceTree = "<group>"; };
+		F6B3923A175A3B5F00AC15E5 /* libgobject.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgobject.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgobject.dylib"; sourceTree = "<group>"; };
+		F6B3923C175A3B6200AC15E5 /* libgstreamer.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgstreamer.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstreamer.dylib"; sourceTree = "<group>"; };
+		F6B3923E175A3B7100AC15E5 /* libgstbase.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgstbase.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstbase.dylib"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F6B391FA175A35DD00AC15E5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6B39239175A3B5C00AC15E5 /* libglib.dylib in Frameworks */,
+				F6B3923B175A3B5F00AC15E5 /* libgobject.dylib in Frameworks */,
+				F6B3923D175A3B6200AC15E5 /* libgstreamer.dylib in Frameworks */,
+				F6B3923F175A3B7100AC15E5 /* libgstbase.dylib in Frameworks */,
+				F6B39237175A3AC400AC15E5 /* librtmp.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F6B391E2175A337F00AC15E5 = {
+			isa = PBXGroup;
+			children = (
+				F6B3923E175A3B7100AC15E5 /* libgstbase.dylib */,
+				F6B3923C175A3B6200AC15E5 /* libgstreamer.dylib */,
+				F6B3923A175A3B5F00AC15E5 /* libgobject.dylib */,
+				F6B39238175A3B5C00AC15E5 /* libglib.dylib */,
+				F6B391E9175A355900AC15E5 /* common.xcconfig */,
+				F6B391EB175A355900AC15E5 /* library.xcconfig */,
+				F6B391EA175A355900AC15E5 /* gst-plugin.xcconfig */,
+				F6B391EC175A358400AC15E5 /* generated */,
+				F6B391ED175A358700AC15E5 /* gst-plugins-bad */,
+				F6B39236175A3ABA00AC15E5 /* Frameworks */,
+				F6B391FE175A35DD00AC15E5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F6B391EC175A358400AC15E5 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				F6B391F0175A35B600AC15E5 /* _stdint.h */,
+				F6B391F1175A35B600AC15E5 /* config.h */,
+			);
+			name = generated;
+			sourceTree = "<group>";
+		};
+		F6B391ED175A358700AC15E5 /* gst-plugins-bad */ = {
+			isa = PBXGroup;
+			children = (
+				F6B391F2175A35C200AC15E5 /* ext */,
+			);
+			name = "gst-plugins-bad";
+			sourceTree = "<group>";
+		};
+		F6B391F2175A35C200AC15E5 /* ext */ = {
+			isa = PBXGroup;
+			children = (
+				F6B391F3175A35C700AC15E5 /* rtmp */,
+			);
+			name = ext;
+			sourceTree = "<group>";
+		};
+		F6B391F3175A35C700AC15E5 /* rtmp */ = {
+			isa = PBXGroup;
+			children = (
+				F6B391F4175A35D000AC15E5 /* gstrtmp.c */,
+				F6B391F5175A35D000AC15E5 /* gstrtmpsink.c */,
+				F6B391F6175A35D000AC15E5 /* gstrtmpsink.h */,
+				F6B391F7175A35D000AC15E5 /* gstrtmpsrc.c */,
+				F6B391F8175A35D000AC15E5 /* gstrtmpsrc.h */,
+			);
+			name = rtmp;
+			sourceTree = "<group>";
+		};
+		F6B391FE175A35DD00AC15E5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F6B391FD175A35DD00AC15E5 /* libgstrtmp.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F6B39236175A3ABA00AC15E5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F6B39234175A3AB600AC15E5 /* librtmp.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F6B391FC175A35DD00AC15E5 /* gstrtmp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F6B391FF175A35DD00AC15E5 /* Build configuration list for PBXNativeTarget "gstrtmp" */;
+			buildPhases = (
+				F6B391F9175A35DD00AC15E5 /* Sources */,
+				F6B391FA175A35DD00AC15E5 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = gstrtmp;
+			productName = gstrtmp;
+			productReference = F6B391FD175A35DD00AC15E5 /* libgstrtmp.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F6B391E3175A337F00AC15E5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+			};
+			buildConfigurationList = F6B391E6175A337F00AC15E5 /* Build configuration list for PBXProject "gst-plugins-bad" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F6B391E2175A337F00AC15E5;
+			productRefGroup = F6B391FE175A35DD00AC15E5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F6B391FC175A35DD00AC15E5 /* gstrtmp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F6B391F9175A35DD00AC15E5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6B39202175A35E700AC15E5 /* gstrtmp.c in Sources */,
+				F6B39203175A35E700AC15E5 /* gstrtmpsink.c in Sources */,
+				F6B39204175A35E700AC15E5 /* gstrtmpsrc.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F6B391E7175A337F00AC15E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					generated,
+					"gst-plugins-bad",
+					../ORC/generated,
+					../ORC/orc,
+					"../gst-plugins-base/generated/gst-libs",
+					"../gst-plugins-base/gst-plugins-base/gst-libs",
+					../GStreamer/generated,
+					../GStreamer/gstreamer,
+					../GStreamer/generated/libs,
+					../GStreamer/gstreamer/libs,
+					../GLib/generated/glib,
+					../GLib/glib/glib,
+					../GLib/generated,
+					../GLib/glib,
+					"../libintl/generated/gettext-runtime/intl",
+				);
+			};
+			name = Debug;
+		};
+		F6B391E8175A337F00AC15E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					generated,
+					"gst-plugins-bad",
+					../ORC/generated,
+					../ORC/orc,
+					"../gst-plugins-base/generated/gst-libs",
+					"../gst-plugins-base/gst-plugins-base/gst-libs",
+					../GStreamer/generated,
+					../GStreamer/gstreamer,
+					../GStreamer/generated/libs,
+					../GStreamer/gstreamer/libs,
+					../GLib/generated/glib,
+					../GLib/glib/glib,
+					../GLib/generated,
+					../GLib/glib,
+					"../libintl/generated/gettext-runtime/intl",
+				);
+			};
+			name = Release;
+		};
+		F6B39200175A35DD00AC15E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6B391EA175A355900AC15E5 /* gst-plugin.xcconfig */;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					../librtmp/rtmpdump,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug\"",
+				);
+			};
+			name = Debug;
+		};
+		F6B39201175A35DD00AC15E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6B391EA175A355900AC15E5 /* gst-plugin.xcconfig */;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					../librtmp/rtmpdump,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug\"",
+				);
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F6B391E6175A337F00AC15E5 /* Build configuration list for PBXProject "gst-plugins-bad" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6B391E7175A337F00AC15E5 /* Debug */,
+				F6B391E8175A337F00AC15E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F6B391FF175A35DD00AC15E5 /* Build configuration list for PBXNativeTarget "gstrtmp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6B39200175A35DD00AC15E5 /* Debug */,
+				F6B39201175A35DD00AC15E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F6B391E3175A337F00AC15E5 /* Project object */;
+}
