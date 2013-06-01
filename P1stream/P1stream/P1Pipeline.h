@@ -3,8 +3,8 @@
 
 @interface P1Pipeline : NSObject
 {
-    GstElement *pipeline, *source, *upload, *render, *download,
-        *tee, *upload2, *preview, *convert, *x264enc, *flvmux, *rtmp;
+    GstElement *pipeline, *source, *upload1, *render, *download, *tee,
+        *queue1, *upload2, *preview, *queue2, *convert, *x264enc, *flvmux, *rtmp;
 }
 
 - (id)initWithPreview:(P1Preview *)preview;

@@ -13,25 +13,27 @@
 
         pipeline = gst_pipeline_new("test");
         source   = gst_element_factory_make("displaystreamsrc", "source");
-        upload   = gst_element_factory_make("textureupload",    "upload");
+        upload1  = gst_element_factory_make("textureupload",    "upload1");
         render   = gst_element_factory_make("rendertextures",   "render");
         download = gst_element_factory_make("texturedownload",  "download");
         tee      = gst_element_factory_make("tee",              "tee");
+        queue1   = gst_element_factory_make("queue",            "queue1");
         upload2  = gst_element_factory_make("textureupload",    "upload2");
+        queue2   = gst_element_factory_make("queue",            "queue2");
         convert  = gst_element_factory_make("videoconvert",     "convert");
         x264enc  = gst_element_factory_make("x264enc",          "x264enc");
         flvmux   = gst_element_factory_make("flvmux",           "flvmux");
         rtmp     = gst_element_factory_make("rtmpsink",         "rtmp");
-        g_assert(pipeline && source && upload && render && download &&
-            tee && upload2 && preview && convert && x264enc && flvmux && rtmp);
+        g_assert(pipeline && source && upload1 && render && download && tee &&
+            queue1 && upload2 && preview && queue2 && convert && x264enc && flvmux && rtmp);
 
-        gst_bin_add_many(GST_BIN(pipeline), source, upload, render, download,
-            tee, upload2, preview, convert, x264enc, flvmux, rtmp, NULL);
+        gst_bin_add_many(GST_BIN(pipeline), source, upload1, render, download, tee,
+            queue1, upload2, preview, queue2, convert, x264enc, flvmux, rtmp, NULL);
 
         gboolean success =
-            gst_element_link_many(source, upload, render, download, tee, NULL) &&
-            gst_element_link_many(tee, upload2, preview, NULL) &&
-            gst_element_link_many(tee, convert, x264enc, flvmux, rtmp, NULL);
+            gst_element_link_many(source, upload1, render, download, tee, NULL) &&
+            gst_element_link_many(tee, queue1, upload2, preview, NULL) &&
+            gst_element_link_many(tee, queue2, convert, x264enc, flvmux, rtmp, NULL);
         g_assert(success);
 
         [self stop];
