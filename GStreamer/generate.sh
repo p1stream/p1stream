@@ -14,7 +14,7 @@ set -e -x
 
 
 # GStreamer version we're targetting. Should match the submodule.
-VERSION="1.0.6"
+VERSION="1.0.7"
 
 
 # Create scratch directory.
