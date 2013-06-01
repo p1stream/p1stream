@@ -14,6 +14,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F65C5AB2175952C800903D49"
+               BuildableName = "yasm"
+               BlueprintName = "yasm"
+               ReferencedContainer = "container:../yasm/yasm.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "F6A0B32616D0F07D0023B9B2"
                BuildableName = "orcc"
                BlueprintName = "orcc"
@@ -29,7 +43,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F6972020169B85C500F03D6B"
-               BuildableName = ".app"
+               BuildableName = "P1stream.app"
                BlueprintName = "P1stream"
                ReferencedContainer = "container:P1stream.xcodeproj">
             </BuildableReference>
@@ -47,7 +61,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F6972020169B85C500F03D6B"
-            BuildableName = ".app"
+            BuildableName = "P1stream.app"
             BlueprintName = "P1stream"
             ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
@@ -66,7 +80,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F6972020169B85C500F03D6B"
-            BuildableName = ".app"
+            BuildableName = "P1stream.app"
             BlueprintName = "P1stream"
             ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
@@ -101,7 +115,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F6972020169B85C500F03D6B"
-            BuildableName = ".app"
+            BuildableName = "P1stream.app"
             BlueprintName = "P1stream"
             ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>

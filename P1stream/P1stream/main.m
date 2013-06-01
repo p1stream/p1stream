@@ -58,6 +58,7 @@ int main(int argc, char *argv[])
     loadGStreamerPlugin(@"coreelements");
     loadGStreamerPlugin(@"videotestsrc");
     loadGStreamerPlugin(@"videoconvert");
+    loadGStreamerPlugin(@"x264enc");
 
     p1_utils_static_init();
     p1_iosurface_allocator_static_init();

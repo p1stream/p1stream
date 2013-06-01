@@ -39,6 +39,7 @@
 		F64254491719602800CF14F4 /* P1FrameBufferMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F64254481719602800CF14F4 /* P1FrameBufferMeta.m */; };
 		F64CD43216BB0B01001B1344 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F68E7546169C9F27002FD6E6 /* CoreGraphics.framework */; };
 		F655F4A51729C7AC00020A70 /* P1TextureDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = F655F4A41729C7AC00020A70 /* P1TextureDownload.m */; };
+		F65C5C2F1759E76A00903D49 /* libgstx264enc.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F65C5C2E1759E76A00903D49 /* libgstx264enc.dylib */; };
 		F6626F6B16E9343A004C6646 /* P1TexturePool.m in Sources */ = {isa = PBXBuildFile; fileRef = F6626F6A16E9343A004C6646 /* P1TexturePool.m */; };
 		F66518CA16D2C8FF00A988DE /* P1GLibLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = F66518C916D2C8FF00A988DE /* P1GLibLoop.m */; };
 		F66518CD16D2E0CE00A988DE /* P1Pipeline.m in Sources */ = {isa = PBXBuildFile; fileRef = F66518CC16D2E0CE00A988DE /* P1Pipeline.m */; };
@@ -88,6 +89,7 @@
 				F60E752D16D16FC500148F06 /* libgstcoreelements.dylib in CopyFiles */,
 				F60E752F16D16FC900148F06 /* libgstvideotestsrc.dylib in CopyFiles */,
 				F60E753116D16FCC00148F06 /* libgstvideoconvert.dylib in CopyFiles */,
+				F65C5C2F1759E76A00903D49 /* libgstx264enc.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,6 +132,7 @@
 		F64254481719602800CF14F4 /* P1FrameBufferMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1FrameBufferMeta.m; sourceTree = "<group>"; };
 		F655F4A41729C7AC00020A70 /* P1TextureDownload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1TextureDownload.m; sourceTree = "<group>"; };
 		F655F4A61729C7B400020A70 /* P1TextureDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1TextureDownload.h; sourceTree = "<group>"; };
+		F65C5C2E1759E76A00903D49 /* libgstx264enc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstx264enc.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstx264enc.dylib"; sourceTree = "<absolute>"; };
 		F6626F6916E9343A004C6646 /* P1TexturePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1TexturePool.h; sourceTree = "<group>"; };
 		F6626F6A16E9343A004C6646 /* P1TexturePool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1TexturePool.m; sourceTree = "<group>"; };
 		F66518C816D2C8FF00A988DE /* P1GLibLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1GLibLoop.h; sourceTree = "<group>"; };
@@ -228,6 +231,7 @@
 				F60E752A16D16FC200148F06 /* libgstvideo.dylib */,
 				F60E753016D16FCC00148F06 /* libgstvideoconvert.dylib */,
 				F60E752E16D16FC900148F06 /* libgstvideotestsrc.dylib */,
+				F65C5C2E1759E76A00903D49 /* libgstx264enc.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -433,7 +437,6 @@
 /* Begin XCBuildConfiguration section */
 		F697203D169B85C500F03D6B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68E1757F1C100362F38 /* common.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -464,7 +467,6 @@
 		};
 		F697203E169B85C500F03D6B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68E1757F1C100362F38 /* common.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -494,6 +496,7 @@
 		};
 		F6972040169B85C500F03D6B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6CBB68E1757F1C100362F38 /* common.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -505,6 +508,7 @@
 		};
 		F6972041169B85C500F03D6B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6CBB68E1757F1C100362F38 /* common.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

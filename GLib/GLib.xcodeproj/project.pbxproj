@@ -172,6 +172,7 @@
 
 /* Begin PBXFileReference section */
 		F60A27131723F012001AC6C3 /* gcharsetprivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gcharsetprivate.h; path = glib/glib/gcharsetprivate.h; sourceTree = "<group>"; };
+		F65C5BEA1759E2DD00903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
 		F670B52D16D112FB001ADAF9 /* libglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F670B53616D11301001ADAF9 /* libgobject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgobject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F670B53E16D11307001ADAF9 /* libgmodule.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgmodule.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -495,6 +496,7 @@
 			isa = PBXGroup;
 			children = (
 				F6CBB68B1757F1B400362F38 /* common.xcconfig */,
+				F65C5BEA1759E2DD00903D49 /* library.xcconfig */,
 				F670B55216D1134A001ADAF9 /* generated */,
 				F670B55416D1139B001ADAF9 /* glib */,
 				F670B55516D113AF001ADAF9 /* gmodule */,
@@ -1161,7 +1163,6 @@
 /* Begin XCBuildConfiguration section */
 		F670B51E16D10E17001ADAF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68B1757F1B400362F38 /* common.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = G_DISABLE_CAST_CHECKS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -1175,7 +1176,6 @@
 		};
 		F670B51F16D10E17001ADAF9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68B1757F1B400362F38 /* common.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = G_DISABLE_CAST_CHECKS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -1189,8 +1189,8 @@
 		};
 		F670B53016D112FB001ADAF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEA1759E2DD00903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"${inherited}",
 					"G_LOG_DOMAIN=\\\"GLib\\\"",
@@ -1202,14 +1202,13 @@
 					generated/glib,
 					glib/glib,
 				);
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Debug;
 		};
 		F670B53116D112FB001ADAF9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEA1759E2DD00903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"${inherited}",
 					"G_LOG_DOMAIN=\\\"GLib\\\"",
@@ -1221,14 +1220,13 @@
 					generated/glib,
 					glib/glib,
 				);
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Release;
 		};
 		F670B53816D11301001ADAF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEA1759E2DD00903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"${inherited}",
 					"G_LOG_DOMAIN=\\\"GLib-GObject\\\"",
@@ -1241,14 +1239,13 @@
 					../libffi/generated/include,
 					../libffi/libffi/src/x86,
 				);
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Debug;
 		};
 		F670B53916D11301001ADAF9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEA1759E2DD00903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"${inherited}",
 					"G_LOG_DOMAIN=\\\"GLib-GObject\\\"",
@@ -1261,14 +1258,13 @@
 					../libffi/generated/include,
 					../libffi/libffi/src/x86,
 				);
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Release;
 		};
 		F670B54016D11307001ADAF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEA1759E2DD00903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"${inherited}",
 					"G_LOG_DOMAIN=\\\"GModule\\\"",
@@ -1278,14 +1274,13 @@
 					generated/glib,
 					glib/glib,
 				);
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Debug;
 		};
 		F670B54116D11307001ADAF9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEA1759E2DD00903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"${inherited}",
 					"G_LOG_DOMAIN=\\\"GModule\\\"",
@@ -1295,14 +1290,13 @@
 					generated/glib,
 					glib/glib,
 				);
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Release;
 		};
 		F670B6B116D11F45001ADAF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEA1759E2DD00903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"${inherited}",
 					"G_LOG_DOMAIN=\\\"GLib-GRegex\\\"",
@@ -1331,8 +1325,8 @@
 		};
 		F670B6B216D11F45001ADAF9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEA1759E2DD00903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"${inherited}",
 					"G_LOG_DOMAIN=\\\"GLib-GRegex\\\"",
@@ -1361,8 +1355,8 @@
 		};
 		F670B6DC16D12072001ADAF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEA1759E2DD00903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"${inherited}",
 					"LIBDIR=\\\"/usr/local/lib\\\"",
@@ -1372,8 +1366,8 @@
 		};
 		F670B6DD16D12072001ADAF9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEA1759E2DD00903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"${inherited}",
 					"LIBDIR=\\\"/usr/local/lib\\\"",

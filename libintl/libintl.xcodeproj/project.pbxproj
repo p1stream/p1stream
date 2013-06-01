@@ -44,6 +44,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F65C5BE71759E22800903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
 		F6A0B2A316D0E26E0023B9B2 /* libintl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libintl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6A0B2A816D0E27D0023B9B2 /* bindtextdom.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bindtextdom.c; path = "gettext/gettext-runtime/intl/bindtextdom.c"; sourceTree = "<group>"; };
 		F6A0B2A916D0E27D0023B9B2 /* dcgettext.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = dcgettext.c; path = "gettext/gettext-runtime/intl/dcgettext.c"; sourceTree = "<group>"; };
@@ -123,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				F6CBB6891757F1AB00362F38 /* common.xcconfig */,
+				F65C5BE71759E22800903D49 /* library.xcconfig */,
 				F6A0B29E16D0E0F10023B9B2 /* generated */,
 				F6A0B29C16D0E0DB0023B9B2 /* gettext-runtime */,
 				F6A0B30C16D0EB1E0023B9B2 /* Frameworks */,
@@ -323,28 +325,38 @@
 /* Begin XCBuildConfiguration section */
 		F6A0B29716D0DF120023B9B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB6891757F1AB00362F38 /* common.xcconfig */;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"LOCALEDIR=\\\"/usr/local/share/locale\\\"",
+					"LOCALE_ALIAS_PATH=\\\"/usr/local/share/locale\\\"",
+					"LIBDIR=\\\"/usr/local/lib\\\"",
+					HAVE_CONFIG_H,
+				);
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = "generated/gettext-runtime";
 			};
 			name = Debug;
 		};
 		F6A0B29816D0DF120023B9B2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB6891757F1AB00362F38 /* common.xcconfig */;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"LOCALEDIR=\\\"/usr/local/share/locale\\\"",
+					"LOCALE_ALIAS_PATH=\\\"/usr/local/share/locale\\\"",
+					"LIBDIR=\\\"/usr/local/lib\\\"",
+					HAVE_CONFIG_H,
+				);
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = "generated/gettext-runtime";
 			};
 			name = Release;
 		};
 		F6A0B2A616D0E26E0023B9B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE71759E22800903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"LOCALEDIR=\\\"/usr/local/share/locale\\\"",
-					"LOCALE_ALIAS_PATH=\\\"/usr/local/share/locale\\\"",
-					"LIBDIR=\\\"/usr/local/lib\\\"",
+					"$(inherited)",
 					BUILDING_LIBINTL,
 					BUILDING_DLL,
 					IN_LIBINTL,
@@ -354,22 +366,17 @@
 					"set_relocation_prefix=libintl_set_relocation_prefix",
 					"relocate=libintl_relocate",
 					"DEPENDS_ON_LIBICONV=1",
-					HAVE_CONFIG_H,
 				);
-				HEADER_SEARCH_PATHS = "generated/gettext-runtime";
-				INSTALL_PATH = "@executable_path";
 				YACCFLAGS = "--name-prefix=__gettext";
 			};
 			name = Debug;
 		};
 		F6A0B2A716D0E26E0023B9B2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE71759E22800903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"LOCALEDIR=\\\"/usr/local/share/locale\\\"",
-					"LOCALE_ALIAS_PATH=\\\"/usr/local/share/locale\\\"",
-					"LIBDIR=\\\"/usr/local/lib\\\"",
+					"$(inherited)",
 					BUILDING_LIBINTL,
 					BUILDING_DLL,
 					IN_LIBINTL,
@@ -379,10 +386,7 @@
 					"set_relocation_prefix=libintl_set_relocation_prefix",
 					"relocate=libintl_relocate",
 					"DEPENDS_ON_LIBICONV=1",
-					HAVE_CONFIG_H,
 				);
-				HEADER_SEARCH_PATHS = "generated/gettext-runtime";
-				INSTALL_PATH = "@executable_path";
 				YACCFLAGS = "--name-prefix=__gettext";
 			};
 			name = Release;

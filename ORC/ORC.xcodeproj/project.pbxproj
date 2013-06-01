@@ -67,6 +67,7 @@
 		F60A27111723E74E001AC6C3 /* orctarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orctarget.h; path = orc/orc/orctarget.h; sourceTree = "<group>"; };
 		F60A27121723E753001AC6C3 /* orcvariable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcvariable.h; path = orc/orc/orcvariable.h; sourceTree = "<group>"; };
 		F60E74CE16D16CDF00148F06 /* build_rule.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build_rule.sh; sourceTree = "<group>"; };
+		F65C5BE61759E1FE00903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
 		F6A0B31916D0F0310023B9B2 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
 		F6A0B31E16D0F06E0023B9B2 /* liborc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liborc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6A0B32716D0F07D0023B9B2 /* orcc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = orcc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -136,6 +137,7 @@
 			isa = PBXGroup;
 			children = (
 				F6CBB68C1757F1B800362F38 /* common.xcconfig */,
+				F65C5BE61759E1FE00903D49 /* library.xcconfig */,
 				F60E74CE16D16CDF00148F06 /* build_rule.sh */,
 				F6A0B31716D0F0170023B9B2 /* generated */,
 				F6A0B31816D0F01E0023B9B2 /* orc */,
@@ -358,7 +360,6 @@
 /* Begin XCBuildConfiguration section */
 		F6A0B31216D0EB990023B9B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68C1757F1B800362F38 /* common.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				HEADER_SEARCH_PATHS = (
@@ -370,7 +371,6 @@
 		};
 		F6A0B31316D0EB990023B9B2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68C1757F1B800362F38 /* common.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				HEADER_SEARCH_PATHS = (
@@ -382,36 +382,36 @@
 		};
 		F6A0B32116D0F06E0023B9B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE61759E1FE00903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					ORC_ENABLE_UNSTABLE_API,
 				);
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Debug;
 		};
 		F6A0B32216D0F06E0023B9B2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE61759E1FE00903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					ORC_ENABLE_UNSTABLE_API,
 				);
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Release;
 		};
 		F6A0B32E16D0F07D0023B9B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6CBB68C1757F1B800362F38 /* common.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		F6A0B32F16D0F07D0023B9B2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6CBB68C1757F1B800362F38 /* common.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

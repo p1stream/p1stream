@@ -134,6 +134,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F65C5BEB1759E42600903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
+		F65C5BEC1759E43100903D49 /* gst-plugin.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "gst-plugin.xcconfig"; path = "../gst-plugin.xcconfig"; sourceTree = "<group>"; };
 		F670B73916D1335A001ADAF9 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
 		F670B73D16D1335A001ADAF9 /* gstconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gstconfig.h; path = generated/gst/gstconfig.h; sourceTree = "<group>"; };
 		F670B73E16D1335A001ADAF9 /* gstenumtypes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstenumtypes.c; path = generated/gst/gstenumtypes.c; sourceTree = "<group>"; };
@@ -378,6 +380,8 @@
 			isa = PBXGroup;
 			children = (
 				F6CBB68D1757F1BD00362F38 /* common.xcconfig */,
+				F65C5BEB1759E42600903D49 /* library.xcconfig */,
+				F65C5BEC1759E43100903D49 /* gst-plugin.xcconfig */,
 				F670B74416D1335A001ADAF9 /* generated */,
 				F670B81C16D1335A001ADAF9 /* gstreamer */,
 				F670B8ED16D13FC6001ADAF9 /* Frameworks */,
@@ -890,7 +894,6 @@
 /* Begin XCBuildConfiguration section */
 		F670B73716D131F9001ADAF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68D1757F1BD00362F38 /* common.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -910,7 +913,6 @@
 		};
 		F670B73816D131F9001ADAF9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68D1757F1BD00362F38 /* common.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -930,49 +932,43 @@
 		};
 		F670B82416D13381001ADAF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEB1759E42600903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Debug;
 		};
 		F670B82516D13381001ADAF9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEB1759E42600903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Release;
 		};
 		F670B82C16D133FC001ADAF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEC1759E43100903D49 /* gst-plugin.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@executable_path/../GStreamerPlugins";
 			};
 			name = Debug;
 		};
 		F670B82D16D133FC001ADAF9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEC1759E43100903D49 /* gst-plugin.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@executable_path/../GStreamerPlugins";
 			};
 			name = Release;
 		};
 		F670B8F716D14257001ADAF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEB1759E42600903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Debug;
 		};
 		F670B8F816D14257001ADAF9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BEB1759E42600903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Release;
 		};

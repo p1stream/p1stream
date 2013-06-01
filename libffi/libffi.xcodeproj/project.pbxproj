@@ -19,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F65C5BE81759E29600903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
 		F6A0B39C16D0F7D70023B9B2 /* fficonfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fficonfig.h; sourceTree = "<group>"; };
 		F6A0B39E16D0F7D70023B9B2 /* ffi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ffi.h; sourceTree = "<group>"; };
 		F6A0B3AD16D0F8420023B9B2 /* libffi.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libffi.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -51,6 +52,7 @@
 			isa = PBXGroup;
 			children = (
 				F6CBB68A1757F1AF00362F38 /* common.xcconfig */,
+				F65C5BE81759E29600903D49 /* library.xcconfig */,
 				F6A0B39B16D0F7D70023B9B2 /* generated */,
 				F6A0B39F16D0F7E10023B9B2 /* libffi */,
 				F6A0B3AE16D0F8420023B9B2 /* Products */,
@@ -190,7 +192,6 @@
 /* Begin XCBuildConfiguration section */
 		F6A0B39616D0F6E50023B9B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68A1757F1AF00362F38 /* common.xcconfig */;
 			buildSettings = {
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -204,7 +205,6 @@
 		};
 		F6A0B39716D0F6E50023B9B2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68A1757F1AF00362F38 /* common.xcconfig */;
 			buildSettings = {
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -218,17 +218,15 @@
 		};
 		F6A0B3B016D0F8420023B9B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE81759E29600903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Debug;
 		};
 		F6A0B3B116D0F8420023B9B2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE81759E29600903D49 /* library.xcconfig */;
 			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@executable_path";
 			};
 			name = Release;
 		};

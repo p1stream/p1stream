@@ -16,3 +16,12 @@
 [submodule "gst-plugins-base/gst-plugins-base"]
 	path = gst-plugins-base/gst-plugins-base
 	url = git://anongit.freedesktop.org/gstreamer/gst-plugins-base
+[submodule "gst-plugins-ugly/gst-plugins-ugly"]
+	path = gst-plugins-ugly/gst-plugins-ugly
+	url = git://anongit.freedesktop.org/gstreamer/gst-plugins-ugly
+[submodule "x264/x264"]
+	path = x264/x264
+	url = git://git.videolan.org/x264.git
+[submodule "yasm/yasm"]
+	path = yasm/yasm
+	url = git://github.com/yasm/yasm.git

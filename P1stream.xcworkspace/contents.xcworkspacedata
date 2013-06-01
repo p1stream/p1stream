@@ -2,22 +2,31 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:yasm/yasm.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:ORC/ORC.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:libintl/libintl.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:libffi/libffi.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:GLib/GLib.xcodeproj">
+      location = "group:x264/x264.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:ORC/ORC.xcodeproj">
+      location = "group:GLib/GLib.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:GStreamer/GStreamer.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:gst-plugins-base/gst-plugins-base.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:gst-plugins-ugly/gst-plugins-ugly.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:P1stream/P1stream.xcodeproj">

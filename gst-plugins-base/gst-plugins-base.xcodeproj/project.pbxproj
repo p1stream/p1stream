@@ -106,6 +106,22 @@
 		F60E74E216D16DC300148F06 /* libgstbase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74AB16D16B8200148F06 /* libgstbase.dylib */; };
 		F60E74E316D16DC500148F06 /* liborc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A916D16B7A00148F06 /* liborc.dylib */; };
 		F60E74F616D16E2100148F06 /* libgstvideo.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E745816D160FD00148F06 /* libgstvideo.dylib */; };
+		F65C5C081759E4E600903D49 /* codec-utils.c in Sources */ = {isa = PBXBuildFile; fileRef = F65C5BF51759E4E600903D49 /* codec-utils.c */; };
+		F65C5C0A1759E4E600903D49 /* descriptions.c in Sources */ = {isa = PBXBuildFile; fileRef = F65C5BF71759E4E600903D49 /* descriptions.c */; };
+		F65C5C0C1759E4E600903D49 /* encoding-profile.c in Sources */ = {isa = PBXBuildFile; fileRef = F65C5BF91759E4E600903D49 /* encoding-profile.c */; };
+		F65C5C0E1759E4E600903D49 /* encoding-target.c in Sources */ = {isa = PBXBuildFile; fileRef = F65C5BFB1759E4E600903D49 /* encoding-target.c */; };
+		F65C5C101759E4E600903D49 /* gstdiscoverer-types.c in Sources */ = {isa = PBXBuildFile; fileRef = F65C5BFD1759E4E600903D49 /* gstdiscoverer-types.c */; };
+		F65C5C111759E4E600903D49 /* gstdiscoverer.c in Sources */ = {isa = PBXBuildFile; fileRef = F65C5BFE1759E4E600903D49 /* gstdiscoverer.c */; };
+		F65C5C131759E4E600903D49 /* gstpluginsbaseversion.c in Sources */ = {isa = PBXBuildFile; fileRef = F65C5C001759E4E600903D49 /* gstpluginsbaseversion.c */; };
+		F65C5C141759E4E600903D49 /* install-plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = F65C5C011759E4E600903D49 /* install-plugins.c */; };
+		F65C5C161759E4E600903D49 /* missing-plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = F65C5C031759E4E600903D49 /* missing-plugins.c */; };
+		F65C5C191759E4E600903D49 /* pbutils.c in Sources */ = {isa = PBXBuildFile; fileRef = F65C5C061759E4E600903D49 /* pbutils.c */; };
+		F65C5C1D1759E60400903D49 /* pbutils-enumtypes.c in Sources */ = {isa = PBXBuildFile; fileRef = F65C5C1B1759E60400903D49 /* pbutils-enumtypes.c */; };
+		F65C5C211759E68C00903D49 /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A516D16B6D00148F06 /* libglib.dylib */; };
+		F65C5C221759E69100903D49 /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A716D16B7100148F06 /* libgobject.dylib */; };
+		F65C5C231759E69500903D49 /* libgstreamer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E74A316D16B6000148F06 /* libgstreamer.dylib */; };
+		F65C5C241759E69D00903D49 /* libgstaudio.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6037AB816F8DB6B0045433B /* libgstaudio.dylib */; };
+		F65C5C251759E6A100903D49 /* libgstvideo.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E745816D160FD00148F06 /* libgstvideo.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -119,19 +135,7 @@
 				"${INPUT_FILE_BASE}.h",
 				"${INPUT_FILE_BASE}.c",
 			);
-			script = "exec ${SRCROOT}/../ORC/build_rule.sh";
-		};
-		F6037AFB16F8DE070045433B /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*.orc";
-			fileType = pattern.proxy;
-			isEditable = 1;
-			outputFiles = (
-				"${INPUT_FILE_BASE}.h",
-				"${INPUT_FILE_BASE}.c",
-			);
-			script = "exec ${SRCROOT}/../ORC/build_rule.sh";
+			script = "exec ${SRCROOT}/../ORC/build_rule.sh --include glib.h";
 		};
 		F6037B3316F8DF8D0045433B /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -143,7 +147,7 @@
 				"${INPUT_FILE_BASE}.h",
 				"${INPUT_FILE_BASE}.c",
 			);
-			script = "exec ${SRCROOT}/../ORC/build_rule.sh";
+			script = "exec ${SRCROOT}/../ORC/build_rule.sh --include glib.h";
 		};
 		F60E749516D1628900148F06 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -155,7 +159,7 @@
 				"${INPUT_FILE_BASE}.h",
 				"${INPUT_FILE_BASE}.c",
 			);
-			script = "exec ${SRCROOT}/../ORC/build_rule.sh";
+			script = "exec ${SRCROOT}/../ORC/build_rule.sh --include glib.h";
 		};
 		F60E74CF16D16D2E00148F06 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -167,7 +171,7 @@
 				"${INPUT_FILE_BASE}.h",
 				"${INPUT_FILE_BASE}.c",
 			);
-			script = "exec ${SRCROOT}/../ORC/build_rule.sh";
+			script = "exec ${SRCROOT}/../ORC/build_rule.sh --include glib.h";
 		};
 		F60E74F516D16DFE00148F06 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -179,7 +183,7 @@
 				"${INPUT_FILE_BASE}.h",
 				"${INPUT_FILE_BASE}.c",
 			);
-			script = "exec ${SRCROOT}/../ORC/build_rule.sh";
+			script = "exec ${SRCROOT}/../ORC/build_rule.sh --include glib.h";
 		};
 /* End PBXBuildRule section */
 
@@ -353,6 +357,29 @@
 		F613CC5916DC1DBC00F57089 /* videooverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = videooverlay.h; path = "gst-plugins-base/gst-libs/gst/video/videooverlay.h"; sourceTree = "<group>"; };
 		F658D33B1756B37600578FEA /* gst-plugin.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "gst-plugin.xcconfig"; path = "../gst-plugin.xcconfig"; sourceTree = "<group>"; };
 		F658D33C1756B4C500578FEA /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
+		F65C5BE51759E17500903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
+		F65C5BF11759E4B400903D49 /* libgstpbutils.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgstpbutils.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F65C5BF51759E4E600903D49 /* codec-utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "codec-utils.c"; path = "gst-plugins-base/gst-libs/gst/pbutils/codec-utils.c"; sourceTree = "<group>"; };
+		F65C5BF61759E4E600903D49 /* codec-utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "codec-utils.h"; path = "gst-plugins-base/gst-libs/gst/pbutils/codec-utils.h"; sourceTree = "<group>"; };
+		F65C5BF71759E4E600903D49 /* descriptions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = descriptions.c; path = "gst-plugins-base/gst-libs/gst/pbutils/descriptions.c"; sourceTree = "<group>"; };
+		F65C5BF81759E4E600903D49 /* descriptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = descriptions.h; path = "gst-plugins-base/gst-libs/gst/pbutils/descriptions.h"; sourceTree = "<group>"; };
+		F65C5BF91759E4E600903D49 /* encoding-profile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "encoding-profile.c"; path = "gst-plugins-base/gst-libs/gst/pbutils/encoding-profile.c"; sourceTree = "<group>"; };
+		F65C5BFA1759E4E600903D49 /* encoding-profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "encoding-profile.h"; path = "gst-plugins-base/gst-libs/gst/pbutils/encoding-profile.h"; sourceTree = "<group>"; };
+		F65C5BFB1759E4E600903D49 /* encoding-target.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "encoding-target.c"; path = "gst-plugins-base/gst-libs/gst/pbutils/encoding-target.c"; sourceTree = "<group>"; };
+		F65C5BFC1759E4E600903D49 /* encoding-target.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "encoding-target.h"; path = "gst-plugins-base/gst-libs/gst/pbutils/encoding-target.h"; sourceTree = "<group>"; };
+		F65C5BFD1759E4E600903D49 /* gstdiscoverer-types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "gstdiscoverer-types.c"; path = "gst-plugins-base/gst-libs/gst/pbutils/gstdiscoverer-types.c"; sourceTree = "<group>"; };
+		F65C5BFE1759E4E600903D49 /* gstdiscoverer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstdiscoverer.c; path = "gst-plugins-base/gst-libs/gst/pbutils/gstdiscoverer.c"; sourceTree = "<group>"; };
+		F65C5BFF1759E4E600903D49 /* gstdiscoverer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gstdiscoverer.h; path = "gst-plugins-base/gst-libs/gst/pbutils/gstdiscoverer.h"; sourceTree = "<group>"; };
+		F65C5C001759E4E600903D49 /* gstpluginsbaseversion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstpluginsbaseversion.c; path = "gst-plugins-base/gst-libs/gst/pbutils/gstpluginsbaseversion.c"; sourceTree = "<group>"; };
+		F65C5C011759E4E600903D49 /* install-plugins.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "install-plugins.c"; path = "gst-plugins-base/gst-libs/gst/pbutils/install-plugins.c"; sourceTree = "<group>"; };
+		F65C5C021759E4E600903D49 /* install-plugins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "install-plugins.h"; path = "gst-plugins-base/gst-libs/gst/pbutils/install-plugins.h"; sourceTree = "<group>"; };
+		F65C5C031759E4E600903D49 /* missing-plugins.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "missing-plugins.c"; path = "gst-plugins-base/gst-libs/gst/pbutils/missing-plugins.c"; sourceTree = "<group>"; };
+		F65C5C041759E4E600903D49 /* missing-plugins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "missing-plugins.h"; path = "gst-plugins-base/gst-libs/gst/pbutils/missing-plugins.h"; sourceTree = "<group>"; };
+		F65C5C051759E4E600903D49 /* pbutils-private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "pbutils-private.h"; path = "gst-plugins-base/gst-libs/gst/pbutils/pbutils-private.h"; sourceTree = "<group>"; };
+		F65C5C061759E4E600903D49 /* pbutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pbutils.c; path = "gst-plugins-base/gst-libs/gst/pbutils/pbutils.c"; sourceTree = "<group>"; };
+		F65C5C071759E4E600903D49 /* pbutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pbutils.h; path = "gst-plugins-base/gst-libs/gst/pbutils/pbutils.h"; sourceTree = "<group>"; };
+		F65C5C1B1759E60400903D49 /* pbutils-enumtypes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "pbutils-enumtypes.c"; sourceTree = "<group>"; };
+		F65C5C1C1759E60400903D49 /* pbutils-enumtypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "pbutils-enumtypes.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -430,6 +457,18 @@
 				F60E74E216D16DC300148F06 /* libgstbase.dylib in Frameworks */,
 				F60E74E316D16DC500148F06 /* liborc.dylib in Frameworks */,
 				F60E74F616D16E2100148F06 /* libgstvideo.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F65C5BEE1759E4B400903D49 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F65C5C211759E68C00903D49 /* libglib.dylib in Frameworks */,
+				F65C5C221759E69100903D49 /* libgobject.dylib in Frameworks */,
+				F65C5C231759E69500903D49 /* libgstreamer.dylib in Frameworks */,
+				F65C5C241759E69D00903D49 /* libgstaudio.dylib in Frameworks */,
+				F65C5C251759E6A100903D49 /* libgstvideo.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -535,6 +574,7 @@
 			children = (
 				F658D33C1756B4C500578FEA /* common.xcconfig */,
 				F658D33B1756B37600578FEA /* gst-plugin.xcconfig */,
+				F65C5BE51759E17500903D49 /* library.xcconfig */,
 				F60E745D16D1610D00148F06 /* generated */,
 				F60E746416D1611A00148F06 /* gst-plugins-base */,
 				F60E74AD16D16BA800148F06 /* Frameworks */,
@@ -551,6 +591,7 @@
 				F6037A8416F8DAC80045433B /* libgstadder.dylib */,
 				F6037AB816F8DB6B0045433B /* libgstaudio.dylib */,
 				F6037AFF16F8DE070045433B /* libgsttag.dylib */,
+				F65C5BF11759E4B400903D49 /* libgstpbutils.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -587,6 +628,8 @@
 			isa = PBXGroup;
 			children = (
 				F60E746316D1610D00148F06 /* gstpluginsbaseversion.h */,
+				F65C5C1B1759E60400903D49 /* pbutils-enumtypes.c */,
+				F65C5C1C1759E60400903D49 /* pbutils-enumtypes.h */,
 			);
 			path = pbutils;
 			sourceTree = "<group>";
@@ -661,6 +704,7 @@
 			isa = PBXGroup;
 			children = (
 				F6037A8816F8DB160045433B /* audio */,
+				F65C5BE41759E11500903D49 /* pbutils */,
 				F6037B0416F8DE740045433B /* tag */,
 				F60E746616D1613F00148F06 /* video */,
 			);
@@ -728,6 +772,32 @@
 			path = "gst-plugins-base/gst/videoconvert";
 			sourceTree = "<group>";
 		};
+		F65C5BE41759E11500903D49 /* pbutils */ = {
+			isa = PBXGroup;
+			children = (
+				F65C5BF51759E4E600903D49 /* codec-utils.c */,
+				F65C5BF61759E4E600903D49 /* codec-utils.h */,
+				F65C5BF71759E4E600903D49 /* descriptions.c */,
+				F65C5BF81759E4E600903D49 /* descriptions.h */,
+				F65C5BF91759E4E600903D49 /* encoding-profile.c */,
+				F65C5BFA1759E4E600903D49 /* encoding-profile.h */,
+				F65C5BFB1759E4E600903D49 /* encoding-target.c */,
+				F65C5BFC1759E4E600903D49 /* encoding-target.h */,
+				F65C5BFD1759E4E600903D49 /* gstdiscoverer-types.c */,
+				F65C5BFE1759E4E600903D49 /* gstdiscoverer.c */,
+				F65C5BFF1759E4E600903D49 /* gstdiscoverer.h */,
+				F65C5C001759E4E600903D49 /* gstpluginsbaseversion.c */,
+				F65C5C011759E4E600903D49 /* install-plugins.c */,
+				F65C5C021759E4E600903D49 /* install-plugins.h */,
+				F65C5C031759E4E600903D49 /* missing-plugins.c */,
+				F65C5C041759E4E600903D49 /* missing-plugins.h */,
+				F65C5C051759E4E600903D49 /* pbutils-private.h */,
+				F65C5C061759E4E600903D49 /* pbutils.c */,
+				F65C5C071759E4E600903D49 /* pbutils.h */,
+			);
+			name = pbutils;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -775,7 +845,6 @@
 				F6037AF516F8DE070045433B /* Frameworks */,
 			);
 			buildRules = (
-				F6037AFB16F8DE070045433B /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -837,6 +906,22 @@
 			productReference = F60E74D916D16DA800148F06 /* libgstvideoconvert.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		F65C5BF01759E4B400903D49 /* gstpbutils */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F65C5BF21759E4B400903D49 /* Build configuration list for PBXNativeTarget "gstpbutils" */;
+			buildPhases = (
+				F65C5BED1759E4B400903D49 /* Sources */,
+				F65C5BEE1759E4B400903D49 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = gstpbutils;
+			productName = gstpbutils;
+			productReference = F65C5BF11759E4B400903D49 /* libgstpbutils.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -859,6 +944,7 @@
 			targets = (
 				F6037A8316F8DAC80045433B /* gstadder */,
 				F6037AB716F8DB6B0045433B /* gstaudio */,
+				F65C5BF01759E4B400903D49 /* gstpbutils */,
 				F6037AE116F8DE070045433B /* gsttag */,
 				F60E745716D160FD00148F06 /* gstvideo */,
 				F60E74B216D16C2B00148F06 /* gstvideotestsrc */,
@@ -974,6 +1060,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F65C5BED1759E4B400903D49 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F65C5C081759E4E600903D49 /* codec-utils.c in Sources */,
+				F65C5C0A1759E4E600903D49 /* descriptions.c in Sources */,
+				F65C5C0C1759E4E600903D49 /* encoding-profile.c in Sources */,
+				F65C5C0E1759E4E600903D49 /* encoding-target.c in Sources */,
+				F65C5C101759E4E600903D49 /* gstdiscoverer-types.c in Sources */,
+				F65C5C111759E4E600903D49 /* gstdiscoverer.c in Sources */,
+				F65C5C131759E4E600903D49 /* gstpluginsbaseversion.c in Sources */,
+				F65C5C141759E4E600903D49 /* install-plugins.c in Sources */,
+				F65C5C161759E4E600903D49 /* missing-plugins.c in Sources */,
+				F65C5C191759E4E600903D49 /* pbutils.c in Sources */,
+				F65C5C1D1759E60400903D49 /* pbutils-enumtypes.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1002,43 +1106,48 @@
 /* Begin XCBuildConfiguration section */
 		F6037A8616F8DAC80045433B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F658D33B1756B37600578FEA /* gst-plugin.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		F6037A8716F8DAC80045433B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F658D33B1756B37600578FEA /* gst-plugin.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		F6037ABA16F8DB6C0045433B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE51759E17500903D49 /* library.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		F6037ABB16F8DB6C0045433B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE51759E17500903D49 /* library.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		F6037AFD16F8DE070045433B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE51759E17500903D49 /* library.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		F6037AFE16F8DE070045433B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE51759E17500903D49 /* library.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		F60E745216D15D2300148F06 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F658D33B1756B37600578FEA /* gst-plugin.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -1065,7 +1174,6 @@
 		};
 		F60E745316D15D2300148F06 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F658D33B1756B37600578FEA /* gst-plugin.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -1092,37 +1200,65 @@
 		};
 		F60E745A16D160FD00148F06 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE51759E17500903D49 /* library.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		F60E745B16D160FD00148F06 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE51759E17500903D49 /* library.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		F60E74B516D16C2B00148F06 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F658D33B1756B37600578FEA /* gst-plugin.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		F60E74B616D16C2B00148F06 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F658D33B1756B37600578FEA /* gst-plugin.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		F60E74DB16D16DA800148F06 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F658D33B1756B37600578FEA /* gst-plugin.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		F60E74DC16D16DA800148F06 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F658D33B1756B37600578FEA /* gst-plugin.xcconfig */;
 			buildSettings = {
+			};
+			name = Release;
+		};
+		F65C5BF31759E4B400903D49 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE51759E17500903D49 /* library.xcconfig */;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug\"",
+				);
+			};
+			name = Debug;
+		};
+		F65C5BF41759E4B400903D49 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F65C5BE51759E17500903D49 /* library.xcconfig */;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug\"",
+				);
 			};
 			name = Release;
 		};
@@ -1191,6 +1327,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		F65C5BF21759E4B400903D49 /* Build configuration list for PBXNativeTarget "gstpbutils" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F65C5BF31759E4B400903D49 /* Debug */,
+				F65C5BF41759E4B400903D49 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
