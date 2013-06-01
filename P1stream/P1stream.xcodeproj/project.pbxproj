@@ -53,6 +53,7 @@
 		F697203C169B85C500F03D6B /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F697203A169B85C500F03D6B /* MainMenu.xib */; };
 		F6A169E916C8575C003096D1 /* P1Preview.m in Sources */ = {isa = PBXBuildFile; fileRef = F6A169E816C8575C003096D1 /* P1Preview.m */; };
 		F6A169EB16C85773003096D1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A169EA16C85773003096D1 /* QuartzCore.framework */; };
+		F6B391E0175A32C500AC15E5 /* libgstflv.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6B391DF175A32C500AC15E5 /* libgstflv.dylib */; };
 		F6B62A0F16EE3D99008EBC63 /* P1MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B62A0E16EE3D98008EBC63 /* P1MainWindowController.m */; };
 		F6BEA4B216A20B4100F6DEC1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6BEA4B116A20B4100F6DEC1 /* OpenGL.framework */; };
 		F6C74B4E16DFCC2600DC25E2 /* P1DisplayStreamSrc.m in Sources */ = {isa = PBXBuildFile; fileRef = F6C74B4D16DFCC2600DC25E2 /* P1DisplayStreamSrc.m */; };
@@ -90,6 +91,7 @@
 				F60E752F16D16FC900148F06 /* libgstvideotestsrc.dylib in CopyFiles */,
 				F60E753116D16FCC00148F06 /* libgstvideoconvert.dylib in CopyFiles */,
 				F65C5C2F1759E76A00903D49 /* libgstx264enc.dylib in CopyFiles */,
+				F6B391E0175A32C500AC15E5 /* libgstflv.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,6 +157,7 @@
 		F6A169E716C8575C003096D1 /* P1Preview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1Preview.h; sourceTree = "<group>"; };
 		F6A169E816C8575C003096D1 /* P1Preview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1Preview.m; sourceTree = "<group>"; };
 		F6A169EA16C85773003096D1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		F6B391DF175A32C500AC15E5 /* libgstflv.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstflv.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstflv.dylib"; sourceTree = "<absolute>"; };
 		F6B62A0D16EE3D98008EBC63 /* P1MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1MainWindowController.h; sourceTree = "<group>"; };
 		F6B62A0E16EE3D98008EBC63 /* P1MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1MainWindowController.m; sourceTree = "<group>"; };
 		F6BEA4B116A20B4100F6DEC1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -232,6 +235,7 @@
 				F60E753016D16FCC00148F06 /* libgstvideoconvert.dylib */,
 				F60E752E16D16FC900148F06 /* libgstvideotestsrc.dylib */,
 				F65C5C2E1759E76A00903D49 /* libgstx264enc.dylib */,
+				F6B391DF175A32C500AC15E5 /* libgstflv.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

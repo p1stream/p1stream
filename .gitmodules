@@ -25,3 +25,6 @@
 [submodule "yasm/yasm"]
 	path = yasm/yasm
 	url = git://github.com/yasm/yasm.git
+[submodule "gst-plugins-good/gst-plugins-good"]
+	path = gst-plugins-good/gst-plugins-good
+	url = git://anongit.freedesktop.org/gstreamer/gst-plugins-good

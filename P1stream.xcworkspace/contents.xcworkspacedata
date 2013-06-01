@@ -26,6 +26,9 @@
       location = "group:gst-plugins-base/gst-plugins-base.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:gst-plugins-good/gst-plugins-good.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:gst-plugins-ugly/gst-plugins-ugly.xcodeproj">
    </FileRef>
    <FileRef

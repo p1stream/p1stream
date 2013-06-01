@@ -24,12 +24,13 @@
 		F65C59DB17593BE300903D49 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
 		F65C59DC17593C2A00903D49 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
 		F65C59DD17593C2E00903D49 /* gst-plugin.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "gst-plugin.xcconfig"; path = "../gst-plugin.xcconfig"; sourceTree = "<group>"; };
-		F65C5A9B17594BDC00903D49 /* libx264.dylib */ = {isa = PBXFileReference; lastKnownFileType = file; name = libx264.dylib; path = ../x264/build/Release/libx264.dylib; sourceTree = "<group>"; };
-		F65C5C1F1759E61600903D49 /* libgstpbutils.dylib */ = {isa = PBXFileReference; lastKnownFileType = file; name = libgstpbutils.dylib; path = "../gst-plugins-base/build/Release/libgstpbutils.dylib"; sourceTree = "<group>"; };
+		F65C5A9B17594BDC00903D49 /* libx264.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libx264.dylib; path = ../x264/build/Release/libx264.dylib; sourceTree = "<group>"; };
+		F65C5C1F1759E61600903D49 /* libgstpbutils.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgstpbutils.dylib; path = "../gst-plugins-base/build/Release/libgstpbutils.dylib"; sourceTree = "<group>"; };
 		F65C5C261759E70A00903D49 /* libgobject.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgobject.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgobject.dylib"; sourceTree = "<group>"; };
 		F65C5C281759E70E00903D49 /* libglib.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglib.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libglib.dylib"; sourceTree = "<group>"; };
 		F65C5C2A1759E71100903D49 /* libgstreamer.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgstreamer.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstreamer.dylib"; sourceTree = "<group>"; };
 		F65C5C2C1759E71D00903D49 /* libgstvideo.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgstvideo.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstvideo.dylib"; sourceTree = "<group>"; };
+		F6B391BC175A305A00AC15E5 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +95,10 @@
 		F65C5A9D17594BDF00903D49 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F65C5C2C1759E71D00903D49 /* libgstvideo.dylib */,
+				F65C5C2A1759E71100903D49 /* libgstreamer.dylib */,
+				F65C5C281759E70E00903D49 /* libglib.dylib */,
+				F65C5C261759E70A00903D49 /* libgobject.dylib */,
 				F65C5C1F1759E61600903D49 /* libgstpbutils.dylib */,
 				F65C5A9B17594BDC00903D49 /* libx264.dylib */,
 			);
@@ -103,11 +108,8 @@
 		F66DAE4C17593A79007C809A = {
 			isa = PBXGroup;
 			children = (
-				F65C5C2C1759E71D00903D49 /* libgstvideo.dylib */,
-				F65C5C2A1759E71100903D49 /* libgstreamer.dylib */,
-				F65C5C281759E70E00903D49 /* libglib.dylib */,
-				F65C5C261759E70A00903D49 /* libgobject.dylib */,
 				F65C59DC17593C2A00903D49 /* common.xcconfig */,
+				F6B391BC175A305A00AC15E5 /* library.xcconfig */,
 				F65C59DD17593C2E00903D49 /* gst-plugin.xcconfig */,
 				F65C59D917593BCD00903D49 /* generated */,
 				F65C59D317593B5400903D49 /* gst-plugins-ugly */,
@@ -176,10 +178,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F65C59DD17593C2E00903D49 /* gst-plugin.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug\"",
-				);
 			};
 			name = Debug;
 		};
@@ -187,10 +185,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F65C59DD17593C2E00903D49 /* gst-plugin.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug\"",
-				);
 			};
 			name = Release;
 		};
@@ -256,6 +250,7 @@
 				F65C59D117593B1600903D49 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F66DAE5017593A79007C809A /* Build configuration list for PBXProject "gst-plugins-ugly" */ = {
 			isa = XCConfigurationList;

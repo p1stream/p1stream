@@ -573,8 +573,8 @@
 			isa = PBXGroup;
 			children = (
 				F658D33C1756B4C500578FEA /* common.xcconfig */,
-				F658D33B1756B37600578FEA /* gst-plugin.xcconfig */,
 				F65C5BE51759E17500903D49 /* library.xcconfig */,
+				F658D33B1756B37600578FEA /* gst-plugin.xcconfig */,
 				F60E745D16D1610D00148F06 /* generated */,
 				F60E746416D1611A00148F06 /* gst-plugins-base */,
 				F60E74AD16D16BA800148F06 /* Frameworks */,
@@ -1335,6 +1335,7 @@
 				F65C5BF41759E4B400903D49 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
