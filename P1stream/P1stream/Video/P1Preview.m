@@ -54,23 +54,26 @@ static gboolean p1_preview_sink_query(GstBaseSink *basesink, GstQuery *query)
 {
     gboolean res = FALSE;
     P1PreviewSink *self = P1_PREVIEW_SINK(basesink);
-    P1Preview *view = (__bridge P1Preview *)self->viewRef;
 
-    switch ((int)GST_QUERY_TYPE(query)) {
-        case GST_QUERY_GL_CONTEXT: {
-            P1GLContext *actual = view.gobjContext;
-            P1GLContext *current = gst_query_get_gl_context(query);
-            if (current == actual)
-                res = TRUE;
-            else if (current == NULL)
-                res = gst_query_set_gl_context(query, actual);
-            else
-                GST_ERROR_OBJECT(self, "multiple contexts in response to query");
-            break;
+    @autoreleasepool {
+        P1Preview *view = (__bridge P1Preview *)self->viewRef;
+
+        switch ((int)GST_QUERY_TYPE(query)) {
+            case GST_QUERY_GL_CONTEXT: {
+                P1GLContext *actual = view.gobjContext;
+                P1GLContext *current = gst_query_get_gl_context(query);
+                if (current == actual)
+                    res = TRUE;
+                else if (current == NULL)
+                    res = gst_query_set_gl_context(query, actual);
+                else
+                    GST_ERROR_OBJECT(self, "multiple contexts in response to query");
+                break;
+            }
+            default:
+                res = GST_BASE_SINK_CLASS(parent_class)->query(basesink, query);
+                break;
         }
-        default:
-            res = GST_BASE_SINK_CLASS(parent_class)->query(basesink, query);
-            break;
     }
 
     return res;
@@ -79,27 +82,30 @@ static gboolean p1_preview_sink_query(GstBaseSink *basesink, GstQuery *query)
 static gboolean p1_preview_sink_set_caps(GstBaseSink *basesink, GstCaps *caps)
 {
     P1PreviewSink *self = P1_PREVIEW_SINK(basesink);
-    P1Preview *view = (__bridge P1Preview *)self->viewRef;
-    GstStructure *structure = gst_caps_get_structure(caps, 0);
 
-    const GValue *context_value = gst_structure_get_value(structure, "context");
-    P1GLContext *current = g_value_get_object(context_value);
-    P1GLContext *actual = view.gobjContext;
-    if (current != actual) {
-        GST_ERROR_OBJECT(self, "caps context does not match");
-        return FALSE;
+    @autoreleasepool {
+        P1Preview *view = (__bridge P1Preview *)self->viewRef;
+        GstStructure *structure = gst_caps_get_structure(caps, 0);
+
+        const GValue *context_value = gst_structure_get_value(structure, "context");
+        P1GLContext *current = g_value_get_object(context_value);
+        P1GLContext *actual = view.gobjContext;
+        if (current != actual) {
+            GST_ERROR_OBJECT(self, "caps context does not match");
+            return FALSE;
+        }
+
+        gint width, height;
+        if (!gst_structure_get_int(structure, "width",  &width))
+            return FALSE;
+        if (!gst_structure_get_int(structure, "height", &height))
+            return FALSE;
+        view.aspect = (CGFloat)width / (CGFloat)height;
+
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [view updateVideoConstraint];
+        });
     }
-
-    gint width, height;
-    if (!gst_structure_get_int(structure, "width",  &width))
-        return FALSE;
-    if (!gst_structure_get_int(structure, "height", &height))
-        return FALSE;
-    view.aspect = (CGFloat)width / (CGFloat)height;
-
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        [view updateVideoConstraint];
-    });
 
     return TRUE;
 }
@@ -108,34 +114,37 @@ static GstStateChangeReturn p1_preview_sink_change_state(GstElement *element, Gs
 {
     GstStateChangeReturn res;
     P1PreviewSink *self = P1_PREVIEW_SINK(element);
-    P1Preview *view = (__bridge P1Preview *)self->viewRef;
 
-    switch (transition) {
-        case GST_STATE_CHANGE_NULL_TO_READY:
-            // Ref our parent view while we're active.
-            g_assert(self->viewRef != NULL);
-            CFRetain(self->viewRef);
-            break;
-        default:
-            break;
-    }
+    @autoreleasepool {
+        P1Preview *view = (__bridge P1Preview *)self->viewRef;
 
-    res = GST_ELEMENT_CLASS(parent_class)->change_state(element, transition);
-    if (res == GST_STATE_CHANGE_FAILURE)
-        return res;
+        switch (transition) {
+            case GST_STATE_CHANGE_NULL_TO_READY:
+                // Ref our parent view while we're active.
+                g_assert(self->viewRef != NULL);
+                CFRetain(self->viewRef);
+                break;
+            default:
+                break;
+        }
 
-    switch (transition) {
-        case GST_STATE_CHANGE_PAUSED_TO_READY:
-            view.buffer = NULL;
-            [view performSelectorOnMainThread:@selector(clearVideoConstraint)
-                                   withObject:nil
-                                waitUntilDone:TRUE];
-            break;
-        case GST_STATE_CHANGE_READY_TO_NULL:
-            CFRelease(self->viewRef);
-            break;
-        default:
-            break;
+        res = GST_ELEMENT_CLASS(parent_class)->change_state(element, transition);
+        if (res == GST_STATE_CHANGE_FAILURE)
+            return res;
+
+        switch (transition) {
+            case GST_STATE_CHANGE_PAUSED_TO_READY:
+                view.buffer = NULL;
+                [view performSelectorOnMainThread:@selector(clearVideoConstraint)
+                                       withObject:nil
+                                    waitUntilDone:TRUE];
+                break;
+            case GST_STATE_CHANGE_READY_TO_NULL:
+                CFRelease(self->viewRef);
+                break;
+            default:
+                break;
+        }
     }
 
     return res;
@@ -144,9 +153,11 @@ static GstStateChangeReturn p1_preview_sink_change_state(GstElement *element, Gs
 static GstFlowReturn p1_preview_sink_show_frame(GstVideoSink *videosink, GstBuffer *buf)
 {
     P1PreviewSink *self = P1_PREVIEW_SINK(videosink);
-    P1Preview *view = (__bridge P1Preview *)self->viewRef;
 
-    view.buffer = buf;
+    @autoreleasepool {
+        P1Preview *view = (__bridge P1Preview *)self->viewRef;
+        view.buffer = buf;
+    }
 
     return GST_FLOW_OK;
 }
