@@ -37,6 +37,9 @@ struct _P1RenderTextures
     gint width;
     gint height;
 
+    gint rate_num;
+    gint rate_denom;
+
     gboolean send_stream_start;
     gboolean send_caps;
 };

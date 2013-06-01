@@ -44,7 +44,8 @@ static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE(
     "sink_%u", GST_PAD_SINK, GST_PAD_REQUEST, GST_STATIC_CAPS(
         "video/x-gl-texture, "
             "width = (int) [ 1, max ], "
-            "height = (int) [ 1, max ]"
+            "height = (int) [ 1, max ], "
+            "framerate = (fraction) [ 0, max ]"
     )
 );
 
@@ -52,7 +53,8 @@ static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE(
     "src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS(
         "video/x-gl-texture, "
             "width = (int) [ 1, max ], "
-            "height = (int) [ 1, max ]"
+            "height = (int) [ 1, max ], "
+            "framerate = (fraction) [ 0, max ]"
     )
 );
 
@@ -236,6 +238,8 @@ static GstStateChangeReturn p1_render_textures_change_state(
         case GST_STATE_CHANGE_PAUSED_TO_READY:
             gst_collect_pads_stop(self->collect);
             p1_render_textures_set_context(self, NULL);
+            self->rate_num = 0;
+            self->rate_denom = 0;
             break;
         default:
             break;
@@ -350,7 +354,21 @@ static gboolean p1_render_textures_sink_event(
                 break;
             }
 
+            gint num, denom;
+            if (!gst_structure_get_fraction(structure, "framerate", &num, &denom)) {
+                GST_ERROR_OBJECT(self, "missing framerate in caps");
+                break;
+            }
+
+            if (self->rate_denom != 0 && num != self->rate_num && denom != self->rate_denom) {
+                GST_ERROR_OBJECT(self, "upstream tried to change framerate mid-stream");
+                break;
+            }
+
             p1_render_textures_set_context(self, context);
+            self->rate_num = num;
+            self->rate_denom = denom;
+
             res = TRUE;
             break;
         }
@@ -392,7 +410,8 @@ static GstFlowReturn p1_render_textures_collected(
         // Build and send the caps event
         GstCaps *caps = gst_caps_new_simple("video/x-gl-texture",
             "width",  G_TYPE_INT, width,
-            "height", G_TYPE_INT, height, NULL);
+            "height", G_TYPE_INT, height,
+            "framerate", GST_TYPE_FRACTION, self->rate_num, self->rate_denom, NULL);
 
         GstStructure *structure = gst_caps_get_structure(caps, 0);
         GValue context_value = G_VALUE_INIT;

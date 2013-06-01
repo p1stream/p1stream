@@ -17,12 +17,14 @@ static void p1_display_stream_src_frame_callback(
     IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef);
 static GstFlowReturn p1_display_stream_src_create(GstPushSrc *pushsrc, GstBuffer **outbuf);
 
+// FIXME: Properly detect the refresh rate.
 static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE(
     "src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS(
         "video/x-raw, "
             "format = (string) { BGRA }, "
             "width = (int) [ 1, max ], "
-            "height = (int) [ 1, max ]"
+            "height = (int) [ 1, max ], "
+            "framerate = (fraction) 60/1"
     )
 );
 
@@ -93,7 +95,8 @@ static GstCaps *p1_display_stream_src_get_caps(GstBaseSrc *src, GstCaps *filter)
     return gst_caps_new_simple("video/x-raw",
                                "format", G_TYPE_STRING, "BGRA",
                                "width", G_TYPE_INT, width,
-                               "height", G_TYPE_INT, height, NULL);
+                               "height", G_TYPE_INT, height,
+                               "framerate", GST_TYPE_FRACTION, 60, 1, NULL);
 }
 
 static gboolean p1_display_stream_src_start(GstBaseSrc *basesrc)

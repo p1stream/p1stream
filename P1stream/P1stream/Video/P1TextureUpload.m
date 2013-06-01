@@ -29,7 +29,8 @@ static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE(
         "video/x-raw, "
             "format = (string) { BGRA }, "
             "width = (int) [ 1, max ], "
-            "height = (int) [ 1, max ]"
+            "height = (int) [ 1, max ], "
+            "framerate = (fraction) [ 0, max ]"
     )
 );
 
@@ -37,7 +38,8 @@ static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE(
     "src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS(
         "video/x-gl-texture, "
             "width = (int) [ 1, max ], "
-            "height = (int) [ 1, max ]"
+            "height = (int) [ 1, max ], "
+            "framerate = (fraction) [ 0, max ]"
     )
 );
 
