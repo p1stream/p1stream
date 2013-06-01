@@ -253,7 +253,7 @@ static GstFlowReturn p1_texture_download_transform(
 
     if (outbuf != texture->dependency) {
         GstMapInfo mapinfo;
-        success = gst_buffer_map(outbuf, &mapinfo, GST_MAP_READ);
+        success = gst_buffer_map(outbuf, &mapinfo, GST_MAP_WRITE);
         if (success) {
             p1_gl_context_lock(self->download_context);
             
