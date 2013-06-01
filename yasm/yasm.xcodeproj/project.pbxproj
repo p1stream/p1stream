@@ -70,6 +70,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F64A054A175A543900D84525 /* common-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
+		F64A054B175A543900D84525 /* common-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
 		F65C5AB3175952C800903D49 /* yasm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = yasm; sourceTree = BUILT_PRODUCTS_DIR; };
 		F65C5B101759547C00903D49 /* libyasm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libyasm.h; sourceTree = "<group>"; };
 		F65C5B11175954AA00903D49 /* arch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arch.h; path = libyasm/arch.h; sourceTree = "<group>"; };
@@ -128,7 +130,7 @@
 		F65C5B46175954AA00903D49 /* xmalloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmalloc.c; path = libyasm/xmalloc.c; sourceTree = "<group>"; };
 		F65C5B47175954AA00903D49 /* xstrdup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xstrdup.c; path = libyasm/xstrdup.c; sourceTree = "<group>"; };
 		F65C5B65175954CB00903D49 /* module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = module.c; path = generated/module.c; sourceTree = "<group>"; };
-		F65C5B671759550D00903D49 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
+		F65C5B671759550D00903D49 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
 		F65C5B77175955A000903D49 /* yasm-options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "yasm-options.c"; path = "frontends/yasm/yasm-options.c"; sourceTree = "<group>"; };
 		F65C5B78175955A000903D49 /* yasm-options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "yasm-options.h"; path = "frontends/yasm/yasm-options.h"; sourceTree = "<group>"; };
 		F65C5B79175955A000903D49 /* yasm-plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "yasm-plugin.c"; path = "frontends/yasm/yasm-plugin.c"; sourceTree = "<group>"; };
@@ -194,14 +196,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F64A0549175A541E00D84525 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				F64A054A175A543900D84525 /* common-debug.xcconfig */,
+				F64A054B175A543900D84525 /* common-release.xcconfig */,
+				F65C5B671759550D00903D49 /* common.xcconfig */,
+			);
+			name = xcconfig;
+			sourceTree = "<group>";
+		};
 		F65C5A9F17594D1200903D49 = {
 			isa = PBXGroup;
 			children = (
-				F65C5B671759550D00903D49 /* common.xcconfig */,
 				F65C5B801759564300903D49 /* build_rule.sh */,
 				F65C5B64175954C100903D49 /* generated */,
 				F65C5AB4175952C800903D49 /* yasm */,
 				F65C5AAB175952AC00903D49 /* Products */,
+				F64A0549175A541E00D84525 /* xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -620,6 +632,7 @@
 /* Begin XCBuildConfiguration section */
 		F65C5AA417594D1200903D49 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A054A175A543900D84525 /* common-debug.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				HEADER_SEARCH_PATHS = (
@@ -631,6 +644,7 @@
 		};
 		F65C5AA517594D1200903D49 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A054B175A543900D84525 /* common-release.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				HEADER_SEARCH_PATHS = (
@@ -642,14 +656,12 @@
 		};
 		F65C5ABA175952C800903D49 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F65C5B671759550D00903D49 /* common.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		F65C5ABB175952C800903D49 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F65C5B671759550D00903D49 /* common.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -673,6 +685,7 @@
 				F65C5ABB175952C800903D49 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

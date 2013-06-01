@@ -18,8 +18,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		F6B3920D175A375E00AC15E5 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
-		F6B3920E175A375E00AC15E5 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
+		F64A0559175A558B00D84525 /* common-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
+		F64A055A175A558B00D84525 /* common-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
+		F6B3920D175A375E00AC15E5 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
+		F6B3920E175A375E00AC15E5 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../xcconfig/library.xcconfig; sourceTree = "<group>"; };
 		F6B39210175A37AC00AC15E5 /* amf.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = amf.c; path = rtmpdump/librtmp/amf.c; sourceTree = "<group>"; };
 		F6B39211175A37AC00AC15E5 /* amf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = amf.h; path = rtmpdump/librtmp/amf.h; sourceTree = "<group>"; };
 		F6B39212175A37AC00AC15E5 /* bytes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bytes.h; path = rtmpdump/librtmp/bytes.h; sourceTree = "<group>"; };
@@ -54,16 +56,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F64A0558175A558000D84525 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				F64A0559175A558B00D84525 /* common-debug.xcconfig */,
+				F64A055A175A558B00D84525 /* common-release.xcconfig */,
+				F6B3920D175A375E00AC15E5 /* common.xcconfig */,
+				F6B3920E175A375E00AC15E5 /* library.xcconfig */,
+			);
+			name = xcconfig;
+			sourceTree = "<group>";
+		};
 		F6B39205175A367000AC15E5 = {
 			isa = PBXGroup;
 			children = (
-				F6B39232175A3A9700AC15E5 /* libz.dylib */,
-				F6B39230175A3A8F00AC15E5 /* libcrypto.dylib */,
-				F6B3920D175A375E00AC15E5 /* common.xcconfig */,
-				F6B3920E175A375E00AC15E5 /* library.xcconfig */,
 				F6B3920C175A374F00AC15E5 /* rtmpdump */,
 				F6B3922E175A3A1B00AC15E5 /* Frameworks */,
 				F6B39223175A37D700AC15E5 /* Products */,
+				F64A0558175A558000D84525 /* xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -107,6 +117,8 @@
 		F6B3922E175A3A1B00AC15E5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F6B39232175A3A9700AC15E5 /* libz.dylib */,
+				F6B39230175A3A8F00AC15E5 /* libcrypto.dylib */,
 				F6B3922C175A3A1700AC15E5 /* libssl.dylib */,
 			);
 			name = Frameworks;
@@ -174,6 +186,7 @@
 /* Begin XCBuildConfiguration section */
 		F6B3920A175A367000AC15E5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A0559175A558B00D84525 /* common-debug.xcconfig */;
 			buildSettings = {
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 			};
@@ -181,6 +194,7 @@
 		};
 		F6B3920B175A367000AC15E5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A055A175A558B00D84525 /* common-release.xcconfig */;
 			buildSettings = {
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 			};
@@ -227,6 +241,7 @@
 				F6B39226175A37D700AC15E5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

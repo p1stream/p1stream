@@ -70,10 +70,12 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXFileReference section */
+		F64A0556175A54E500D84525 /* common-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
+		F64A0557175A54E500D84525 /* common-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
 		F65C59E917593F3D00903D49 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
 		F65C59EA17593F3D00903D49 /* x264_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = x264_config.h; path = generated/x264_config.h; sourceTree = "<group>"; };
 		F65C59EF17593F5400903D49 /* libx264.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libx264.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		F65C59F417593F9500903D49 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
+		F65C59F417593F9500903D49 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
 		F65C59F61759403A00903D49 /* bitstream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitstream.c; path = x264/common/bitstream.c; sourceTree = "<group>"; };
 		F65C59F71759403A00903D49 /* bitstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bitstream.h; path = x264/common/bitstream.h; sourceTree = "<group>"; };
 		F65C59F81759403A00903D49 /* cabac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cabac.c; path = x264/common/cabac.c; sourceTree = "<group>"; };
@@ -150,7 +152,7 @@
 		F65C5A9617594B9400903D49 /* opencl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = opencl.c; path = x264/common/opencl.c; sourceTree = "<group>"; };
 		F65C5A9717594B9400903D49 /* opencl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = opencl.h; path = x264/common/opencl.h; sourceTree = "<group>"; };
 		F65C5A9917594BA700903D49 /* slicetype-cl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "slicetype-cl.c"; path = "x264/encoder/slicetype-cl.c"; sourceTree = "<group>"; };
-		F65C5BE91759E2BA00903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
+		F65C5BE91759E2BA00903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../xcconfig/library.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,14 +166,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F64A0555175A54DA00D84525 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				F64A0556175A54E500D84525 /* common-debug.xcconfig */,
+				F64A0557175A54E500D84525 /* common-release.xcconfig */,
+				F65C59F417593F9500903D49 /* common.xcconfig */,
+				F65C5BE91759E2BA00903D49 /* library.xcconfig */,
+			);
+			name = xcconfig;
+			sourceTree = "<group>";
+		};
 		F65C59E017593DF700903D49 = {
 			isa = PBXGroup;
 			children = (
-				F65C59F417593F9500903D49 /* common.xcconfig */,
-				F65C5BE91759E2BA00903D49 /* library.xcconfig */,
 				F65C59E717593F2700903D49 /* generated */,
 				F65C59E817593F2E00903D49 /* x264 */,
 				F65C59F017593F5400903D49 /* Products */,
+				F64A0555175A54DA00D84525 /* xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -420,6 +432,7 @@
 /* Begin XCBuildConfiguration section */
 		F65C59E517593DF700903D49 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A0556175A54E500D84525 /* common-debug.xcconfig */;
 			buildSettings = {
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -431,6 +444,7 @@
 		};
 		F65C59E617593DF700903D49 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A0557175A54E500D84525 /* common-release.xcconfig */;
 			buildSettings = {
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -473,6 +487,7 @@
 				F65C59F317593F5400903D49 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

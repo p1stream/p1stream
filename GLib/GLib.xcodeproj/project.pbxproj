@@ -172,7 +172,9 @@
 
 /* Begin PBXFileReference section */
 		F60A27131723F012001AC6C3 /* gcharsetprivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gcharsetprivate.h; path = glib/glib/gcharsetprivate.h; sourceTree = "<group>"; };
-		F65C5BEA1759E2DD00903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
+		F64A055E175A55F900D84525 /* common-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
+		F64A055F175A55F900D84525 /* common-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
+		F65C5BEA1759E2DD00903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../xcconfig/library.xcconfig; sourceTree = "<group>"; };
 		F670B52D16D112FB001ADAF9 /* libglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F670B53616D11301001ADAF9 /* libgobject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgobject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F670B53E16D11307001ADAF9 /* libgmodule.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgmodule.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -441,7 +443,7 @@
 		F670B72D16D12989001ADAF9 /* libffi.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libffi.dylib; path = ../libffi/build/Release/libffi.dylib; sourceTree = "<group>"; };
 		F670B72F16D12A27001ADAF9 /* giounix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = giounix.c; path = glib/glib/giounix.c; sourceTree = "<group>"; };
 		F670B8EF16D14148001ADAF9 /* gspawn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gspawn.c; path = glib/glib/gspawn.c; sourceTree = "<group>"; };
-		F6CBB68B1757F1B400362F38 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
+		F6CBB68B1757F1B400362F38 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -492,43 +494,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		F670B51916D10E17001ADAF9 = {
-			isa = PBXGroup;
-			children = (
-				F6CBB68B1757F1B400362F38 /* common.xcconfig */,
-				F65C5BEA1759E2DD00903D49 /* library.xcconfig */,
-				F670B55216D1134A001ADAF9 /* generated */,
-				F670B55416D1139B001ADAF9 /* glib */,
-				F670B55516D113AF001ADAF9 /* gmodule */,
-				F670B55816D113BE001ADAF9 /* gobject */,
-				F670B55916D113DD001ADAF9 /* Frameworks */,
-				F670B52E16D112FB001ADAF9 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		F670B52E16D112FB001ADAF9 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F670B52D16D112FB001ADAF9 /* libglib.dylib */,
-				F670B53616D11301001ADAF9 /* libgobject.dylib */,
-				F670B53E16D11307001ADAF9 /* libgmodule.dylib */,
-				F670B6AF16D11F45001ADAF9 /* libpcre.a */,
-				F670B6DA16D12072001ADAF9 /* libcharset.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		F670B55216D1134A001ADAF9 /* generated */ = {
-			isa = PBXGroup;
-			children = (
-				F670B55316D11359001ADAF9 /* config.h */,
-				F670B56916D114EE001ADAF9 /* glib */,
-				F670B6E516D12283001ADAF9 /* gmodule */,
-			);
-			name = generated;
-			sourceTree = "<group>";
-		};
-		F670B55416D1139B001ADAF9 /* glib */ = {
+		F64A055C175A55D500D84525 /* glib */ = {
 			isa = PBXGroup;
 			children = (
 				F670B56C16D115E9001ADAF9 /* deprecated */,
@@ -711,6 +677,60 @@
 				F670B67F16D11E6C001ADAF9 /* gversion.h */,
 				F670B68016D11E6C001ADAF9 /* gversionmacros.h */,
 				F670B68116D11E6C001ADAF9 /* gwakeup.h */,
+			);
+			name = glib;
+			sourceTree = "<group>";
+		};
+		F64A055D175A55EF00D84525 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				F64A055E175A55F900D84525 /* common-debug.xcconfig */,
+				F64A055F175A55F900D84525 /* common-release.xcconfig */,
+				F6CBB68B1757F1B400362F38 /* common.xcconfig */,
+				F65C5BEA1759E2DD00903D49 /* library.xcconfig */,
+			);
+			name = xcconfig;
+			sourceTree = "<group>";
+		};
+		F670B51916D10E17001ADAF9 = {
+			isa = PBXGroup;
+			children = (
+				F670B55216D1134A001ADAF9 /* generated */,
+				F670B55416D1139B001ADAF9 /* glib */,
+				F670B55916D113DD001ADAF9 /* Frameworks */,
+				F670B52E16D112FB001ADAF9 /* Products */,
+				F64A055D175A55EF00D84525 /* xcconfig */,
+			);
+			sourceTree = "<group>";
+		};
+		F670B52E16D112FB001ADAF9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F670B52D16D112FB001ADAF9 /* libglib.dylib */,
+				F670B53616D11301001ADAF9 /* libgobject.dylib */,
+				F670B53E16D11307001ADAF9 /* libgmodule.dylib */,
+				F670B6AF16D11F45001ADAF9 /* libpcre.a */,
+				F670B6DA16D12072001ADAF9 /* libcharset.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F670B55216D1134A001ADAF9 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				F670B55316D11359001ADAF9 /* config.h */,
+				F670B56916D114EE001ADAF9 /* glib */,
+				F670B6E516D12283001ADAF9 /* gmodule */,
+			);
+			name = generated;
+			sourceTree = "<group>";
+		};
+		F670B55416D1139B001ADAF9 /* glib */ = {
+			isa = PBXGroup;
+			children = (
+				F64A055C175A55D500D84525 /* glib */,
+				F670B55516D113AF001ADAF9 /* gmodule */,
+				F670B55816D113BE001ADAF9 /* gobject */,
 			);
 			name = glib;
 			sourceTree = "<group>";
@@ -1163,6 +1183,7 @@
 /* Begin XCBuildConfiguration section */
 		F670B51E16D10E17001ADAF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A055E175A55F900D84525 /* common-debug.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = G_DISABLE_CAST_CHECKS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -1176,6 +1197,7 @@
 		};
 		F670B51F16D10E17001ADAF9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A055F175A55F900D84525 /* common-release.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = G_DISABLE_CAST_CHECKS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;

@@ -37,6 +37,8 @@
 		F63DCBF416E68A9C00DBE29D /* P1TextureMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F63DCBF316E68A9C00DBE29D /* P1TextureMeta.m */; };
 		F63DCBF716E698DF00DBE29D /* P1GLContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F63DCBF616E698DF00DBE29D /* P1GLContext.m */; };
 		F64254491719602800CF14F4 /* P1FrameBufferMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F64254481719602800CF14F4 /* P1FrameBufferMeta.m */; };
+		F64A0572175A56D500D84525 /* common-debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = F64A0570175A56D500D84525 /* common-debug.xcconfig */; };
+		F64A0573175A56D500D84525 /* common-release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = F64A0571175A56D500D84525 /* common-release.xcconfig */; };
 		F64CD43216BB0B01001B1344 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F68E7546169C9F27002FD6E6 /* CoreGraphics.framework */; };
 		F655F4A51729C7AC00020A70 /* P1TextureDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = F655F4A41729C7AC00020A70 /* P1TextureDownload.m */; };
 		F65C5C2F1759E76A00903D49 /* libgstx264enc.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F65C5C2E1759E76A00903D49 /* libgstx264enc.dylib */; };
@@ -134,6 +136,8 @@
 		F63DCBF616E698DF00DBE29D /* P1GLContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1GLContext.m; sourceTree = "<group>"; };
 		F64254471719602800CF14F4 /* P1FrameBufferMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1FrameBufferMeta.h; sourceTree = "<group>"; };
 		F64254481719602800CF14F4 /* P1FrameBufferMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1FrameBufferMeta.m; sourceTree = "<group>"; };
+		F64A0570175A56D500D84525 /* common-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
+		F64A0571175A56D500D84525 /* common-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
 		F655F4A41729C7AC00020A70 /* P1TextureDownload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1TextureDownload.m; sourceTree = "<group>"; };
 		F655F4A61729C7B400020A70 /* P1TextureDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1TextureDownload.h; sourceTree = "<group>"; };
 		F65C5C2E1759E76A00903D49 /* libgstx264enc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstx264enc.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstx264enc.dylib"; sourceTree = "<absolute>"; };
@@ -166,7 +170,7 @@
 		F6BEA4B116A20B4100F6DEC1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		F6C74B4C16DFCC2600DC25E2 /* P1DisplayStreamSrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1DisplayStreamSrc.h; sourceTree = "<group>"; };
 		F6C74B4D16DFCC2600DC25E2 /* P1DisplayStreamSrc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1DisplayStreamSrc.m; sourceTree = "<group>"; };
-		F6CBB68E1757F1C100362F38 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
+		F6CBB68E1757F1C100362F38 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
 		F6CE70BF16AF10F40005DD3D /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		F6D475D416A2DC54003BD4E1 /* P1Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1Utils.h; sourceTree = "<group>"; };
 		F6D475D516A2DC54003BD4E1 /* P1Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1Utils.m; sourceTree = "<group>"; };
@@ -196,13 +200,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		F6972016169B85C500F03D6B = {
+		F64A056F175A56CC00D84525 /* xcconfig */ = {
 			isa = PBXGroup;
 			children = (
 				F6CBB68E1757F1C100362F38 /* common.xcconfig */,
+				F64A0570175A56D500D84525 /* common-debug.xcconfig */,
+				F64A0571175A56D500D84525 /* common-release.xcconfig */,
+			);
+			name = xcconfig;
+			sourceTree = "<group>";
+		};
+		F6972016169B85C500F03D6B = {
+			isa = PBXGroup;
+			children = (
 				F697202B169B85C500F03D6B /* P1stream */,
 				F6972024169B85C500F03D6B /* Frameworks */,
 				F6972022169B85C500F03D6B /* Products */,
+				F64A056F175A56CC00D84525 /* xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -381,6 +395,8 @@
 				F60457E316AB4D5600A5AB58 /* simple.frag.sl in Resources */,
 				F60A271517243D15001AC6C3 /* P1CLMemoryMeta.m in Resources */,
 				F6CBB68F1757F1C100362F38 /* common.xcconfig in Resources */,
+				F64A0572175A56D500D84525 /* common-debug.xcconfig in Resources */,
+				F64A0573175A56D500D84525 /* common-release.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,6 +461,7 @@
 /* Begin XCBuildConfiguration section */
 		F697203D169B85C500F03D6B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A0570175A56D500D84525 /* common-debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -475,6 +492,7 @@
 		};
 		F697203E169B85C500F03D6B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A0571175A56D500D84525 /* common-release.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -504,7 +522,6 @@
 		};
 		F6972040169B85C500F03D6B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68E1757F1C100362F38 /* common.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -516,7 +533,6 @@
 		};
 		F6972041169B85C500F03D6B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68E1757F1C100362F38 /* common.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

@@ -134,8 +134,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		F65C5BEB1759E42600903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
-		F65C5BEC1759E43100903D49 /* gst-plugin.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "gst-plugin.xcconfig"; path = "../gst-plugin.xcconfig"; sourceTree = "<group>"; };
+		F64A0561175A561800D84525 /* common-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
+		F64A0562175A561800D84525 /* common-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
+		F65C5BEB1759E42600903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../xcconfig/library.xcconfig; sourceTree = "<group>"; };
+		F65C5BEC1759E43100903D49 /* gst-plugin.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "gst-plugin.xcconfig"; path = "../xcconfig/gst-plugin.xcconfig"; sourceTree = "<group>"; };
 		F670B73916D1335A001ADAF9 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
 		F670B73D16D1335A001ADAF9 /* gstconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gstconfig.h; path = generated/gst/gstconfig.h; sourceTree = "<group>"; };
 		F670B73E16D1335A001ADAF9 /* gstenumtypes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstenumtypes.c; path = generated/gst/gstenumtypes.c; sourceTree = "<group>"; };
@@ -338,7 +340,7 @@
 		F670B99016D14543001ADAF9 /* gsttee.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttee.h; sourceTree = "<group>"; };
 		F670B99116D14543001ADAF9 /* gsttypefindelement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gsttypefindelement.h; sourceTree = "<group>"; };
 		F670B99216D14543001ADAF9 /* gstvalve.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gstvalve.h; sourceTree = "<group>"; };
-		F6CBB68D1757F1BD00362F38 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
+		F6CBB68D1757F1BD00362F38 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -376,16 +378,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F64A0560175A560A00D84525 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				F64A0561175A561800D84525 /* common-debug.xcconfig */,
+				F64A0562175A561800D84525 /* common-release.xcconfig */,
+				F6CBB68D1757F1BD00362F38 /* common.xcconfig */,
+				F65C5BEC1759E43100903D49 /* gst-plugin.xcconfig */,
+				F65C5BEB1759E42600903D49 /* library.xcconfig */,
+			);
+			name = xcconfig;
+			sourceTree = "<group>";
+		};
 		F670B73216D131F9001ADAF9 = {
 			isa = PBXGroup;
 			children = (
-				F6CBB68D1757F1BD00362F38 /* common.xcconfig */,
-				F65C5BEB1759E42600903D49 /* library.xcconfig */,
-				F65C5BEC1759E43100903D49 /* gst-plugin.xcconfig */,
 				F670B74416D1335A001ADAF9 /* generated */,
 				F670B81C16D1335A001ADAF9 /* gstreamer */,
 				F670B8ED16D13FC6001ADAF9 /* Frameworks */,
 				F670B82216D13381001ADAF9 /* Products */,
+				F64A0560175A560A00D84525 /* xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -894,6 +906,7 @@
 /* Begin XCBuildConfiguration section */
 		F670B73716D131F9001ADAF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A0561175A561800D84525 /* common-debug.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -913,6 +926,7 @@
 		};
 		F670B73816D131F9001ADAF9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A0562175A561800D84525 /* common-release.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;

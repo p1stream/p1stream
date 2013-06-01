@@ -355,9 +355,11 @@
 		F613CC5716DC1DBC00F57089 /* video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = video.h; path = "gst-plugins-base/gst-libs/gst/video/video.h"; sourceTree = "<group>"; };
 		F613CC5816DC1DBC00F57089 /* videoorientation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = videoorientation.h; path = "gst-plugins-base/gst-libs/gst/video/videoorientation.h"; sourceTree = "<group>"; };
 		F613CC5916DC1DBC00F57089 /* videooverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = videooverlay.h; path = "gst-plugins-base/gst-libs/gst/video/videooverlay.h"; sourceTree = "<group>"; };
-		F658D33B1756B37600578FEA /* gst-plugin.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "gst-plugin.xcconfig"; path = "../gst-plugin.xcconfig"; sourceTree = "<group>"; };
-		F658D33C1756B4C500578FEA /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
-		F65C5BE51759E17500903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
+		F64A0564175A564700D84525 /* common-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
+		F64A0565175A564700D84525 /* common-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
+		F658D33B1756B37600578FEA /* gst-plugin.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "gst-plugin.xcconfig"; path = "../xcconfig/gst-plugin.xcconfig"; sourceTree = "<group>"; };
+		F658D33C1756B4C500578FEA /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
+		F65C5BE51759E17500903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../xcconfig/library.xcconfig; sourceTree = "<group>"; };
 		F65C5BF11759E4B400903D49 /* libgstpbutils.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgstpbutils.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F65C5BF51759E4E600903D49 /* codec-utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "codec-utils.c"; path = "gst-plugins-base/gst-libs/gst/pbutils/codec-utils.c"; sourceTree = "<group>"; };
 		F65C5BF61759E4E600903D49 /* codec-utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "codec-utils.h"; path = "gst-plugins-base/gst-libs/gst/pbutils/codec-utils.h"; sourceTree = "<group>"; };
@@ -572,13 +574,11 @@
 		F60E744D16D15D2300148F06 = {
 			isa = PBXGroup;
 			children = (
-				F658D33C1756B4C500578FEA /* common.xcconfig */,
-				F65C5BE51759E17500903D49 /* library.xcconfig */,
-				F658D33B1756B37600578FEA /* gst-plugin.xcconfig */,
 				F60E745D16D1610D00148F06 /* generated */,
 				F60E746416D1611A00148F06 /* gst-plugins-base */,
 				F60E74AD16D16BA800148F06 /* Frameworks */,
 				F60E745916D160FD00148F06 /* Products */,
+				F64A0563175A563500D84525 /* xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -772,6 +772,18 @@
 			path = "gst-plugins-base/gst/videoconvert";
 			sourceTree = "<group>";
 		};
+		F64A0563175A563500D84525 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				F64A0564175A564700D84525 /* common-debug.xcconfig */,
+				F64A0565175A564700D84525 /* common-release.xcconfig */,
+				F658D33C1756B4C500578FEA /* common.xcconfig */,
+				F658D33B1756B37600578FEA /* gst-plugin.xcconfig */,
+				F65C5BE51759E17500903D49 /* library.xcconfig */,
+			);
+			name = xcconfig;
+			sourceTree = "<group>";
+		};
 		F65C5BE41759E11500903D49 /* pbutils */ = {
 			isa = PBXGroup;
 			children = (
@@ -942,11 +954,11 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F6037A8316F8DAC80045433B /* gstadder */,
 				F6037AB716F8DB6B0045433B /* gstaudio */,
 				F65C5BF01759E4B400903D49 /* gstpbutils */,
 				F6037AE116F8DE070045433B /* gsttag */,
 				F60E745716D160FD00148F06 /* gstvideo */,
+				F6037A8316F8DAC80045433B /* gstadder */,
 				F60E74B216D16C2B00148F06 /* gstvideotestsrc */,
 				F60E74D816D16DA800148F06 /* gstvideoconvert */,
 			);
@@ -1148,6 +1160,7 @@
 		};
 		F60E745216D15D2300148F06 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A0564175A564700D84525 /* common-debug.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -1174,6 +1187,7 @@
 		};
 		F60E745316D15D2300148F06 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A0565175A564700D84525 /* common-release.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;

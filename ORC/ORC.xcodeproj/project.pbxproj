@@ -67,7 +67,9 @@
 		F60A27111723E74E001AC6C3 /* orctarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orctarget.h; path = orc/orc/orctarget.h; sourceTree = "<group>"; };
 		F60A27121723E753001AC6C3 /* orcvariable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = orcvariable.h; path = orc/orc/orcvariable.h; sourceTree = "<group>"; };
 		F60E74CE16D16CDF00148F06 /* build_rule.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build_rule.sh; sourceTree = "<group>"; };
-		F65C5BE61759E1FE00903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../library.xcconfig; sourceTree = "<group>"; };
+		F64A054D175A545B00D84525 /* common-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
+		F64A054E175A545B00D84525 /* common-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
+		F65C5BE61759E1FE00903D49 /* library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = library.xcconfig; path = ../xcconfig/library.xcconfig; sourceTree = "<group>"; };
 		F6A0B31916D0F0310023B9B2 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
 		F6A0B31E16D0F06E0023B9B2 /* liborc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liborc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6A0B32716D0F07D0023B9B2 /* orcc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = orcc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -111,7 +113,7 @@
 		F6A0B38516D0F4C50023B9B2 /* orcprogram-mmx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "orcprogram-mmx.c"; path = "orc/orc/orcprogram-mmx.c"; sourceTree = "<group>"; };
 		F6A0B38716D0F4CE0023B9B2 /* orcrules-mmx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "orcrules-mmx.c"; path = "orc/orc/orcrules-mmx.c"; sourceTree = "<group>"; };
 		F6A0B38916D0F4D90023B9B2 /* orcmmx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = orcmmx.c; path = orc/orc/orcmmx.c; sourceTree = "<group>"; };
-		F6CBB68C1757F1B800362F38 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
+		F6CBB68C1757F1B800362F38 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,15 +135,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F64A054C175A544900D84525 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				F64A054D175A545B00D84525 /* common-debug.xcconfig */,
+				F64A054E175A545B00D84525 /* common-release.xcconfig */,
+				F6CBB68C1757F1B800362F38 /* common.xcconfig */,
+				F65C5BE61759E1FE00903D49 /* library.xcconfig */,
+			);
+			name = xcconfig;
+			sourceTree = "<group>";
+		};
 		F6A0B30D16D0EB990023B9B2 = {
 			isa = PBXGroup;
 			children = (
-				F6CBB68C1757F1B800362F38 /* common.xcconfig */,
-				F65C5BE61759E1FE00903D49 /* library.xcconfig */,
 				F60E74CE16D16CDF00148F06 /* build_rule.sh */,
 				F6A0B31716D0F0170023B9B2 /* generated */,
 				F6A0B31816D0F01E0023B9B2 /* orc */,
 				F6A0B31F16D0F06E0023B9B2 /* Products */,
+				F64A054C175A544900D84525 /* xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -360,6 +372,7 @@
 /* Begin XCBuildConfiguration section */
 		F6A0B31216D0EB990023B9B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A054D175A545B00D84525 /* common-debug.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				HEADER_SEARCH_PATHS = (
@@ -371,6 +384,7 @@
 		};
 		F6A0B31316D0EB990023B9B2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F64A054E175A545B00D84525 /* common-release.xcconfig */;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				HEADER_SEARCH_PATHS = (
@@ -404,14 +418,12 @@
 		};
 		F6A0B32E16D0F07D0023B9B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68C1757F1B800362F38 /* common.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		F6A0B32F16D0F07D0023B9B2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6CBB68C1757F1B800362F38 /* common.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
