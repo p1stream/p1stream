@@ -1,3 +1,5 @@
+#include <gst/video/video.h>
+#include <gst/video/gstvideopool.h>
 #import "P1TextureDownload.h"
 #import "P1TexturePool.h"
 #import "P1TextureMeta.h"
@@ -20,6 +22,8 @@ static gboolean p1_texture_download_set_caps(
     GstBaseTransform *trans, GstCaps *incaps, GstCaps *outcaps);
 static gboolean p1_texture_download_query(
     GstBaseTransform *trans, GstPadDirection direction, GstQuery *query);
+static gboolean p1_texture_download_decide_allocation(
+    GstBaseTransform *trans, GstQuery *query);
 static GstFlowReturn p1_texture_download_prepare_output_buffer(
     GstBaseTransform *trans, GstBuffer *inbuf, GstBuffer **outbuf);
 static GstFlowReturn p1_texture_download_transform(
@@ -54,6 +58,7 @@ static void p1_texture_download_class_init(P1TextureDownloadClass *klass)
     basetransform_class->transform_caps        = p1_texture_download_transform_caps;
     basetransform_class->set_caps              = p1_texture_download_set_caps;
     basetransform_class->query                 = p1_texture_download_query;
+    basetransform_class->decide_allocation     = p1_texture_download_decide_allocation;
     basetransform_class->prepare_output_buffer = p1_texture_download_prepare_output_buffer;
     basetransform_class->transform             = p1_texture_download_transform;
     basetransform_class->stop                  = p1_texture_download_stop;
@@ -179,6 +184,49 @@ static gboolean p1_texture_download_query(
     }
 
     return res;
+}
+
+static gboolean p1_texture_download_decide_allocation(
+    GstBaseTransform *trans, GstQuery *query)
+{
+    // Taken from GstVideoFilter.
+    GstBufferPool *pool = NULL;
+    GstStructure *config;
+    guint min, max, size;
+    gboolean update_pool;
+    GstCaps *outcaps;
+
+    gst_query_parse_allocation(query, &outcaps, NULL);
+
+    if (gst_query_get_n_allocation_pools(query) > 0) {
+        gst_query_parse_nth_allocation_pool(query, 0, &pool, &size, &min, &max);
+        update_pool = TRUE;
+    } else {
+        GstVideoInfo vinfo;
+        gst_video_info_init(&vinfo);
+        gst_video_info_from_caps(&vinfo, outcaps);
+
+        size = (guint)vinfo.size;
+        min = max = 0;
+        update_pool = FALSE;
+    }
+
+    if (!pool)
+        pool = gst_video_buffer_pool_new();
+
+    config = gst_buffer_pool_get_config(pool);
+    gst_buffer_pool_config_add_option(config, GST_BUFFER_POOL_OPTION_VIDEO_META);
+    gst_buffer_pool_config_set_params(config, outcaps, size, min, max);
+    gst_buffer_pool_set_config(pool, config);
+
+    if (update_pool)
+        gst_query_set_nth_allocation_pool(query, 0, pool, size, min, max);
+    else
+        gst_query_add_allocation_pool(query, pool, size, min, max);
+
+    gst_object_unref(pool);
+
+    return parent_class->decide_allocation(trans, query);
 }
 
 static GstFlowReturn p1_texture_download_prepare_output_buffer(
