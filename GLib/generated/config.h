@@ -37,10 +37,10 @@
 #define GETTEXT_PACKAGE "glib20"
 
 /* Define to the GLIB binary age */
-#define GLIB_BINARY_AGE 3601
+#define GLIB_BINARY_AGE 3602
 
 /* Define to the GLIB interface age */
-#define GLIB_INTERFACE_AGE 1
+#define GLIB_INTERFACE_AGE 2
 
 /* Define the location where the catalogs will be installed */
 #define GLIB_LOCALE_DIR "/usr/local/share/locale"
@@ -49,7 +49,7 @@
 #define GLIB_MAJOR_VERSION 2
 
 /* Define to the GLIB micro version */
-#define GLIB_MICRO_VERSION 1
+#define GLIB_MICRO_VERSION 2
 
 /* Define to the GLIB minor version */
 #define GLIB_MINOR_VERSION 36
@@ -659,7 +659,7 @@
 #define PACKAGE_NAME "glib"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "glib 2.36.1"
+#define PACKAGE_STRING "glib 2.36.2"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "glib"
@@ -668,7 +668,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.36.1"
+#define PACKAGE_VERSION "2.36.2"
 
 /* define if posix_memalign() can allocate any size */
 #define POSIX_MEMALIGN_WITH_COMPLIANT_ALLOCS 1
