@@ -135,7 +135,7 @@
 /* #undef HAVE_DVDREAD */
 
 /* Define to enable building of experimental plug-ins. */
-/* #undef HAVE_EXPERIMENTAL */
+#define HAVE_EXPERIMENTAL /**/
 
 /* Define to enable building of plug-ins with external deps. */
 #define HAVE_EXTERNAL /**/
@@ -150,7 +150,7 @@
 /* #undef HAVE_GETTEXT */
 
 /* Define if you have the iconv() function and it works. */
-#define HAVE_ICONV 1
+/* #undef HAVE_ICONV */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
