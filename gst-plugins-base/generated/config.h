@@ -43,16 +43,16 @@
 #define GETTEXT_PACKAGE "NULL"
 
 /* The GIO library directory. */
-#define GIO_LIBDIR "/usr/local/Cellar/glib/2.34.3/lib"
+#define GIO_LIBDIR "/usr/local/Cellar/glib/2.36.2/lib"
 
 /* The GIO modules directory. */
-#define GIO_MODULE_DIR "/usr/local/Cellar/glib/2.34.3/lib/gio/modules"
+#define GIO_MODULE_DIR "/usr/local/lib/gio/modules"
 
 /* major/minor version */
 #define GST_API_VERSION "1.0"
 
 /* system wide data directory */
-#define GST_DATADIR "/usr/local/Cellar/gstreamer/1.0.6/share"
+#define GST_DATADIR "/usr/local/Cellar/gstreamer/1.0.7/share"
 
 /* set to disable libxml2-dependent code in subparse */
 #define GST_DISABLE_XML 1
@@ -85,7 +85,7 @@
 #define GST_PACKAGE_ORIGIN "Unknown package origin"
 
 /* GStreamer package release date/time for plugins as YYYY-MM-DD */
-#define GST_PACKAGE_RELEASE_DATETIME "2013-01-08"
+#define GST_PACKAGE_RELEASE_DATETIME "2013-03-22"
 
 /* Define to enable ALSA (used by alsa). */
 /* #undef HAVE_ALSA */
