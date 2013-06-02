@@ -56,7 +56,6 @@ int main(int argc, char *argv[])
     gst_debug_add_log_function(gstreamerLogCallback, NULL, NULL);
 
     loadGStreamerPlugin(@"coreelements");
-    loadGStreamerPlugin(@"videotestsrc");
     loadGStreamerPlugin(@"videoconvert");
     loadGStreamerPlugin(@"x264enc");
     loadGStreamerPlugin(@"flv");

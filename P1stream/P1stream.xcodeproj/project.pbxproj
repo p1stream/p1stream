@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F602C192175B65210079D3EE /* libgstpbutils.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F602C190175B650B0079D3EE /* libgstpbutils.dylib */; };
+		F602C195175B65520079D3EE /* libgstaudio.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F602C193175B65460079D3EE /* libgstaudio.dylib */; };
+		F602C198175B65640079D3EE /* libgsttag.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F602C196175B65590079D3EE /* libgsttag.dylib */; };
+		F602C19B175B658D0079D3EE /* librtmp.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F602C199175B65860079D3EE /* librtmp.dylib */; };
+		F602C19E175B65990079D3EE /* libx264.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F602C19C175B65940079D3EE /* libx264.dylib */; };
 		F60457DD16AB4A6200A5AB58 /* yuv420.cl in Sources */ = {isa = PBXBuildFile; fileRef = F60457DA16AB4A4E00A5AB58 /* yuv420.cl */; };
 		F60457DF16AB4B9600A5AB58 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F60457DE16AB4B9600A5AB58 /* OpenCL.framework */; };
 		F60457E116AB4CCD00A5AB58 /* simple.vert.sl in Resources */ = {isa = PBXBuildFile; fileRef = F60457E016AB4CCD00A5AB58 /* simple.vert.sl */; };
@@ -24,7 +29,6 @@
 		F60E752916D16FBB00148F06 /* libgstbase.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E752816D16FBB00148F06 /* libgstbase.dylib */; };
 		F60E752B16D16FC200148F06 /* libgstvideo.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E752A16D16FC200148F06 /* libgstvideo.dylib */; };
 		F60E752D16D16FC500148F06 /* libgstcoreelements.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E752C16D16FC500148F06 /* libgstcoreelements.dylib */; };
-		F60E752F16D16FC900148F06 /* libgstvideotestsrc.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E752E16D16FC900148F06 /* libgstvideotestsrc.dylib */; };
 		F60E753116D16FCC00148F06 /* libgstvideoconvert.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F60E753016D16FCC00148F06 /* libgstvideoconvert.dylib */; };
 		F60E753216D172DF00148F06 /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E751C16D16F9900148F06 /* libglib.dylib */; };
 		F60E753316D172E500148F06 /* libgobject.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F60E751F16D16FA600148F06 /* libgobject.dylib */; };
@@ -74,13 +78,18 @@
 			files = (
 				F60E751916D16F9200148F06 /* libintl.dylib in CopyFiles */,
 				F60E751B16D16F9500148F06 /* libffi.dylib in CopyFiles */,
+				F602C19B175B658D0079D3EE /* librtmp.dylib in CopyFiles */,
+				F602C19E175B65990079D3EE /* libx264.dylib in CopyFiles */,
 				F60E751E16D16FA200148F06 /* libglib.dylib in CopyFiles */,
 				F60E752116D16FAB00148F06 /* libgobject.dylib in CopyFiles */,
 				F60E752316D16FAF00148F06 /* libgmodule.dylib in CopyFiles */,
 				F60E752516D16FB400148F06 /* liborc.dylib in CopyFiles */,
 				F60E752716D16FB700148F06 /* libgstreamer.dylib in CopyFiles */,
 				F60E752916D16FBB00148F06 /* libgstbase.dylib in CopyFiles */,
+				F602C195175B65520079D3EE /* libgstaudio.dylib in CopyFiles */,
+				F602C192175B65210079D3EE /* libgstpbutils.dylib in CopyFiles */,
 				F60E752B16D16FC200148F06 /* libgstvideo.dylib in CopyFiles */,
+				F602C198175B65640079D3EE /* libgsttag.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,7 +101,6 @@
 			files = (
 				F6B39242175A3B9200AC15E5 /* libgstrtmp.dylib in CopyFiles */,
 				F60E752D16D16FC500148F06 /* libgstcoreelements.dylib in CopyFiles */,
-				F60E752F16D16FC900148F06 /* libgstvideotestsrc.dylib in CopyFiles */,
 				F60E753116D16FCC00148F06 /* libgstvideoconvert.dylib in CopyFiles */,
 				F65C5C2F1759E76A00903D49 /* libgstx264enc.dylib in CopyFiles */,
 				F6B391E0175A32C500AC15E5 /* libgstflv.dylib in CopyFiles */,
@@ -102,6 +110,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F602C190175B650B0079D3EE /* libgstpbutils.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstpbutils.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstpbutils.dylib"; sourceTree = "<absolute>"; };
+		F602C193175B65460079D3EE /* libgstaudio.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstaudio.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstaudio.dylib"; sourceTree = "<absolute>"; };
+		F602C196175B65590079D3EE /* libgsttag.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgsttag.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgsttag.dylib"; sourceTree = "<absolute>"; };
+		F602C199175B65860079D3EE /* librtmp.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = librtmp.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/librtmp.dylib"; sourceTree = "<absolute>"; };
+		F602C19C175B65940079D3EE /* libx264.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libx264.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libx264.dylib"; sourceTree = "<absolute>"; };
 		F60457DA16AB4A4E00A5AB58 /* yuv420.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = yuv420.cl; sourceTree = "<group>"; };
 		F60457DE16AB4B9600A5AB58 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		F60457E016AB4CCD00A5AB58 /* simple.vert.sl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = simple.vert.sl; sourceTree = "<group>"; };
@@ -122,7 +135,6 @@
 		F60E752816D16FBB00148F06 /* libgstbase.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstbase.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstbase.dylib"; sourceTree = "<absolute>"; };
 		F60E752A16D16FC200148F06 /* libgstvideo.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstvideo.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstvideo.dylib"; sourceTree = "<absolute>"; };
 		F60E752C16D16FC500148F06 /* libgstcoreelements.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstcoreelements.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstcoreelements.dylib"; sourceTree = "<absolute>"; };
-		F60E752E16D16FC900148F06 /* libgstvideotestsrc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstvideotestsrc.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstvideotestsrc.dylib"; sourceTree = "<absolute>"; };
 		F60E753016D16FCC00148F06 /* libgstvideoconvert.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgstvideoconvert.dylib; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libgstvideoconvert.dylib"; sourceTree = "<absolute>"; };
 		F613CC3D16DC0EA300F57089 /* P1TextureUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1TextureUpload.h; sourceTree = "<group>"; };
 		F613CC3E16DC0EA300F57089 /* P1TextureUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1TextureUpload.m; sourceTree = "<group>"; };
@@ -241,16 +253,20 @@
 				F69656DC16BD2F3500DEFF4A /* AudioToolbox.framework */,
 				F60E751816D16F9200148F06 /* libintl.dylib */,
 				F60E751A16D16F9500148F06 /* libffi.dylib */,
+				F602C199175B65860079D3EE /* librtmp.dylib */,
+				F602C19C175B65940079D3EE /* libx264.dylib */,
 				F60E751C16D16F9900148F06 /* libglib.dylib */,
 				F60E752216D16FAF00148F06 /* libgmodule.dylib */,
 				F60E751F16D16FA600148F06 /* libgobject.dylib */,
 				F60E752616D16FB700148F06 /* libgstreamer.dylib */,
 				F60E752816D16FBB00148F06 /* libgstbase.dylib */,
+				F602C190175B650B0079D3EE /* libgstpbutils.dylib */,
 				F60E752C16D16FC500148F06 /* libgstcoreelements.dylib */,
 				F60E752416D16FB400148F06 /* liborc.dylib */,
+				F602C193175B65460079D3EE /* libgstaudio.dylib */,
 				F60E752A16D16FC200148F06 /* libgstvideo.dylib */,
+				F602C196175B65590079D3EE /* libgsttag.dylib */,
 				F60E753016D16FCC00148F06 /* libgstvideoconvert.dylib */,
-				F60E752E16D16FC900148F06 /* libgstvideotestsrc.dylib */,
 				F65C5C2E1759E76A00903D49 /* libgstx264enc.dylib */,
 				F6B391DF175A32C500AC15E5 /* libgstflv.dylib */,
 				F6B39240175A3B8600AC15E5 /* libgstrtmp.dylib */,

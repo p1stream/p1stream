@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F602C18C175B64310079D3EE /* libintl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F602C18A175B642B0079D3EE /* libintl.dylib */; };
+		F602C18F175B643D0079D3EE /* libffi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F602C18D175B64360079D3EE /* libffi.dylib */; };
 		F670B57816D115EF001ADAF9 /* gallocator.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B56D16D115E9001ADAF9 /* gallocator.c */; };
 		F670B57916D115EF001ADAF9 /* gcache.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B56F16D115E9001ADAF9 /* gcache.c */; };
 		F670B57A16D115EF001ADAF9 /* gcompletion.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B57116D115E9001ADAF9 /* gcompletion.c */; };
@@ -89,7 +91,6 @@
 		F670B61216D1173A001ADAF9 /* gwakeup.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B5F716D1173A001ADAF9 /* gwakeup.c */; };
 		F670B61416D1176C001ADAF9 /* glib-unix.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B61316D1176C001ADAF9 /* glib-unix.c */; };
 		F670B61616D11784001ADAF9 /* gthread-posix.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B61516D11784001ADAF9 /* gthread-posix.c */; };
-		F670B61A16D11C08001ADAF9 /* libintl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B61916D11C08001ADAF9 /* libintl.dylib */; };
 		F670B61C16D11E1B001ADAF9 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B61B16D11E1B001ADAF9 /* CoreFoundation.framework */; };
 		F670B61E16D11E2C001ADAF9 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B61D16D11E2C001ADAF9 /* Carbon.framework */; };
 		F670B62016D11E38001ADAF9 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B61F16D11E38001ADAF9 /* libiconv.dylib */; };
@@ -134,7 +135,6 @@
 		F670B71316D1289F001ADAF9 /* gvaluetransform.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B70116D1289E001ADAF9 /* gvaluetransform.c */; };
 		F670B71416D1289F001ADAF9 /* gvaluetypes.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B70216D1289E001ADAF9 /* gvaluetypes.c */; };
 		F670B72C16D12948001ADAF9 /* libglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B52D16D112FB001ADAF9 /* libglib.dylib */; };
-		F670B72E16D1298A001ADAF9 /* libffi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F670B72D16D12989001ADAF9 /* libffi.dylib */; };
 		F670B73016D12A27001ADAF9 /* giounix.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B72F16D12A27001ADAF9 /* giounix.c */; };
 		F670B8F016D14148001ADAF9 /* gspawn.c in Sources */ = {isa = PBXBuildFile; fileRef = F670B8EF16D14148001ADAF9 /* gspawn.c */; };
 /* End PBXBuildFile section */
@@ -171,6 +171,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F602C18A175B642B0079D3EE /* libintl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libintl.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libintl.dylib"; sourceTree = "<group>"; };
+		F602C18D175B64360079D3EE /* libffi.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libffi.dylib; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libffi.dylib"; sourceTree = "<group>"; };
 		F60A27131723F012001AC6C3 /* gcharsetprivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gcharsetprivate.h; path = glib/glib/gcharsetprivate.h; sourceTree = "<group>"; };
 		F64A055E175A55F900D84525 /* common-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
 		F64A055F175A55F900D84525 /* common-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
@@ -268,7 +270,6 @@
 		F670B5F716D1173A001ADAF9 /* gwakeup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gwakeup.c; path = glib/glib/gwakeup.c; sourceTree = "<group>"; };
 		F670B61316D1176C001ADAF9 /* glib-unix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "glib-unix.c"; path = "glib/glib/glib-unix.c"; sourceTree = "<group>"; };
 		F670B61516D11784001ADAF9 /* gthread-posix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "gthread-posix.c"; path = "glib/glib/gthread-posix.c"; sourceTree = "<group>"; };
-		F670B61916D11C08001ADAF9 /* libintl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libintl.dylib; path = ../libintl/build/Release/libintl.dylib; sourceTree = "<group>"; };
 		F670B61B16D11E1B001ADAF9 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		F670B61D16D11E2C001ADAF9 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Carbon.framework; sourceTree = DEVELOPER_DIR; };
 		F670B61F16D11E38001ADAF9 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libiconv.dylib; sourceTree = DEVELOPER_DIR; };
@@ -440,7 +441,6 @@
 		F670B72716D128D8001ADAF9 /* gvaluearray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gvaluearray.h; path = glib/gobject/gvaluearray.h; sourceTree = "<group>"; };
 		F670B72816D128D8001ADAF9 /* gvaluecollector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gvaluecollector.h; path = glib/gobject/gvaluecollector.h; sourceTree = "<group>"; };
 		F670B72916D128D8001ADAF9 /* gvaluetypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gvaluetypes.h; path = glib/gobject/gvaluetypes.h; sourceTree = "<group>"; };
-		F670B72D16D12989001ADAF9 /* libffi.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libffi.dylib; path = ../libffi/build/Release/libffi.dylib; sourceTree = "<group>"; };
 		F670B72F16D12A27001ADAF9 /* giounix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = giounix.c; path = glib/glib/giounix.c; sourceTree = "<group>"; };
 		F670B8EF16D14148001ADAF9 /* gspawn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gspawn.c; path = glib/glib/gspawn.c; sourceTree = "<group>"; };
 		F6CBB68B1757F1B400362F38 /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
@@ -454,7 +454,7 @@
 				F670B61C16D11E1B001ADAF9 /* CoreFoundation.framework in Frameworks */,
 				F670B61E16D11E2C001ADAF9 /* Carbon.framework in Frameworks */,
 				F670B62016D11E38001ADAF9 /* libiconv.dylib in Frameworks */,
-				F670B61A16D11C08001ADAF9 /* libintl.dylib in Frameworks */,
+				F602C18C175B64310079D3EE /* libintl.dylib in Frameworks */,
 				F670B6C616D11F59001ADAF9 /* libpcre.a in Frameworks */,
 				F670B6E116D120AA001ADAF9 /* libcharset.a in Frameworks */,
 			);
@@ -464,8 +464,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F670B72E16D1298A001ADAF9 /* libffi.dylib in Frameworks */,
 				F670B72C16D12948001ADAF9 /* libglib.dylib in Frameworks */,
+				F602C18F175B643D0079D3EE /* libffi.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -794,9 +794,9 @@
 		F670B55916D113DD001ADAF9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F670B61916D11C08001ADAF9 /* libintl.dylib */,
-				F670B72D16D12989001ADAF9 /* libffi.dylib */,
 				F670B61F16D11E38001ADAF9 /* libiconv.dylib */,
+				F602C18A175B642B0079D3EE /* libintl.dylib */,
+				F602C18D175B64360079D3EE /* libffi.dylib */,
 				F670B61D16D11E2C001ADAF9 /* Carbon.framework */,
 				F670B61B16D11E1B001ADAF9 /* CoreFoundation.framework */,
 			);
