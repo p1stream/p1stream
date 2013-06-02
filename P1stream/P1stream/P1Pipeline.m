@@ -45,9 +45,15 @@
         g_value_unset(&val);
 
         g_value_init(&val, G_TYPE_INT);
-        g_value_set_int(&val, 128 * 1024 * 1024);
+        g_value_set_int(&val, 128 * 1024 * 1024); // 128 MiB
         g_object_set_property(G_OBJECT(queue2), "max-size-bytes", &val);
-        g_value_set_int(&val, 5);
+        g_value_set_int(&val, 0); // CBR
+        g_object_set_property(G_OBJECT(x264enc), "pass", &val);
+        g_value_set_int(&val, 3584); // 3.5 MBit/s
+        g_object_set_property(G_OBJECT(x264enc), "bitrate", &val);
+        g_value_set_int(&val, 5); // Fast
+        g_object_set_property(G_OBJECT(x264enc), "speed-preset", &val);
+        g_value_set_int(&val, 5); // Reduced latency / lookahead buffer
         g_object_set_property(G_OBJECT(x264enc), "rc-lookahead", &val);
         g_value_unset(&val);
 
