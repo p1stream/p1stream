@@ -1,3 +1,6 @@
+#include "P1GLContext.h"
+
+
 #define P1_TYPE_CL_CONTEXT \
     (p1_cl_context_get_type())
 #define P1_CL_CONTEXT_CAST(obj) \
@@ -43,3 +46,5 @@ GType p1_cl_context_get_type();
     (P1_CL_CONTEXT_CAST(self)->context)
 
 P1CLContext *p1_cl_context_new();
+P1CLContext *p1_cl_context_new_shared_with_gl(P1GLContext *other);
+P1CLContext *p1_cl_context_new_existing(cl_context context);

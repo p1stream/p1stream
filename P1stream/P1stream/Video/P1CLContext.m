@@ -8,7 +8,6 @@ static void p1_cl_context_dispose(GObject *gobject);
 static void p1_cl_context_finalize(GObject *gobject);
 
 
-
 static void p1_cl_context_class_init(P1CLContextClass *klass)
 {
     parent_class = g_type_class_ref(G_TYPE_OBJECT);
@@ -45,7 +44,40 @@ static void p1_cl_context_finalize(GObject *gobject)
 
 P1CLContext *p1_cl_context_new()
 {
+    cl_device_id device_id;
+    cl_uint num_devices;
+    cl_int err = clGetDeviceIDs(NULL, CL_DEVICE_TYPE_ALL, 1, &device_id, &num_devices);
+    g_return_val_if_fail(err == CL_SUCCESS, NULL);
+
+    // FIXME: log with gstreamer
+    cl_context context = clCreateContext(NULL, num_devices, &device_id, clLogMessagesToStdoutAPPLE, NULL, NULL);
+    g_return_val_if_fail(context != NULL, NULL);
+
     P1CLContext *obj = g_object_new(P1_TYPE_CL_CONTEXT, NULL);
-    obj->context = NULL;
+    obj->context = context;
+    return obj;
+}
+
+P1CLContext *p1_cl_context_new_shared_with_gl(P1GLContext *other)
+{
+    CGLContextObj raw_gl_context = p1_gl_context_get_raw(other);
+    CGLShareGroupObj share_group = CGLGetShareGroup(raw_gl_context);
+    cl_context_properties props[] = {
+        CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE, (cl_context_properties)share_group,
+        0
+    };
+
+    cl_context context = clCreateContext(props, 0, NULL, clLogMessagesToStdoutAPPLE, NULL, NULL);
+    g_return_val_if_fail(context != NULL, NULL);
+
+    P1CLContext *obj = g_object_new(P1_TYPE_CL_CONTEXT, NULL);
+    obj->context = context;
+    return obj;
+}
+
+P1CLContext *p1_cl_context_new_existing(cl_context context)
+{
+    P1CLContext *obj = g_object_new(P1_TYPE_CL_CONTEXT, NULL);
+    obj->context = clRetainContext(context);
     return obj;
 }
