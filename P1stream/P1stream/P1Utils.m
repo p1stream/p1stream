@@ -156,7 +156,7 @@ gboolean p1_decide_texture_allocation(GstQuery *query)
         pool = GST_BUFFER_POOL_CAST(p1_texture_pool_new());
         g_return_val_if_fail(pool != NULL, FALSE);
         size = 1;
-        min = max = 2;
+        min = max = 0;
     }
 
     // Extract caps, which we need to set on the pool config
