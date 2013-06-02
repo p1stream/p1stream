@@ -11,30 +11,33 @@
         if (preview)
             gst_object_ref(preview);
 
-        pipeline = gst_pipeline_new("test");
-        source   = gst_element_factory_make("displaystreamsrc", "source");
-        upload1  = gst_element_factory_make("textureupload",    "upload1");
-        render   = gst_element_factory_make("rendertextures",   "render");
-        download = gst_element_factory_make("texturedownload",  "download");
-        tee      = gst_element_factory_make("tee",              "tee");
-        queue1   = gst_element_factory_make("queue",            "queue1");
-        upload2  = gst_element_factory_make("textureupload",    "upload2");
-        queue2   = gst_element_factory_make("queue",            "queue2");
-        convert  = gst_element_factory_make("videoconvert",     "convert");
-        x264enc  = gst_element_factory_make("x264enc",          "x264enc");
-        flvmux   = gst_element_factory_make("flvmux",           "flvmux");
-        queue3   = gst_element_factory_make("queue",            "queue3");
-        rtmp     = gst_element_factory_make("rtmpsink",         "rtmp");
-        g_assert(pipeline && source && upload1 && render && download && tee &&
-            queue1 && upload2 && preview && queue2 && convert && x264enc && flvmux && queue3 && rtmp);
+        pipeline  = gst_pipeline_new("test");
+        source    = gst_element_factory_make("displaystreamsrc", "source");
+        upload1   = gst_element_factory_make("textureupload",    "upload1");
+        render    = gst_element_factory_make("rendertextures",   "render");
+        tee       = gst_element_factory_make("tee",              "tee");
+        queue1    = gst_element_factory_make("queue",            "queue1");
+        download1 = gst_element_factory_make("texturedownload",  "download1");
+        upload2   = gst_element_factory_make("textureupload",    "upload2");
+        queue2    = gst_element_factory_make("queue",            "queue2");
+        download2 = gst_element_factory_make("texturedownload",  "download2");
+        convert   = gst_element_factory_make("videoconvert",     "convert");
+        x264enc   = gst_element_factory_make("x264enc",          "x264enc");
+        flvmux    = gst_element_factory_make("flvmux",           "flvmux");
+        queue3    = gst_element_factory_make("queue",            "queue3");
+        rtmp      = gst_element_factory_make("rtmpsink",         "rtmp");
+        g_assert(pipeline && source && upload1 && render && tee && queue1 &&
+            download1 && upload2 && preview && queue2 && download2 && convert &&
+            x264enc && flvmux && queue3 && rtmp);
 
-        gst_bin_add_many(GST_BIN(pipeline), source, upload1, render, download, tee,
-            queue1, upload2, preview, queue2, convert, x264enc, flvmux, queue3, rtmp, NULL);
+        gst_bin_add_many(GST_BIN(pipeline), source, upload1, render, tee,
+            queue1, download1, upload2, preview, queue2, download2, convert,
+            x264enc, flvmux, queue3, rtmp, NULL);
 
         gboolean success =
-            gst_element_link_many(source, upload1, render, download, tee, NULL) &&
-            gst_element_link_many(tee, queue1, upload2, preview, NULL) &&
-            gst_element_link_many(tee, queue2, convert, x264enc, flvmux, queue3, rtmp, NULL);
+            gst_element_link_many(source, upload1, render, tee, NULL) &&
+            gst_element_link_many(tee, queue1, download1, upload2, preview, NULL) &&
+            gst_element_link_many(tee, queue2, download2, convert, x264enc, flvmux, queue3, rtmp, NULL);
         g_assert(success);
 
         GValue val = G_VALUE_INIT;
