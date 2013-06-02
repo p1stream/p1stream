@@ -423,8 +423,9 @@ static GstFlowReturn p1_render_textures_collected(
         gst_caps_unref(caps);
 
         // Send an empty segment event
+        // FIXME
         GstSegment segment;
-        gst_segment_init(&segment, GST_FORMAT_DEFAULT);
+        gst_segment_init(&segment, GST_FORMAT_TIME);
         gst_pad_push_event(self->src, gst_event_new_segment(&segment));
 
         // Query for a texture pool
@@ -487,6 +488,7 @@ static GstFlowReturn p1_render_textures_collected(
     };
 
     // FIXME: sort
+    gboolean first = TRUE;
     for (GSList *collected = collect->data; collected != NULL; collected = g_slist_next(collected)) {
         GstCollectData *collect_data;
         GstBuffer *inbuf;
@@ -495,6 +497,12 @@ static GstFlowReturn p1_render_textures_collected(
         inbuf = gst_collect_pads_pop(collect, collect_data);
         if (inbuf == NULL)
             continue;
+
+        if (first) {
+            first = FALSE;
+            gst_buffer_copy_into(outbuf, inbuf,
+                GST_BUFFER_COPY_FLAGS | GST_BUFFER_COPY_TIMESTAMPS, 0, 0);
+        }
 
         texture = gst_buffer_get_texture_meta(inbuf);
         g_assert(p1_gl_context_is_shared(texture->context, context));

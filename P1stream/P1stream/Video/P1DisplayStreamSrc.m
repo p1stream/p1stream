@@ -65,7 +65,8 @@ static void p1_display_stream_src_init(P1DisplayStreamSrc *self)
 
     GstBaseSrc *basesrc = GST_BASE_SRC(self);
     gst_base_src_set_live(basesrc, TRUE);
-    gst_base_src_set_format(basesrc, GST_FORMAT_BUFFERS);
+    gst_base_src_set_format(basesrc, GST_FORMAT_TIME);
+    gst_base_src_set_do_timestamp(basesrc, TRUE);
 }
 
 static void p1_display_stream_src_dispose(GObject* gobject)
@@ -176,7 +177,11 @@ static void p1_display_stream_src_frame_callback(
     GST_OBJECT_LOCK(self);
 
     if (status == kCGDisplayStreamFrameStatusFrameComplete) {
+        GstBufferFlags flags = GST_BUFFER_FLAG_LIVE | GST_BUFFER_FLAG_DROPPABLE;
+
         if (self->buffer) {
+            flags &= GST_BUFFER_FLAG_DISCONT;
+
             if (gst_buffer_get_iosurface(self->buffer) != frameSurface) {
                 gst_buffer_unref(self->buffer);
                 self->buffer = NULL;
@@ -186,6 +191,9 @@ static void p1_display_stream_src_frame_callback(
         if (!self->buffer) {
             self->buffer = gst_buffer_new_iosurface(frameSurface, 0);
         }
+
+        // FIXME: use displayTime somehow?
+        GST_BUFFER_FLAGS(self->buffer) = flags;
 
         g_cond_broadcast(&self->cond);
     }

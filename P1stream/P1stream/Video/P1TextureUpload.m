@@ -201,8 +201,6 @@ static GstFlowReturn p1_texture_upload_transform(
     glBindTexture(GL_TEXTURE_RECTANGLE, meta->name);
 
     // Try for an IOSurface buffer.
-    // FIXME: we can just add the meta to the existing buffer. But we need to
-    // trigger in-place mode in GstBaseTransform.
     IOSurfaceRef surface = gst_buffer_get_iosurface(inbuf);
     if (surface != NULL) {
         // Check if the texture is already linked to this IOSurface.
