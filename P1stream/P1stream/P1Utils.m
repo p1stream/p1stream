@@ -109,20 +109,6 @@ void p1_build_shader_program(GLuint program, NSString *resource)
 }
 
 
-// Strip off all metas.
-static void gst_query_strip_metas(GstQuery *query)
-{
-    guint n_metas = gst_query_get_n_allocation_metas(query);
-    while (n_metas--) {
-        gst_query_remove_nth_allocation_meta(query, n_metas);
-    }
-}
-
-// Strip of all allocators.
-static void gst_query_strip_allocation_params(GstQuery *query)
-{
-}
-
 // Decide allocation for texture elements.
 gboolean p1_decide_texture_allocation(GstQuery *query)
 {
