@@ -2,13 +2,17 @@
 #import "P1TexturePool.h"
 
 static GQuark gl_context_quark = NULL;
+static GQuark cl_context_quark = NULL;
 static GQuark context_quark = NULL;
+
 
 void p1_utils_static_init()
 {
     gl_context_quark = g_quark_from_static_string("gl_context");
+    cl_context_quark = g_quark_from_static_string("cl_context");
     context_quark = g_quark_from_static_string("context");
 }
+
 
 GstQuery *gst_query_new_gl_context()
 {
@@ -27,7 +31,7 @@ P1GLContext *gst_query_get_gl_context(GstQuery *query)
     if (val == NULL)
         return NULL;
 
-    return g_value_get_object(val);
+    return P1_GL_CONTEXT(g_value_get_object(val));
 }
 
 gboolean gst_query_set_gl_context(GstQuery *query, P1GLContext *context)
@@ -38,11 +42,47 @@ gboolean gst_query_set_gl_context(GstQuery *query, P1GLContext *context)
 
     GValue val = G_VALUE_INIT;
     g_value_init(&val, G_TYPE_OBJECT);
-    g_value_set_object(&val, context);
+    g_value_set_object(&val, G_OBJECT(context));
     gst_structure_id_take_value(structure, context_quark, &val);
 
     return TRUE;
 }
+
+
+GstQuery *gst_query_new_cl_context()
+{
+    GstStructure *structure = gst_structure_new_id(cl_context_quark,
+       context_quark, G_TYPE_OBJECT, NULL, NULL);
+    return gst_query_new_custom(GST_QUERY_CL_CONTEXT, structure);
+}
+
+P1CLContext *gst_query_get_cl_context(GstQuery *query)
+{
+    const GstStructure *structure = gst_query_get_structure(query);
+    if (structure == NULL)
+        return NULL;
+
+    const GValue *val = gst_structure_id_get_value(structure, context_quark);
+    if (val == NULL)
+        return NULL;
+
+    return P1_CL_CONTEXT(g_value_get_object(val));
+}
+
+gboolean gst_query_set_cl_context(GstQuery *query, P1CLContext *context)
+{
+    GstStructure *structure = gst_query_writable_structure(query);
+    if (structure == NULL)
+        return NULL;
+
+    GValue val = G_VALUE_INIT;
+    g_value_init(&val, G_TYPE_OBJECT);
+    g_value_set_object(&val, G_OBJECT(context));
+    gst_structure_id_take_value(structure, context_quark, &val);
+
+    return TRUE;
+}
+
 
 // Compile a shader from a resource.
 GLuint p1_build_shader(GLuint type, NSString *resource, NSString *ext)

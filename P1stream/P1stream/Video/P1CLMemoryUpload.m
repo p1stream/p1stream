@@ -1,13 +1,18 @@
 #import "P1CLMemoryUpload.h"
-#import "P1TexturePool.h"
-#import "P1TextureMeta.h"
+//#import "P1CLMemoryPool.h" // FIXME
+#import "P1CLMemoryMeta.h"
 #import "P1IOSurfaceBuffer.h"
 
 
 G_DEFINE_TYPE(P1CLMemoryUpload, p1_cl_memory_upload, GST_TYPE_BASE_TRANSFORM)
 static GstBaseTransformClass *parent_class = NULL;
 
-static void p1_cl_memory_upload_src_dispose(GObject *gobject);
+static void p1_cl_memory_upload_dispose(
+    GObject *gobject);
+static gboolean p1_cl_memory_upload_stop(
+    GstBaseTransform *trans);
+static void p1_cl_memory_upload_set_context(
+    P1CLMemoryUpload *self, P1CLContext *context);
 static GstCaps *p1_cl_memory_upload_transform_caps(
     GstBaseTransform *trans, GstPadDirection direction, GstCaps *caps, GstCaps *filter);
 static gboolean p1_cl_memory_upload_set_caps(
@@ -41,6 +46,7 @@ static void p1_cl_memory_upload_class_init(P1CLMemoryUploadClass *klass)
     parent_class = g_type_class_ref(GST_TYPE_BASE_TRANSFORM);
 
     GstBaseTransformClass *basetransform_class = GST_BASE_TRANSFORM_CLASS(klass);
+    basetransform_class->stop              = p1_cl_memory_upload_stop;
     basetransform_class->transform_caps    = p1_cl_memory_upload_transform_caps;
     basetransform_class->set_caps          = p1_cl_memory_upload_set_caps;
     basetransform_class->decide_allocation = p1_cl_memory_upload_decide_allocation;
@@ -50,10 +56,13 @@ static void p1_cl_memory_upload_class_init(P1CLMemoryUploadClass *klass)
     GstElementClass *element_class = GST_ELEMENT_CLASS(klass);
     gst_element_class_add_pad_template(element_class, gst_static_pad_template_get(&sink_template));
     gst_element_class_add_pad_template(element_class, gst_static_pad_template_get(&src_template));
-    gst_element_class_set_static_metadata(element_class, "P1stream texture upload",
+    gst_element_class_set_static_metadata(element_class, "P1stream OpenCL upload",
                                            "Filter/Video",
-                                           "Uploads a frame as a texture to an OpenGL context",
+                                           "Uploads a buffer to OpenCL memory",
                                            "Stéphan Kochen <stephan@kochen.nl>");
+
+    GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+    gobject_class->dispose = p1_cl_memory_upload_dispose;
 }
 
 static void p1_cl_memory_upload_init(P1CLMemoryUpload *self)
@@ -62,35 +71,76 @@ static void p1_cl_memory_upload_init(P1CLMemoryUpload *self)
     gst_base_transform_set_qos_enabled(basetransform, TRUE);
 }
 
+static void p1_cl_memory_upload_dispose(GObject *gobject)
+{
+    P1CLMemoryUpload *self = P1_CL_MEMORY_UPLOAD(gobject);
+
+    p1_cl_memory_upload_set_context(self, NULL);
+
+    G_OBJECT_CLASS(parent_class)->dispose(gobject);
+}
+
+static gboolean p1_cl_memory_upload_stop(GstBaseTransform *trans)
+{
+    P1CLMemoryUpload *self = P1_CL_MEMORY_UPLOAD(trans);
+
+    p1_cl_memory_upload_set_context(self, NULL);
+
+    return TRUE;
+}
+
+static void p1_cl_memory_upload_set_context(P1CLMemoryUpload *self, P1CLContext *context)
+{
+    if (context == self->context)
+        return;
+
+    if (self->context != NULL) {
+        g_object_unref(self->context);
+        self->context = NULL;
+    }
+
+    if (context != NULL) {
+        GST_DEBUG_OBJECT(self, "setting context to %p", context);
+        self->context = context;
+    }
+}
+
 static GstCaps *p1_cl_memory_upload_transform_caps(
     GstBaseTransform *trans, GstPadDirection direction, GstCaps *caps, GstCaps *filter)
 {
-    GstCaps *out = gst_caps_copy(caps);
-    guint size = gst_caps_get_size(out);
-    for (guint i = 0; i < size; i++) {
-        GstStructure *cap = gst_caps_get_structure(out, i);
-        if (direction == GST_PAD_SINK) {
-            gst_structure_set_name(cap, "video/x-gl-texture");
-            gst_structure_remove_field(cap, "format");
-        }
-        else {
-            GValue bgra_value = G_VALUE_INIT;
-            g_value_init(&bgra_value, G_TYPE_STRING);
-            g_value_set_static_string(&bgra_value, "BGRA");
-            gst_structure_set_name(cap, "video/x-raw");
-            gst_structure_take_value(cap, "format", &bgra_value);
-        }
-    }
-    return out;
+    // FIXME
+    return NULL;
 }
 
 static gboolean p1_cl_memory_upload_set_caps(
     GstBaseTransform *trans, GstCaps *incaps, GstCaps *outcaps)
 {
-    P1CLMemoryUpload *self = P1_TEXTURE_UPLOAD(trans);
+    P1CLMemoryUpload *self = P1_CL_MEMORY_UPLOAD(trans);
+    GstStructure *structure = gst_caps_get_structure(outcaps, 0);
 
-    GstStructure *structure = gst_caps_get_structure(incaps, 0);
-    // FIXME
+    // Determine the context to use
+    // FIXME: Use GL context from caps to create a shared context
+    GstQuery *query = gst_query_new_cl_context();
+    gst_pad_peer_query(GST_BASE_TRANSFORM(self)->srcpad, query);
+    P1CLContext *context = gst_query_get_cl_context(query);
+    if (context != NULL) {
+        if (self->context == NULL) {
+            p1_cl_memory_upload_set_context(self, g_object_ref(context));
+        }
+        else if (context != self->context) {
+            GST_ERROR_OBJECT(self, "downstream tried to change context mid-stream");
+            return FALSE;
+        }
+    }
+    else if (self->context == NULL) {
+        p1_cl_memory_upload_set_context(self, p1_cl_context_new());
+    }
+
+    // Add the context to the downstream caps
+    GValue context_value = G_VALUE_INIT;
+    g_value_init(&context_value, G_TYPE_OBJECT);
+    g_value_set_object(&context_value, self->context);
+    gst_structure_take_value(structure, "context", &context_value);
 
     return TRUE;
 }
@@ -98,58 +148,58 @@ static gboolean p1_cl_memory_upload_set_caps(
 static gboolean p1_cl_memory_upload_decide_allocation(
     GstBaseTransform *trans, GstQuery *query)
 {
-    P1TexturePool *pool = NULL;
-    guint size = 1, min = 1, max = 1;
+    guint i, num;
 
-    // Strip of all metas.
-    guint n_metas = gst_query_get_n_allocation_metas(query);
-    while (n_metas--) {
-        gst_query_remove_nth_allocation_meta(query, n_metas);
+    // Strip metas and allocation params. We don't use these.
+    num = gst_query_get_n_allocation_metas(query);
+    for (i = 0; i < num; i++) {
+        gst_query_remove_nth_allocation_meta(query, i);
+    }
+    num = gst_query_get_n_allocation_params(query);
+    for (i = 0; i < num; i++) {
+        gst_query_set_nth_allocation_param(query, i, NULL, NULL);
     }
 
-    // Strip of all allocators.
-    guint n_params = gst_query_get_n_allocation_params(query);
-    while (n_params--) {
-        gst_query_set_nth_allocation_param(query, n_params, NULL, NULL);
-    }
-
-    // Keep only texture pools, and select the first in the list.
-    GstBufferPool *i_pool;
-    guint i_size, i_min, i_max;
-    guint n_pools = gst_query_get_n_allocation_pools(query);
-    while (n_pools--) {
-        gst_query_parse_nth_allocation_pool(query, n_pools, &i_pool, &i_size, &i_min, &i_max);
-        if (P1_IS_TEXTURE_POOL(i_pool)) {
-            pool = P1_TEXTURE_POOL_CAST(i_pool);
-            size = i_size;
-            min = i_min;
-            max = i_max;
+    // Keep only cl_mem pools, and select the first in the list.
+    GstBufferPool *pool = NULL;
+    guint size, min, max;
+    num = gst_query_get_n_allocation_pools(query);
+    // FIXME: implement pool
+#if 1
+    size = min = max = 0;
+#else
+    for (i = 0; i < num; i++) {
+        gst_query_parse_nth_allocation_pool(query, i, &pool, &size, &min, &max);
+        if (P1_IS_CL_MEMORY_POOL(pool))
             break;
-        }
-        gst_object_unref(i_pool);
+
+        gst_object_unref(pool);
+        pool = NULL;
     }
 
-    // No texture pool, create our own (with an off-screen context).
+    // No texture pool, create our own.
     if (pool == NULL) {
-        GST_DEBUG_OBJECT(trans, "allocating off-screen context");
-        pool = p1_texture_pool_new(NULL);
+        pool = GST_BUFFER_POOL_CAST(p1_cl_memory_pool_new());
         g_return_val_if_fail(pool != NULL, FALSE);
+        size = 1;
+        min = max = 0;
     }
 
+    // Extract caps, which we need to set on the pool config
     GstCaps *outcaps;
     gst_query_parse_allocation(query, &outcaps, NULL);
 
-    GstAllocationParams params;
-    GstStructure *config = gst_buffer_pool_get_config(GST_BUFFER_POOL(pool));
+    // Build the pool config
+    GstStructure *config = gst_buffer_pool_get_config(pool);
     gst_buffer_pool_config_set_params(config, outcaps, size, min, max);
-    gst_buffer_pool_config_set_allocator(config, NULL, &params);
-    gst_buffer_pool_set_config(GST_BUFFER_POOL(pool), config);
+    gst_buffer_pool_set_config(pool, config);
+#endif
 
     // Fix the pool selection.
-    if (gst_query_get_n_allocation_pools(query) == 0)
-        gst_query_add_allocation_pool(query, GST_BUFFER_POOL_CAST(pool), size, min, max);
+    if (num == 0)
+        gst_query_add_allocation_pool(query, pool, size, min, max);
     else
-        gst_query_set_nth_allocation_pool(query, 0, GST_BUFFER_POOL_CAST(pool), size, min, max);
+        gst_query_set_nth_allocation_pool(query, 0, pool, size, min, max);
     gst_object_unref(pool);
 
     return TRUE;
@@ -158,9 +208,6 @@ static gboolean p1_cl_memory_upload_decide_allocation(
 static GstFlowReturn p1_cl_memory_upload_transform(
     GstBaseTransform *trans, GstBuffer *inbuf, GstBuffer *outbuf)
 {
-    P1CLMemoryUpload *self = P1_TEXTURE_UPLOAD(trans);
-
     // FIXME
-
-    return GST_FLOW_OK;
+    return GST_FLOW_NOT_SUPPORTED;
 }

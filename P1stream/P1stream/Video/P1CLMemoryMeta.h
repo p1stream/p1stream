@@ -22,4 +22,4 @@ const GstMetaInfo *p1_cl_memory_meta_get_info();
 #define gst_buffer_add_cl_memory_meta(b, ctx) \
     ((P1CLMemoryMeta *)gst_buffer_add_meta((b), P1_FRAME_BUFFER_META_INFO, ctx))
 
-GstBuffer *gst_buffer_new_cl_memory(P1CLContext *context);
+GstBuffer *gst_buffer_new_cl_memory(P1CLContext *context, cl_mem ptr);

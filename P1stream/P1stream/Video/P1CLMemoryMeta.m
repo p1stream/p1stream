@@ -12,23 +12,13 @@ GType p1_cl_memory_meta_api_get_type()
     return type;
 }
 
-static gboolean p1_cl_memory_meta_init(GstMeta *meta, gpointer data, GstBuffer *buffer)
-{
-    P1CLMemoryMeta *self = (P1CLMemoryMeta *)meta;
-    self->context = g_object_ref(data);
-    self->ptr = NULL;
-    return TRUE;
-}
-
 static void p1_cl_memory_meta_free(GstMeta *meta, GstBuffer *buffer)
 {
     P1CLMemoryMeta *self = (P1CLMemoryMeta *)meta;
 
-    if (self->ptr != NULL) {
-        p1_cl_context_lock(self->context);
-        clReleaseMemObject(self->ptr);
-        p1_cl_context_unlock(self->context);
-    }
+    p1_cl_context_lock(self->context);
+    clReleaseMemObject(self->ptr);
+    p1_cl_context_unlock(self->context);
 
     g_object_unref(self->context);
 }
@@ -39,7 +29,7 @@ static gboolean p1_cl_memory_meta_transform(
     P1CLMemoryMeta *self = (P1CLMemoryMeta *)meta;
 
     P1CLMemoryMeta *copy = gst_buffer_add_cl_memory_meta(transbuf, self->context);
-    // FIXME: Copy state? No expectations here, currently.
+    GST_FIXME("copy not implemented for cl_mem");
 
     return copy != NULL;
 }
@@ -52,7 +42,7 @@ const GstMetaInfo *p1_cl_memory_meta_get_info()
             P1_FRAME_BUFFER_META_API_TYPE,
             "P1CLMemoryMeta",
             sizeof(P1CLMemoryMeta),
-            p1_cl_memory_meta_init,
+            NULL,
             p1_cl_memory_meta_free,
             p1_cl_memory_meta_transform);
         g_once_init_leave(&info, _info);
@@ -60,10 +50,17 @@ const GstMetaInfo *p1_cl_memory_meta_get_info()
     return info;
 }
 
-GstBuffer *gst_buffer_new_cl_memory(P1CLContext *context)
+GstBuffer *gst_buffer_new_cl_memory(P1CLContext *context, cl_mem ptr)
 {
     GstBuffer *buf = gst_buffer_new();
+
     P1CLMemoryMeta *meta = gst_buffer_add_cl_memory_meta(buf, context);
     g_return_val_if_fail(meta != NULL, NULL);
+
+    p1_cl_context_lock(context);
+    meta->context = g_object_ref(context);
+    meta->ptr = clRetainMemObject(ptr);
+    p1_cl_context_unlock(context);
+
     return buf;
 }
