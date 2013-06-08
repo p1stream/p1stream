@@ -40,12 +40,21 @@ gboolean gst_query_set_gl_context(GstQuery *query, P1GLContext *context)
     if (structure == NULL)
         return NULL;
 
-    GValue val = G_VALUE_INIT;
-    g_value_init(&val, G_TYPE_OBJECT);
-    g_value_set_object(&val, G_OBJECT(context));
-    gst_structure_id_take_value(structure, context_quark, &val);
-
-    return TRUE;
+    P1GLContext *current = gst_query_get_gl_context(query);
+    if (current == context) {
+        return TRUE;
+    }
+    else if (current != NULL) {
+        GST_ERROR("multiple contexts in response to query");
+        return FALSE;
+    }
+    else {
+        GValue val = G_VALUE_INIT;
+        g_value_init(&val, G_TYPE_OBJECT);
+        g_value_set_object(&val, G_OBJECT(context));
+        gst_structure_id_take_value(structure, context_quark, &val);
+        return TRUE;
+    }
 }
 
 
@@ -75,12 +84,21 @@ gboolean gst_query_set_cl_context(GstQuery *query, P1CLContext *context)
     if (structure == NULL)
         return NULL;
 
-    GValue val = G_VALUE_INIT;
-    g_value_init(&val, G_TYPE_OBJECT);
-    g_value_set_object(&val, G_OBJECT(context));
-    gst_structure_id_take_value(structure, context_quark, &val);
-
-    return TRUE;
+    P1CLContext *current = gst_query_get_cl_context(query);
+    if (current == context) {
+        return TRUE;
+    }
+    else if (current != NULL) {
+        GST_ERROR("multiple contexts in response to query");
+        return FALSE;
+    }
+    else {
+        GValue val = G_VALUE_INIT;
+        g_value_init(&val, G_TYPE_OBJECT);
+        g_value_set_object(&val, G_OBJECT(context));
+        gst_structure_id_take_value(structure, context_quark, &val);
+        return TRUE;
+    }
 }
 
 

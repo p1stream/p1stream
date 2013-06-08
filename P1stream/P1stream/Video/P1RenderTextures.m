@@ -319,10 +319,23 @@ static gboolean p1_render_textures_src_event(
 static gboolean p1_render_textures_sink_query(
     GstCollectPads *collect, GstCollectData *data, GstQuery *query, gpointer user_data)
 {
+    P1RenderTextures *self = (P1RenderTextures *)user_data;
+    gboolean res = FALSE;
+
     switch (GST_QUERY_TYPE(query)) {
+        case GST_QUERY_GL_CONTEXT: {
+            // Respond with the active context or forward.
+            if (self->context)
+                res = gst_query_set_gl_context(query, self->context);
+            else
+                res = gst_collect_pads_query_default(collect, data, query, FALSE);
+            break;
+        }
         default:
-            return gst_collect_pads_query_default(collect, data, query, FALSE);
+            res = gst_collect_pads_query_default(collect, data, query, FALSE);
     }
+
+    return res;
 }
 
 static gboolean p1_render_textures_sink_event(

@@ -174,11 +174,16 @@ static gboolean p1_texture_download_set_caps(
 static gboolean p1_texture_download_query(
     GstBaseTransform *trans, GstPadDirection direction, GstQuery *query)
 {
+    P1TextureDownload *self = P1_TEXTURE_DOWNLOAD(trans);
     gboolean res = FALSE;
 
     switch ((int)GST_QUERY_TYPE(query)) {
-        case GST_QUERY_GL_CONTEXT:
+        case GST_QUERY_GL_CONTEXT: {
+            // Respond with the active context.
+            if (self->context)
+                res = gst_query_set_gl_context(query, self->context);
             break; // Don't forward
+        }
         default:
             res = parent_class->query(trans, direction, query);
     }

@@ -60,14 +60,7 @@ static gboolean p1_preview_sink_query(GstBaseSink *basesink, GstQuery *query)
 
         switch ((int)GST_QUERY_TYPE(query)) {
             case GST_QUERY_GL_CONTEXT: {
-                P1GLContext *actual = view.gobjContext;
-                P1GLContext *current = gst_query_get_gl_context(query);
-                if (current == actual)
-                    res = TRUE;
-                else if (current == NULL)
-                    res = gst_query_set_gl_context(query, actual);
-                else
-                    GST_ERROR_OBJECT(self, "multiple contexts in response to query");
+                res = gst_query_set_gl_context(query, view.gobjContext);
                 break;
             }
             default:
