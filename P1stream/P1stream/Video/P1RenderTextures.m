@@ -322,7 +322,7 @@ static gboolean p1_render_textures_sink_query(
     P1RenderTextures *self = (P1RenderTextures *)user_data;
     gboolean res = FALSE;
 
-    switch (GST_QUERY_TYPE(query)) {
+    switch ((int)GST_QUERY_TYPE(query)) {
         case GST_QUERY_GL_CONTEXT: {
             // Respond with the active context or forward.
             if (self->context)
