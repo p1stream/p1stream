@@ -167,26 +167,36 @@ void p1_build_shader_program(GLuint program, NSString *resource)
 }
 
 
+// Strip allocation metas from a query.
+void gst_query_strip_allocation_metas(GstQuery *query)
+{
+    guint num = gst_query_get_n_allocation_metas(query);
+    for (guint i = 0; i < num; i++) {
+        gst_query_remove_nth_allocation_meta(query, i);
+    }
+}
+
+// Strip allocation params from a query.
+void gst_query_strip_allocation_params(GstQuery *query)
+{
+    guint num = gst_query_get_n_allocation_params(query);
+    for (guint i = 0; i < num; i++) {
+        gst_query_set_nth_allocation_param(query, i, NULL, NULL);
+    }
+}
+
+
 // Decide allocation for texture elements.
 gboolean p1_decide_texture_allocation(GstQuery *query)
 {
-    guint i, num;
-
-    // Strip metas and allocation params. We don't use these.
-    num = gst_query_get_n_allocation_metas(query);
-    for (i = 0; i < num; i++) {
-        gst_query_remove_nth_allocation_meta(query, i);
-    }
-    num = gst_query_get_n_allocation_params(query);
-    for (i = 0; i < num; i++) {
-        gst_query_set_nth_allocation_param(query, i, NULL, NULL);
-    }
+    gst_query_strip_allocation_metas(query);
+    gst_query_strip_allocation_params(query);
 
     // Keep only texture pools, and select the first in the list.
     GstBufferPool *pool = NULL;
     guint size, min, max;
-    num = gst_query_get_n_allocation_pools(query);
-    for (i = 0; i < num; i++) {
+    guint num = gst_query_get_n_allocation_pools(query);
+    for (guint i = 0; i < num; i++) {
         gst_query_parse_nth_allocation_pool(query, i, &pool, &size, &min, &max);
         if (P1_IS_TEXTURE_POOL(pool))
             break;

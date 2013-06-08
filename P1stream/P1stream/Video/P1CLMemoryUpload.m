@@ -148,27 +148,18 @@ static gboolean p1_cl_memory_upload_set_caps(
 static gboolean p1_cl_memory_upload_decide_allocation(
     GstBaseTransform *trans, GstQuery *query)
 {
-    guint i, num;
-
-    // Strip metas and allocation params. We don't use these.
-    num = gst_query_get_n_allocation_metas(query);
-    for (i = 0; i < num; i++) {
-        gst_query_remove_nth_allocation_meta(query, i);
-    }
-    num = gst_query_get_n_allocation_params(query);
-    for (i = 0; i < num; i++) {
-        gst_query_set_nth_allocation_param(query, i, NULL, NULL);
-    }
+    gst_query_strip_allocation_metas(query);
+    gst_query_strip_allocation_params(query);
 
     // Keep only cl_mem pools, and select the first in the list.
     GstBufferPool *pool = NULL;
     guint size, min, max;
-    num = gst_query_get_n_allocation_pools(query);
+    guint num = gst_query_get_n_allocation_pools(query);
     // FIXME: implement pool
 #if 1
     size = min = max = 0;
 #else
-    for (i = 0; i < num; i++) {
+    for (guint i = 0; i < num; i++) {
         gst_query_parse_nth_allocation_pool(query, i, &pool, &size, &min, &max);
         if (P1_IS_CL_MEMORY_POOL(pool))
             break;

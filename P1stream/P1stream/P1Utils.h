@@ -19,4 +19,7 @@ gboolean gst_query_set_cl_context(GstQuery *query, P1CLContext *context);
 GLuint p1_build_shader(GLuint type, NSString *resource, NSString *ext);
 void p1_build_shader_program(GLuint program, NSString *resource);
 
+void gst_query_strip_allocation_metas(GstQuery *query);
+void gst_query_strip_allocation_params(GstQuery *query);
+
 gboolean p1_decide_texture_allocation(GstQuery *query);
