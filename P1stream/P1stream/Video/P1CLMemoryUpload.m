@@ -115,34 +115,60 @@ static GstCaps *p1_cl_memory_upload_transform_caps(
 static gboolean p1_cl_memory_upload_set_caps(
     GstBaseTransform *trans, GstCaps *incaps, GstCaps *outcaps)
 {
+    gboolean res = TRUE;
     P1CLMemoryUpload *self = P1_CL_MEMORY_UPLOAD(trans);
     GstStructure *structure = gst_caps_get_structure(outcaps, 0);
+    const gchar *caps_name = gst_structure_get_name(structure);
 
     // Determine the context to use
-    // FIXME: Use GL context from caps to create a shared context
-    GstQuery *query = gst_query_new_cl_context();
-    gst_pad_peer_query(GST_BASE_TRANSFORM(self)->srcpad, query);
-    P1CLContext *context = gst_query_get_cl_context(query);
-    if (context != NULL) {
+    if (strcmp(caps_name, "video/x-gl-texture") == 0) {
+        // Upstream is GL, get the GL context
+        const GValue *context_value = gst_structure_get_value(structure, "context");
+        g_return_val_if_fail(context_value != NULL, FALSE);
+        P1GLContext *gl_context = g_value_get_object(context_value);
+        g_return_val_if_fail(gl_context != NULL, FALSE);
+
+        // Ensure we have a context shared with the GL context
         if (self->context == NULL) {
-            p1_cl_memory_upload_set_context(self, g_object_ref(context));
+            P1CLContext *context = p1_cl_context_new_shared_with_gl(gl_context);
+            p1_cl_memory_upload_set_context(self, context);
         }
-        else if (context != self->context) {
-            GST_ERROR_OBJECT(self, "downstream tried to change context mid-stream");
-            return FALSE;
+        else if (p1_cl_context_get_parent(self->context) != gl_context) {
+            GST_ERROR_OBJECT(self, "upstream tried to change context mid-stream");
+            res = FALSE;
         }
     }
-    else if (self->context == NULL) {
-        p1_cl_memory_upload_set_context(self, p1_cl_context_new());
+    else {
+        // Query downstream for an existing context
+        GstQuery *query = gst_query_new_cl_context();
+        gst_pad_peer_query(GST_BASE_TRANSFORM(self)->srcpad, query);
+        P1CLContext *context = gst_query_get_cl_context(query);
+
+        if (context != NULL) {
+            if (self->context == NULL) {
+                p1_cl_memory_upload_set_context(self, g_object_ref(context));
+            }
+            else if (context != self->context) {
+                GST_ERROR_OBJECT(self, "upstream tried to change context mid-stream");
+                res = FALSE;
+            }
+        }
+        else if (self->context == NULL) {
+            p1_cl_memory_upload_set_context(self, p1_cl_context_new());
+        }
+
+        gst_query_unref(query);
     }
 
     // Add the context to the downstream caps
-    GValue context_value = G_VALUE_INIT;
-    g_value_init(&context_value, G_TYPE_OBJECT);
-    g_value_set_object(&context_value, self->context);
-    gst_structure_take_value(structure, "context", &context_value);
+    if (res != FALSE) {
+        GValue context_value = G_VALUE_INIT;
+        g_value_init(&context_value, G_TYPE_OBJECT);
+        g_value_set_object(&context_value, self->context);
+        gst_structure_take_value(structure, "context", &context_value);
+    }
 
-    return TRUE;
+    return res;
 }
 
 static gboolean p1_cl_memory_upload_decide_allocation(

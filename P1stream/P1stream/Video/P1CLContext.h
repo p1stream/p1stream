@@ -26,6 +26,8 @@ struct _P1CLContext
     /*< private >*/
     cl_context context;
     GMutex lock;
+
+    P1GLContext *parent;
 };
 
 struct _P1CLContextClass
@@ -44,6 +46,9 @@ GType p1_cl_context_get_type();
 
 #define p1_cl_context_get_raw(self) \
     (P1_CL_CONTEXT_CAST(self)->context)
+
+#define p1_cl_context_get_parent(self) \
+    (P1_CL_CONTEXT_CAST(self)->parent)
 
 P1CLContext *p1_cl_context_new();
 P1CLContext *p1_cl_context_new_shared_with_gl(P1GLContext *other);

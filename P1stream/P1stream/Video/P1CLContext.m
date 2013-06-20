@@ -21,6 +21,8 @@ static void p1_cl_context_init(P1CLContext *self)
 {
     self->context = NULL;
     g_mutex_init(&self->lock);
+
+    self->parent = NULL;
 }
 
 static void p1_cl_context_dispose(GObject *gobject)
@@ -30,6 +32,11 @@ static void p1_cl_context_dispose(GObject *gobject)
     if (self->context) {
         clReleaseContext(self->context);
         self->context = NULL;
+    }
+
+    if (self->parent) {
+        g_object_unref(self->parent);
+        self->parent = NULL;
     }
 
     parent_class->dispose(gobject);
@@ -72,6 +79,7 @@ P1CLContext *p1_cl_context_new_shared_with_gl(P1GLContext *other)
 
     P1CLContext *obj = g_object_new(P1_TYPE_CL_CONTEXT, NULL);
     obj->context = context;
+    obj->parent = g_object_ref(other);
     return obj;
 }
 
