@@ -449,6 +449,8 @@ static GstFlowReturn p1_render_textures_collected(
         GstBufferPool *pool = NULL;
         gst_query_parse_nth_allocation_pool(query, 0, &pool, NULL, NULL, NULL);
         p1_render_textures_set_pool(self, pool);
+
+        gst_query_unref(query);
     }
 
     // Setup output

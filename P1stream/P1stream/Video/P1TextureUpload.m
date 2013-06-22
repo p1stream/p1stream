@@ -149,6 +149,7 @@ static GstCaps *p1_texture_upload_transform_caps(
 static gboolean p1_texture_upload_set_caps(
     GstBaseTransform *trans, GstCaps *incaps, GstCaps *outcaps)
 {
+    gboolean res = TRUE;
     P1TextureUpload *self = P1_TEXTURE_UPLOAD(trans);
     GstStructure *structure = gst_caps_get_structure(outcaps, 0);
 
@@ -156,32 +157,37 @@ static gboolean p1_texture_upload_set_caps(
     GstQuery *query = gst_query_new_gl_context();
     gst_pad_peer_query(GST_BASE_TRANSFORM(self)->srcpad, query);
     P1GLContext *context = gst_query_get_gl_context(query);
+
     if (context != NULL) {
         if (self->context == NULL) {
             p1_texture_upload_set_context(self, g_object_ref(context));
         }
         else if (context != self->context) {
             GST_ERROR_OBJECT(self, "downstream tried to change context mid-stream");
-            return FALSE;
+            res = FALSE;
         }
     }
     else if (self->context == NULL) {
         p1_texture_upload_set_context(self, p1_gl_context_new());
     }
 
+    gst_query_unref(query);
+
     // Add the context to the downstream caps
-    GValue context_value = G_VALUE_INIT;
-    g_value_init(&context_value, G_TYPE_OBJECT);
-    g_value_set_object(&context_value, self->context);
-    gst_structure_take_value(structure, "context", &context_value);
+    if (res) {
+        GValue context_value = G_VALUE_INIT;
+        g_value_init(&context_value, G_TYPE_OBJECT);
+        g_value_set_object(&context_value, self->context);
+        gst_structure_take_value(structure, "context", &context_value);
+    }
 
     // Take width and height from the caps
     if (!gst_structure_get_int(structure, "width",  &self->width))
-        return FALSE;
+        res = FALSE;
     if (!gst_structure_get_int(structure, "height", &self->height))
-        return FALSE;
+        res = FALSE;
 
-    return TRUE;
+    return res;
 }
 
 static gboolean p1_texture_upload_decide_allocation(
