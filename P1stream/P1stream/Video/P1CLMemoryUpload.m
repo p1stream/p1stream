@@ -149,7 +149,7 @@ static gboolean p1_cl_memory_upload_set_caps(
                 p1_cl_memory_upload_set_context(self, g_object_ref(context));
             }
             else if (context != self->context) {
-                GST_ERROR_OBJECT(self, "upstream tried to change context mid-stream");
+                GST_ERROR_OBJECT(self, "downstream tried to change context mid-stream");
                 res = FALSE;
             }
         }
