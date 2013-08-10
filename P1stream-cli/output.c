@@ -5,6 +5,7 @@
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/gl3.h>
 #include <OpenCL/opencl.h>
+#include <x264.h>
 
 #include "output.h"
 
@@ -31,7 +32,8 @@ static struct {
     cl_mem out_mem;
     cl_kernel yuv_kernel;
 
-    void *out;
+    x264_t *enc;
+    x264_picture_t enc_pic;
 } state;
 
 static const char *simple_vertex_shader =
@@ -119,18 +121,19 @@ static const size_t yuv_work_size[] = {
     output_height / 2
 };
 
-static const size_t frame_rate_div = 2;
-static size_t frame_skip_counter;
+static const size_t in_fps = 60;
+static const size_t fps_div = 2;
+static const size_t out_fps = in_fps / fps_div;
+static size_t skip_counter;
+static size_t frame_counter;
 
 
 void p1_output_init()
 {
     CGLError cgl_err;
     cl_int cl_err;
+    int err;
     size_t size;
-
-    state.out = malloc(output_yuv_size);
-    assert(state.out != NULL);
 
     CGLPixelFormatObj pixel_format;
     const CGLPixelFormatAttribute attribs[] = {
@@ -144,6 +147,8 @@ void p1_output_init()
     cgl_err = CGLCreateContext(pixel_format, NULL, &state.gl);
     CGLReleasePixelFormat(pixel_format);
     assert(cgl_err == kCGLNoError);
+
+    CGLSetCurrentContext(state.gl);
 
     CGLShareGroupObj share_group = CGLGetShareGroup(state.gl);
     cl_context_properties props[] = {
@@ -160,7 +165,26 @@ void p1_output_init()
     state.clq = clCreateCommandQueue(state.cl, device_id, 0, NULL);
     assert(state.clq != NULL);
 
-    CGLSetCurrentContext(state.gl);
+    x264_param_t enc_params;
+    x264_param_default(&enc_params);
+    x264_param_default_preset(&enc_params, "veryfast", NULL);
+    enc_params.i_width = output_width;
+    enc_params.i_height = output_height;
+    enc_params.i_fps_num = out_fps;
+    enc_params.i_fps_den = 1;
+    enc_params.i_keyint_max = out_fps;
+    enc_params.i_bframe_pyramid = 0;
+    enc_params.b_intra_refresh = 1;
+    enc_params.rc.i_rc_method = X264_RC_ABR;
+    enc_params.rc.i_bitrate = 4096;
+    enc_params.b_repeat_headers = 1;
+    enc_params.b_annexb = 1;
+    x264_param_apply_fastfirstpass(&enc_params);
+    x264_param_apply_profile(&enc_params, "high");
+    state.enc = x264_encoder_open(&enc_params);
+
+    err = x264_picture_alloc(&state.enc_pic, X264_CSP_I420, output_width, output_height);
+    assert(err == 0);
 
     glGenVertexArrays(1, &state.vao);
     glGenBuffers(1, &state.vbo);
@@ -188,19 +212,6 @@ void p1_output_init()
     p1_output_build_program(state.program, simple_vertex_shader, simple_fragment_shader);
     state.tex_u = glGetUniformLocation(state.program, "u_Texture");
 
-    glViewport(0, 0, output_width, output_height);
-    glClearColor(0, 0, 0, 1);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_RECTANGLE, state.tex);
-    glUseProgram(state.program);
-    glUniform1i(state.tex_u, 0);
-    glBindVertexArray(state.vao);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, vbo_stride, 0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, vbo_stride, vbo_tex_coord_offset);
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    assert(glGetError() == GL_NO_ERROR);
-
     state.rbo_mem = clCreateFromGLRenderbuffer(state.cl, CL_MEM_READ_ONLY, state.rbo, NULL);
     assert(state.rbo_mem != NULL);
 
@@ -214,6 +225,20 @@ void p1_output_init()
     state.yuv_kernel = clCreateKernel(yuv_program, "yuv", NULL);
     assert(state.yuv_kernel != NULL);
     clReleaseProgram(yuv_program);
+
+    /* State init. This is only up here because we can. */
+    glViewport(0, 0, output_width, output_height);
+    glClearColor(0, 0, 0, 1);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_RECTANGLE, state.tex);
+    glUseProgram(state.program);
+    glUniform1i(state.tex_u, 0);
+    glBindVertexArray(state.vao);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, vbo_stride, 0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, vbo_stride, vbo_tex_coord_offset);
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    assert(glGetError() == GL_NO_ERROR);
 
     cl_err = clSetKernelArg(state.yuv_kernel, 0, sizeof(cl_mem), &state.rbo_mem);
     assert(cl_err == CL_SUCCESS);
@@ -241,14 +266,15 @@ static int p1_output_video_prep()
 {
     CGLSetCurrentContext(state.gl);
 
-    if (frame_skip_counter >= frame_rate_div)
-        frame_skip_counter = 0;
-    return frame_skip_counter++ == 0;
+    if (skip_counter >= fps_div)
+        skip_counter = 0;
+    return skip_counter++ == 0;
 }
 
 static void p1_output_video_do()
 {
     cl_int cl_err;
+    int err;
 
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -259,10 +285,17 @@ static void p1_output_video_do()
     assert(cl_err == CL_SUCCESS);
     cl_err = clEnqueueNDRangeKernel(state.clq, state.yuv_kernel, 2, NULL, yuv_work_size, NULL, 0, NULL, NULL);
     assert(cl_err == CL_SUCCESS);
-    cl_err = clEnqueueReadBuffer(state.clq, state.out_mem, CL_FALSE, 0, output_yuv_size, state.out, 0, NULL, NULL);
+    cl_err = clEnqueueReadBuffer(state.clq, state.out_mem, CL_FALSE, 0, output_yuv_size, state.enc_pic.img.plane[0], 0, NULL, NULL);
     assert(cl_err == CL_SUCCESS);
     cl_err = clFinish(state.clq);
     assert(cl_err == CL_SUCCESS);
+
+    x264_nal_t* nals;
+    int n_nals;
+    x264_picture_t out_pic;
+    state.enc_pic.i_pts = state.enc_pic.i_dts = frame_counter++;
+    err = x264_encoder_encode(state.enc, &nals, &n_nals, &state.enc_pic, &out_pic);
+    assert(err >= 0);
 }
 
 static GLuint p1_build_shader(GLuint type, const char *source)
