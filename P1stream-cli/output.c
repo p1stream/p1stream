@@ -8,9 +8,11 @@
 #include <x264.h>
 
 #include "output.h"
+#include "stream.h"
 
 static int p1_output_video_prep();
-static void p1_output_video_do();
+static void p1_output_video_yuv();
+static void p1_output_video_finish();
 static GLuint p1_build_shader(GLuint type, const char *source);
 static void p1_output_build_program(GLuint program, const char *vertexShader, const char *fragmentShader);
 
@@ -246,6 +248,33 @@ void p1_output_init()
     assert(cl_err == CL_SUCCESS);
 }
 
+static int p1_output_video_prep()
+{
+    CGLSetCurrentContext(state.gl);
+
+    if (skip_counter >= fps_div)
+        skip_counter = 0;
+    return skip_counter++ == 0;
+}
+
+void p1_output_video_idle()
+{
+    if (!p1_output_video_prep())
+        return;
+
+    p1_output_video_finish();
+}
+
+void p1_output_video_blank()
+{
+    if (!p1_output_video_prep())
+        return;
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    p1_output_video_yuv();
+}
+
 void p1_output_video_iosurface(IOSurfaceRef buffer)
 {
     if (!p1_output_video_prep())
@@ -259,27 +288,17 @@ void p1_output_video_iosurface(IOSurfaceRef buffer)
         GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, buffer, 0);
     assert(err == kCGLNoError);
 
-    p1_output_video_do();
-}
-
-static int p1_output_video_prep()
-{
-    CGLSetCurrentContext(state.gl);
-
-    if (skip_counter >= fps_div)
-        skip_counter = 0;
-    return skip_counter++ == 0;
-}
-
-static void p1_output_video_do()
-{
-    cl_int cl_err;
-    int err;
-
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glFinish();
     assert(glGetError() == GL_NO_ERROR);
+
+    p1_output_video_yuv();
+}
+
+static void p1_output_video_yuv()
+{
+    cl_int cl_err;
 
     cl_err = clEnqueueAcquireGLObjects(state.clq, 1, &state.rbo_mem, 0, NULL, NULL);
     assert(cl_err == CL_SUCCESS);
@@ -290,12 +309,34 @@ static void p1_output_video_do()
     cl_err = clFinish(state.clq);
     assert(cl_err == CL_SUCCESS);
 
-    x264_nal_t* nals;
-    int n_nals;
+    // Same code as idle frame applies.
+    p1_output_video_finish();
+}
+
+static void p1_output_video_finish()
+{
+    x264_nal_t *nals;
+    int len;
+    int ret;
+
+    if (frame_counter == 0) {
+        ret = x264_encoder_headers(state.enc, &nals, &len);
+        assert(ret >= 0);
+        p1_stream_video_config(nals, len);
+    }
+
     x264_picture_t out_pic;
-    state.enc_pic.i_pts = state.enc_pic.i_dts = frame_counter++;
-    err = x264_encoder_encode(state.enc, &nals, &n_nals, &state.enc_pic, &out_pic);
-    assert(err >= 0);
+    state.enc_pic.i_pts = state.enc_pic.i_dts = frame_counter * 1000 / out_fps;
+    ret = x264_encoder_encode(state.enc, &nals, &len, &state.enc_pic, &out_pic);
+    assert(ret >= 0);
+    if (len)
+        p1_stream_video(nals, len, &out_pic);
+
+    static int64_t last_in, last_out;
+    last_in = state.enc_pic.i_pts;
+    last_out = out_pic.i_pts;
+
+    frame_counter++;
 }
 
 static GLuint p1_build_shader(GLuint type, const char *source)
