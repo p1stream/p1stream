@@ -7,22 +7,26 @@
 
 #include "stream.h"
 
+static const size_t max_queue_len = 64;
+
 static struct {
     RTMP rtmp;
+    RTMPPacket q[max_queue_len]; // ring buffer
+    size_t q_start;
+    size_t q_len;
 
     mach_timebase_info_data_t timebase;
     uint64_t start;
 } state;
 
 static uint32_t p1_stream_format_time(int64_t time);
+static RTMPPacket *p1_stream_queue_slot(uint8_t packet_type, uint32_t time);
 
 
 void p1_stream_init(const char *c_url)
 {
     int res;
     RTMP * const r = &state.rtmp;
-
-    mach_timebase_info(&state.timebase);
 
     RTMP_Init(r);
 
@@ -39,6 +43,7 @@ void p1_stream_init(const char *c_url)
     res = RTMP_ConnectStream(r, 0);
     assert(res == TRUE);
 
+    mach_timebase_info(&state.timebase);
     state.start = mach_absolute_time();
 }
 
@@ -110,21 +115,18 @@ void p1_stream_video_config(x264_nal_t *nals, int len)
 
 void p1_stream_video(x264_nal_t *nals, int len, x264_picture_t *pic)
 {
-    RTMP * const r = &state.rtmp;
-    RTMPPacket * const pkt = &r->m_write;
     int err;
+    RTMP * const r = &state.rtmp;
+
+    uint32_t time = p1_stream_format_time(pic->i_dts);
+    RTMPPacket * const pkt = p1_stream_queue_slot(RTMP_PACKET_TYPE_VIDEO, time);
+    if (!pkt) return;
 
     uint32_t size = 0;
     for (int i = 0; i < len; i++)
         size += nals[i].i_payload;
 
     const uint32_t tag_size = size + 5;
-
-    pkt->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-    pkt->m_packetType = RTMP_PACKET_TYPE_VIDEO;
-    pkt->m_nChannel = 0x04;
-    pkt->m_nTimeStamp = p1_stream_format_time(pic->i_dts);
-    pkt->m_nInfoField2 = r->m_stream_id;
     pkt->m_nBodySize = tag_size;
 
     err = RTMPPacket_Alloc(pkt, tag_size);
@@ -137,9 +139,12 @@ void p1_stream_video(x264_nal_t *nals, int len, x264_picture_t *pic)
 
     memcpy(body + 5, nals[0].p_payload, size);
 
-    err = RTMP_SendPacket(r, pkt, FALSE);
-    RTMPPacket_Free(pkt);
-    assert(err == TRUE);
+    // Queue wants us to send immediately.
+    if (pkt == &r->m_write) {
+        err = RTMP_SendPacket(r, pkt, FALSE);
+        RTMPPacket_Free(pkt);
+        assert(err == TRUE);
+    }
 }
 
 void p1_stream_audio_config()
@@ -173,20 +178,17 @@ void p1_stream_audio_config()
     assert(err == TRUE);
 }
 
-void p1_stream_audio(AudioQueueBufferRef buf, int64_t time)
+void p1_stream_audio(AudioQueueBufferRef buf, int64_t mtime)
 {
-    RTMP * const r = &state.rtmp;
-    RTMPPacket * const pkt = &r->m_write;
     int err;
+    RTMP * const r = &state.rtmp;
+
+    uint32_t time = p1_stream_format_time(mtime);
+    RTMPPacket * const pkt = p1_stream_queue_slot(RTMP_PACKET_TYPE_AUDIO, time);
+    if (!pkt) return;
 
     const uint32_t size = buf->mAudioDataByteSize;
     const uint32_t tag_size = 2 + size;
-
-    pkt->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-    pkt->m_packetType = RTMP_PACKET_TYPE_AUDIO;
-    pkt->m_nChannel = 0x04;
-    pkt->m_nTimeStamp = p1_stream_format_time(time);
-    pkt->m_nInfoField2 = r->m_stream_id;
     pkt->m_nBodySize = tag_size;
 
     err = RTMPPacket_Alloc(pkt, tag_size);
@@ -198,9 +200,12 @@ void p1_stream_audio(AudioQueueBufferRef buf, int64_t time)
 
     memcpy(body + 2, buf->mAudioData, size);
 
-    err = RTMP_SendPacket(r, pkt, FALSE);
-    RTMPPacket_Free(pkt);
-    assert(err == TRUE);
+    // Queue wants us to send immediately.
+    if (pkt == &r->m_write) {
+        err = RTMP_SendPacket(r, pkt, FALSE);
+        RTMPPacket_Free(pkt);
+        assert(err == TRUE);
+    }
 }
 
 static uint32_t p1_stream_format_time(int64_t time) {
@@ -212,4 +217,59 @@ static uint32_t p1_stream_format_time(int64_t time) {
     if (time < 0) time = 0;
     // Wrap when we exceed 32-bits.
     return (uint32_t) (time & 0x7fffffff);
+}
+
+static RTMPPacket *p1_stream_queue_slot(uint8_t packet_type, uint32_t time)
+{
+    int err;
+    RTMP * const r = &state.rtmp;
+    RTMPPacket *pkt;
+
+    // Queue is empty, always queue the packet.
+    if (state.q_len == 0)
+        goto alloc;
+
+    // Already queuing packets of this type.
+    if (state.q[state.q_start].m_packetType == packet_type)
+        goto alloc;
+
+    // Dequeue all packets of other types that come before this one.
+    while (state.q_len) {
+        pkt = &state.q[state.q_start];
+        // FIXME: doesn't account for wrapping
+        if (pkt->m_nTimeStamp > time) break;
+
+        err = RTMP_SendPacket(r, pkt, FALSE);
+        RTMPPacket_Free(pkt);
+        assert(err == TRUE);
+
+        state.q_start = (state.q_start + 1) % max_queue_len;
+        state.q_len--;
+    }
+
+    // Queue is empty again, queue the packet.
+    if (state.q_len == 0)
+        goto alloc;
+
+    // Other types still waiting, so we can send this immediately.
+    pkt = &r->m_write;
+    goto prep;
+
+alloc:
+    if (state.q_len == max_queue_len) {
+        printf("A/V desync, dropping packet!\n");
+        return NULL;
+    }
+
+    size_t pos = (state.q_start + state.q_len++) % max_queue_len;
+    pkt = &state.q[pos];
+
+prep:
+    pkt->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
+    pkt->m_packetType = packet_type;
+    pkt->m_nChannel = 0x04;
+    pkt->m_nTimeStamp = time;
+    pkt->m_nInfoField2 = r->m_stream_id;
+
+    return pkt;
 }
