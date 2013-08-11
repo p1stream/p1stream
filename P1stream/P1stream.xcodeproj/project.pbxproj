@@ -16,9 +16,9 @@
 		F6A76ACF17B6F8D6002FE99E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */; };
 		F6A76AD117B6F8EB002FE99E /* audio_input.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD017B6F8EB002FE99E /* audio_input.c */; };
 		F6A76AD517B6FE31002FE99E /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD417B6FE31002FE99E /* audio.c */; };
-		F6F6076C17B64212009E6155 /* capture_desktop.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6076B17B64212009E6155 /* capture_desktop.c */; };
+		F6F6076C17B64212009E6155 /* video_desktop.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6076B17B64212009E6155 /* video_desktop.c */; };
 		F6F6076E17B6426F009E6155 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6076D17B6426F009E6155 /* CoreGraphics.framework */; };
-		F6F6077217B6488C009E6155 /* output.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6077117B6488C009E6155 /* output.c */; };
+		F6F6077217B6488C009E6155 /* video.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6077117B6488C009E6155 /* video.c */; };
 		F6F6077517B64C28009E6155 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077417B64C28009E6155 /* OpenGL.framework */; };
 		F6F6077717B64C34009E6155 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077617B64C34009E6155 /* CoreFoundation.framework */; };
 		F6F6077917B64CC4009E6155 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077817B64CC4009E6155 /* IOSurface.framework */; };
@@ -32,7 +32,7 @@
 		F607452917B637F2004EA730 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
 		F607452F17B6382D004EA730 /* librtmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librtmp.a; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-btvhmyjurauagogfmobulawteuzj/Build/Products/Debug/librtmp.a"; sourceTree = "<group>"; };
 		F607453017B6382D004EA730 /* libx264.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libx264.a; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-btvhmyjurauagogfmobulawteuzj/Build/Products/Debug/libx264.a"; sourceTree = "<group>"; };
-		F644CB9517B6291D007934C3 /* P1stream-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "P1stream-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F644CB9517B6291D007934C3 /* P1stream */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = P1stream; sourceTree = BUILT_PRODUCTS_DIR; };
 		F644CB9817B6291D007934C3 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		F644CBA217B62C03007934C3 /* common-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
 		F644CBA317B62C03007934C3 /* common-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
@@ -42,15 +42,15 @@
 		F6A76AD217B6F8F2002FE99E /* audio_input.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audio_input.h; sourceTree = "<group>"; };
 		F6A76AD317B6FE2B002FE99E /* audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
-		F6F6076B17B64212009E6155 /* capture_desktop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = capture_desktop.c; sourceTree = "<group>"; };
+		F6F6076B17B64212009E6155 /* video_desktop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video_desktop.c; sourceTree = "<group>"; };
 		F6F6076D17B6426F009E6155 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		F6F6077117B6488C009E6155 /* output.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = output.c; sourceTree = "<group>"; };
-		F6F6077317B64894009E6155 /* output.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = output.h; sourceTree = "<group>"; };
+		F6F6077117B6488C009E6155 /* video.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video.c; sourceTree = "<group>"; };
+		F6F6077317B64894009E6155 /* video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video.h; sourceTree = "<group>"; };
 		F6F6077417B64C28009E6155 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		F6F6077617B64C34009E6155 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		F6F6077817B64CC4009E6155 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		F6F6077A17B65F1F009E6155 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
-		F6F6077C17B65F87009E6155 /* capture_desktop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = capture_desktop.h; sourceTree = "<group>"; };
+		F6F6077C17B65F87009E6155 /* video_desktop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video_desktop.h; sourceTree = "<group>"; };
 		F6F6077D17B68E05009E6155 /* stream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stream.h; sourceTree = "<group>"; };
 		F6F6077E17B68E0B009E6155 /* stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stream.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -99,16 +99,16 @@
 			isa = PBXGroup;
 			children = (
 				F644CB9817B6291D007934C3 /* main.c */,
-				F6F6077317B64894009E6155 /* output.h */,
-				F6F6077117B6488C009E6155 /* output.c */,
 				F6A76AD317B6FE2B002FE99E /* audio.h */,
 				F6A76AD417B6FE31002FE99E /* audio.c */,
+				F6F6077317B64894009E6155 /* video.h */,
+				F6F6077117B6488C009E6155 /* video.c */,
 				F6F6077D17B68E05009E6155 /* stream.h */,
 				F6F6077E17B68E0B009E6155 /* stream.c */,
-				F6F6077C17B65F87009E6155 /* capture_desktop.h */,
-				F6F6076B17B64212009E6155 /* capture_desktop.c */,
 				F6A76AD217B6F8F2002FE99E /* audio_input.h */,
 				F6A76AD017B6F8EB002FE99E /* audio_input.c */,
+				F6F6077C17B65F87009E6155 /* video_desktop.h */,
+				F6F6076B17B64212009E6155 /* video_desktop.c */,
 				F607450E17B6303F004EA730 /* Frameworks */,
 				F644CB9617B6291D007934C3 /* Products */,
 				F644CBA117B62BE6007934C3 /* xcconfig */,
@@ -118,7 +118,7 @@
 		F644CB9617B6291D007934C3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F644CB9517B6291D007934C3 /* P1stream-cli */,
+				F644CB9517B6291D007934C3 /* P1stream */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -136,9 +136,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		F644CB9417B6291D007934C3 /* P1stream-cli */ = {
+		F644CB9417B6291D007934C3 /* P1stream */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F644CB9E17B6291D007934C3 /* Build configuration list for PBXNativeTarget "P1stream-cli" */;
+			buildConfigurationList = F644CB9E17B6291D007934C3 /* Build configuration list for PBXNativeTarget "P1stream" */;
 			buildPhases = (
 				F644CB9117B6291D007934C3 /* Sources */,
 				F644CB9217B6291D007934C3 /* Frameworks */,
@@ -147,9 +147,9 @@
 			);
 			dependencies = (
 			);
-			name = "P1stream-cli";
-			productName = "P1stream-cli";
-			productReference = F644CB9517B6291D007934C3 /* P1stream-cli */;
+			name = P1stream;
+			productName = P1stream;
+			productReference = F644CB9517B6291D007934C3 /* P1stream */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -161,7 +161,7 @@
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "Stéphan Kochen";
 			};
-			buildConfigurationList = F644CB9017B6291D007934C3 /* Build configuration list for PBXProject "P1stream-cli" */;
+			buildConfigurationList = F644CB9017B6291D007934C3 /* Build configuration list for PBXProject "P1stream" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -173,7 +173,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F644CB9417B6291D007934C3 /* P1stream-cli */,
+				F644CB9417B6291D007934C3 /* P1stream */,
 			);
 		};
 /* End PBXProject section */
@@ -184,8 +184,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				F644CB9917B6291D007934C3 /* main.c in Sources */,
-				F6F6076C17B64212009E6155 /* capture_desktop.c in Sources */,
-				F6F6077217B6488C009E6155 /* output.c in Sources */,
+				F6F6076C17B64212009E6155 /* video_desktop.c in Sources */,
+				F6F6077217B6488C009E6155 /* video.c in Sources */,
 				F6F6077F17B68E0B009E6155 /* stream.c in Sources */,
 				F6A76AD117B6F8EB002FE99E /* audio_input.c in Sources */,
 				F6A76AD517B6FE31002FE99E /* audio.c in Sources */,
@@ -256,7 +256,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F644CB9017B6291D007934C3 /* Build configuration list for PBXProject "P1stream-cli" */ = {
+		F644CB9017B6291D007934C3 /* Build configuration list for PBXProject "P1stream" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F644CB9C17B6291D007934C3 /* Debug */,
@@ -265,7 +265,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F644CB9E17B6291D007934C3 /* Build configuration list for PBXNativeTarget "P1stream-cli" */ = {
+		F644CB9E17B6291D007934C3 /* Build configuration list for PBXNativeTarget "P1stream" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F644CB9F17B6291D007934C3 /* Debug */,

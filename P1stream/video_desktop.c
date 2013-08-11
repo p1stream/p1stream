@@ -3,10 +3,11 @@
 #include <dispatch/dispatch.h>
 #include <CoreGraphics/CoreGraphics.h>
 
-#include "capture_desktop.h"
-#include "output.h"
+#include "video_desktop.h"
 
-static void p1_capture_desktop_frame(
+#include "video.h"
+
+static void p1_video_desktop_frame(
     CGDisplayStreamFrameStatus status, uint64_t displayTime,
     IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef);
 
@@ -20,7 +21,7 @@ static struct {
 static const size_t fps = 60;
 
 
-int p1_capture_desktop_start()
+int p1_video_desktop_init()
 {
     int res = 0;
 
@@ -32,7 +33,7 @@ int p1_capture_desktop_start()
     state.display_stream = CGDisplayStreamCreateWithDispatchQueue(
         display_id, width, height, 'BGRA', NULL, queue,
         ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef) {
-            p1_capture_desktop_frame(status, displayTime, frameSurface, updateRef);
+            p1_video_desktop_frame(status, displayTime, frameSurface, updateRef);
         });
     if (state.display_stream) {
         res = CGDisplayStreamStart(state.display_stream) == kCGErrorSuccess;
@@ -49,19 +50,19 @@ int p1_capture_desktop_start()
     return res;
 }
 
-static void p1_capture_desktop_frame(
+static void p1_video_desktop_frame(
     CGDisplayStreamFrameStatus status, uint64_t displayTime,
     IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
 {
     switch (status) {
         case kCGDisplayStreamFrameStatusFrameComplete:
-            p1_output_video_iosurface(frameSurface);
+            p1_video_frame_iosurface(frameSurface);
             break;
         case kCGDisplayStreamFrameStatusFrameIdle:
-            p1_output_video_idle();
+            p1_video_frame_idle();
             break;
         case kCGDisplayStreamFrameStatusFrameBlank:
-            p1_output_video_blank();
+            p1_video_frame_blank();
             break;
         case kCGDisplayStreamFrameStatusStopped:
             printf("Display stream stopped.");
@@ -76,7 +77,7 @@ static void p1_capture_desktop_frame(
     else {
         state.last_time += state.frame_period;
         while (state.last_time < displayTime) {
-            p1_output_video_idle();
+            p1_video_frame_idle();
             state.last_time += state.frame_period;
         }
     }

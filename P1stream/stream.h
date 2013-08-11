@@ -1,5 +1,5 @@
-#ifndef P1stream_cli_stream_h
-#define P1stream_cli_stream_h
+#ifndef p1_cli_stream_h
+#define p1_cli_stream_h
 
 #include <x264.h>
 #include <AudioToolbox/AudioToolbox.h>

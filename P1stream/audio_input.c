@@ -4,7 +4,7 @@
 #include <AudioToolbox/AudioToolbox.h>
 
 #include "audio_input.h"
-#include "audio.h"
+
 #include "stream.h"
 
 static const UInt32 num_buffers = 3;

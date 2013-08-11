@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F644CB9417B6291D007934C3"
-               BuildableName = "P1stream-cli"
-               BlueprintName = "P1stream-cli"
-               ReferencedContainer = "container:P1stream-cli.xcodeproj">
+               BuildableName = "P1stream"
+               BlueprintName = "P1stream"
+               ReferencedContainer = "container:P1stream.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,9 +47,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F644CB9417B6291D007934C3"
-            BuildableName = "P1stream-cli"
-            BlueprintName = "P1stream-cli"
-            ReferencedContainer = "container:P1stream-cli.xcodeproj">
+            BuildableName = "P1stream"
+            BlueprintName = "P1stream"
+            ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -66,9 +66,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F644CB9417B6291D007934C3"
-            BuildableName = "P1stream-cli"
-            BlueprintName = "P1stream-cli"
-            ReferencedContainer = "container:P1stream-cli.xcodeproj">
+            BuildableName = "P1stream"
+            BlueprintName = "P1stream"
+            ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -90,9 +90,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F644CB9417B6291D007934C3"
-            BuildableName = "P1stream-cli"
-            BlueprintName = "P1stream-cli"
-            ReferencedContainer = "container:P1stream-cli.xcodeproj">
+            BuildableName = "P1stream"
+            BlueprintName = "P1stream"
+            ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

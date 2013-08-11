@@ -7,14 +7,14 @@
 #include <OpenCL/opencl.h>
 #include <x264.h>
 
-#include "output.h"
+#include "video.h"
 #include "stream.h"
 
-static int p1_output_video_prep();
-static void p1_output_video_yuv();
-static void p1_output_video_finish();
+static int p1_video_frame_prep();
+static void p1_video_frame_yuv();
+static void p1_video_frame_finish();
 static GLuint p1_build_shader(GLuint type, const char *source);
-static void p1_output_build_program(GLuint program, const char *vertexShader, const char *fragmentShader);
+static void p1_video_build_program(GLuint program, const char *vertexShader, const char *fragmentShader);
 
 static struct {
     CGLContextObj gl;
@@ -130,7 +130,7 @@ static size_t skip_counter;
 static size_t frame_counter;
 
 
-void p1_output_init()
+void p1_video_init()
 {
     CGLError cgl_err;
     cl_int cl_err;
@@ -211,7 +211,7 @@ void p1_output_init()
     glBindAttribLocation(state.program, 0, "a_Position");
     glBindAttribLocation(state.program, 1, "a_TexCoords");
     glBindFragDataLocation(state.program, 0, "o_FragColor");
-    p1_output_build_program(state.program, simple_vertex_shader, simple_fragment_shader);
+    p1_video_build_program(state.program, simple_vertex_shader, simple_fragment_shader);
     state.tex_u = glGetUniformLocation(state.program, "u_Texture");
 
     state.rbo_mem = clCreateFromGLRenderbuffer(state.cl, CL_MEM_READ_ONLY, state.rbo, NULL);
@@ -248,7 +248,7 @@ void p1_output_init()
     assert(cl_err == CL_SUCCESS);
 }
 
-static int p1_output_video_prep()
+static int p1_video_frame_prep()
 {
     CGLSetCurrentContext(state.gl);
 
@@ -257,27 +257,27 @@ static int p1_output_video_prep()
     return skip_counter++ == 0;
 }
 
-void p1_output_video_idle()
+void p1_video_frame_idle()
 {
-    if (!p1_output_video_prep())
+    if (!p1_video_frame_prep())
         return;
 
-    p1_output_video_finish();
+    p1_video_frame_finish();
 }
 
-void p1_output_video_blank()
+void p1_video_frame_blank()
 {
-    if (!p1_output_video_prep())
+    if (!p1_video_frame_prep())
         return;
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    p1_output_video_yuv();
+    p1_video_frame_yuv();
 }
 
-void p1_output_video_iosurface(IOSurfaceRef buffer)
+void p1_video_frame_iosurface(IOSurfaceRef buffer)
 {
-    if (!p1_output_video_prep())
+    if (!p1_video_frame_prep())
         return;
 
     GLsizei width = (GLsizei) IOSurfaceGetWidth(buffer);
@@ -293,10 +293,10 @@ void p1_output_video_iosurface(IOSurfaceRef buffer)
     glFinish();
     assert(glGetError() == GL_NO_ERROR);
 
-    p1_output_video_yuv();
+    p1_video_frame_yuv();
 }
 
-static void p1_output_video_yuv()
+static void p1_video_frame_yuv()
 {
     cl_int cl_err;
 
@@ -310,10 +310,10 @@ static void p1_output_video_yuv()
     assert(cl_err == CL_SUCCESS);
 
     // Same code as idle frame applies.
-    p1_output_video_finish();
+    p1_video_frame_finish();
 }
 
-static void p1_output_video_finish()
+static void p1_video_frame_finish()
 {
     x264_nal_t *nals;
     int len;
@@ -364,7 +364,7 @@ static GLuint p1_build_shader(GLuint type, const char *source)
     return shader;
 }
 
-static void p1_output_build_program(GLuint program, const char *vertex_source, const char *fragment_source)
+static void p1_video_build_program(GLuint program, const char *vertex_source, const char *fragment_source)
 {
     GLuint vertex_shader = p1_build_shader(GL_VERTEX_SHADER, vertex_source);
     GLuint fragment_shader = p1_build_shader(GL_FRAGMENT_SHADER, fragment_source);

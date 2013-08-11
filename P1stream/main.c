@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <dispatch/dispatch.h>
 
-#include "output.h"
+#include "video.h"
 #include "stream.h"
-#include "capture_desktop.h"
+
 #include "audio_input.h"
+#include "video_desktop.h"
 
 
 int main(int argc, const char * argv[])
@@ -14,9 +15,9 @@ int main(int argc, const char * argv[])
         return 2;
     }
 
-    p1_output_init();
+    p1_video_init();
     p1_stream_init(argv[1]);
-    p1_capture_desktop_start();
+    p1_video_desktop_init();
     p1_audio_input_init();
     dispatch_main();
 
