@@ -9,6 +9,7 @@
 
 static struct {
     RTMP rtmp;
+
     mach_timebase_info_data_t timebase;
     uint64_t start;
 } state;
@@ -207,6 +208,8 @@ static uint32_t p1_stream_format_time(int64_t time) {
     time -= state.start;
     // Convert to milliseconds.
     time = time * state.timebase.numer / state.timebase.denom / 1000000;
+    // x264 may have a couple of frames with negative time.
+    if (time < 0) time = 0;
     // Wrap when we exceed 32-bits.
     return (uint32_t) (time & 0x7fffffff);
 }
