@@ -119,7 +119,7 @@ void p1_stream_video(x264_nal_t *nals, int len, x264_picture_t *pic)
 
     const uint32_t tag_size = size + 5;
 
-    pkt->m_headerType = time == 0 ? RTMP_PACKET_SIZE_LARGE : RTMP_PACKET_SIZE_MEDIUM;
+    pkt->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
     pkt->m_packetType = RTMP_PACKET_TYPE_VIDEO;
     pkt->m_nChannel = 0x04;
     pkt->m_nTimeStamp = p1_stream_format_time(pic->i_dts);
@@ -181,7 +181,7 @@ void p1_stream_audio(AudioQueueBufferRef buf, int64_t time)
     const uint32_t size = buf->mAudioDataByteSize;
     const uint32_t tag_size = 2 + size;
 
-    pkt->m_headerType = time == 0 ? RTMP_PACKET_SIZE_LARGE : RTMP_PACKET_SIZE_MEDIUM;
+    pkt->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
     pkt->m_packetType = RTMP_PACKET_TYPE_AUDIO;
     pkt->m_nChannel = 0x04;
     pkt->m_nTimeStamp = p1_stream_format_time(time);
