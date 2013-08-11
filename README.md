@@ -41,6 +41,10 @@ running from Xcode, this is set to `rtmp://127.0.0.1/app/test`.
 If you need this to be a different URL, make a non-shared copy of the
 ‘P1stream’ scheme and edit the arguments. (The shared scheme lives in git.)
 
+A good way to test is using [nginx-rtmp-module].
+
+ [nginx-rtmp-module]: https://github.com/arut/nginx-rtmp-module
+
 ### License
 
 All original code here is licensed [GPLv3](LICENSE). This is pretty much
