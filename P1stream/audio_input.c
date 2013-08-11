@@ -36,7 +36,6 @@ void p1_audio_input_init()
     memset(&fmt, 0, sizeof(AudioStreamBasicDescription));
     fmt.mSampleRate = sample_rate;
     fmt.mFormatID = kAudioFormatMPEG4AAC;
-    fmt.mFormatFlags = kMPEG4Object_AAC_Main;
     fmt.mChannelsPerFrame = num_channels;
     fmt.mFramesPerPacket = 1024;
 
