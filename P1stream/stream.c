@@ -10,7 +10,7 @@
 static struct {
     RTMP rtmp;
     mach_timebase_info_data_t timebase;
-    uint32_t at, vt;
+    uint64_t start;
 } state;
 
 static uint32_t p1_stream_format_time(int64_t time);
@@ -37,6 +37,8 @@ void p1_stream_init(const char *c_url)
 
     res = RTMP_ConnectStream(r, 0);
     assert(res == TRUE);
+
+    state.start = mach_absolute_time();
 }
 
 void p1_stream_video_config(x264_nal_t *nals, int len)
@@ -201,6 +203,8 @@ void p1_stream_audio(AudioQueueBufferRef buf, int64_t time)
 }
 
 static uint32_t p1_stream_format_time(int64_t time) {
+    // Relative time.
+    time -= state.start;
     // Convert to milliseconds.
     time = time * state.timebase.numer / state.timebase.denom / 1000000;
     // Wrap when we exceed 32-bits.
