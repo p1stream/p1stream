@@ -8,6 +8,6 @@ void p1_stream_init(const char *url);
 void p1_stream_video_config(x264_nal_t *nals, int len);
 void p1_stream_video(x264_nal_t *nals, int len, x264_picture_t *pic);
 void p1_stream_audio_config();
-void p1_stream_audio(AudioQueueBufferRef buf, uint64_t time);
+void p1_stream_audio(AudioQueueBufferRef buf, int64_t time);
 
 #endif

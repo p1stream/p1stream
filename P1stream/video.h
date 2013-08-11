@@ -4,8 +4,8 @@
 #include <IOSurface/IOSurface.h>
 
 void p1_video_init();
-void p1_video_frame_idle();
-void p1_video_frame_blank();
-void p1_video_frame_iosurface(IOSurfaceRef buffer);
+void p1_video_frame_idle(int64_t time);
+void p1_video_frame_blank(int64_t time);
+void p1_video_frame_iosurface(int64_t time, IOSurfaceRef buffer);
 
 #endif

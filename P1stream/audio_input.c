@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <mach/mach_time.h>
 #include <dispatch/dispatch.h>
 #include <AudioToolbox/AudioToolbox.h>
 
@@ -15,9 +14,7 @@ static const UInt32 sample_rate = 44100;
 struct {
     AudioQueueRef queue;
     AudioQueueBufferRef buffers[num_buffers];
-
-    uint64_t last_time;
-    mach_timebase_info_data_t base;
+    int sent_config;
 } state;
 
 static void p1_audio_input_callback(
@@ -28,8 +25,6 @@ static void p1_audio_input_callback(
 void p1_audio_input_init()
 {
     OSStatus ret;
-
-    mach_timebase_info(&state.base);
 
     // FIXME: don't do encoding here, but after mixing
     AudioStreamBasicDescription fmt;
@@ -63,15 +58,12 @@ static void p1_audio_input_callback(
     AudioQueueBufferRef buf, const AudioTimeStamp *time,
     UInt32 num_packets, const AudioStreamPacketDescription *packets)
 {
-    if (state.last_time == 0)
-        state.last_time = time->mHostTime;
-    uint64_t dt = time->mHostTime - state.last_time;
-    uint64_t relms = (uint32_t) (dt * state.base.numer / state.base.denom / 1000000);
-
-    if (dt == 0)
+    if (!state.sent_config) {
+        state.sent_config = 1;
         p1_stream_audio_config();
+    }
 
-    p1_stream_audio(buf, relms);
+    p1_stream_audio(buf, time->mHostTime);
 
     OSStatus ret = AudioQueueEnqueueBuffer(state.queue, buf, 0, NULL);
     assert(ret == noErr);

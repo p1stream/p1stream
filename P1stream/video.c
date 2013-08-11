@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <mach/mach_time.h>
 #include <IOSurface/IOSurface.h>
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/gl3.h>
@@ -17,6 +18,8 @@ static GLuint p1_build_shader(GLuint type, const char *source);
 static void p1_video_build_program(GLuint program, const char *vertexShader, const char *fragmentShader);
 
 static struct {
+    size_t skip_counter;
+
     CGLContextObj gl;
 
     cl_context cl;
@@ -36,6 +39,7 @@ static struct {
 
     x264_t *enc;
     x264_picture_t enc_pic;
+    int sent_config;
 } state;
 
 static const char *simple_vertex_shader =
@@ -126,8 +130,6 @@ static const size_t yuv_work_size[] = {
 static const size_t in_fps = 60;
 static const size_t fps_div = 2;
 static const size_t out_fps = in_fps / fps_div;
-static size_t skip_counter;
-static size_t frame_counter;
 
 
 void p1_video_init()
@@ -167,6 +169,9 @@ void p1_video_init()
     state.clq = clCreateCommandQueue(state.cl, device_id, 0, NULL);
     assert(state.clq != NULL);
 
+    mach_timebase_info_data_t base;
+    mach_timebase_info(&base);
+
     x264_param_t enc_params;
     x264_param_default(&enc_params);
     x264_param_default_preset(&enc_params, "veryfast", NULL);
@@ -174,8 +179,8 @@ void p1_video_init()
     enc_params.i_height = output_height;
     enc_params.i_fps_num = out_fps;
     enc_params.i_fps_den = 1;
-    enc_params.i_timebase_num = 1;
-    enc_params.i_timebase_den = 1000;
+    enc_params.i_timebase_num = base.numer;
+    enc_params.i_timebase_den = base.denom * 1000000000;
     enc_params.i_keyint_max = 10 * out_fps;
     enc_params.rc.i_rc_method = X264_RC_ABR;
     enc_params.rc.i_bitrate = 4096;
@@ -252,30 +257,30 @@ static int p1_video_frame_prep()
 {
     CGLSetCurrentContext(state.gl);
 
-    if (skip_counter >= fps_div)
-        skip_counter = 0;
-    return skip_counter++ == 0;
+    if (state.skip_counter >= fps_div)
+        state.skip_counter = 0;
+    return state.skip_counter++ == 0;
 }
 
-void p1_video_frame_idle()
+void p1_video_frame_idle(int64_t time)
 {
     if (!p1_video_frame_prep())
         return;
 
-    p1_video_frame_finish();
+    p1_video_frame_finish(time);
 }
 
-void p1_video_frame_blank()
+void p1_video_frame_blank(int64_t time)
 {
     if (!p1_video_frame_prep())
         return;
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    p1_video_frame_yuv();
+    p1_video_frame_yuv(time);
 }
 
-void p1_video_frame_iosurface(IOSurfaceRef buffer)
+void p1_video_frame_iosurface(int64_t time, IOSurfaceRef buffer)
 {
     if (!p1_video_frame_prep())
         return;
@@ -293,10 +298,10 @@ void p1_video_frame_iosurface(IOSurfaceRef buffer)
     glFinish();
     assert(glGetError() == GL_NO_ERROR);
 
-    p1_video_frame_yuv();
+    p1_video_frame_yuv(time);
 }
 
-static void p1_video_frame_yuv()
+static void p1_video_frame_yuv(int64_t time)
 {
     cl_int cl_err;
 
@@ -312,33 +317,29 @@ static void p1_video_frame_yuv()
     assert(cl_err == CL_SUCCESS);
 
     // Same code as idle frame applies.
-    p1_video_frame_finish();
+    p1_video_frame_finish(time);
 }
 
-static void p1_video_frame_finish()
+static void p1_video_frame_finish(int64_t time)
 {
     x264_nal_t *nals;
     int len;
     int ret;
 
-    if (frame_counter == 0) {
+    if (!state.sent_config) {
+        state.sent_config = 1;
         ret = x264_encoder_headers(state.enc, &nals, &len);
         assert(ret >= 0);
         p1_stream_video_config(nals, len);
     }
 
     x264_picture_t out_pic;
-    state.enc_pic.i_pts = state.enc_pic.i_dts = frame_counter * 1000 / out_fps;
+    state.enc_pic.i_dts = time;
+    state.enc_pic.i_pts = time;
     ret = x264_encoder_encode(state.enc, &nals, &len, &state.enc_pic, &out_pic);
     assert(ret >= 0);
     if (len)
         p1_stream_video(nals, len, &out_pic);
-
-    static int64_t last_in, last_out;
-    last_in = state.enc_pic.i_pts;
-    last_out = out_pic.i_pts;
-
-    frame_counter++;
 }
 
 static GLuint p1_build_shader(GLuint type, const char *source)

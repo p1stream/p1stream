@@ -54,21 +54,6 @@ static void p1_video_desktop_frame(
     CGDisplayStreamFrameStatus status, uint64_t displayTime,
     IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
 {
-    switch (status) {
-        case kCGDisplayStreamFrameStatusFrameComplete:
-            p1_video_frame_iosurface(frameSurface);
-            break;
-        case kCGDisplayStreamFrameStatusFrameIdle:
-            p1_video_frame_idle();
-            break;
-        case kCGDisplayStreamFrameStatusFrameBlank:
-            p1_video_frame_blank();
-            break;
-        case kCGDisplayStreamFrameStatusStopped:
-            printf("Display stream stopped.");
-            abort();
-    }
-
     // When idle, we get frames at a lower rate, apparently 15hz.
     // Pad with idle frames.
     if (state.last_time == 0) {
@@ -77,8 +62,23 @@ static void p1_video_desktop_frame(
     else {
         state.last_time += state.frame_period;
         while (state.last_time < displayTime) {
-            p1_video_frame_idle();
+            p1_video_frame_idle(state.last_time);
             state.last_time += state.frame_period;
         }
+    }
+
+    switch (status) {
+        case kCGDisplayStreamFrameStatusFrameComplete:
+            p1_video_frame_iosurface(displayTime, frameSurface);
+            break;
+        case kCGDisplayStreamFrameStatusFrameIdle:
+            p1_video_frame_idle(displayTime);
+            break;
+        case kCGDisplayStreamFrameStatusFrameBlank:
+            p1_video_frame_blank(displayTime);
+            break;
+        case kCGDisplayStreamFrameStatusStopped:
+            printf("Display stream stopped.");
+            abort();
     }
 }

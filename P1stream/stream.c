@@ -2,19 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <mach/mach_time.h>
 #include <rtmp.h>
 
 #include "stream.h"
 
 static struct {
     RTMP rtmp;
+    mach_timebase_info_data_t timebase;
+    uint32_t at, vt;
 } state;
+
+static uint32_t p1_stream_format_time(int64_t time);
 
 
 void p1_stream_init(const char *c_url)
 {
     int res;
     RTMP * const r = &state.rtmp;
+
+    mach_timebase_info(&state.timebase);
 
     RTMP_Init(r);
 
@@ -109,13 +116,11 @@ void p1_stream_video(x264_nal_t *nals, int len, x264_picture_t *pic)
         size += nals[i].i_payload;
 
     const uint32_t tag_size = size + 5;
-    // Wrap the timestamp when it exceeds the 32-bit field
-    uint32_t time = pic->i_pts & 0x7fffffff;
 
     pkt->m_headerType = time == 0 ? RTMP_PACKET_SIZE_LARGE : RTMP_PACKET_SIZE_MEDIUM;
     pkt->m_packetType = RTMP_PACKET_TYPE_VIDEO;
     pkt->m_nChannel = 0x04;
-    pkt->m_nTimeStamp = time;
+    pkt->m_nTimeStamp = p1_stream_format_time(pic->i_dts);
     pkt->m_nInfoField2 = r->m_stream_id;
     pkt->m_nBodySize = tag_size;
 
@@ -165,7 +170,7 @@ void p1_stream_audio_config()
     assert(err == TRUE);
 }
 
-void p1_stream_audio(AudioQueueBufferRef buf, uint64_t time)
+void p1_stream_audio(AudioQueueBufferRef buf, int64_t time)
 {
     RTMP * const r = &state.rtmp;
     RTMPPacket * const pkt = &r->m_write;
@@ -173,13 +178,11 @@ void p1_stream_audio(AudioQueueBufferRef buf, uint64_t time)
 
     const uint32_t size = buf->mAudioDataByteSize;
     const uint32_t tag_size = 2 + size;
-    // Wrap the timestamp when it exceeds the 32-bit field
-    time &= 0x7fffffff;
 
     pkt->m_headerType = time == 0 ? RTMP_PACKET_SIZE_LARGE : RTMP_PACKET_SIZE_MEDIUM;
     pkt->m_packetType = RTMP_PACKET_TYPE_AUDIO;
     pkt->m_nChannel = 0x04;
-    pkt->m_nTimeStamp = (uint32_t) time;
+    pkt->m_nTimeStamp = p1_stream_format_time(time);
     pkt->m_nInfoField2 = r->m_stream_id;
     pkt->m_nBodySize = tag_size;
 
@@ -195,4 +198,11 @@ void p1_stream_audio(AudioQueueBufferRef buf, uint64_t time)
     err = RTMP_SendPacket(r, pkt, FALSE);
     RTMPPacket_Free(pkt);
     assert(err == TRUE);
+}
+
+static uint32_t p1_stream_format_time(int64_t time) {
+    // Convert to milliseconds.
+    time = time * state.timebase.numer / state.timebase.denom / 1000000;
+    // Wrap when we exceed 32-bits.
+    return (uint32_t) (time & 0x7fffffff);
 }
