@@ -3,6 +3,7 @@
 #include <dispatch/dispatch.h>
 #include <CoreGraphics/CoreGraphics.h>
 
+#include "capture_desktop.h"
 #include "output.h"
 
 static void p1_capture_desktop_frame(

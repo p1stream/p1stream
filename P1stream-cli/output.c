@@ -174,13 +174,13 @@ void p1_output_init()
     enc_params.i_height = output_height;
     enc_params.i_fps_num = out_fps;
     enc_params.i_fps_den = 1;
-    enc_params.i_keyint_max = out_fps;
-    enc_params.i_bframe_pyramid = 0;
-    enc_params.b_intra_refresh = 1;
+    enc_params.i_timebase_num = 1;
+    enc_params.i_timebase_den = 1000;
+    enc_params.i_keyint_max = 10 * out_fps;
     enc_params.rc.i_rc_method = X264_RC_ABR;
     enc_params.rc.i_bitrate = 4096;
-    enc_params.b_repeat_headers = 1;
-    enc_params.b_annexb = 1;
+    enc_params.b_aud = 1;
+    enc_params.b_annexb = 0;
     x264_param_apply_fastfirstpass(&enc_params);
     x264_param_apply_profile(&enc_params, "high");
     state.enc = x264_encoder_open(&enc_params);

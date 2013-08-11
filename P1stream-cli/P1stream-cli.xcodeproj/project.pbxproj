@@ -13,6 +13,9 @@
 		F607453117B6382D004EA730 /* librtmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F607452F17B6382D004EA730 /* librtmp.a */; };
 		F607453217B6382D004EA730 /* libx264.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F607453017B6382D004EA730 /* libx264.a */; };
 		F644CB9917B6291D007934C3 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F644CB9817B6291D007934C3 /* main.c */; };
+		F6A76ACF17B6F8D6002FE99E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */; };
+		F6A76AD117B6F8EB002FE99E /* audio_input.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD017B6F8EB002FE99E /* audio_input.c */; };
+		F6A76AD517B6FE31002FE99E /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD417B6FE31002FE99E /* audio.c */; };
 		F6F6076C17B64212009E6155 /* capture_desktop.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6076B17B64212009E6155 /* capture_desktop.c */; };
 		F6F6076E17B6426F009E6155 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6076D17B6426F009E6155 /* CoreGraphics.framework */; };
 		F6F6077217B6488C009E6155 /* output.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6077117B6488C009E6155 /* output.c */; };
@@ -34,6 +37,11 @@
 		F644CBA217B62C03007934C3 /* common-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
 		F644CBA317B62C03007934C3 /* common-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
 		F644CBA417B62C03007934C3 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
+		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		F6A76AD017B6F8EB002FE99E /* audio_input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio_input.c; sourceTree = "<group>"; };
+		F6A76AD217B6F8F2002FE99E /* audio_input.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audio_input.h; sourceTree = "<group>"; };
+		F6A76AD317B6FE2B002FE99E /* audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
+		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 		F6F6076B17B64212009E6155 /* capture_desktop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = capture_desktop.c; sourceTree = "<group>"; };
 		F6F6076D17B6426F009E6155 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F6F6077117B6488C009E6155 /* output.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = output.c; sourceTree = "<group>"; };
@@ -62,6 +70,7 @@
 				F6F6076E17B6426F009E6155 /* CoreGraphics.framework in Frameworks */,
 				F6F6077517B64C28009E6155 /* OpenGL.framework in Frameworks */,
 				F6F6077B17B65F1F009E6155 /* OpenCL.framework in Frameworks */,
+				F6A76ACF17B6F8D6002FE99E /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +90,7 @@
 				F6F6076D17B6426F009E6155 /* CoreGraphics.framework */,
 				F6F6077417B64C28009E6155 /* OpenGL.framework */,
 				F6F6077A17B65F1F009E6155 /* OpenCL.framework */,
+				F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -89,12 +99,16 @@
 			isa = PBXGroup;
 			children = (
 				F644CB9817B6291D007934C3 /* main.c */,
-				F6F6077C17B65F87009E6155 /* capture_desktop.h */,
-				F6F6076B17B64212009E6155 /* capture_desktop.c */,
 				F6F6077317B64894009E6155 /* output.h */,
 				F6F6077117B6488C009E6155 /* output.c */,
+				F6A76AD317B6FE2B002FE99E /* audio.h */,
+				F6A76AD417B6FE31002FE99E /* audio.c */,
 				F6F6077D17B68E05009E6155 /* stream.h */,
 				F6F6077E17B68E0B009E6155 /* stream.c */,
+				F6F6077C17B65F87009E6155 /* capture_desktop.h */,
+				F6F6076B17B64212009E6155 /* capture_desktop.c */,
+				F6A76AD217B6F8F2002FE99E /* audio_input.h */,
+				F6A76AD017B6F8EB002FE99E /* audio_input.c */,
 				F607450E17B6303F004EA730 /* Frameworks */,
 				F644CB9617B6291D007934C3 /* Products */,
 				F644CBA117B62BE6007934C3 /* xcconfig */,
@@ -173,6 +187,8 @@
 				F6F6076C17B64212009E6155 /* capture_desktop.c in Sources */,
 				F6F6077217B6488C009E6155 /* output.c in Sources */,
 				F6F6077F17B68E0B009E6155 /* stream.c in Sources */,
+				F6A76AD117B6F8EB002FE99E /* audio_input.c in Sources */,
+				F6A76AD517B6FE31002FE99E /* audio.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
