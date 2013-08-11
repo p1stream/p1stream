@@ -11,6 +11,7 @@ static const size_t max_queue_len = 64;
 
 static struct {
     RTMP rtmp;
+    char *url;
     RTMPPacket q[max_queue_len]; // ring buffer
     size_t q_start;
     size_t q_len;
@@ -30,9 +31,8 @@ void p1_stream_init(const char *c_url)
 
     RTMP_Init(r);
 
-    char *url = strdup(c_url);
-    res = RTMP_SetupURL(r, url);
-    free(url);
+    state.url = strdup(c_url);
+    res = RTMP_SetupURL(r, state.url);
     assert(res == TRUE);
 
     RTMP_EnableWrite(r);
