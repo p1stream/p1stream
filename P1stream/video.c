@@ -304,6 +304,8 @@ static void p1_video_frame_yuv()
     assert(cl_err == CL_SUCCESS);
     cl_err = clEnqueueNDRangeKernel(state.clq, state.yuv_kernel, 2, NULL, yuv_work_size, NULL, 0, NULL, NULL);
     assert(cl_err == CL_SUCCESS);
+    cl_err = clEnqueueReleaseGLObjects(state.clq, 1, &state.rbo_mem, 0, NULL, NULL);
+    assert(cl_err == CL_SUCCESS);
     cl_err = clEnqueueReadBuffer(state.clq, state.out_mem, CL_FALSE, 0, output_yuv_size, state.enc_pic.img.plane[0], 0, NULL, NULL);
     assert(cl_err == CL_SUCCESS);
     cl_err = clFinish(state.clq);
