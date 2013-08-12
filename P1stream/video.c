@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include <mach/mach_time.h>
 #include <IOSurface/IOSurface.h>
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/gl3.h>
@@ -170,28 +169,11 @@ void p1_video_init()
     state.clq = clCreateCommandQueue(state.cl, device_id, 0, NULL);
     assert(state.clq != NULL);
 
-    mach_timebase_info_data_t base;
-    mach_timebase_info(&base);
-
-    x264_param_t enc_params;
-    x264_param_default(&enc_params);
-    err = x264_param_default_preset(&enc_params, p1_conf.encoder.preset, NULL);
-    assert(err == 0);
-    enc_params.i_width = output_width;
-    enc_params.i_height = output_height;
-    enc_params.i_fps_num = out_fps;
-    enc_params.i_fps_den = 1;
-    enc_params.i_timebase_num = base.numer;
-    enc_params.i_timebase_den = base.denom * 1000000000;
-    enc_params.i_keyint_max = 10 * out_fps;
-    enc_params.rc.i_rc_method = X264_RC_ABR;
-    enc_params.rc.i_bitrate = 4096;
-    enc_params.b_aud = 1;
-    enc_params.b_annexb = 0;
-    x264_param_apply_fastfirstpass(&enc_params);
-    err = x264_param_apply_profile(&enc_params, p1_conf.encoder.profile);
-    assert(err == 0);
-    state.enc = x264_encoder_open(&enc_params);
+    p1_conf.encoder.i_width = output_width;
+    p1_conf.encoder.i_height = output_height;
+    p1_conf.encoder.i_fps_num = out_fps;
+    p1_conf.encoder.i_fps_den = 1;
+    state.enc = x264_encoder_open(&p1_conf.encoder);
     assert(state.enc != NULL);
 
     err = x264_picture_alloc(&state.enc_pic, X264_CSP_I420, output_width, output_height);

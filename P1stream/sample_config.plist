@@ -13,6 +13,8 @@
 		<string>baseline</string>
 		<key>preset</key>
 		<string>veryfast</string>
+		<key>threads</key>
+		<string>8</string>
 	</dict>
 </dict>
 </plist>
