@@ -70,6 +70,7 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXFileReference section */
+		F63FB21B17B8083600CD1B46 /* x264.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = x264.h; path = x264/x264.h; sourceTree = "<group>"; };
 		F64A0556175A54E500D84525 /* common-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
 		F64A0557175A54E500D84525 /* common-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
 		F65C59E917593F3D00903D49 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/config.h; sourceTree = "<group>"; };
@@ -192,6 +193,7 @@
 			children = (
 				F65C59F51759403200903D49 /* common */,
 				F65C5A341759406800903D49 /* encoder */,
+				F63FB21B17B8083600CD1B46 /* x264.h */,
 			);
 			name = x264;
 			sourceTree = "<group>";
