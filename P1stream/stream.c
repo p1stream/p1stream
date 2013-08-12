@@ -6,12 +6,12 @@
 #include <rtmp.h>
 
 #include "stream.h"
+#include "conf.h"
 
 static const size_t max_queue_len = 64;
 
 static struct {
     RTMP rtmp;
-    char *url;
     RTMPPacket q[max_queue_len]; // ring buffer
     size_t q_start;
     size_t q_len;
@@ -24,15 +24,14 @@ static uint32_t p1_stream_format_time(int64_t time);
 static RTMPPacket *p1_stream_queue_slot(uint8_t packet_type, uint32_t time);
 
 
-void p1_stream_init(const char *c_url)
+void p1_stream_init()
 {
     int res;
     RTMP * const r = &state.rtmp;
 
     RTMP_Init(r);
 
-    state.url = strdup(c_url);
-    res = RTMP_SetupURL(r, state.url);
+    res = RTMP_SetupURL(r, p1_conf.stream.url);
     assert(res == TRUE);
 
     RTMP_EnableWrite(r);

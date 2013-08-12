@@ -1,5 +1,8 @@
-# Ignore all user data directories.
+# User data.
 xcuserdata
 
 # Scratch for generate.sh scripts.
 /_scratch
+
+# Configuration files.
+/*.plist

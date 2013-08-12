@@ -9,6 +9,7 @@
 #include <x264.h>
 
 #include "video.h"
+#include "conf.h"
 #include "stream.h"
 
 static int p1_video_frame_prep();
@@ -174,7 +175,8 @@ void p1_video_init()
 
     x264_param_t enc_params;
     x264_param_default(&enc_params);
-    x264_param_default_preset(&enc_params, "veryfast", NULL);
+    err = x264_param_default_preset(&enc_params, p1_conf.encoder.preset, NULL);
+    assert(err == 0);
     enc_params.i_width = output_width;
     enc_params.i_height = output_height;
     enc_params.i_fps_num = out_fps;
@@ -187,8 +189,10 @@ void p1_video_init()
     enc_params.b_aud = 1;
     enc_params.b_annexb = 0;
     x264_param_apply_fastfirstpass(&enc_params);
-    x264_param_apply_profile(&enc_params, "high");
+    err = x264_param_apply_profile(&enc_params, p1_conf.encoder.profile);
+    assert(err == 0);
     state.enc = x264_encoder_open(&enc_params);
+    assert(state.enc != NULL);
 
     err = x264_picture_alloc(&state.enc_pic, X264_CSP_I420, output_width, output_height);
     assert(err == 0);

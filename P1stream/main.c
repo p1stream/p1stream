@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <dispatch/dispatch.h>
 
+#include "conf.h"
 #include "video.h"
 #include "stream.h"
 
@@ -11,12 +12,13 @@
 int main(int argc, const char * argv[])
 {
     if (argc != 2) {
-        printf("Usage: %s <url>\n", argv[0]);
+        printf("Usage: %s <config.plist>\n", argv[0]);
         return 2;
     }
 
+    p1_conf_init(argv[1]);
     p1_video_init();
-    p1_stream_init(argv[1]);
+    p1_stream_init();
     p1_video_desktop_init();
     p1_audio_input_init();
     dispatch_main();

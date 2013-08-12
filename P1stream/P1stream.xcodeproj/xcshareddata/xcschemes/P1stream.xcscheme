@@ -73,7 +73,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "rtmp://127.0.0.1/app/test"
+            argument = "$(PROJECT_DIR)/../config.plist"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

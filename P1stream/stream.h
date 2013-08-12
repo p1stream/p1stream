@@ -4,7 +4,7 @@
 #include <x264.h>
 #include <AudioToolbox/AudioToolbox.h>
 
-void p1_stream_init(const char *url);
+void p1_stream_init();
 void p1_stream_video_config(x264_nal_t *nals, int len);
 void p1_stream_video(x264_nal_t *nals, int len, x264_picture_t *pic);
 void p1_stream_audio_config();

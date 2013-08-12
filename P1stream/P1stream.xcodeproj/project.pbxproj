@@ -12,6 +12,7 @@
 		F607452A17B637F2004EA730 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F607452917B637F2004EA730 /* libssl.dylib */; };
 		F607453117B6382D004EA730 /* librtmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F607452F17B6382D004EA730 /* librtmp.a */; };
 		F607453217B6382D004EA730 /* libx264.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F607453017B6382D004EA730 /* libx264.a */; };
+		F63FB21D17B8316D00CD1B46 /* conf.c in Sources */ = {isa = PBXBuildFile; fileRef = F63FB21C17B8316D00CD1B46 /* conf.c */; };
 		F644CB9917B6291D007934C3 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F644CB9817B6291D007934C3 /* main.c */; };
 		F6A76ACF17B6F8D6002FE99E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */; };
 		F6A76AD117B6F8EB002FE99E /* audio_input.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD017B6F8EB002FE99E /* audio_input.c */; };
@@ -32,11 +33,14 @@
 		F607452917B637F2004EA730 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
 		F607452F17B6382D004EA730 /* librtmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librtmp.a; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-btvhmyjurauagogfmobulawteuzj/Build/Products/Debug/librtmp.a"; sourceTree = "<group>"; };
 		F607453017B6382D004EA730 /* libx264.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libx264.a; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-btvhmyjurauagogfmobulawteuzj/Build/Products/Debug/libx264.a"; sourceTree = "<group>"; };
+		F63FB21C17B8316D00CD1B46 /* conf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf.c; sourceTree = "<group>"; };
+		F63FB21E17B8317300CD1B46 /* conf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = conf.h; sourceTree = "<group>"; };
 		F644CB9517B6291D007934C3 /* P1stream */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = P1stream; sourceTree = BUILT_PRODUCTS_DIR; };
 		F644CB9817B6291D007934C3 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		F644CBA217B62C03007934C3 /* common-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
 		F644CBA317B62C03007934C3 /* common-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
 		F644CBA417B62C03007934C3 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
+		F680B5B817B95FD10067BBE7 /* sample_config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sample_config.plist; sourceTree = "<group>"; };
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD017B6F8EB002FE99E /* audio_input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio_input.c; sourceTree = "<group>"; };
 		F6A76AD217B6F8F2002FE99E /* audio_input.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audio_input.h; sourceTree = "<group>"; };
@@ -99,6 +103,8 @@
 			isa = PBXGroup;
 			children = (
 				F644CB9817B6291D007934C3 /* main.c */,
+				F63FB21E17B8317300CD1B46 /* conf.h */,
+				F63FB21C17B8316D00CD1B46 /* conf.c */,
 				F6A76AD317B6FE2B002FE99E /* audio.h */,
 				F6A76AD417B6FE31002FE99E /* audio.c */,
 				F6F6077317B64894009E6155 /* video.h */,
@@ -109,6 +115,7 @@
 				F6A76AD017B6F8EB002FE99E /* audio_input.c */,
 				F6F6077C17B65F87009E6155 /* video_desktop.h */,
 				F6F6076B17B64212009E6155 /* video_desktop.c */,
+				F680B5B817B95FD10067BBE7 /* sample_config.plist */,
 				F607450E17B6303F004EA730 /* Frameworks */,
 				F644CB9617B6291D007934C3 /* Products */,
 				F644CBA117B62BE6007934C3 /* xcconfig */,
@@ -189,6 +196,7 @@
 				F6F6077F17B68E0B009E6155 /* stream.c in Sources */,
 				F6A76AD117B6F8EB002FE99E /* audio_input.c in Sources */,
 				F6A76AD517B6FE31002FE99E /* audio.c in Sources */,
+				F63FB21D17B8316D00CD1B46 /* conf.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

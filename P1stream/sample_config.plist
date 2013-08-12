@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>stream</key>
+	<dict>
+		<key>url</key>
+		<string>rtmp://localhost/app/test</string>
+	</dict>
+	<key>encoder</key>
+	<dict>
+		<key>profile</key>
+		<string>baseline</string>
+		<key>preset</key>
+		<string>veryfast</string>
+	</dict>
+</dict>
+</plist>
