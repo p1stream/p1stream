@@ -32,16 +32,16 @@ filesystem location for this is somewhere in `~/Library/Developer/Xcode/DerivedD
 
 ### Running
 
-Currently, many parameters are hardcoded. The utility will stream at 720p,
-30 FPS, with an average bitrate of 4 Mbps.
+Create a configuration using the sample plist file. The ‘P1stream’ scheme
+looks for a `config.plist` in the toplevel directory, so:
 
-The first and only parameter on the commandline is the stream URL. If you're
-running from Xcode, this is set to `rtmp://127.0.0.1/app/test`.
+    cp ./P1stream/sample_config.plist ./config.plist
 
-If you need this to be a different URL, make a non-shared copy of the
-‘P1stream’ scheme and edit the arguments. (The shared scheme lives in git.)
+Now simply run from the ‘P1stream’ scheme, or from the command-line:
 
-A good way to test is using [nginx-rtmp-module].
+    path/to/P1stream ./config.plist
+
+You can get an excellent local test setup going with [nginx-rtmp-module].
 
  [nginx-rtmp-module]: https://github.com/arut/nginx-rtmp-module
 
