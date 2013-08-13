@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <mach/mach_time.h>
+#include <dispatch/dispatch.h>
 #include <rtmp.h>
 
 #include "stream.h"
@@ -11,6 +12,8 @@
 static const size_t max_queue_len = 64;
 
 static struct {
+    dispatch_queue_t dispatch;
+
     RTMP rtmp;
 
     // ring buffer
@@ -24,12 +27,16 @@ static struct {
 
 static RTMPPacket *p1_stream_new_packet(uint8_t type, int64_t time, uint32_t body_size);
 static void p1_stream_submit_packet(RTMPPacket *pkt);
+static void p1_stream_submit_packet_on_thread(RTMPPacket *pkt);
 
 
+// Setup state and connect.
 void p1_stream_init()
 {
     int res;
     RTMP * const r = &state.rtmp;
+
+    state.dispatch = dispatch_queue_create("stream", DISPATCH_QUEUE_SERIAL);
 
     RTMP_Init(r);
 
@@ -48,6 +55,7 @@ void p1_stream_init()
     state.start = mach_absolute_time();
 }
 
+// Send video configuration.
 void p1_stream_video_config(x264_nal_t *nals, int len)
 {
     int i;
@@ -98,11 +106,10 @@ void p1_stream_video_config(x264_nal_t *nals, int len)
     *(uint16_t *) (body+i) = htons(pps_size);
     memcpy(body+i+2, nal_pps->p_payload+4, pps_size);
 
-    int err = RTMP_SendPacket(&state.rtmp, pkt, FALSE);
-    free(pkt);
-    assert(err == TRUE);
+    p1_stream_submit_packet(pkt);
 }
 
+// Send video data.
 void p1_stream_video(x264_nal_t *nals, int len, x264_picture_t *pic)
 {
     uint32_t size = 0;
@@ -122,6 +129,7 @@ void p1_stream_video(x264_nal_t *nals, int len, x264_picture_t *pic)
     p1_stream_submit_packet(pkt);
 }
 
+// Send audio configuration.
 void p1_stream_audio_config()
 {
     const uint32_t tag_size = 2 + 2;
@@ -136,11 +144,10 @@ void p1_stream_audio_config()
     body[2] = 0x10 | 0x02;
     body[3] = 0x10;
 
-    int err = RTMP_SendPacket(&state.rtmp, pkt, FALSE);
-    free(pkt);
-    assert(err == TRUE);
+    p1_stream_submit_packet(pkt);
 }
 
+// Send audio data.
 void p1_stream_audio(AudioQueueBufferRef buf, int64_t mtime)
 {
     const uint32_t size = buf->mAudioDataByteSize;
@@ -157,9 +164,13 @@ void p1_stream_audio(AudioQueueBufferRef buf, int64_t mtime)
     p1_stream_submit_packet(pkt);
 }
 
+// Allocate a new packet and set header fields.
 static RTMPPacket *p1_stream_new_packet(uint8_t type, int64_t time, uint32_t body_size)
 {
     const size_t prelude_size = sizeof(RTMPPacket) + RTMP_MAX_HEADER_SIZE;
+
+    // We read some state without synchronisation here, but that's okay,
+    // because we only touch parts that don't change during the connection.
 
     // Allocate packet memory.
     RTMPPacket *pkt = calloc(1, prelude_size + body_size);
@@ -186,17 +197,31 @@ static RTMPPacket *p1_stream_new_packet(uint8_t type, int64_t time, uint32_t bod
 
     // Start stream with a large header.
     pkt->m_headerType = time ? RTMP_PACKET_SIZE_MEDIUM : RTMP_PACKET_SIZE_LARGE;
+    pkt->m_hasAbsTimestamp = pkt->m_headerType == RTMP_PACKET_SIZE_LARGE;
 
     return pkt;
 }
 
+// Submit a packet. It'll either be sent immediately, or queued.
 static void p1_stream_submit_packet(RTMPPacket *pkt)
+{
+    dispatch_async(state.dispatch, ^{
+        p1_stream_submit_packet_on_thread(pkt);
+    });
+}
+
+// Continuation of p1_stream_submit_packet when on the correct thread.
+static void p1_stream_submit_packet_on_thread(RTMPPacket *pkt)
 {
     int err;
     RTMP * const r = &state.rtmp;
 
-    // This algorithm assumes there will only ever be two types of packets in
-    // the queue. In our case, we only queue audio and video packets.
+    // The logic here assumes there will only ever be two types of packets
+    // in the queue. We only send audio and video packets.
+
+    // We only need to queue packets with relative timestamps.
+    if (pkt->m_hasAbsTimestamp)
+        goto send;
 
     // Queue is empty, always queue the packet.
     if (state.q_len == 0)
@@ -225,11 +250,8 @@ static void p1_stream_submit_packet(RTMPPacket *pkt)
     if (state.q_len == 0)
         goto queue;
 
-    // Other types still waiting, so we can send this immediately.
-    err = RTMP_SendPacket(r, pkt, FALSE);
-    free(pkt);
-    assert(err == TRUE);
-    return;
+    // Remaining packets come after this one, so send immediately.
+    goto send;
 
 queue:
     if (state.q_len == max_queue_len) {
@@ -240,4 +262,10 @@ queue:
         size_t pos = (state.q_start + state.q_len++) % max_queue_len;
         state.q[pos] = pkt;
     }
+    return;
+
+send:
+    err = RTMP_SendPacket(r, pkt, FALSE);
+    free(pkt);
+    assert(err == TRUE);
 }

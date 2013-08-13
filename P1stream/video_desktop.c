@@ -12,6 +12,8 @@ static void p1_video_desktop_frame(
     IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef);
 
 static struct {
+    dispatch_queue_t dispatch;
+
     CGDisplayStreamRef display_stream;
 
     uint64_t last_time;
@@ -25,13 +27,14 @@ int p1_video_desktop_init()
 {
     int res = 0;
 
-    dispatch_queue_t queue = dispatch_get_main_queue();
+    state.dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
+
     const CGDirectDisplayID display_id = kCGDirectMainDisplay;
     size_t width  = CGDisplayPixelsWide(display_id);
     size_t height = CGDisplayPixelsHigh(display_id);
 
     state.display_stream = CGDisplayStreamCreateWithDispatchQueue(
-        display_id, width, height, 'BGRA', NULL, queue,
+        display_id, width, height, 'BGRA', NULL, state.dispatch,
         ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef) {
             p1_video_desktop_frame(status, displayTime, frameSurface, updateRef);
         });

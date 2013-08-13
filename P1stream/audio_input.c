@@ -12,6 +12,8 @@ static const UInt32 sample_size_bits = 16;
 static const UInt32 sample_rate = 44100;
 
 struct {
+    dispatch_queue_t dispatch;
+
     AudioQueueRef queue;
     AudioQueueBufferRef buffers[num_buffers];
     int sent_config;
@@ -26,6 +28,8 @@ void p1_audio_input_init()
 {
     OSStatus ret;
 
+    state.dispatch = dispatch_queue_create("audio_input", DISPATCH_QUEUE_SERIAL);
+
     // FIXME: don't do encoding here, but after mixing
     AudioStreamBasicDescription fmt;
     memset(&fmt, 0, sizeof(AudioStreamBasicDescription));
@@ -35,7 +39,7 @@ void p1_audio_input_init()
     fmt.mFramesPerPacket = 1024;
 
     ret = AudioQueueNewInputWithDispatchQueue(
-        &state.queue, &fmt, 0, dispatch_get_main_queue(),
+        &state.queue, &fmt, 0, state.dispatch,
         ^(AudioQueueRef queue, AudioQueueBufferRef buf,
           const AudioTimeStamp *time, UInt32 num_descs,
           const AudioStreamPacketDescription *descs) {
