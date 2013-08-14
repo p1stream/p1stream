@@ -7,3 +7,6 @@
 [submodule "rtmpdump/rtmpdump"]
 	path = rtmpdump/rtmpdump
 	url = git://git.ffmpeg.org/rtmpdump
+[submodule "aac/aac"]
+	path = aac/aac
+	url = https://android.googlesource.com/platform/external/aac

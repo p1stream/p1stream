@@ -13,6 +13,9 @@
       <FileRef
          location = "group:rtmpdump/rtmpdump.xcodeproj">
       </FileRef>
+      <FileRef
+         location = "group:aac/aac.xcodeproj">
+      </FileRef>
    </Group>
    <FileRef
       location = "group:P1stream/P1stream.xcodeproj">
