@@ -1,6 +1,7 @@
 #ifndef p1_cli_stream_h
 #define p1_cli_stream_h
 
+#include <stdint.h>
 #include <x264.h>
 #include <AudioToolbox/AudioToolbox.h>
 

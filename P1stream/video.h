@@ -1,6 +1,7 @@
 #ifndef p1_cli_video_h
 #define p1_cli_video_h
 
+#include <stdint.h>
 #include <IOSurface/IOSurface.h>
 
 void p1_video_init();

@@ -11,7 +11,7 @@ static const UInt32 num_channels = 2;
 static const UInt32 sample_size_bits = 16;
 static const UInt32 sample_rate = 44100;
 
-struct {
+static struct {
     dispatch_queue_t dispatch;
 
     AudioQueueRef queue;

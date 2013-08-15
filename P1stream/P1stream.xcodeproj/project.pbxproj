@@ -91,6 +91,7 @@
 				F607452717B637EE004EA730 /* libcrypto.dylib */,
 				F607452917B637F2004EA730 /* libssl.dylib */,
 				F607453017B6382D004EA730 /* libx264.a */,
+				F627211617BC330700A889B4 /* libFraunhoferAAC.a */,
 				F607452F17B6382D004EA730 /* librtmp.a */,
 				F6F6077617B64C34009E6155 /* CoreFoundation.framework */,
 				F6F6077817B64CC4009E6155 /* IOSurface.framework */,
@@ -105,7 +106,6 @@
 		F644CB8C17B6291D007934C3 = {
 			isa = PBXGroup;
 			children = (
-				F627211617BC330700A889B4 /* libFraunhoferAAC.a */,
 				F644CB9817B6291D007934C3 /* main.c */,
 				F63FB21E17B8317300CD1B46 /* conf.h */,
 				F63FB21C17B8316D00CD1B46 /* conf.c */,
