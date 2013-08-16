@@ -2,6 +2,7 @@
 #include <dispatch/dispatch.h>
 
 #include "conf.h"
+#include "audio.h"
 #include "video.h"
 #include "stream.h"
 
@@ -17,6 +18,7 @@ int main(int argc, const char * argv[])
     }
 
     p1_conf_init(argv[1]);
+    p1_audio_init();
     p1_video_init();
     p1_stream_init();
     p1_video_desktop_init();

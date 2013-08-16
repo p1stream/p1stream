@@ -225,6 +225,8 @@
 				HEADER_SEARCH_PATHS = (
 					../x264/generated,
 					../x264/x264,
+					../aac/aac/libSYS/include,
+					../aac/aac/libAACenc/include,
 					../rtmpdump/rtmpdump/librtmp,
 				);
 			};
@@ -246,6 +248,8 @@
 				HEADER_SEARCH_PATHS = (
 					../x264/generated,
 					../x264/x264,
+					../aac/aac/libSYS/include,
+					../aac/aac/libAACenc/include,
 					../rtmpdump/rtmpdump/librtmp,
 				);
 			};

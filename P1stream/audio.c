@@ -1,1 +1,152 @@
+#include <math.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <memory.h>
+#include <aacenc_lib.h>
+
+#include "audio.h"
+#include "stream.h"
+
+// Hardcoded bitrate.
+static const int bit_rate = 128 * 1024;
+// Mix buffer buffer of one full second.
+static const int mix_size = p1_audio_num_channels * p1_audio_sample_size * p1_audio_sample_rate;
+// Minimum output buffer size per FDK AAC requirements.
+static const int out_min_size = 6144 / 8 * p1_audio_num_channels;
+// Complete output buffer size, also one full second.
+static const int out_size = out_min_size * 64;
+
+static struct {
+    HANDLE_AACENCODER aac;
+
+    void *mix;
+    int mix_len;
+
+    void *out;
+} state;
+
+static int p1_audio_write(void **in, int *in_len);
+static int p1_audio_read(int num);
+
+
+void p1_audio_init()
+{
+    AACENC_ERROR err;
+
+    state.mix = calloc(1, mix_size);
+    state.out = malloc(out_size);
+
+    err = aacEncOpen(&state.aac, 0x01, 2);
+    assert(err == AACENC_OK);
+
+    err = aacEncoder_SetParam(state.aac, AACENC_AOT, AOT_AAC_LC);
+    assert(err == AACENC_OK);
+    err = aacEncoder_SetParam(state.aac, AACENC_SAMPLERATE, p1_audio_sample_rate);
+    assert(err == AACENC_OK);
+    err = aacEncoder_SetParam(state.aac, AACENC_CHANNELMODE, MODE_2);
+    assert(err == AACENC_OK);
+    err = aacEncoder_SetParam(state.aac, AACENC_BITRATE, bit_rate);
+    assert(err == AACENC_OK);
+    err = aacEncoder_SetParam(state.aac, AACENC_TRANSMUX, TT_MP4_RAW);
+    assert(err == AACENC_OK);
+
+    err = aacEncEncode(state.aac, NULL, NULL, NULL, NULL);
+    assert(err == AACENC_OK);
+}
+
+void p1_audio_mix(int64_t time, void *in, int in_len)
+{
+    int out_size;
+    do {
+        p1_audio_write(&in, &in_len);
+        out_size = p1_audio_read(state.mix_len);
+        if (out_size)
+            // FIXME: Properly track time.
+            p1_stream_audio(time, state.out, out_size);
+    } while (out_size);
+    if (in_len)
+        printf("Audio mix buffer underrun, dropped %d bytes!", in_len);
+}
+
+// Write as much as possible to the mix buffer.
+static int p1_audio_write(void **in, int *in_len)
+{
+    int bytes = mix_size - state.mix_len;
+    if (*in_len < bytes)
+        bytes = *in_len;
+
+    if (bytes != 0) {
+        // FIXME: Mixing code goes here!
+        memcpy(state.mix + state.mix_len, *in, bytes);
+
+        *in += bytes;
+        *in_len -= bytes;
+        state.mix_len += bytes;
+    }
+
+    return bytes;
+}
+
+// Read as much as possible from the ring buffer.
+static int p1_audio_read(int bytes)
+{
+    // Prepare encoder arguments.
+    INT el_sizes[] = { p1_audio_sample_size };
+
+    void *enc_bufs[] = { state.mix };
+    INT enc_identifiers[] = { IN_AUDIO_DATA };
+    INT enc_sizes[] = { bytes };
+    AACENC_BufDesc in_desc = {
+        .numBufs = 1,
+        .bufs = enc_bufs,
+        .bufferIdentifiers = enc_identifiers,
+        .bufSizes = enc_sizes,
+        .bufElSizes = el_sizes
+    };
+
+    void *out_bufs[] = { state.out };
+    INT out_identifiers[] = { OUT_BITSTREAM_DATA };
+    INT out_sizes[] = { out_size };
+    AACENC_BufDesc out_desc = {
+        .numBufs = 1,
+        .bufs = out_bufs,
+        .bufferIdentifiers = out_identifiers,
+        .bufSizes = out_sizes,
+        .bufElSizes = el_sizes
+    };
+
+    AACENC_InArgs in_args = {
+        .numInSamples = bytes / p1_audio_sample_size,
+        .numAncBytes = 0
+    };
+
+    // Encode as much as we can; FDK AAC gives us small batches.
+    AACENC_ERROR err;
+    AACENC_OutArgs out_args = { .numInSamples = 1 };
+    while (in_args.numInSamples && out_args.numInSamples && out_desc.bufSizes[0] > out_min_size) {
+        err = aacEncEncode(state.aac, &in_desc, &out_desc, &in_args, &out_args);
+        assert(err == AACENC_OK);
+
+        size_t in_processed = out_args.numInSamples * p1_audio_sample_size;
+        in_desc.bufs[0] += in_processed;
+        in_desc.bufSizes[0] -= in_processed;
+
+        size_t out_bytes = out_args.numOutBytes;
+        out_desc.bufs[0] += out_bytes;
+        out_desc.bufSizes[0] -= out_bytes;
+
+        in_args.numInSamples -= out_args.numInSamples;
+    }
+
+    // Move remaining data up in the mix buffer.
+    int mix_read = (int) (in_desc.bufs[0] - state.mix);
+    if (mix_read) {
+        int mix_remaining = state.mix_len - mix_read;
+        if (mix_remaining)
+            memmove(state.mix, in_desc.bufs[0], mix_remaining);
+        memset(state.mix + mix_remaining, 0, mix_read);
+        state.mix_len = mix_remaining;
+    }
+
+    return mix_read;
+}

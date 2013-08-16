@@ -3,12 +3,12 @@
 #include <AudioToolbox/AudioToolbox.h>
 
 #include "audio_input.h"
-
-#include "stream.h"
+#include "audio.h"
 
 static const UInt32 num_buffers = 3;
 static const UInt32 num_channels = 2;
-static const UInt32 sample_size_bits = 16;
+static const UInt32 sample_size = 2;
+static const UInt32 sample_size_bits = sample_size * 8;
 static const UInt32 sample_rate = 44100;
 
 static struct {
@@ -16,7 +16,6 @@ static struct {
 
     AudioQueueRef queue;
     AudioQueueBufferRef buffers[num_buffers];
-    int sent_config;
 } state;
 
 static void p1_audio_input_callback(
@@ -30,13 +29,16 @@ void p1_audio_input_init()
 
     state.dispatch = dispatch_queue_create("audio_input", DISPATCH_QUEUE_SERIAL);
 
-    // FIXME: don't do encoding here, but after mixing
     AudioStreamBasicDescription fmt;
-    memset(&fmt, 0, sizeof(AudioStreamBasicDescription));
+    fmt.mFormatID = kAudioFormatLinearPCM;
+    fmt.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
     fmt.mSampleRate = sample_rate;
-    fmt.mFormatID = kAudioFormatMPEG4AAC;
+    fmt.mBitsPerChannel = sample_size_bits;
     fmt.mChannelsPerFrame = num_channels;
-    fmt.mFramesPerPacket = 1024;
+    fmt.mBytesPerFrame = num_channels * sample_size;
+    fmt.mFramesPerPacket = 1;
+    fmt.mBytesPerPacket = fmt.mBytesPerFrame;
+    fmt.mReserved = 0;
 
     ret = AudioQueueNewInputWithDispatchQueue(
         &state.queue, &fmt, 0, state.dispatch,
@@ -62,12 +64,7 @@ static void p1_audio_input_callback(
     AudioQueueBufferRef buf, const AudioTimeStamp *time,
     UInt32 num_packets, const AudioStreamPacketDescription *packets)
 {
-    if (!state.sent_config) {
-        state.sent_config = 1;
-        p1_stream_audio_config();
-    }
-
-    p1_stream_audio(buf, time->mHostTime);
+    p1_audio_mix(time->mHostTime, buf->mAudioData, buf->mAudioDataByteSize);
 
     OSStatus ret = AudioQueueEnqueueBuffer(state.queue, buf, 0, NULL);
     assert(ret == noErr);

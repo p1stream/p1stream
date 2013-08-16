@@ -129,29 +129,10 @@ void p1_stream_video(x264_nal_t *nals, int len, x264_picture_t *pic)
     p1_stream_submit_packet(pkt);
 }
 
-// Send audio configuration.
-void p1_stream_audio_config()
-{
-    const uint32_t tag_size = 2 + 2;
-
-    RTMPPacket *pkt = p1_stream_new_packet(RTMP_PACKET_TYPE_AUDIO, 0, tag_size);
-    char * const body = pkt->m_body;
-
-    body[0] = 0xa0 | 0x0c | 0x02 | 0x01; // AAC, 44.1kHz, 16-bit, Stereo
-    body[1] = 0; // AAC config
-
-    // Low Complexity profile, 44.1kHz, Stereo
-    body[2] = 0x10 | 0x02;
-    body[3] = 0x10;
-
-    p1_stream_submit_packet(pkt);
-}
-
 // Send audio data.
-void p1_stream_audio(AudioQueueBufferRef buf, int64_t mtime)
+void p1_stream_audio(int64_t mtime, void *buf, int len)
 {
-    const uint32_t size = buf->mAudioDataByteSize;
-    const uint32_t tag_size = 2 + size;
+    const uint32_t tag_size = 2 + len;
 
     RTMPPacket *pkt = p1_stream_new_packet(RTMP_PACKET_TYPE_AUDIO, mtime, tag_size);
     char * const body = pkt->m_body;
@@ -159,7 +140,8 @@ void p1_stream_audio(AudioQueueBufferRef buf, int64_t mtime)
     body[0] = 0xa0 | 0x0c | 0x02 | 0x01; // AAC, 44.1kHz, 16-bit, Stereo
     body[1] = 1; // AAC raw
 
-    memcpy(body + 2, buf->mAudioData, size);
+    // FIXME: Do the extra work to avoid this copy.
+    memcpy(body + 2, buf, len);
 
     p1_stream_submit_packet(pkt);
 }
