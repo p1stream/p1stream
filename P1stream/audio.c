@@ -4,13 +4,17 @@
 #include <memory.h>
 #include <aacenc_lib.h>
 
+#include <mach/mach_time.h>
+
 #include "audio.h"
 #include "stream.h"
 
 // Hardcoded bitrate.
 static const int bit_rate = 128 * 1024;
+// Size of one frame.
+static const int frame_size = p1_audio_num_channels * p1_audio_sample_size;
 // Mix buffer buffer of one full second.
-static const int mix_size = p1_audio_num_channels * p1_audio_sample_size * p1_audio_sample_rate;
+static const int mix_size = frame_size * p1_audio_sample_rate;
 // Minimum output buffer size per FDK AAC requirements.
 static const int out_min_size = 6144 / 8 * p1_audio_num_channels;
 // Complete output buffer size, also one full second.
@@ -23,10 +27,14 @@ static struct {
     int mix_len;
 
     void *out;
+
+    mach_timebase_info_data_t timebase;
+    int64_t time;
 } state;
 
 static int p1_audio_write(void **in, int *in_len);
 static int p1_audio_read(int num);
+static int64_t p1_audio_bytes_to_mach_time(int bytes);
 
 
 void p1_audio_init()
@@ -52,18 +60,30 @@ void p1_audio_init()
 
     err = aacEncEncode(state.aac, NULL, NULL, NULL, NULL);
     assert(err == AACENC_OK);
+
+    mach_timebase_info(&state.timebase);
 }
 
 void p1_audio_mix(int64_t time, void *in, int in_len)
 {
+    // Calculate time for the start of the mix buffer.
+    state.time = time - p1_audio_bytes_to_mach_time(state.mix_len);
+
     int out_size;
     do {
+        // Write to the mix buffer.
         p1_audio_write(&in, &in_len);
+
+        // Read, encode and stream from the mix buffer.
         out_size = p1_audio_read(state.mix_len);
-        if (out_size)
-            // FIXME: Properly track time.
+        if (out_size) {
             p1_stream_audio(time, state.out, out_size);
+
+            // Recalculate mix buffer start time.
+            state.time += p1_audio_bytes_to_mach_time(out_size);
+        }
     } while (out_size);
+
     if (in_len)
         printf("Audio mix buffer underrun, dropped %d bytes!", in_len);
 }
@@ -149,4 +169,11 @@ static int p1_audio_read(int bytes)
     }
 
     return mix_read;
+}
+
+static int64_t p1_audio_bytes_to_mach_time(int bytes)
+{
+    int samples = bytes / frame_size;
+    int64_t nanosec = samples * 1000000000 / p1_audio_sample_rate;
+    return nanosec * state.timebase.denom / state.timebase.numer;
 }
