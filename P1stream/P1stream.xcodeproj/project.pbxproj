@@ -45,7 +45,6 @@
 		F680B5B817B95FD10067BBE7 /* sample_config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sample_config.plist; sourceTree = "<group>"; };
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD017B6F8EB002FE99E /* audio_input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio_input.c; sourceTree = "<group>"; };
-		F6A76AD217B6F8F2002FE99E /* audio_input.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audio_input.h; sourceTree = "<group>"; };
 		F6A76AD317B6FE2B002FE99E /* audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 		F6F6076B17B64212009E6155 /* video_desktop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video_desktop.c; sourceTree = "<group>"; };
@@ -56,7 +55,6 @@
 		F6F6077617B64C34009E6155 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		F6F6077817B64CC4009E6155 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		F6F6077A17B65F1F009E6155 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
-		F6F6077C17B65F87009E6155 /* video_desktop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video_desktop.h; sourceTree = "<group>"; };
 		F6F6077D17B68E05009E6155 /* stream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stream.h; sourceTree = "<group>"; };
 		F6F6077E17B68E0B009E6155 /* stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stream.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -115,9 +113,7 @@
 				F6F6077117B6488C009E6155 /* video.c */,
 				F6F6077D17B68E05009E6155 /* stream.h */,
 				F6F6077E17B68E0B009E6155 /* stream.c */,
-				F6A76AD217B6F8F2002FE99E /* audio_input.h */,
 				F6A76AD017B6F8EB002FE99E /* audio_input.c */,
-				F6F6077C17B65F87009E6155 /* video_desktop.h */,
 				F6F6076B17B64212009E6155 /* video_desktop.c */,
 				F680B5B817B95FD10067BBE7 /* sample_config.plist */,
 				F607450E17B6303F004EA730 /* Frameworks */,

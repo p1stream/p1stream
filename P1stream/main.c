@@ -6,8 +6,8 @@
 #include "video.h"
 #include "stream.h"
 
-#include "audio_input.h"
-#include "video_desktop.h"
+extern P1AudioPlugin p1_audio_input;
+extern P1VideoPlugin p1_video_desktop;
 
 
 int main(int argc, const char * argv[])

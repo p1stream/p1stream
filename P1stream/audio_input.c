@@ -2,7 +2,7 @@
 #include <dispatch/dispatch.h>
 #include <AudioToolbox/AudioToolbox.h>
 
-#include "audio_input.h"
+#include "audio.h"
 
 static const UInt32 num_buffers = 3;
 static const UInt32 num_channels = 2;
