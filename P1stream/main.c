@@ -21,8 +21,13 @@ int main(int argc, const char * argv[])
     p1_audio_init();
     p1_video_init();
     p1_stream_init();
+
     p1_video_desktop_init();
-    p1_audio_input_init();
+
+    P1AudioSource *audio_source = p1_audio_input.create();
+    p1_audio_add_source(audio_source);
+    audio_source->plugin->start(audio_source);
+
     dispatch_main();
 
     return 0;

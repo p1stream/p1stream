@@ -21,11 +21,11 @@ static const int out_min_size = 6144 / 8 * p1_audio_num_channels;
 static const int out_size = out_min_size * 64;
 
 static struct {
-    HANDLE_AACENCODER aac;
+    P1AudioSource *src;
 
+    HANDLE_AACENCODER aac;
     void *mix;
     int mix_len;
-
     void *out;
 
     mach_timebase_info_data_t timebase;
@@ -66,8 +66,16 @@ void p1_audio_init()
     mach_timebase_info(&state.timebase);
 }
 
-void p1_audio_mix(int64_t time, void *in, int in_len)
+void p1_audio_add_source(P1AudioSource *src)
 {
+    assert(state.src == NULL);
+    state.src = src;
+}
+
+void p1_audio_mix(P1AudioSource *src, int64_t time, void *in, int in_len)
+{
+    assert(src == state.src);
+
     if (!state.sent_config) {
         state.sent_config = 1;
         p1_stream_audio_config();
