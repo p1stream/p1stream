@@ -8,6 +8,7 @@
 void p1_stream_init();
 void p1_stream_video_config(x264_nal_t *nals, int len);
 void p1_stream_video(x264_nal_t *nals, int len, x264_picture_t *pic);
+void p1_stream_audio_config();
 void p1_stream_audio(int64_t time, void *buf, int len);
 
 #endif

@@ -30,6 +30,8 @@ static struct {
 
     mach_timebase_info_data_t timebase;
     int64_t time;
+
+    int sent_config;
 } state;
 
 static int p1_audio_write(void **in, int *in_len);
@@ -66,6 +68,11 @@ void p1_audio_init()
 
 void p1_audio_mix(int64_t time, void *in, int in_len)
 {
+    if (!state.sent_config) {
+        state.sent_config = 1;
+        p1_stream_audio_config();
+    }
+
     // Calculate time for the start of the mix buffer.
     state.time = time - p1_audio_bytes_to_mach_time(state.mix_len);
 

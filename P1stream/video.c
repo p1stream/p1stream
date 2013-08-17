@@ -39,6 +39,7 @@ static struct {
 
     x264_t *enc;
     x264_picture_t enc_pic;
+
     int sent_config;
 } state;
 
