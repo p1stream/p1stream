@@ -11,13 +11,15 @@
 #include "conf.h"
 #include "stream.h"
 
-static int p1_video_frame_prep();
+static int p1_video_frame_prep(P1VideoSource *src);
 static void p1_video_frame_yuv();
 static void p1_video_frame_finish();
 static GLuint p1_build_shader(GLuint type, const char *source);
 static void p1_video_build_program(GLuint program, const char *vertexShader, const char *fragmentShader);
 
 static struct {
+    P1VideoSource *src;
+
     size_t skip_counter;
 
     CGLContextObj gl;
@@ -240,8 +242,16 @@ void p1_video_init()
     assert(cl_err == CL_SUCCESS);
 }
 
-static int p1_video_frame_prep()
+void p1_video_add_source(P1VideoSource *src)
 {
+    assert(state.src == NULL);
+    state.src = src;
+}
+
+static int p1_video_frame_prep(P1VideoSource *src)
+{
+    assert(src == state.src);
+
     CGLSetCurrentContext(state.gl);
 
     if (state.skip_counter >= fps_div)
@@ -249,17 +259,17 @@ static int p1_video_frame_prep()
     return state.skip_counter++ == 0;
 }
 
-void p1_video_frame_idle(int64_t time)
+void p1_video_frame_idle(P1VideoSource *src, int64_t time)
 {
-    if (!p1_video_frame_prep())
+    if (!p1_video_frame_prep(src))
         return;
 
     p1_video_frame_finish(time);
 }
 
-void p1_video_frame_blank(int64_t time)
+void p1_video_frame_blank(P1VideoSource *src, int64_t time)
 {
-    if (!p1_video_frame_prep())
+    if (!p1_video_frame_prep(src))
         return;
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -267,9 +277,9 @@ void p1_video_frame_blank(int64_t time)
     p1_video_frame_yuv(time);
 }
 
-void p1_video_frame_iosurface(int64_t time, IOSurfaceRef buffer)
+void p1_video_frame_iosurface(P1VideoSource *src, int64_t time, IOSurfaceRef buffer)
 {
-    if (!p1_video_frame_prep())
+    if (!p1_video_frame_prep(src))
         return;
 
     GLsizei width = (GLsizei) IOSurfaceGetWidth(buffer);

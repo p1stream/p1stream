@@ -5,80 +5,120 @@
 
 #include "video_desktop.h"
 
-#include "video.h"
+static const size_t fps = 60;
 
-static void p1_video_desktop_frame(
-    CGDisplayStreamFrameStatus status, uint64_t displayTime,
-    IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef);
+typedef struct _P1VideoDesktopSource P1VideoDesktopSource;
 
-static struct {
+struct _P1VideoDesktopSource {
+    P1VideoSource super;
+
     dispatch_queue_t dispatch;
 
     CGDisplayStreamRef display_stream;
 
     uint64_t last_time;
     uint64_t frame_period;
-} state;
+};
 
-static const size_t fps = 60;
+static P1VideoSource *p1_video_desktop_create();
+static void p1_video_desktop_free(P1VideoSource *_source);
+static int p1_video_desktop_start(P1VideoSource *_source);
+static void p1_video_desktop_stop(P1VideoSource *_source);
+static void p1_video_desktop_frame(
+    P1VideoDesktopSource *source, CGDisplayStreamFrameStatus status,
+    uint64_t displayTime, IOSurfaceRef frameSurface);
+
+P1VideoPlugin p1_video_desktop = {
+    .create = p1_video_desktop_create,
+    .free = p1_video_desktop_free,
+
+    .start = p1_video_desktop_start,
+    .stop = p1_video_desktop_stop
+};
 
 
-int p1_video_desktop_init()
+static P1VideoSource *p1_video_desktop_create()
 {
-    int res = 0;
+    P1VideoDesktopSource *source = calloc(1, sizeof(P1VideoDesktopSource));
+    assert(source != NULL);
 
-    state.dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
+    P1VideoSource *_source = (P1VideoSource *) source;
+    _source->plugin = &p1_video_desktop;
+
+    source->dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
 
     const CGDirectDisplayID display_id = kCGDirectMainDisplay;
     size_t width  = CGDisplayPixelsWide(display_id);
     size_t height = CGDisplayPixelsHigh(display_id);
 
-    state.display_stream = CGDisplayStreamCreateWithDispatchQueue(
-        display_id, width, height, 'BGRA', NULL, state.dispatch,
+    source->display_stream = CGDisplayStreamCreateWithDispatchQueue(
+        display_id, width, height, 'BGRA', NULL, source->dispatch,
         ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef) {
-            p1_video_desktop_frame(status, displayTime, frameSurface, updateRef);
+            p1_video_desktop_frame(source, status, displayTime, frameSurface);
         });
-    if (state.display_stream) {
-        res = CGDisplayStreamStart(state.display_stream) == kCGErrorSuccess;
-        if (!res) {
-            CFRelease(state.display_stream);
-            state.display_stream = NULL;
-        }
-    }
+    assert(source->display_stream);
 
     mach_timebase_info_data_t base;
     mach_timebase_info(&base);
-    state.frame_period = 1000000000 / fps * base.denom / base.numer;
+    source->frame_period = 1000000000 / fps * base.denom / base.numer;
 
-    return res;
+    return _source;
+}
+
+static void p1_video_desktop_free(P1VideoSource *_source)
+{
+    P1VideoDesktopSource *source = (P1VideoDesktopSource *)_source;
+
+    CFRelease(source->display_stream);
+    dispatch_release(source->dispatch);
+}
+
+static int p1_video_desktop_start(P1VideoSource *_source)
+{
+    P1VideoDesktopSource *source = (P1VideoDesktopSource *)_source;
+
+    CGError err = CGDisplayStreamStart(source->display_stream);
+    assert(err == kCGErrorSuccess);
+
+    return 1;
+}
+
+static void p1_video_desktop_stop(P1VideoSource *_source)
+{
+    P1VideoDesktopSource *source = (P1VideoDesktopSource *)_source;
+
+    CGError err = CGDisplayStreamStop(source->display_stream);
+    assert(err == kCGErrorSuccess);
 }
 
 static void p1_video_desktop_frame(
-    CGDisplayStreamFrameStatus status, uint64_t displayTime,
-    IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
+    P1VideoDesktopSource *source, CGDisplayStreamFrameStatus status,
+    uint64_t displayTime, IOSurfaceRef frameSurface)
 {
+    P1VideoSource *_source = (P1VideoSource *) source;
+
     // When idle, we get frames at a lower rate, apparently 15hz.
     // Pad with idle frames.
-    if (state.last_time == 0) {
-        state.last_time = displayTime;
+    if (source->last_time == 0) {
+        source->last_time = displayTime;
     }
     else {
-        state.last_time += state.frame_period;
-        while (state.last_time < displayTime) {
-            p1_video_frame_idle(state.last_time);
-            state.last_time += state.frame_period;
+        source->last_time += source->frame_period;
+        while (source->last_time < displayTime) {
+            p1_video_frame_idle(_source, source->last_time);
+            source->last_time += source->frame_period;
         }
     }
 
     switch (status) {
         case kCGDisplayStreamFrameStatusFrameComplete:
-            p1_video_frame_iosurface(displayTime, frameSurface);
+            p1_video_frame_iosurface(_source, displayTime, frameSurface);
             break;
         case kCGDisplayStreamFrameStatusFrameIdle:
-            p1_video_frame_idle(displayTime);
+            p1_video_frame_idle(_source, displayTime);
             break;
         case kCGDisplayStreamFrameStatusFrameBlank:
-            p1_video_frame_blank(displayTime);
+            p1_video_frame_blank(_source, displayTime);
             break;
         case kCGDisplayStreamFrameStatusStopped:
             printf("Display stream stopped.");

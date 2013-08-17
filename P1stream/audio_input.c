@@ -38,7 +38,7 @@ P1AudioPlugin p1_audio_input = {
 static P1AudioSource *p1_audio_input_create()
 {
     P1AudioInputSource *source = calloc(1, sizeof(P1AudioInputSource));
-    assert (source != NULL);
+    assert(source != NULL);
 
     P1AudioSource *_source = (P1AudioSource *) source;
     _source->plugin = &p1_audio_input;
