@@ -11,7 +11,7 @@
 #include "conf.h"
 #include "stream.h"
 
-static int p1_video_frame_prep(P1VideoSource *src);
+static bool p1_video_frame_prep(P1VideoSource *src);
 static void p1_video_frame_yuv();
 static void p1_video_frame_finish();
 static GLuint p1_build_shader(GLuint type, const char *source);
@@ -42,7 +42,7 @@ static struct {
     x264_t *enc;
     x264_picture_t enc_pic;
 
-    int sent_config;
+    bool sent_config;
 } state;
 
 static const char *simple_vertex_shader =
@@ -248,7 +248,7 @@ void p1_video_add_source(P1VideoSource *src)
     state.src = src;
 }
 
-static int p1_video_frame_prep(P1VideoSource *src)
+static bool p1_video_frame_prep(P1VideoSource *src)
 {
     assert(src == state.src);
 
@@ -339,7 +339,7 @@ static void p1_video_frame_finish(int64_t time)
     int ret;
 
     if (!state.sent_config) {
-        state.sent_config = 1;
+        state.sent_config = true;
         ret = x264_encoder_headers(state.enc, &nals, &len);
         assert(ret >= 0);
         p1_stream_video_config(nals, len);

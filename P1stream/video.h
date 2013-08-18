@@ -1,6 +1,7 @@
 #ifndef p1_cli_video_h
 #define p1_cli_video_h
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <IOSurface/IOSurface.h>
 
@@ -11,7 +12,7 @@ struct _P1VideoPlugin {
     P1VideoSource *(*create)();
     void (*free)(P1VideoSource *src);
 
-    int (*start)(P1VideoSource *src);
+    bool (*start)(P1VideoSource *src);
     void (*stop)(P1VideoSource *src);
 };
 

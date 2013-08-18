@@ -37,7 +37,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 // Plugin definition.
 static P1VideoSource *p1_video_capture_create();
 static void p1_video_capture_free(P1VideoSource *_source);
-static int p1_video_capture_start(P1VideoSource *_source);
+static bool p1_video_capture_start(P1VideoSource *_source);
 static void p1_video_capture_stop(P1VideoSource *_source);
 
 P1VideoPlugin p1_video_capture = {
@@ -100,7 +100,7 @@ static void p1_video_capture_free(P1VideoSource *_source)
     CFRelease(source->delegate);
 }
 
-static int p1_video_capture_start(P1VideoSource *_source)
+static bool p1_video_capture_start(P1VideoSource *_source)
 {
     P1VideoCaptureSource *source = (P1VideoCaptureSource *) _source;
 
@@ -109,7 +109,7 @@ static int p1_video_capture_start(P1VideoSource *_source)
         [session startRunning];
     }
 
-    return 1;
+    return true;
 }
 
 static void p1_video_capture_stop(P1VideoSource *_source)

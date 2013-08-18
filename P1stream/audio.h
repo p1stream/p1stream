@@ -1,6 +1,7 @@
 #ifndef p1_cli_audio_h
 #define p1_cli_audio_h
 
+#include <stdbool.h>
 #include <stdint.h>
 
 // Fixed internal mixing buffer parameters.
@@ -15,7 +16,7 @@ struct _P1AudioPlugin {
     P1AudioSource *(*create)();
     void (*free)(P1AudioSource *src);
 
-    int (*start)(P1AudioSource *src);
+    bool (*start)(P1AudioSource *src);
     void (*stop)(P1AudioSource *src);
 };
 

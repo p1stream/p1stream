@@ -31,7 +31,7 @@ static struct {
     mach_timebase_info_data_t timebase;
     int64_t time;
 
-    int sent_config;
+    bool sent_config;
 } state;
 
 static int p1_audio_write(void **in, int *in_len);
@@ -77,7 +77,7 @@ void p1_audio_mix(P1AudioSource *src, int64_t time, void *in, int in_len)
     assert(src == state.src);
 
     if (!state.sent_config) {
-        state.sent_config = 1;
+        state.sent_config = true;
         p1_stream_audio_config();
     }
 

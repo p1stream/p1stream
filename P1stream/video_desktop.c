@@ -22,7 +22,7 @@ struct _P1VideoDesktopSource {
 
 static P1VideoSource *p1_video_desktop_create();
 static void p1_video_desktop_free(P1VideoSource *_source);
-static int p1_video_desktop_start(P1VideoSource *_source);
+static bool p1_video_desktop_start(P1VideoSource *_source);
 static void p1_video_desktop_stop(P1VideoSource *_source);
 static void p1_video_desktop_frame(
     P1VideoDesktopSource *source, CGDisplayStreamFrameStatus status,
@@ -73,14 +73,14 @@ static void p1_video_desktop_free(P1VideoSource *_source)
     dispatch_release(source->dispatch);
 }
 
-static int p1_video_desktop_start(P1VideoSource *_source)
+static bool p1_video_desktop_start(P1VideoSource *_source)
 {
     P1VideoDesktopSource *source = (P1VideoDesktopSource *)_source;
 
     CGError err = CGDisplayStreamStart(source->display_stream);
     assert(err == kCGErrorSuccess);
 
-    return 1;
+    return true;
 }
 
 static void p1_video_desktop_stop(P1VideoSource *_source)

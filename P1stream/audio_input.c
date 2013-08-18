@@ -23,7 +23,7 @@ struct _P1AudioInputSource {
 
 static P1AudioSource *p1_audio_input_create();
 static void p1_audio_input_free(P1AudioSource *_source);
-static int p1_audio_input_start(P1AudioSource *_source);
+static bool p1_audio_input_start(P1AudioSource *_source);
 static void p1_audio_input_stop(P1AudioSource *_source);
 
 P1AudioPlugin p1_audio_input = {
@@ -88,14 +88,14 @@ static void p1_audio_input_free(P1AudioSource *_source)
     dispatch_release(source->dispatch);
 }
 
-static int p1_audio_input_start(P1AudioSource *_source)
+static bool p1_audio_input_start(P1AudioSource *_source)
 {
     P1AudioInputSource *source = (P1AudioInputSource *)_source;
 
     OSStatus ret = AudioQueueStart(source->queue, NULL);
     assert(ret == noErr);
 
-    return 1;
+    return true;
 }
 
 static void p1_audio_input_stop(P1AudioSource *_source)
