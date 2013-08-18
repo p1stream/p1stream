@@ -9,7 +9,7 @@
 #include "stream.h"
 #include "conf.h"
 
-static const size_t max_queue_len = 64;
+static const size_t max_queue_len = 256;
 
 static struct {
     dispatch_queue_t dispatch;

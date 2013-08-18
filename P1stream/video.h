@@ -23,6 +23,7 @@ void p1_video_init();
 void p1_video_add_source(P1VideoSource *src);
 void p1_video_frame_idle(P1VideoSource *src, int64_t time);
 void p1_video_frame_blank(P1VideoSource *src, int64_t time);
+void p1_video_frame_raw(P1VideoSource *src, int64_t time, int width, int height, void *data);
 void p1_video_frame_iosurface(P1VideoSource *src, int64_t time, IOSurfaceRef buffer);
 
 #endif

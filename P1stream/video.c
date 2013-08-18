@@ -277,6 +277,21 @@ void p1_video_frame_blank(P1VideoSource *src, int64_t time)
     p1_video_frame_yuv(time);
 }
 
+void p1_video_frame_raw(P1VideoSource *src, int64_t time, int width, int height, void *data)
+{
+    if (!p1_video_frame_prep(src))
+        return;
+
+    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, width, height, 0,
+                 GL_BGRA, GL_UNSIGNED_BYTE, data);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glFinish();
+    assert(glGetError() == GL_NO_ERROR);
+
+    p1_video_frame_yuv(time);
+}
+
 void p1_video_frame_iosurface(P1VideoSource *src, int64_t time, IOSurfaceRef buffer)
 {
     if (!p1_video_frame_prep(src))

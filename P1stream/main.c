@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <dispatch/dispatch.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 #include "conf.h"
 #include "audio.h"
@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
     p1_audio_add_source(audio_source);
     audio_source->plugin->start(audio_source);
 
-    dispatch_main();
+    CFRunLoopRun();
 
     return 0;
 }

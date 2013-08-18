@@ -15,6 +15,10 @@
 		F627211717BC330700A889B4 /* libFraunhoferAAC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F627211617BC330700A889B4 /* libFraunhoferAAC.a */; };
 		F63FB21D17B8316D00CD1B46 /* conf.c in Sources */ = {isa = PBXBuildFile; fileRef = F63FB21C17B8316D00CD1B46 /* conf.c */; };
 		F644CB9917B6291D007934C3 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F644CB9817B6291D007934C3 /* main.c */; };
+		F653422917BFAF5C00769680 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F653422817BFAF5C00769680 /* CoreMedia.framework */; };
+		F653422B17BFAF6200769680 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F653422A17BFAF6200769680 /* CoreVideo.framework */; };
+		F653422D17BFAF6600769680 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F653422C17BFAF6600769680 /* AVFoundation.framework */; };
+		F653422F17BFBC1200769680 /* video_capture.m in Sources */ = {isa = PBXBuildFile; fileRef = F653422E17BFBC1200769680 /* video_capture.m */; };
 		F6A76ACF17B6F8D6002FE99E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */; };
 		F6A76AD117B6F8EB002FE99E /* audio_input.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD017B6F8EB002FE99E /* audio_input.c */; };
 		F6A76AD517B6FE31002FE99E /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD417B6FE31002FE99E /* audio.c */; };
@@ -42,6 +46,10 @@
 		F644CBA217B62C03007934C3 /* common-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
 		F644CBA317B62C03007934C3 /* common-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
 		F644CBA417B62C03007934C3 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
+		F653422817BFAF5C00769680 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		F653422A17BFAF6200769680 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		F653422C17BFAF6600769680 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		F653422E17BFBC1200769680 /* video_capture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = video_capture.m; sourceTree = "<group>"; };
 		F680B5B817B95FD10067BBE7 /* sample_config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sample_config.plist; sourceTree = "<group>"; };
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD017B6F8EB002FE99E /* audio_input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio_input.c; sourceTree = "<group>"; };
@@ -72,9 +80,12 @@
 				F607453117B6382D004EA730 /* librtmp.a in Frameworks */,
 				F6F6077717B64C34009E6155 /* CoreFoundation.framework in Frameworks */,
 				F6F6077917B64CC4009E6155 /* IOSurface.framework in Frameworks */,
-				F6F6076E17B6426F009E6155 /* CoreGraphics.framework in Frameworks */,
 				F6F6077517B64C28009E6155 /* OpenGL.framework in Frameworks */,
 				F6F6077B17B65F1F009E6155 /* OpenCL.framework in Frameworks */,
+				F6F6076E17B6426F009E6155 /* CoreGraphics.framework in Frameworks */,
+				F653422917BFAF5C00769680 /* CoreMedia.framework in Frameworks */,
+				F653422B17BFAF6200769680 /* CoreVideo.framework in Frameworks */,
+				F653422D17BFAF6600769680 /* AVFoundation.framework in Frameworks */,
 				F6A76ACF17B6F8D6002FE99E /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -93,9 +104,12 @@
 				F607452F17B6382D004EA730 /* librtmp.a */,
 				F6F6077617B64C34009E6155 /* CoreFoundation.framework */,
 				F6F6077817B64CC4009E6155 /* IOSurface.framework */,
-				F6F6076D17B6426F009E6155 /* CoreGraphics.framework */,
 				F6F6077417B64C28009E6155 /* OpenGL.framework */,
 				F6F6077A17B65F1F009E6155 /* OpenCL.framework */,
+				F6F6076D17B6426F009E6155 /* CoreGraphics.framework */,
+				F653422817BFAF5C00769680 /* CoreMedia.framework */,
+				F653422A17BFAF6200769680 /* CoreVideo.framework */,
+				F653422C17BFAF6600769680 /* AVFoundation.framework */,
 				F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */,
 			);
 			name = Frameworks;
@@ -115,6 +129,7 @@
 				F6F6077E17B68E0B009E6155 /* stream.c */,
 				F6A76AD017B6F8EB002FE99E /* audio_input.c */,
 				F6F6076B17B64212009E6155 /* video_desktop.c */,
+				F653422E17BFBC1200769680 /* video_capture.m */,
 				F680B5B817B95FD10067BBE7 /* sample_config.plist */,
 				F607450E17B6303F004EA730 /* Frameworks */,
 				F644CB9617B6291D007934C3 /* Products */,
@@ -197,6 +212,7 @@
 				F6A76AD117B6F8EB002FE99E /* audio_input.c in Sources */,
 				F6A76AD517B6FE31002FE99E /* audio.c in Sources */,
 				F63FB21D17B8316D00CD1B46 /* conf.c in Sources */,
+				F653422F17BFBC1200769680 /* video_capture.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
