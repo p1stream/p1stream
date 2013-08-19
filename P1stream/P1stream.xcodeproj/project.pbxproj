@@ -23,7 +23,7 @@
 		F6A76AD117B6F8EB002FE99E /* audio_input.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD017B6F8EB002FE99E /* audio_input.c */; };
 		F6A76AD517B6FE31002FE99E /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD417B6FE31002FE99E /* audio.c */; };
 		F6AFEDA317C23180002A43D7 /* clock_display.c in Sources */ = {isa = PBXBuildFile; fileRef = F6AFEDA217C23180002A43D7 /* clock_display.c */; };
-		F6F6076C17B64212009E6155 /* video_desktop.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6076B17B64212009E6155 /* video_desktop.c */; };
+		F6F6076C17B64212009E6155 /* video_display.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6076B17B64212009E6155 /* video_display.c */; };
 		F6F6076E17B6426F009E6155 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6076D17B6426F009E6155 /* CoreGraphics.framework */; };
 		F6F6077217B6488C009E6155 /* video.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6077117B6488C009E6155 /* video.c */; };
 		F6F6077517B64C28009E6155 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077417B64C28009E6155 /* OpenGL.framework */; };
@@ -57,7 +57,7 @@
 		F6A76AD317B6FE2B002FE99E /* audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 		F6AFEDA217C23180002A43D7 /* clock_display.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = clock_display.c; sourceTree = "<group>"; };
-		F6F6076B17B64212009E6155 /* video_desktop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video_desktop.c; sourceTree = "<group>"; };
+		F6F6076B17B64212009E6155 /* video_display.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video_display.c; sourceTree = "<group>"; };
 		F6F6076D17B6426F009E6155 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F6F6077117B6488C009E6155 /* video.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video.c; sourceTree = "<group>"; };
 		F6F6077317B64894009E6155 /* video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video.h; sourceTree = "<group>"; };
@@ -131,7 +131,7 @@
 				F6F6077E17B68E0B009E6155 /* stream.c */,
 				F6A76AD017B6F8EB002FE99E /* audio_input.c */,
 				F6AFEDA217C23180002A43D7 /* clock_display.c */,
-				F6F6076B17B64212009E6155 /* video_desktop.c */,
+				F6F6076B17B64212009E6155 /* video_display.c */,
 				F653422E17BFBC1200769680 /* video_capture.m */,
 				F680B5B817B95FD10067BBE7 /* sample_config.plist */,
 				F607450E17B6303F004EA730 /* Frameworks */,
@@ -209,7 +209,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F644CB9917B6291D007934C3 /* main.c in Sources */,
-				F6F6076C17B64212009E6155 /* video_desktop.c in Sources */,
+				F6F6076C17B64212009E6155 /* video_display.c in Sources */,
 				F6F6077217B6488C009E6155 /* video.c in Sources */,
 				F6F6077F17B68E0B009E6155 /* stream.c in Sources */,
 				F6A76AD117B6F8EB002FE99E /* audio_input.c in Sources */,

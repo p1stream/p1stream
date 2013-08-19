@@ -9,9 +9,9 @@
 
 static const size_t fps = 60;
 
-typedef struct _P1VideoDesktopSource P1VideoDesktopSource;
+typedef struct _P1DisplayVideoSource P1DisplayVideoSource;
 
-struct _P1VideoDesktopSource {
+struct _P1DisplayVideoSource {
     P1VideoSource super;
 
     dispatch_queue_t dispatch;
@@ -22,32 +22,32 @@ struct _P1VideoDesktopSource {
     CGDisplayStreamRef display_stream;
 };
 
-static P1VideoSource *p1_video_desktop_create();
-static void p1_video_desktop_free(P1VideoSource *_source);
-static bool p1_video_desktop_start(P1VideoSource *_source);
-static void p1_video_desktop_frame(P1VideoSource *_source);
-static void p1_video_desktop_stop(P1VideoSource *_source);
-static void p1_video_desktop_stream_callback(
-    P1VideoDesktopSource *source,
+static P1VideoSource *p1_display_video_source_create();
+static void p1_display_video_source_free(P1VideoSource *_source);
+static bool p1_display_video_source_start(P1VideoSource *_source);
+static void p1_display_video_source_frame(P1VideoSource *_source);
+static void p1_display_video_source_stop(P1VideoSource *_source);
+static void p1_display_video_source_callback(
+    P1DisplayVideoSource *source,
     CGDisplayStreamFrameStatus status,
     IOSurfaceRef frame);
 
-P1VideoSourceFactory p1_video_desktop_factory = {
-    .create = p1_video_desktop_create
+P1VideoSourceFactory p1_display_video_source_factory = {
+    .create = p1_display_video_source_create
 };
 
 
-static P1VideoSource *p1_video_desktop_create()
+static P1VideoSource *p1_display_video_source_create()
 {
-    P1VideoDesktopSource *source = calloc(1, sizeof(P1VideoDesktopSource));
+    P1DisplayVideoSource *source = calloc(1, sizeof(P1DisplayVideoSource));
     assert(source != NULL);
 
     P1VideoSource *_source = (P1VideoSource *) source;
-    _source->factory = &p1_video_desktop_factory;
-    _source->free = p1_video_desktop_free;
-    _source->start = p1_video_desktop_start;
-    _source->frame = p1_video_desktop_frame;
-    _source->stop = p1_video_desktop_stop;
+    _source->factory = &p1_display_video_source_factory;
+    _source->free = p1_display_video_source_free;
+    _source->start = p1_display_video_source_start;
+    _source->frame = p1_display_video_source_frame;
+    _source->stop = p1_display_video_source_stop;
 
     source->dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
 
@@ -64,16 +64,16 @@ static P1VideoSource *p1_video_desktop_create()
             IOSurfaceRef frameSurface,
             CGDisplayStreamUpdateRef updateRef)
         {
-            p1_video_desktop_stream_callback(source, status, frameSurface);
+            p1_display_video_source_callback(source, status, frameSurface);
         });
     assert(source->display_stream);
 
     return _source;
 }
 
-static void p1_video_desktop_free(P1VideoSource *_source)
+static void p1_display_video_source_free(P1VideoSource *_source)
 {
-    P1VideoDesktopSource *source = (P1VideoDesktopSource *)_source;
+    P1DisplayVideoSource *source = (P1DisplayVideoSource *)_source;
 
     CFRelease(source->display_stream);
     dispatch_release(source->dispatch);
@@ -81,9 +81,9 @@ static void p1_video_desktop_free(P1VideoSource *_source)
     pthread_mutex_destroy(&source->frame_lock);
 }
 
-static bool p1_video_desktop_start(P1VideoSource *_source)
+static bool p1_display_video_source_start(P1VideoSource *_source)
 {
-    P1VideoDesktopSource *source = (P1VideoDesktopSource *)_source;
+    P1DisplayVideoSource *source = (P1DisplayVideoSource *)_source;
 
     CGError cg_ret = CGDisplayStreamStart(source->display_stream);
     assert(cg_ret == kCGErrorSuccess);
@@ -91,9 +91,9 @@ static bool p1_video_desktop_start(P1VideoSource *_source)
     return true;
 }
 
-static void p1_video_desktop_frame(P1VideoSource *_source)
+static void p1_display_video_source_frame(P1VideoSource *_source)
 {
-    P1VideoDesktopSource *source = (P1VideoDesktopSource *)_source;
+    P1DisplayVideoSource *source = (P1DisplayVideoSource *)_source;
     IOSurfaceRef frame;
 
     pthread_mutex_lock(&source->frame_lock);
@@ -113,16 +113,16 @@ static void p1_video_desktop_frame(P1VideoSource *_source)
     CFRelease(frame);
 }
 
-static void p1_video_desktop_stop(P1VideoSource *_source)
+static void p1_display_video_source_stop(P1VideoSource *_source)
 {
-    P1VideoDesktopSource *source = (P1VideoDesktopSource *)_source;
+    P1DisplayVideoSource *source = (P1DisplayVideoSource *)_source;
 
     CGError cg_ret = CGDisplayStreamStop(source->display_stream);
     assert(cg_ret == kCGErrorSuccess);
 }
 
-static void p1_video_desktop_stream_callback(
-    P1VideoDesktopSource *source,
+static void p1_display_video_source_callback(
+    P1DisplayVideoSource *source,
     CGDisplayStreamFrameStatus status,
     IOSurfaceRef frame)
 {
