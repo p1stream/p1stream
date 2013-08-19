@@ -266,6 +266,10 @@ void p1_video_clock_tick(P1VideoClock *clock, int64_t time)
     glClear(GL_COLOR_BUFFER_BIT);
 
     state.src->frame(state.src);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glFinish();
+    assert(glGetError() == GL_NO_ERROR);
+
 
     p1_video_frame_finish(time);
 }
@@ -276,10 +280,6 @@ void p1_video_frame_raw(P1VideoSource *src, int width, int height, void *data)
 
     glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, width, height, 0,
                  GL_BGRA, GL_UNSIGNED_BYTE, data);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glFinish();
-    assert(glGetError() == GL_NO_ERROR);
 }
 
 void p1_video_frame_iosurface(P1VideoSource *src, IOSurfaceRef buffer)
@@ -297,10 +297,6 @@ void p1_video_frame_iosurface(P1VideoSource *src, IOSurfaceRef buffer)
 
 static void p1_video_frame_finish(int64_t time)
 {
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glFinish();
-    assert(glGetError() == GL_NO_ERROR);
-
     cl_int cl_err;
 
     cl_err = clEnqueueAcquireGLObjects(state.clq, 1, &state.rbo_mem, 0, NULL, NULL);
