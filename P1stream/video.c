@@ -12,7 +12,6 @@
 #include "stream.h"
 
 static bool p1_video_frame_prep(P1VideoSource *src);
-static void p1_video_frame_yuv();
 static void p1_video_frame_finish();
 static GLuint p1_build_shader(GLuint type, const char *source);
 static void p1_video_build_program(GLuint program, const char *vertexShader, const char *fragmentShader);
@@ -248,39 +247,26 @@ void p1_video_add_source(P1VideoSource *src)
     state.src = src;
 }
 
-static bool p1_video_frame_prep(P1VideoSource *src)
+void p1_video_clock_tick(P1VideoSource *src, int64_t time)
 {
     assert(src == state.src);
 
-    CGLSetCurrentContext(state.gl);
-
     if (state.skip_counter >= fps_div)
         state.skip_counter = 0;
-    return state.skip_counter++ == 0;
-}
-
-void p1_video_frame_idle(P1VideoSource *src, int64_t time)
-{
-    if (!p1_video_frame_prep(src))
+    if (state.skip_counter++ != 0)
         return;
+
+    CGLSetCurrentContext(state.gl);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    src->plugin->frame(src);
 
     p1_video_frame_finish(time);
 }
 
-void p1_video_frame_blank(P1VideoSource *src, int64_t time)
+void p1_video_frame_raw(P1VideoSource *src, int width, int height, void *data)
 {
-    if (!p1_video_frame_prep(src))
-        return;
-
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    p1_video_frame_yuv(time);
-}
-
-void p1_video_frame_raw(P1VideoSource *src, int64_t time, int width, int height, void *data)
-{
-    if (!p1_video_frame_prep(src))
-        return;
+    assert(src == state.src);
 
     glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, width, height, 0,
                  GL_BGRA, GL_UNSIGNED_BYTE, data);
@@ -288,14 +274,11 @@ void p1_video_frame_raw(P1VideoSource *src, int64_t time, int width, int height,
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glFinish();
     assert(glGetError() == GL_NO_ERROR);
-
-    p1_video_frame_yuv(time);
 }
 
-void p1_video_frame_iosurface(P1VideoSource *src, int64_t time, IOSurfaceRef buffer)
+void p1_video_frame_iosurface(P1VideoSource *src, IOSurfaceRef buffer)
 {
-    if (!p1_video_frame_prep(src))
-        return;
+    assert(src == state.src);
 
     GLsizei width = (GLsizei) IOSurfaceGetWidth(buffer);
     GLsizei height = (GLsizei) IOSurfaceGetHeight(buffer);
@@ -304,17 +287,14 @@ void p1_video_frame_iosurface(P1VideoSource *src, int64_t time, IOSurfaceRef buf
         GL_RGBA8, width, height,
         GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, buffer, 0);
     assert(err == kCGLNoError);
+}
 
-    glClear(GL_COLOR_BUFFER_BIT);
+static void p1_video_frame_finish(int64_t time)
+{
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glFinish();
     assert(glGetError() == GL_NO_ERROR);
 
-    p1_video_frame_yuv(time);
-}
-
-static void p1_video_frame_yuv(int64_t time)
-{
     cl_int cl_err;
 
     cl_err = clEnqueueAcquireGLObjects(state.clq, 1, &state.rbo_mem, 0, NULL, NULL);
@@ -328,12 +308,6 @@ static void p1_video_frame_yuv(int64_t time)
     cl_err = clFinish(state.clq);
     assert(cl_err == CL_SUCCESS);
 
-    // Same code as idle frame applies.
-    p1_video_frame_finish(time);
-}
-
-static void p1_video_frame_finish(int64_t time)
-{
     x264_nal_t *nals;
     int len;
     int ret;

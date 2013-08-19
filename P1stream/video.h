@@ -13,6 +13,7 @@ struct _P1VideoPlugin {
     void (*free)(P1VideoSource *src);
 
     bool (*start)(P1VideoSource *src);
+    void (*frame)(P1VideoSource *src);
     void (*stop)(P1VideoSource *src);
 };
 
@@ -22,9 +23,8 @@ struct _P1VideoSource {
 
 void p1_video_init();
 void p1_video_add_source(P1VideoSource *src);
-void p1_video_frame_idle(P1VideoSource *src, int64_t time);
-void p1_video_frame_blank(P1VideoSource *src, int64_t time);
-void p1_video_frame_raw(P1VideoSource *src, int64_t time, int width, int height, void *data);
-void p1_video_frame_iosurface(P1VideoSource *src, int64_t time, IOSurfaceRef buffer);
+void p1_video_clock_tick(P1VideoSource *src, int64_t time);
+void p1_video_frame_raw(P1VideoSource *src, int width, int height, void *data);
+void p1_video_frame_iosurface(P1VideoSource *src, IOSurfaceRef buffer);
 
 #endif

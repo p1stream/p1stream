@@ -32,12 +32,13 @@ struct _P1VideoDesktopSource {
 static P1VideoSource *p1_video_desktop_create();
 static void p1_video_desktop_free(P1VideoSource *_source);
 static bool p1_video_desktop_start(P1VideoSource *_source);
+static void p1_video_desktop_frame(P1VideoSource *_source);
 static void p1_video_desktop_stop(P1VideoSource *_source);
-static void p1_video_desktop_frame(
+static void p1_video_desktop_stream_callback(
     P1VideoDesktopSource *source,
     CGDisplayStreamFrameStatus status,
     IOSurfaceRef frame);
-static CVReturn p1_video_desktop_clock(
+static CVReturn p1_video_desktop_link_callback(
     CVDisplayLinkRef displayLink,
     const CVTimeStamp *inNow,
     const CVTimeStamp *inOutputTime,
@@ -50,6 +51,7 @@ P1VideoPlugin p1_video_desktop = {
     .free = p1_video_desktop_free,
 
     .start = p1_video_desktop_start,
+    .frame = p1_video_desktop_frame,
     .stop = p1_video_desktop_stop
 };
 
@@ -79,13 +81,13 @@ static P1VideoSource *p1_video_desktop_create()
             IOSurfaceRef frameSurface,
             CGDisplayStreamUpdateRef updateRef)
         {
-            p1_video_desktop_frame(source, status, frameSurface);
+            p1_video_desktop_stream_callback(source, status, frameSurface);
         });
     assert(source->display_stream);
 
     ret = CVDisplayLinkCreateWithCGDisplay(display_id, &source->display_link);
     assert(ret == kCVReturnSuccess);
-    ret = CVDisplayLinkSetOutputCallback(source->display_link, p1_video_desktop_clock, source);
+    ret = CVDisplayLinkSetOutputCallback(source->display_link, p1_video_desktop_link_callback, source);
     assert(ret == kCVReturnSuccess);
 
     return _source;
@@ -114,6 +116,28 @@ static bool p1_video_desktop_start(P1VideoSource *_source)
     return true;
 }
 
+static void p1_video_desktop_frame(P1VideoSource *_source)
+{
+    P1VideoDesktopSource *source = (P1VideoDesktopSource *)_source;
+    IOSurfaceRef frame;
+
+    pthread_mutex_lock(&source->frame_lock);
+    frame = source->frame;
+    if (frame) {
+        CFRetain(frame);
+        IOSurfaceIncrementUseCount(frame);
+    }
+    pthread_mutex_unlock(&source->frame_lock);
+
+    if (!frame)
+        return;
+
+    p1_video_frame_iosurface(_source, frame);
+
+    IOSurfaceDecrementUseCount(frame);
+    CFRelease(frame);
+}
+
 static void p1_video_desktop_stop(P1VideoSource *_source)
 {
     P1VideoDesktopSource *source = (P1VideoDesktopSource *)_source;
@@ -125,25 +149,32 @@ static void p1_video_desktop_stop(P1VideoSource *_source)
     assert(cg_ret == kCGErrorSuccess);
 }
 
-static void p1_video_desktop_frame(
+static void p1_video_desktop_stream_callback(
     P1VideoDesktopSource *source,
     CGDisplayStreamFrameStatus status,
     IOSurfaceRef frame)
 {
-    pthread_mutex_lock(&source->frame_lock);
-    if (status != kCGDisplayStreamFrameStatusFrameIdle) {
-        if (source->frame) {
-            IOSurfaceDecrementUseCount(source->frame);
-            CFRelease(source->frame);
-            source->frame = NULL;
-        }
-    }
     if (status == kCGDisplayStreamFrameStatusFrameComplete) {
         CFRetain(frame);
         IOSurfaceIncrementUseCount(frame);
+    }
+
+    IOSurfaceRef old_frame = NULL;
+
+    pthread_mutex_lock(&source->frame_lock);
+    if (status != kCGDisplayStreamFrameStatusFrameIdle) {
+        old_frame = source->frame;
+        source->frame = NULL;
+    }
+    if (status == kCGDisplayStreamFrameStatusFrameComplete) {
         source->frame = frame;
     }
     pthread_mutex_unlock(&source->frame_lock);
+
+    if (old_frame) {
+        IOSurfaceDecrementUseCount(old_frame);
+        CFRelease(old_frame);
+    }
 
     if (status == kCGDisplayStreamFrameStatusStopped) {
         printf("Display stream stopped.");
@@ -151,7 +182,7 @@ static void p1_video_desktop_frame(
     }
 }
 
-static CVReturn p1_video_desktop_clock(
+static CVReturn p1_video_desktop_link_callback(
     CVDisplayLinkRef displayLink,
     const CVTimeStamp *inNow,
     const CVTimeStamp *inOutputTime,
@@ -159,23 +190,9 @@ static CVReturn p1_video_desktop_clock(
     CVOptionFlags *flagsOut,
     void *displayLinkContext)
 {
-    P1VideoDesktopSource *source = (P1VideoDesktopSource *)displayLinkContext;
-    P1VideoSource *_source = (P1VideoSource *)source;
+    P1VideoSource *_source = (P1VideoSource *) displayLinkContext;
 
-    IOSurfaceRef frame = NULL;
-
-    pthread_mutex_lock(&source->frame_lock);
-    frame = source->frame;
-    if (frame) {
-        CFRetain(frame);
-        IOSurfaceIncrementUseCount(frame);
-    }
-    pthread_mutex_unlock(&source->frame_lock);
-
-    p1_video_frame_iosurface(_source, inNow->hostTime, frame);
-
-    IOSurfaceDecrementUseCount(frame);
-    CFRelease(frame);
+    p1_video_clock_tick(_source, inNow->hostTime);
 
     return kCVReturnSuccess;
 }

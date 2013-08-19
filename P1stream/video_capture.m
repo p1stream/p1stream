@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
-#include <mach/mach_time.h>
+#include <pthread.h>
 #include <CoreVideo/CoreVideo.h>
 #include <CoreMedia/CoreMedia.h>
 #include <AVFoundation/AVFoundation.h>
@@ -13,6 +13,9 @@ typedef struct _P1VideoCaptureSource P1VideoCaptureSource;
 struct _P1VideoCaptureSource {
     P1VideoSource super;
 
+    CVPixelBufferRef frame;
+    pthread_mutex_t frame_lock;
+
     CFTypeRef delegate;
     CFTypeRef session;
 };
@@ -21,7 +24,6 @@ struct _P1VideoCaptureSource {
 @interface P1VideoCaptureDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     P1VideoCaptureSource *source;
-    mach_timebase_info_data_t timebase;
 }
 
 - (id)initWithSource:(P1VideoCaptureSource *)_source;
@@ -38,6 +40,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 static P1VideoSource *p1_video_capture_create();
 static void p1_video_capture_free(P1VideoSource *_source);
 static bool p1_video_capture_start(P1VideoSource *_source);
+static void p1_video_capture_frame(P1VideoSource *_source);
 static void p1_video_capture_stop(P1VideoSource *_source);
 
 P1VideoPlugin p1_video_capture = {
@@ -45,6 +48,7 @@ P1VideoPlugin p1_video_capture = {
     .free = p1_video_capture_free,
 
     .start = p1_video_capture_start,
+    .frame = p1_video_capture_frame,
     .stop = p1_video_capture_stop
 };
 
@@ -56,6 +60,8 @@ static P1VideoSource *p1_video_capture_create()
 
     P1VideoSource *_source = (P1VideoSource *) source;
     _source->plugin = &p1_video_capture;
+
+    pthread_mutex_init(&source->frame_lock, NULL);
 
     @autoreleasepool {
         P1VideoCaptureDelegate *delegate = [[P1VideoCaptureDelegate alloc] initWithSource:source];
@@ -98,6 +104,8 @@ static void p1_video_capture_free(P1VideoSource *_source)
 
     CFRelease(source->session);
     CFRelease(source->delegate);
+
+    pthread_mutex_destroy(&source->frame_lock);
 }
 
 static bool p1_video_capture_start(P1VideoSource *_source)
@@ -110,6 +118,36 @@ static bool p1_video_capture_start(P1VideoSource *_source)
     }
 
     return true;
+}
+
+static void p1_video_capture_frame(P1VideoSource *_source)
+{
+    P1VideoCaptureSource *source = (P1VideoCaptureSource *) _source;
+    CVPixelBufferRef frame;
+
+    pthread_mutex_lock(&source->frame_lock);
+    frame = source->frame;
+    if (frame)
+        CFRetain(frame);
+    pthread_mutex_unlock(&source->frame_lock);
+
+    if (!frame)
+        return;
+
+    IOSurfaceRef surface = CVPixelBufferGetIOSurface(frame);
+    if (surface != NULL) {
+        p1_video_frame_iosurface(_source, surface);
+    }
+    else {
+        CVPixelBufferLockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
+        int width = (int) CVPixelBufferGetWidth(frame);
+        int height = (int) CVPixelBufferGetHeight(frame);
+        void *data = CVPixelBufferGetBaseAddress(frame);
+        p1_video_frame_raw(_source, width, height, data);
+        CVPixelBufferUnlockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
+    }
+
+    CFRelease(frame);
 }
 
 static void p1_video_capture_stop(P1VideoSource *_source)
@@ -129,7 +167,6 @@ static void p1_video_capture_stop(P1VideoSource *_source)
     self = [super init];
     if (self) {
         source = _source;
-        mach_timebase_info(&timebase);
     }
     return self;
 }
@@ -138,27 +175,20 @@ static void p1_video_capture_stop(P1VideoSource *_source)
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection
 {
-    P1VideoSource *_source = (P1VideoSource *) source;
-
-    // Calculate mach time of this sample.
-    CMTime cmtime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-    int64_t nanoscale = 1000000000 / cmtime.timescale;
-    int64_t time = cmtime.value * nanoscale * timebase.denom / timebase.numer;
     // Get the image data.
-    CVPixelBufferRef pixbuf = CMSampleBufferGetImageBuffer(sampleBuffer);
-    assert(pixbuf != NULL);
-    IOSurfaceRef surface = CVPixelBufferGetIOSurface(pixbuf);
-    if (surface != NULL) {
-        p1_video_frame_iosurface(_source, time, surface);
-    }
-    else {
-        CVPixelBufferLockBaseAddress(pixbuf, kCVPixelBufferLock_ReadOnly);
-        int width = (int) CVPixelBufferGetWidth(pixbuf);
-        int height = (int) CVPixelBufferGetHeight(pixbuf);
-        void *data = CVPixelBufferGetBaseAddress(pixbuf);
-        p1_video_frame_raw(_source, time, width, height, data);
-        CVPixelBufferUnlockBaseAddress(pixbuf, kCVPixelBufferLock_ReadOnly);
-    }
+    CVPixelBufferRef frame = CMSampleBufferGetImageBuffer(sampleBuffer);
+    assert(frame != NULL);
+    CFRetain(frame);
+
+    CVPixelBufferRef old_frame;
+
+    pthread_mutex_lock(&source->frame_lock);
+    old_frame = source->frame;
+    source->frame = frame;
+    pthread_mutex_unlock(&source->frame_lock);
+
+    if (old_frame)
+        CFRelease(old_frame);
 }
 
 - (void)handleError:(NSNotification *)obj
