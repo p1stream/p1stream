@@ -43,13 +43,8 @@ static bool p1_video_capture_start(P1VideoSource *_source);
 static void p1_video_capture_frame(P1VideoSource *_source);
 static void p1_video_capture_stop(P1VideoSource *_source);
 
-P1VideoPlugin p1_video_capture = {
+P1VideoSourceFactory p1_video_capture_factory = {
     .create = p1_video_capture_create,
-    .free = p1_video_capture_free,
-
-    .start = p1_video_capture_start,
-    .frame = p1_video_capture_frame,
-    .stop = p1_video_capture_stop
 };
 
 
@@ -59,7 +54,11 @@ static P1VideoSource *p1_video_capture_create()
     assert(source != NULL);
 
     P1VideoSource *_source = (P1VideoSource *) source;
-    _source->plugin = &p1_video_capture;
+    _source->factory = &p1_video_capture_factory;
+    _source->free = p1_video_capture_free;
+    _source->start = p1_video_capture_start;
+    _source->frame = p1_video_capture_frame;
+    _source->stop = p1_video_capture_stop;
 
     pthread_mutex_init(&source->frame_lock, NULL);
 

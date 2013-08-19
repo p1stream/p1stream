@@ -1,15 +1,9 @@
-// Video source that captures the desktop.
-//
-// This uses a combination of a CGDisplayStream (10.8+) and a CVDisplayLink.
-// The display link is needed because the display stream throttles back when
-// there are no updates. In practice, the display link will always call back
-// after the display stream.
+// Video source that captures the display using CGDisplayStream (10.8+).
 
 #include <stdio.h>
 #include <pthread.h>
 #include <dispatch/dispatch.h>
 #include <CoreGraphics/CoreGraphics.h>
-#include <CoreVideo/CoreVideo.h>
 
 #include "video.h"
 
@@ -26,7 +20,6 @@ struct _P1VideoDesktopSource {
     pthread_mutex_t frame_lock;
 
     CGDisplayStreamRef display_stream;
-    CVDisplayLinkRef display_link;
 };
 
 static P1VideoSource *p1_video_desktop_create();
@@ -38,33 +31,23 @@ static void p1_video_desktop_stream_callback(
     P1VideoDesktopSource *source,
     CGDisplayStreamFrameStatus status,
     IOSurfaceRef frame);
-static CVReturn p1_video_desktop_link_callback(
-    CVDisplayLinkRef displayLink,
-    const CVTimeStamp *inNow,
-    const CVTimeStamp *inOutputTime,
-    CVOptionFlags flagsIn,
-    CVOptionFlags *flagsOut,
-    void *displayLinkContext);
 
-P1VideoPlugin p1_video_desktop = {
-    .create = p1_video_desktop_create,
-    .free = p1_video_desktop_free,
-
-    .start = p1_video_desktop_start,
-    .frame = p1_video_desktop_frame,
-    .stop = p1_video_desktop_stop
+P1VideoSourceFactory p1_video_desktop_factory = {
+    .create = p1_video_desktop_create
 };
 
 
 static P1VideoSource *p1_video_desktop_create()
 {
-    CVReturn ret;
-
     P1VideoDesktopSource *source = calloc(1, sizeof(P1VideoDesktopSource));
     assert(source != NULL);
 
     P1VideoSource *_source = (P1VideoSource *) source;
-    _source->plugin = &p1_video_desktop;
+    _source->factory = &p1_video_desktop_factory;
+    _source->free = p1_video_desktop_free;
+    _source->start = p1_video_desktop_start;
+    _source->frame = p1_video_desktop_frame;
+    _source->stop = p1_video_desktop_stop;
 
     source->dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
 
@@ -85,11 +68,6 @@ static P1VideoSource *p1_video_desktop_create()
         });
     assert(source->display_stream);
 
-    ret = CVDisplayLinkCreateWithCGDisplay(display_id, &source->display_link);
-    assert(ret == kCVReturnSuccess);
-    ret = CVDisplayLinkSetOutputCallback(source->display_link, p1_video_desktop_link_callback, source);
-    assert(ret == kCVReturnSuccess);
-
     return _source;
 }
 
@@ -109,9 +87,6 @@ static bool p1_video_desktop_start(P1VideoSource *_source)
 
     CGError cg_ret = CGDisplayStreamStart(source->display_stream);
     assert(cg_ret == kCGErrorSuccess);
-
-    CVReturn cv_ret = CVDisplayLinkStart(source->display_link);
-    assert(cv_ret == kCVReturnSuccess);
 
     return true;
 }
@@ -141,9 +116,6 @@ static void p1_video_desktop_frame(P1VideoSource *_source)
 static void p1_video_desktop_stop(P1VideoSource *_source)
 {
     P1VideoDesktopSource *source = (P1VideoDesktopSource *)_source;
-
-    CVReturn cv_ret = CVDisplayLinkStop(source->display_link);
-    assert(cv_ret == kCVReturnSuccess);
 
     CGError cg_ret = CGDisplayStreamStop(source->display_stream);
     assert(cg_ret == kCGErrorSuccess);
@@ -180,19 +152,4 @@ static void p1_video_desktop_stream_callback(
         printf("Display stream stopped.");
         abort();
     }
-}
-
-static CVReturn p1_video_desktop_link_callback(
-    CVDisplayLinkRef displayLink,
-    const CVTimeStamp *inNow,
-    const CVTimeStamp *inOutputTime,
-    CVOptionFlags flagsIn,
-    CVOptionFlags *flagsOut,
-    void *displayLinkContext)
-{
-    P1VideoSource *_source = (P1VideoSource *) displayLinkContext;
-
-    p1_video_clock_tick(_source, inNow->hostTime);
-
-    return kCVReturnSuccess;
 }

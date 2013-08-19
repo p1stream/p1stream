@@ -6,8 +6,9 @@
 #include "video.h"
 #include "stream.h"
 
+extern P1VideoClockFactory p1_display_video_clock_factory;
+extern P1VideoSourceFactory p1_video_desktop_factory;
 extern P1AudioPlugin p1_audio_input;
-extern P1VideoPlugin p1_video_desktop;
 
 
 int main(int argc, const char * argv[])
@@ -22,9 +23,13 @@ int main(int argc, const char * argv[])
     p1_video_init();
     p1_stream_init();
 
-    P1VideoSource *video_source = p1_video_desktop.create();
+    P1VideoClock *video_clock = p1_display_video_clock_factory.create();
+    p1_video_set_clock(video_clock);
+    video_clock->start(video_clock);
+
+    P1VideoSource *video_source = p1_video_desktop_factory.create();
     p1_video_add_source(video_source);
-    video_source->plugin->start(video_source);
+    video_source->start(video_source);
 
     P1AudioSource *audio_source = p1_audio_input.create();
     p1_audio_add_source(audio_source);

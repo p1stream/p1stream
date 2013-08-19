@@ -17,6 +17,7 @@ static GLuint p1_build_shader(GLuint type, const char *source);
 static void p1_video_build_program(GLuint program, const char *vertexShader, const char *fragmentShader);
 
 static struct {
+    P1VideoClock *clock;
     P1VideoSource *src;
 
     size_t skip_counter;
@@ -241,15 +242,20 @@ void p1_video_init()
     assert(cl_err == CL_SUCCESS);
 }
 
+void p1_video_set_clock(P1VideoClock *clock)
+{
+    state.clock = clock;
+}
+
 void p1_video_add_source(P1VideoSource *src)
 {
     assert(state.src == NULL);
     state.src = src;
 }
 
-void p1_video_clock_tick(P1VideoSource *src, int64_t time)
+void p1_video_clock_tick(P1VideoClock *clock, int64_t time)
 {
-    assert(src == state.src);
+    assert(clock == state.clock);
 
     if (state.skip_counter >= fps_div)
         state.skip_counter = 0;
@@ -259,7 +265,7 @@ void p1_video_clock_tick(P1VideoSource *src, int64_t time)
     CGLSetCurrentContext(state.gl);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    src->plugin->frame(src);
+    state.src->frame(state.src);
 
     p1_video_frame_finish(time);
 }
