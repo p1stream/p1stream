@@ -10,9 +10,9 @@ static const UInt32 sample_size = 2;
 static const UInt32 sample_size_bits = sample_size * 8;
 static const UInt32 sample_rate = 44100;
 
-typedef struct _P1AudioInputSource P1AudioInputSource;
+typedef struct _P1InputAudioSource P1InputAudioSource;
 
-struct _P1AudioInputSource {
+struct _P1InputAudioSource {
     P1AudioSource super;
 
     dispatch_queue_t dispatch;
@@ -21,27 +21,26 @@ struct _P1AudioInputSource {
     AudioQueueBufferRef buffers[num_buffers];
 };
 
-static P1AudioSource *p1_audio_input_create();
-static void p1_audio_input_free(P1AudioSource *_source);
-static bool p1_audio_input_start(P1AudioSource *_source);
-static void p1_audio_input_stop(P1AudioSource *_source);
+static P1AudioSource *p1_input_audio_source_create();
+static void p1_input_audio_source_free(P1AudioSource *_source);
+static bool p1_input_audio_source_start(P1AudioSource *_source);
+static void p1_input_audio_source_stop(P1AudioSource *_source);
 
-P1AudioPlugin p1_audio_input = {
-    .create = p1_audio_input_create,
-    .free = p1_audio_input_free,
-
-    .start = p1_audio_input_start,
-    .stop = p1_audio_input_stop
+P1AudioSourceFactory p1_input_audio_source_factory = {
+    .create = p1_input_audio_source_create,
 };
 
 
-static P1AudioSource *p1_audio_input_create()
+static P1AudioSource *p1_input_audio_source_create()
 {
-    P1AudioInputSource *source = calloc(1, sizeof(P1AudioInputSource));
+    P1InputAudioSource *source = calloc(1, sizeof(P1InputAudioSource));
     assert(source != NULL);
 
     P1AudioSource *_source = (P1AudioSource *) source;
-    _source->plugin = &p1_audio_input;
+    _source->factory = &p1_input_audio_source_factory;
+    _source->free = p1_input_audio_source_free;
+    _source->start = p1_input_audio_source_start;
+    _source->stop = p1_input_audio_source_stop;
 
     OSStatus ret;
 
@@ -80,17 +79,17 @@ static P1AudioSource *p1_audio_input_create()
     return _source;
 }
 
-static void p1_audio_input_free(P1AudioSource *_source)
+static void p1_input_audio_source_free(P1AudioSource *_source)
 {
-    P1AudioInputSource *source = (P1AudioInputSource *)_source;
+    P1InputAudioSource *source = (P1InputAudioSource *)_source;
 
     AudioQueueDispose(source->queue, TRUE);
     dispatch_release(source->dispatch);
 }
 
-static bool p1_audio_input_start(P1AudioSource *_source)
+static bool p1_input_audio_source_start(P1AudioSource *_source)
 {
-    P1AudioInputSource *source = (P1AudioInputSource *)_source;
+    P1InputAudioSource *source = (P1InputAudioSource *)_source;
 
     OSStatus ret = AudioQueueStart(source->queue, NULL);
     assert(ret == noErr);
@@ -98,9 +97,9 @@ static bool p1_audio_input_start(P1AudioSource *_source)
     return true;
 }
 
-static void p1_audio_input_stop(P1AudioSource *_source)
+static void p1_input_audio_source_stop(P1AudioSource *_source)
 {
-    P1AudioInputSource *source = (P1AudioInputSource *)_source;
+    P1InputAudioSource *source = (P1InputAudioSource *)_source;
 
     OSStatus ret = AudioQueueStop(source->queue, TRUE);
     assert(ret == noErr);
