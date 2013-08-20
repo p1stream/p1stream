@@ -8,9 +8,9 @@
 #include "video.h"
 
 // Source state.
-typedef struct _P1VideoCaptureSource P1VideoCaptureSource;
+typedef struct _P1CaptureVideoSource P1CaptureVideoSource;
 
-struct _P1VideoCaptureSource {
+struct _P1CaptureVideoSource {
     P1VideoSource super;
 
     CVPixelBufferRef frame;
@@ -23,10 +23,10 @@ struct _P1VideoCaptureSource {
 // Delegate class we use internally for the capture session.
 @interface P1VideoCaptureDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 {
-    P1VideoCaptureSource *source;
+    P1CaptureVideoSource *source;
 }
 
-- (id)initWithSource:(P1VideoCaptureSource *)_source;
+- (id)initWithSource:(P1CaptureVideoSource *)_source;
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
@@ -37,28 +37,28 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 @end
 
 // Plugin definition.
-static P1VideoSource *p1_video_capture_create();
-static void p1_video_capture_free(P1VideoSource *_source);
-static bool p1_video_capture_start(P1VideoSource *_source);
-static void p1_video_capture_frame(P1VideoSource *_source);
-static void p1_video_capture_stop(P1VideoSource *_source);
+static P1VideoSource *p1_capture_video_source_create();
+static void p1_capture_video_source_free(P1VideoSource *_source);
+static bool p1_capture_video_source_start(P1VideoSource *_source);
+static void p1_capture_video_source_frame(P1VideoSource *_source);
+static void p1_capture_video_source_stop(P1VideoSource *_source);
 
-P1VideoSourceFactory p1_video_capture_factory = {
-    .create = p1_video_capture_create,
+P1VideoSourceFactory p1_capture_video_source_factory = {
+    .create = p1_capture_video_source_create,
 };
 
 
-static P1VideoSource *p1_video_capture_create()
+static P1VideoSource *p1_capture_video_source_create()
 {
-    P1VideoCaptureSource *source = calloc(1, sizeof(P1VideoCaptureSource));
+    P1CaptureVideoSource *source = calloc(1, sizeof(P1CaptureVideoSource));
     assert(source != NULL);
 
     P1VideoSource *_source = (P1VideoSource *) source;
-    _source->factory = &p1_video_capture_factory;
-    _source->free = p1_video_capture_free;
-    _source->start = p1_video_capture_start;
-    _source->frame = p1_video_capture_frame;
-    _source->stop = p1_video_capture_stop;
+    _source->factory = &p1_capture_video_source_factory;
+    _source->free = p1_capture_video_source_free;
+    _source->start = p1_capture_video_source_start;
+    _source->frame = p1_capture_video_source_frame;
+    _source->stop = p1_capture_video_source_stop;
 
     pthread_mutex_init(&source->frame_lock, NULL);
 
@@ -97,9 +97,9 @@ static P1VideoSource *p1_video_capture_create()
     return _source;
 }
 
-static void p1_video_capture_free(P1VideoSource *_source)
+static void p1_capture_video_source_free(P1VideoSource *_source)
 {
-    P1VideoCaptureSource *source = (P1VideoCaptureSource *) _source;
+    P1CaptureVideoSource *source = (P1CaptureVideoSource *) _source;
 
     CFRelease(source->session);
     CFRelease(source->delegate);
@@ -107,9 +107,9 @@ static void p1_video_capture_free(P1VideoSource *_source)
     pthread_mutex_destroy(&source->frame_lock);
 }
 
-static bool p1_video_capture_start(P1VideoSource *_source)
+static bool p1_capture_video_source_start(P1VideoSource *_source)
 {
-    P1VideoCaptureSource *source = (P1VideoCaptureSource *) _source;
+    P1CaptureVideoSource *source = (P1CaptureVideoSource *) _source;
 
     @autoreleasepool {
         AVCaptureSession *session = (__bridge AVCaptureSession *)source->session;
@@ -119,9 +119,9 @@ static bool p1_video_capture_start(P1VideoSource *_source)
     return true;
 }
 
-static void p1_video_capture_frame(P1VideoSource *_source)
+static void p1_capture_video_source_frame(P1VideoSource *_source)
 {
-    P1VideoCaptureSource *source = (P1VideoCaptureSource *) _source;
+    P1CaptureVideoSource *source = (P1CaptureVideoSource *) _source;
     CVPixelBufferRef frame;
 
     pthread_mutex_lock(&source->frame_lock);
@@ -149,9 +149,9 @@ static void p1_video_capture_frame(P1VideoSource *_source)
     CFRelease(frame);
 }
 
-static void p1_video_capture_stop(P1VideoSource *_source)
+static void p1_capture_video_source_stop(P1VideoSource *_source)
 {
-    P1VideoCaptureSource *source = (P1VideoCaptureSource *) _source;
+    P1CaptureVideoSource *source = (P1CaptureVideoSource *) _source;
 
     @autoreleasepool {
         AVCaptureSession *session = (__bridge AVCaptureSession *)source->session;
@@ -161,7 +161,7 @@ static void p1_video_capture_stop(P1VideoSource *_source)
 
 @implementation P1VideoCaptureDelegate
 
-- (id)initWithSource:(P1VideoCaptureSource *)_source
+- (id)initWithSource:(P1CaptureVideoSource *)_source
 {
     self = [super init];
     if (self) {
