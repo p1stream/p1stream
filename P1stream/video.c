@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <mach/mach_time.h>
 #include <IOSurface/IOSurface.h>
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/gl3.h>
@@ -8,15 +9,18 @@
 #include <x264.h>
 
 #include "video.h"
-#include "conf.h"
 #include "stream.h"
 
+static void p1_video_init_encoder();
+static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);
 static bool p1_video_frame_prep(P1VideoSource *src);
 static void p1_video_frame_finish();
 static GLuint p1_build_shader(GLuint type, const char *source);
 static void p1_video_build_program(GLuint program, const char *vertexShader, const char *fragmentShader);
 
 static struct {
+    P1Config *cfg;
+
     P1VideoClock *clock;
     P1VideoSource *src;
 
@@ -135,12 +139,14 @@ static const size_t fps_div = 2;
 static const size_t out_fps = in_fps / fps_div;
 
 
-void p1_video_init()
+void p1_video_init(P1Config *cfg)
 {
     CGLError cgl_err;
     cl_int cl_err;
-    int err;
+    int i_err;
     size_t size;
+
+    state.cfg = cfg;
 
     CGLPixelFormatObj pixel_format;
     const CGLPixelFormatAttribute attribs[] = {
@@ -172,15 +178,9 @@ void p1_video_init()
     state.clq = clCreateCommandQueue(state.cl, device_id, 0, NULL);
     assert(state.clq != NULL);
 
-    p1_conf.encoder.i_width = output_width;
-    p1_conf.encoder.i_height = output_height;
-    p1_conf.encoder.i_fps_num = out_fps;
-    p1_conf.encoder.i_fps_den = 1;
-    state.enc = x264_encoder_open(&p1_conf.encoder);
-    assert(state.enc != NULL);
-
-    err = x264_picture_alloc(&state.enc_pic, X264_CSP_I420, output_width, output_height);
-    assert(err == 0);
+    p1_video_init_encoder();
+    i_err = x264_picture_alloc(&state.enc_pic, X264_CSP_I420, output_width, output_height);
+    assert(i_err == 0);
 
     glGenVertexArrays(1, &state.vao);
     glGenBuffers(1, &state.vbo);
@@ -242,6 +242,58 @@ void p1_video_init()
     assert(cl_err == CL_SUCCESS);
 }
 
+static void p1_video_init_encoder()
+{
+    int i_err;
+    char tmp[128];
+
+    x264_param_t params;
+    x264_param_default(&params);
+
+    if (state.cfg->get_string(state.cfg, NULL, "video.encoder.preset", tmp, sizeof(tmp))) {
+        i_err = x264_param_default_preset(&params, tmp, NULL);
+        assert(i_err == 0);
+    }
+
+    if (!state.cfg->each_string(state.cfg, NULL, "video.encoder", p1_video_parse_encoder_param, &params)) {
+        abort();
+    }
+
+    mach_timebase_info_data_t timebase;
+    mach_timebase_info(&timebase);
+    params.i_timebase_num = timebase.numer;
+    params.i_timebase_den = timebase.denom * 1000000000;
+
+    params.b_aud = 1;
+    params.b_annexb = 0;
+
+    params.i_width = output_width;
+    params.i_height = output_height;
+
+    params.i_fps_num = out_fps;
+    params.i_fps_den = 1;
+
+    x264_param_apply_fastfirstpass(&params);
+
+    if (state.cfg->get_string(state.cfg, NULL, "video.encoder.profile", tmp, sizeof(tmp))) {
+        i_err = x264_param_apply_profile(&params, tmp);
+        assert(i_err == 0);
+    }
+
+    state.enc = x264_encoder_open(&params);
+    assert(state.enc != NULL);
+}
+
+static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data)
+{
+    x264_param_t *params = (x264_param_t *) data;
+
+    if (strcmp(key, "preset") == 0 || strcmp(key, "profile") == 0)
+        return true;
+
+    return x264_param_parse(params, key, val) == 0;
+}
+
 void p1_video_set_clock(P1VideoClock *clock)
 {
     state.clock = clock;
@@ -269,7 +321,6 @@ void p1_video_clock_tick(P1VideoClock *clock, int64_t time)
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glFinish();
     assert(glGetError() == GL_NO_ERROR);
-
 
     p1_video_frame_finish(time);
 }

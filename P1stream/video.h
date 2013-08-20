@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include <IOSurface/IOSurface.h>
 
+#include "conf.h"
+
 
 typedef struct _P1VideoClock P1VideoClock;
 typedef struct _P1VideoClockFactory P1VideoClockFactory;
@@ -39,7 +41,7 @@ struct _P1VideoSourceFactory {
 };
 
 
-void p1_video_init();
+void p1_video_init(P1Config *cfg);
 
 void p1_video_set_clock(P1VideoClock *src);
 void p1_video_add_source(P1VideoSource *src);

@@ -7,14 +7,17 @@
 		<key>url</key>
 		<string>rtmp://localhost/app/test</string>
 	</dict>
-	<key>encoder</key>
+	<key>video</key>
 	<dict>
-		<key>profile</key>
-		<string>baseline</string>
-		<key>preset</key>
-		<string>veryfast</string>
-		<key>threads</key>
-		<string>8</string>
+		<key>encoder</key>
+		<dict>
+			<key>profile</key>
+			<string>baseline</string>
+			<key>preset</key>
+			<string>veryfast</string>
+			<key>threads</key>
+			<string>8</string>
+		</dict>
 	</dict>
 </dict>
 </plist>

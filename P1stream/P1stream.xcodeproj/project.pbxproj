@@ -13,7 +13,7 @@
 		F607453117B6382D004EA730 /* librtmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F607452F17B6382D004EA730 /* librtmp.a */; };
 		F607453217B6382D004EA730 /* libx264.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F607453017B6382D004EA730 /* libx264.a */; };
 		F627211717BC330700A889B4 /* libFraunhoferAAC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F627211617BC330700A889B4 /* libFraunhoferAAC.a */; };
-		F63FB21D17B8316D00CD1B46 /* conf.c in Sources */ = {isa = PBXBuildFile; fileRef = F63FB21C17B8316D00CD1B46 /* conf.c */; };
+		F63FB21D17B8316D00CD1B46 /* conf_plist.c in Sources */ = {isa = PBXBuildFile; fileRef = F63FB21C17B8316D00CD1B46 /* conf_plist.c */; };
 		F644CB9917B6291D007934C3 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F644CB9817B6291D007934C3 /* main.c */; };
 		F653422917BFAF5C00769680 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F653422817BFAF5C00769680 /* CoreMedia.framework */; };
 		F653422B17BFAF6200769680 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F653422A17BFAF6200769680 /* CoreVideo.framework */; };
@@ -40,7 +40,7 @@
 		F607452F17B6382D004EA730 /* librtmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librtmp.a; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-btvhmyjurauagogfmobulawteuzj/Build/Products/Debug/librtmp.a"; sourceTree = "<group>"; };
 		F607453017B6382D004EA730 /* libx264.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libx264.a; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-btvhmyjurauagogfmobulawteuzj/Build/Products/Debug/libx264.a"; sourceTree = "<group>"; };
 		F627211617BC330700A889B4 /* libFraunhoferAAC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFraunhoferAAC.a; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libFraunhoferAAC.a"; sourceTree = "<group>"; };
-		F63FB21C17B8316D00CD1B46 /* conf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf.c; sourceTree = "<group>"; };
+		F63FB21C17B8316D00CD1B46 /* conf_plist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_plist.c; sourceTree = "<group>"; };
 		F63FB21E17B8317300CD1B46 /* conf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = conf.h; sourceTree = "<group>"; };
 		F644CB9517B6291D007934C3 /* P1stream */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = P1stream; sourceTree = BUILT_PRODUCTS_DIR; };
 		F644CB9817B6291D007934C3 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
@@ -122,13 +122,13 @@
 			children = (
 				F644CB9817B6291D007934C3 /* main.c */,
 				F63FB21E17B8317300CD1B46 /* conf.h */,
-				F63FB21C17B8316D00CD1B46 /* conf.c */,
 				F6A76AD317B6FE2B002FE99E /* audio.h */,
 				F6A76AD417B6FE31002FE99E /* audio.c */,
 				F6F6077317B64894009E6155 /* video.h */,
 				F6F6077117B6488C009E6155 /* video.c */,
 				F6F6077D17B68E05009E6155 /* stream.h */,
 				F6F6077E17B68E0B009E6155 /* stream.c */,
+				F63FB21C17B8316D00CD1B46 /* conf_plist.c */,
 				F6A76AD017B6F8EB002FE99E /* audio_input.c */,
 				F6AFEDA217C23180002A43D7 /* clock_display.c */,
 				F6F6076B17B64212009E6155 /* video_display.c */,
@@ -214,7 +214,7 @@
 				F6F6077F17B68E0B009E6155 /* stream.c in Sources */,
 				F6A76AD117B6F8EB002FE99E /* audio_input.c in Sources */,
 				F6A76AD517B6FE31002FE99E /* audio.c in Sources */,
-				F63FB21D17B8316D00CD1B46 /* conf.c in Sources */,
+				F63FB21D17B8316D00CD1B46 /* conf_plist.c in Sources */,
 				F653422F17BFBC1200769680 /* video_capture.m in Sources */,
 				F6AFEDA317C23180002A43D7 /* clock_display.c in Sources */,
 			);

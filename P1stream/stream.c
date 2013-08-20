@@ -7,14 +7,17 @@
 #include <rtmp.h>
 
 #include "stream.h"
-#include "conf.h"
 
+static const char *default_url = "rtmp://localhost/app/test";
 static const size_t max_queue_len = 256;
 
 static struct {
+    P1Config *cfg;
+
     dispatch_queue_t dispatch;
 
     RTMP rtmp;
+    char url[256];
 
     // ring buffer
     RTMPPacket *q[max_queue_len];
@@ -31,8 +34,10 @@ static void p1_stream_submit_packet_on_thread(RTMPPacket *pkt);
 
 
 // Setup state and connect.
-void p1_stream_init()
+void p1_stream_init(P1Config *cfg)
 {
+    state.cfg = cfg;
+
     int res;
     RTMP * const r = &state.rtmp;
 
@@ -40,7 +45,9 @@ void p1_stream_init()
 
     RTMP_Init(r);
 
-    res = RTMP_SetupURL(r, p1_conf.stream.url);
+    if (!cfg->get_string(cfg, NULL, "stream.url", state.url, sizeof(state.url)))
+        strcpy(state.url, default_url);
+    res = RTMP_SetupURL(r, state.url);
     assert(res == TRUE);
 
     RTMP_EnableWrite(r);
