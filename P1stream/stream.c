@@ -6,7 +6,7 @@
 #include <dispatch/dispatch.h>
 #include <rtmp.h>
 
-#include "stream.h"
+#include "p1stream.h"
 
 static const char *default_url = "rtmp://localhost/app/test";
 static const size_t max_queue_len = 256;

@@ -1,7 +1,7 @@
 #include <string.h>
 #include <CoreFoundation/CoreFoundation.h>
 
-#include "conf.h"
+#include "p1stream.h"
 
 typedef struct _P1PlistConfig P1PlistConfig;
 

@@ -41,7 +41,6 @@
 		F607453017B6382D004EA730 /* libx264.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libx264.a; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-btvhmyjurauagogfmobulawteuzj/Build/Products/Debug/libx264.a"; sourceTree = "<group>"; };
 		F627211617BC330700A889B4 /* libFraunhoferAAC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFraunhoferAAC.a; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libFraunhoferAAC.a"; sourceTree = "<group>"; };
 		F63FB21C17B8316D00CD1B46 /* conf_plist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_plist.c; sourceTree = "<group>"; };
-		F63FB21E17B8317300CD1B46 /* conf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = conf.h; sourceTree = "<group>"; };
 		F644CB9517B6291D007934C3 /* P1stream */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = P1stream; sourceTree = BUILT_PRODUCTS_DIR; };
 		F644CB9817B6291D007934C3 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		F644CBA217B62C03007934C3 /* common-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
@@ -52,20 +51,18 @@
 		F653422C17BFAF6600769680 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		F653422E17BFBC1200769680 /* video_capture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = video_capture.m; sourceTree = "<group>"; };
 		F680B5B817B95FD10067BBE7 /* sample_config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sample_config.plist; sourceTree = "<group>"; };
+		F69E0C7817C423A3000EA1CD /* p1stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream.h; sourceTree = "<group>"; };
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD017B6F8EB002FE99E /* audio_input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio_input.c; sourceTree = "<group>"; };
-		F6A76AD317B6FE2B002FE99E /* audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 		F6AFEDA217C23180002A43D7 /* clock_display.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = clock_display.c; sourceTree = "<group>"; };
 		F6F6076B17B64212009E6155 /* video_display.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video_display.c; sourceTree = "<group>"; };
 		F6F6076D17B6426F009E6155 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F6F6077117B6488C009E6155 /* video.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video.c; sourceTree = "<group>"; };
-		F6F6077317B64894009E6155 /* video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video.h; sourceTree = "<group>"; };
 		F6F6077417B64C28009E6155 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		F6F6077617B64C34009E6155 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		F6F6077817B64CC4009E6155 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		F6F6077A17B65F1F009E6155 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
-		F6F6077D17B68E05009E6155 /* stream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stream.h; sourceTree = "<group>"; };
 		F6F6077E17B68E0B009E6155 /* stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stream.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -120,13 +117,10 @@
 		F644CB8C17B6291D007934C3 = {
 			isa = PBXGroup;
 			children = (
+				F69E0C7817C423A3000EA1CD /* p1stream.h */,
 				F644CB9817B6291D007934C3 /* main.c */,
-				F63FB21E17B8317300CD1B46 /* conf.h */,
-				F6A76AD317B6FE2B002FE99E /* audio.h */,
 				F6A76AD417B6FE31002FE99E /* audio.c */,
-				F6F6077317B64894009E6155 /* video.h */,
 				F6F6077117B6488C009E6155 /* video.c */,
-				F6F6077D17B68E05009E6155 /* stream.h */,
 				F6F6077E17B68E0B009E6155 /* stream.c */,
 				F63FB21C17B8316D00CD1B46 /* conf_plist.c */,
 				F6A76AD017B6F8EB002FE99E /* audio_input.c */,

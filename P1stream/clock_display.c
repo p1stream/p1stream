@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <CoreVideo/CoreVideo.h>
 
-#include "video.h"
+#include "p1stream.h"
 
 static const size_t fps = 60;
 

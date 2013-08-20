@@ -8,8 +8,7 @@
 #include <OpenCL/opencl.h>
 #include <x264.h>
 
-#include "video.h"
-#include "stream.h"
+#include "p1stream.h"
 
 static void p1_video_init_encoder();
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);

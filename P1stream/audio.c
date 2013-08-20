@@ -3,20 +3,22 @@
 #include <stdio.h>
 #include <memory.h>
 #include <aacenc_lib.h>
-
 #include <mach/mach_time.h>
 
-#include "audio.h"
-#include "stream.h"
+#include "p1stream.h"
 
+// Fixed internal mixing buffer parameters.
+static const int sample_rate = 44100;
+static const int sample_size = 2;
+static const int num_channels = 2;
 // Hardcoded bitrate.
 static const int bit_rate = 128 * 1024;
 // Size of one frame.
-static const int frame_size = p1_audio_num_channels * p1_audio_sample_size;
+static const int frame_size = num_channels * sample_size;
 // Mix buffer buffer of one full second.
-static const int mix_size = frame_size * p1_audio_sample_rate;
+static const int mix_size = frame_size * sample_rate;
 // Minimum output buffer size per FDK AAC requirements.
-static const int out_min_size = 6144 / 8 * p1_audio_num_channels;
+static const int out_min_size = 6144 / 8 * num_channels;
 // Complete output buffer size, also one full second.
 static const int out_size = out_min_size * 64;
 
@@ -51,7 +53,7 @@ void p1_audio_init()
 
     err = aacEncoder_SetParam(state.aac, AACENC_AOT, AOT_AAC_LC);
     assert(err == AACENC_OK);
-    err = aacEncoder_SetParam(state.aac, AACENC_SAMPLERATE, p1_audio_sample_rate);
+    err = aacEncoder_SetParam(state.aac, AACENC_SAMPLERATE, sample_rate);
     assert(err == AACENC_OK);
     err = aacEncoder_SetParam(state.aac, AACENC_CHANNELMODE, MODE_2);
     assert(err == AACENC_OK);
@@ -126,7 +128,7 @@ static int p1_audio_write(void **in, int *in_len)
 static int p1_audio_read(int bytes)
 {
     // Prepare encoder arguments.
-    INT el_sizes[] = { p1_audio_sample_size };
+    INT el_sizes[] = { sample_size };
 
     void *enc_bufs[] = { state.mix };
     INT enc_identifiers[] = { IN_AUDIO_DATA };
@@ -151,7 +153,7 @@ static int p1_audio_read(int bytes)
     };
 
     AACENC_InArgs in_args = {
-        .numInSamples = bytes / p1_audio_sample_size,
+        .numInSamples = bytes / sample_size,
         .numAncBytes = 0
     };
 
@@ -162,7 +164,7 @@ static int p1_audio_read(int bytes)
         err = aacEncEncode(state.aac, &in_desc, &out_desc, &in_args, &out_args);
         assert(err == AACENC_OK);
 
-        size_t in_processed = out_args.numInSamples * p1_audio_sample_size;
+        size_t in_processed = out_args.numInSamples * sample_size;
         in_desc.bufs[0] += in_processed;
         in_desc.bufSizes[0] -= in_processed;
 
@@ -189,6 +191,6 @@ static int p1_audio_read(int bytes)
 static int64_t p1_audio_bytes_to_mach_time(int bytes)
 {
     int samples = bytes / frame_size;
-    int64_t nanosec = samples * 1000000000 / p1_audio_sample_rate;
+    int64_t nanosec = samples * 1000000000 / sample_rate;
     return nanosec * state.timebase.denom / state.timebase.numer;
 }

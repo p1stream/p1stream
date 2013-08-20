@@ -1,10 +1,7 @@
 #include <stdio.h>
 #include <CoreFoundation/CoreFoundation.h>
 
-#include "conf.h"
-#include "audio.h"
-#include "video.h"
-#include "stream.h"
+#include "p1stream.h"
 
 P1Config *p1_conf_plist_from_file(const char *file);
 extern P1VideoClockFactory p1_display_video_clock_factory;

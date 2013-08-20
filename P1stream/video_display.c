@@ -5,9 +5,7 @@
 #include <dispatch/dispatch.h>
 #include <CoreGraphics/CoreGraphics.h>
 
-#include "video.h"
-
-static const size_t fps = 60;
+#include "p1stream.h"
 
 typedef struct _P1DisplayVideoSource P1DisplayVideoSource;
 

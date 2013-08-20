@@ -5,7 +5,7 @@
 #include <CoreMedia/CoreMedia.h>
 #include <AVFoundation/AVFoundation.h>
 
-#include "video.h"
+#include "p1stream.h"
 
 // Source state.
 typedef struct _P1CaptureVideoSource P1CaptureVideoSource;
