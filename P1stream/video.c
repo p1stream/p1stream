@@ -289,7 +289,7 @@ void p1_video_clock_tick(P1VideoClock *clock, int64_t time)
     p1_video_frame_finish(ctx, time);
 }
 
-void p1_video_frame_raw(P1VideoSource *src, int width, int height, void *data)
+void p1_video_frame(P1VideoSource *src, int width, int height, void *data)
 {
     P1Context *ctx = src->ctx;
     assert(src == ctx->video_src);

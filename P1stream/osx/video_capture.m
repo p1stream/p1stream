@@ -143,7 +143,7 @@ static void p1_capture_video_source_frame(P1VideoSource *_source)
         int width = (int) CVPixelBufferGetWidth(frame);
         int height = (int) CVPixelBufferGetHeight(frame);
         void *data = CVPixelBufferGetBaseAddress(frame);
-        p1_video_frame_raw(_source, width, height, data);
+        p1_video_frame(_source, width, height, data);
         CVPixelBufferUnlockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
     }
 

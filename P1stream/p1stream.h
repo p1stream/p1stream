@@ -82,7 +82,7 @@ void p1_video_set_clock(P1Context *ctx, P1VideoClock *src);
 void p1_video_add_source(P1Context *ctx, P1VideoSource *src);
 
 void p1_video_clock_tick(P1VideoClock *src, int64_t time);
-void p1_video_frame_raw(P1VideoSource *src, int width, int height, void *data);
+void p1_video_frame(P1VideoSource *src, int width, int height, void *data);
 
 void p1_audio_add_source(P1Context *ctx, P1AudioSource *src);
 void p1_audio_mix(P1AudioSource *dtv, int64_t time, void *in, int in_len);
