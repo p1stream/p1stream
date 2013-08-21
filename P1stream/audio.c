@@ -26,7 +26,7 @@ static int p1_audio_read(P1Context *ctx, int num);
 static int64_t p1_audio_bytes_to_mach_time(P1Context *ctx, int bytes);
 
 
-void p1_audio_init(P1Context *ctx, P1Config *cfg)
+void p1_audio_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect)
 {
     AACENC_ERROR err;
 

@@ -24,7 +24,7 @@ typedef bool (*P1ConfigIterSection)(P1Config *cfg, P1ConfigSection *sect, void *
 typedef bool (*P1ConfigIterString)(P1Config *cfg, const char *key, char *val, void *data);
 
 struct _P1Config {
-    // Free resources
+    // Free resources.
     void (*free)(P1Config *cfg);
 
     // Get a reference to the section. If this returns NULL, all items expected
@@ -103,10 +103,17 @@ struct _P1AudioSource {
 };
 
 
-// Create a new context based on the given configuration.
-P1Context *p1_create(P1Config *cfg);
+// These types are for convenience. Sources usually want to have a function
+// following one of these signatures to instantiate them.
+typedef P1AudioSource *(P1AudioSourceFactory)(P1Config *cfg, P1ConfigSection *sect);
+typedef P1VideoClock *(P1VideoClockFactory)(P1Config *cfg, P1ConfigSection *sect);
+typedef P1VideoSource *(P1VideoSourceFactory)(P1Config *cfg, P1ConfigSection *sect);
 
-void p1_video_set_clock(P1Context *ctx, P1VideoClock *src);
+
+// Create a new context based on the given configuration.
+P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect);
+
+void p1_video_set_clock(P1Context *ctx, P1VideoClock *clock);
 void p1_video_add_source(P1Context *ctx, P1VideoSource *src);
 
 void p1_video_clock_tick(P1VideoClock *src, int64_t time);

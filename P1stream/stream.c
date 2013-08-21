@@ -14,7 +14,7 @@ static void p1_stream_submit_packet_on_thread(P1Context *ctx, RTMPPacket *pkt);
 
 
 // Setup state and connect.
-void p1_stream_init(P1Context *ctx, P1Config *cfg)
+void p1_stream_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect)
 {
     int res;
     RTMP * const r = &ctx->rtmp;
@@ -23,7 +23,7 @@ void p1_stream_init(P1Context *ctx, P1Config *cfg)
 
     RTMP_Init(r);
 
-    if (!cfg->get_string(cfg, NULL, "stream.url", ctx->url, sizeof(ctx->url)))
+    if (!cfg->get_string(cfg, sect, "url", ctx->url, sizeof(ctx->url)))
         strcpy(ctx->url, default_url);
     res = RTMP_SetupURL(r, ctx->url);
     assert(res == TRUE);

@@ -9,6 +9,18 @@
 	</dict>
 	<key>video</key>
 	<dict>
+		<key>clock</key>
+		<dict>
+			<key>type</key>
+			<string>display</string>
+		</dict>
+		<key>sources</key>
+		<array>
+			<dict>
+				<key>type</key>
+				<string>display</string>
+			</dict>
+		</array>
 		<key>encoder</key>
 		<dict>
 			<key>profile</key>
@@ -18,6 +30,16 @@
 			<key>threads</key>
 			<string>8</string>
 		</dict>
+	</dict>
+	<key>audio</key>
+	<dict>
+		<key>sources</key>
+		<array>
+			<dict>
+				<key>type</key>
+				<string>input</string>
+			</dict>
+		</array>
 	</dict>
 </dict>
 </plist>

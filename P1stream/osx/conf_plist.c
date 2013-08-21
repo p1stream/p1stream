@@ -110,8 +110,22 @@ static bool p1_plist_config_get_string(P1Config *_cfg, P1ConfigSection *sect, co
 
 static bool p1_plist_config_each_section(P1Config *_cfg, P1ConfigSection *sect, const char *key, P1ConfigIterSection iter, void *data)
 {
-    // FIXME
-    return false;
+    CFArrayRef arr = p1_plist_config_resolve(_cfg, sect, key, CFArrayGetTypeID());
+    if (arr == NULL)
+        return true;
+
+    CFIndex count = CFArrayGetCount(arr);
+    const void *values[count];
+    CFArrayGetValues(arr, CFRangeMake(0, count), values);
+    for (CFIndex i = 0; i < count; i++) {
+        CFDictionaryRef dict = values[i];
+        assert(CFGetTypeID(dict) == CFDictionaryGetTypeID());
+
+        if (iter(_cfg, (P1ConfigSection *) dict, data) == false)
+            return false;
+    }
+
+    return true;
 }
 
 static bool p1_plist_config_each_string(P1Config *_cfg, P1ConfigSection *sect, const char *key, P1ConfigIterString iter, void *data)

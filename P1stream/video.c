@@ -5,7 +5,7 @@
 #include "p1stream_priv.h"
 
 
-static void p1_video_init_encoder(P1Context *ctx, P1Config *cfg);
+static void p1_video_init_encoder(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);
 static bool p1_video_frame_prep(P1Context *ctx, P1VideoSource *src);
 static void p1_video_frame_finish(P1Context *ctx, int64_t time);
@@ -102,7 +102,7 @@ static const size_t fps_div = 2;
 static const size_t out_fps = in_fps / fps_div;
 
 
-void p1_video_init(P1Context *ctx, P1Config *cfg)
+void p1_video_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect)
 {
     CGLError cgl_err;
     cl_int cl_err;
@@ -139,7 +139,7 @@ void p1_video_init(P1Context *ctx, P1Config *cfg)
     ctx->clq = clCreateCommandQueue(ctx->cl, device_id, 0, NULL);
     assert(ctx->clq != NULL);
 
-    p1_video_init_encoder(ctx, cfg);
+    p1_video_init_encoder(ctx, cfg, sect);
     i_err = x264_picture_alloc(&ctx->enc_pic, X264_CSP_I420, output_width, output_height);
     assert(i_err == 0);
 
@@ -203,7 +203,7 @@ void p1_video_init(P1Context *ctx, P1Config *cfg)
     assert(cl_err == CL_SUCCESS);
 }
 
-static void p1_video_init_encoder(P1Context *ctx, P1Config *cfg)
+static void p1_video_init_encoder(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect)
 {
     int i_err;
     char tmp[128];
@@ -211,12 +211,12 @@ static void p1_video_init_encoder(P1Context *ctx, P1Config *cfg)
     x264_param_t params;
     x264_param_default(&params);
 
-    if (cfg->get_string(cfg, NULL, "video.encoder.preset", tmp, sizeof(tmp))) {
+    if (cfg->get_string(cfg, sect, "encoder.preset", tmp, sizeof(tmp))) {
         i_err = x264_param_default_preset(&params, tmp, NULL);
         assert(i_err == 0);
     }
 
-    if (!cfg->each_string(cfg, NULL, "video.encoder", p1_video_parse_encoder_param, &params)) {
+    if (!cfg->each_string(cfg, sect, "encoder", p1_video_parse_encoder_param, &params)) {
         abort();
     }
 
@@ -236,7 +236,7 @@ static void p1_video_init_encoder(P1Context *ctx, P1Config *cfg)
 
     x264_param_apply_fastfirstpass(&params);
 
-    if (cfg->get_string(cfg, NULL, "video.encoder.profile", tmp, sizeof(tmp))) {
+    if (cfg->get_string(cfg, sect, "encoder.profile", tmp, sizeof(tmp))) {
         i_err = x264_param_apply_profile(&params, tmp);
         assert(i_err == 0);
     }

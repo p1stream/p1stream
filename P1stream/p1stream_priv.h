@@ -75,9 +75,9 @@ struct _P1Context {
     uint64_t start;
 };
 
-void p1_audio_init(P1Context *ctx, P1Config *cfg);
-void p1_video_init(P1Context *ctx, P1Config *cfg);
-void p1_stream_init(P1Context *ctx, P1Config *cfg);
+void p1_audio_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect);
+void p1_video_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect);
+void p1_stream_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect);
 
 void p1_stream_video_config(P1Context *ctx, x264_nal_t *nals, int len);
 void p1_stream_video(P1Context *ctx, x264_nal_t *nals, int len, x264_picture_t *pic);
