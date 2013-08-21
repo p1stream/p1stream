@@ -3,12 +3,13 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <x264.h>
-#include <IOSurface/IOSurface.h>
+
+
+typedef struct _P1Context P1Context; // opaque
 
 
 typedef struct _P1Config P1Config;
-typedef struct _P1ConfigSection P1ConfigSection; // opaque
+typedef struct _P1ConfigSection P1ConfigSection; // abstract
 
 typedef bool (*P1ConfigIterSection)(P1Config *cfg, P1ConfigSection *sect, void *data);
 typedef bool (*P1ConfigIterString)(P1Config *cfg, const char *key, char *val, void *data);
@@ -27,6 +28,7 @@ typedef struct _P1VideoClock P1VideoClock;
 typedef struct _P1VideoClockFactory P1VideoClockFactory;
 
 struct _P1VideoClock {
+    P1Context *ctx;
     P1VideoClockFactory *factory;
     void (*free)(P1VideoClock *clock);
 
@@ -43,6 +45,7 @@ typedef struct _P1VideoSource P1VideoSource;
 typedef struct _P1VideoSourceFactory P1VideoSourceFactory;
 
 struct _P1VideoSource {
+    P1Context *ctx;
     P1VideoSourceFactory *factory;
     void (*free)(P1VideoSource *source);
 
@@ -60,6 +63,7 @@ typedef struct _P1AudioSource P1AudioSource;
 typedef struct _P1AudioSourceFactory P1AudioSourceFactory;
 
 struct _P1AudioSource {
+    P1Context *ctx;
     P1AudioSourceFactory *factory;
     void (*free)(P1AudioSource *src);
 
@@ -72,26 +76,23 @@ struct _P1AudioSourceFactory {
 };
 
 
-// FIXME: combine these, remove globals, single state struct.
-void p1_video_init(P1Config *cfg);
-void p1_audio_init();
-void p1_stream_init(P1Config *cfg);
+P1Context *p1_create(P1Config *cfg);
 
-void p1_video_set_clock(P1VideoClock *src);
-void p1_video_add_source(P1VideoSource *src);
+void p1_video_set_clock(P1Context *ctx, P1VideoClock *src);
+void p1_video_add_source(P1Context *ctx, P1VideoSource *src);
 
 void p1_video_clock_tick(P1VideoClock *src, int64_t time);
 void p1_video_frame_raw(P1VideoSource *src, int width, int height, void *data);
-void p1_video_frame_iosurface(P1VideoSource *src, IOSurfaceRef buffer);
 
-void p1_audio_add_source(P1AudioSource *src);
+void p1_audio_add_source(P1Context *ctx, P1AudioSource *src);
 void p1_audio_mix(P1AudioSource *dtv, int64_t time, void *in, int in_len);
 
-// FIXME: These should be internal.
-void p1_stream_video_config(x264_nal_t *nals, int len);
-void p1_stream_video(x264_nal_t *nals, int len, x264_picture_t *pic);
 
-void p1_stream_audio_config();
-void p1_stream_audio(int64_t time, void *buf, int len);
+#if __APPLE__
+#   include <TargetConditionals.h>
+#   if TARGET_OS_MAC
+#       include "osx/p1stream_osx.h"
+#   endif
+#endif
 
 #endif

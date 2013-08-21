@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory.h>
-#include <aacenc_lib.h>
-#include <mach/mach_time.h>
 
-#include "p1stream.h"
+#include "p1stream_priv.h"
+
 
 // Fixed internal mixing buffer parameters.
 static const int sample_rate = 44100;
@@ -22,82 +21,70 @@ static const int out_min_size = 6144 / 8 * num_channels;
 // Complete output buffer size, also one full second.
 static const int out_size = out_min_size * 64;
 
-static struct {
-    P1AudioSource *src;
-
-    HANDLE_AACENCODER aac;
-    void *mix;
-    int mix_len;
-    void *out;
-
-    mach_timebase_info_data_t timebase;
-    int64_t time;
-
-    bool sent_config;
-} state;
-
-static int p1_audio_write(void **in, int *in_len);
-static int p1_audio_read(int num);
-static int64_t p1_audio_bytes_to_mach_time(int bytes);
+static int p1_audio_write(P1Context *ctx, void **in, int *in_len);
+static int p1_audio_read(P1Context *ctx, int num);
+static int64_t p1_audio_bytes_to_mach_time(P1Context *ctx, int bytes);
 
 
-void p1_audio_init()
+void p1_audio_init(P1Context *ctx, P1Config *cfg)
 {
     AACENC_ERROR err;
 
-    state.mix = calloc(1, mix_size);
-    state.out = malloc(out_size);
+    ctx->mix = calloc(1, mix_size);
+    ctx->out = malloc(out_size);
 
-    err = aacEncOpen(&state.aac, 0x01, 2);
-    assert(err == AACENC_OK);
-
-    err = aacEncoder_SetParam(state.aac, AACENC_AOT, AOT_AAC_LC);
-    assert(err == AACENC_OK);
-    err = aacEncoder_SetParam(state.aac, AACENC_SAMPLERATE, sample_rate);
-    assert(err == AACENC_OK);
-    err = aacEncoder_SetParam(state.aac, AACENC_CHANNELMODE, MODE_2);
-    assert(err == AACENC_OK);
-    err = aacEncoder_SetParam(state.aac, AACENC_BITRATE, bit_rate);
-    assert(err == AACENC_OK);
-    err = aacEncoder_SetParam(state.aac, AACENC_TRANSMUX, TT_MP4_RAW);
+    err = aacEncOpen(&ctx->aac, 0x01, 2);
     assert(err == AACENC_OK);
 
-    err = aacEncEncode(state.aac, NULL, NULL, NULL, NULL);
+    err = aacEncoder_SetParam(ctx->aac, AACENC_AOT, AOT_AAC_LC);
+    assert(err == AACENC_OK);
+    err = aacEncoder_SetParam(ctx->aac, AACENC_SAMPLERATE, sample_rate);
+    assert(err == AACENC_OK);
+    err = aacEncoder_SetParam(ctx->aac, AACENC_CHANNELMODE, MODE_2);
+    assert(err == AACENC_OK);
+    err = aacEncoder_SetParam(ctx->aac, AACENC_BITRATE, bit_rate);
+    assert(err == AACENC_OK);
+    err = aacEncoder_SetParam(ctx->aac, AACENC_TRANSMUX, TT_MP4_RAW);
     assert(err == AACENC_OK);
 
-    mach_timebase_info(&state.timebase);
+    err = aacEncEncode(ctx->aac, NULL, NULL, NULL, NULL);
+    assert(err == AACENC_OK);
+
+    mach_timebase_info(&ctx->timebase);
 }
 
-void p1_audio_add_source(P1AudioSource *src)
+void p1_audio_add_source(P1Context *ctx, P1AudioSource *src)
 {
-    assert(state.src == NULL);
-    state.src = src;
+    assert(ctx->audio_src == NULL);
+    ctx->audio_src = src;
+    src->ctx = ctx;
 }
 
 void p1_audio_mix(P1AudioSource *src, int64_t time, void *in, int in_len)
 {
-    assert(src == state.src);
+    P1Context *ctx = src->ctx;
+    assert(src == ctx->audio_src);
 
-    if (!state.sent_config) {
-        state.sent_config = true;
-        p1_stream_audio_config();
+    if (!ctx->sent_audio_config) {
+        ctx->sent_audio_config = true;
+        p1_stream_audio_config(ctx);
     }
 
     // Calculate time for the start of the mix buffer.
-    state.time = time - p1_audio_bytes_to_mach_time(state.mix_len);
+    ctx->time = time - p1_audio_bytes_to_mach_time(ctx, ctx->mix_len);
 
     int out_size;
     do {
         // Write to the mix buffer.
-        p1_audio_write(&in, &in_len);
+        p1_audio_write(ctx, &in, &in_len);
 
         // Read, encode and stream from the mix buffer.
-        out_size = p1_audio_read(state.mix_len);
+        out_size = p1_audio_read(ctx, ctx->mix_len);
         if (out_size) {
-            p1_stream_audio(time, state.out, out_size);
+            p1_stream_audio(ctx, time, ctx->out, out_size);
 
             // Recalculate mix buffer start time.
-            state.time += p1_audio_bytes_to_mach_time(out_size);
+            ctx->time += p1_audio_bytes_to_mach_time(ctx, out_size);
         }
     } while (out_size);
 
@@ -106,31 +93,31 @@ void p1_audio_mix(P1AudioSource *src, int64_t time, void *in, int in_len)
 }
 
 // Write as much as possible to the mix buffer.
-static int p1_audio_write(void **in, int *in_len)
+static int p1_audio_write(P1Context *ctx, void **in, int *in_len)
 {
-    int bytes = mix_size - state.mix_len;
+    int bytes = mix_size - ctx->mix_len;
     if (*in_len < bytes)
         bytes = *in_len;
 
     if (bytes != 0) {
         // FIXME: Mixing code goes here!
-        memcpy(state.mix + state.mix_len, *in, bytes);
+        memcpy(ctx->mix + ctx->mix_len, *in, bytes);
 
         *in += bytes;
         *in_len -= bytes;
-        state.mix_len += bytes;
+        ctx->mix_len += bytes;
     }
 
     return bytes;
 }
 
 // Read as much as possible from the ring buffer.
-static int p1_audio_read(int bytes)
+static int p1_audio_read(P1Context *ctx, int bytes)
 {
     // Prepare encoder arguments.
     INT el_sizes[] = { sample_size };
 
-    void *enc_bufs[] = { state.mix };
+    void *enc_bufs[] = { ctx->mix };
     INT enc_identifiers[] = { IN_AUDIO_DATA };
     INT enc_sizes[] = { bytes };
     AACENC_BufDesc in_desc = {
@@ -141,7 +128,7 @@ static int p1_audio_read(int bytes)
         .bufElSizes = el_sizes
     };
 
-    void *out_bufs[] = { state.out };
+    void *out_bufs[] = { ctx->out };
     INT out_identifiers[] = { OUT_BITSTREAM_DATA };
     INT out_sizes[] = { out_size };
     AACENC_BufDesc out_desc = {
@@ -161,7 +148,7 @@ static int p1_audio_read(int bytes)
     AACENC_ERROR err;
     AACENC_OutArgs out_args = { .numInSamples = 1 };
     while (in_args.numInSamples && out_args.numInSamples && out_desc.bufSizes[0] > out_min_size) {
-        err = aacEncEncode(state.aac, &in_desc, &out_desc, &in_args, &out_args);
+        err = aacEncEncode(ctx->aac, &in_desc, &out_desc, &in_args, &out_args);
         assert(err == AACENC_OK);
 
         size_t in_processed = out_args.numInSamples * sample_size;
@@ -176,21 +163,21 @@ static int p1_audio_read(int bytes)
     }
 
     // Move remaining data up in the mix buffer.
-    int mix_read = (int) (in_desc.bufs[0] - state.mix);
+    int mix_read = (int) (in_desc.bufs[0] - ctx->mix);
     if (mix_read) {
-        int mix_remaining = state.mix_len - mix_read;
+        int mix_remaining = ctx->mix_len - mix_read;
         if (mix_remaining)
-            memmove(state.mix, in_desc.bufs[0], mix_remaining);
-        memset(state.mix + mix_remaining, 0, mix_read);
-        state.mix_len = mix_remaining;
+            memmove(ctx->mix, in_desc.bufs[0], mix_remaining);
+        memset(ctx->mix + mix_remaining, 0, mix_read);
+        ctx->mix_len = mix_remaining;
     }
 
     return mix_read;
 }
 
-static int64_t p1_audio_bytes_to_mach_time(int bytes)
+static int64_t p1_audio_bytes_to_mach_time(P1Context *ctx, int bytes)
 {
     int samples = bytes / frame_size;
     int64_t nanosec = samples * 1000000000 / sample_rate;
-    return nanosec * state.timebase.denom / state.timebase.numer;
+    return nanosec * ctx->timebase.denom / ctx->timebase.numer;
 }

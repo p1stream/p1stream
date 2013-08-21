@@ -5,7 +5,6 @@
 
 #include "p1stream.h"
 
-static const size_t fps = 60;
 
 typedef struct _P1DisplayVideoClock P1DisplayVideoClock;
 

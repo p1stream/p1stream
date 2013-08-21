@@ -4,6 +4,7 @@
 
 #include "p1stream.h"
 
+
 static const UInt32 num_buffers = 3;
 static const UInt32 num_channels = 2;
 static const UInt32 sample_size = 2;

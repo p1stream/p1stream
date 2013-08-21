@@ -35,7 +35,7 @@ filesystem location for this is somewhere in `~/Library/Developer/Xcode/DerivedD
 Create a configuration using the sample plist file. The ‘P1stream’ scheme
 looks for a `config.plist` in the toplevel directory, so:
 
-    cp ./P1stream/sample_config.plist ./config.plist
+    cp ./P1stream/osx/sample_config.plist ./config.plist
 
 Now simply run from the ‘P1stream’ scheme, or from the command-line:
 

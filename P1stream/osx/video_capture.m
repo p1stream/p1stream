@@ -7,6 +7,7 @@
 
 #include "p1stream.h"
 
+
 // Source state.
 typedef struct _P1CaptureVideoSource P1CaptureVideoSource;
 
