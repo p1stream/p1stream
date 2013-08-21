@@ -38,24 +38,18 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 @end
 
 // Plugin definition.
-static P1VideoSource *p1_capture_video_source_create();
 static void p1_capture_video_source_free(P1VideoSource *_source);
 static bool p1_capture_video_source_start(P1VideoSource *_source);
 static void p1_capture_video_source_frame(P1VideoSource *_source);
 static void p1_capture_video_source_stop(P1VideoSource *_source);
 
-P1VideoSourceFactory p1_capture_video_source_factory = {
-    .create = p1_capture_video_source_create,
-};
 
-
-static P1VideoSource *p1_capture_video_source_create()
+P1VideoSource *p1_capture_video_source_create()
 {
     P1CaptureVideoSource *source = calloc(1, sizeof(P1CaptureVideoSource));
     assert(source != NULL);
 
     P1VideoSource *_source = (P1VideoSource *) source;
-    _source->factory = &p1_capture_video_source_factory;
     _source->free = p1_capture_video_source_free;
     _source->start = p1_capture_video_source_start;
     _source->frame = p1_capture_video_source_frame;

@@ -14,7 +14,6 @@ struct _P1DisplayVideoClock {
     CVDisplayLinkRef display_link;
 };
 
-static P1VideoClock *p1_display_video_clock_create();
 static void p1_display_video_clock_free(P1VideoClock *_clock);
 static bool p1_display_video_clock_start(P1VideoClock *_clock);
 static void p1_display_video_clock_stop(P1VideoClock *_clock);
@@ -26,12 +25,8 @@ static CVReturn p1_display_video_clock_callback(
     CVOptionFlags *flagsOut,
     void *displayLinkContext);
 
-P1VideoClockFactory p1_display_video_clock_factory = {
-    .create = p1_display_video_clock_create
-};
 
-
-static P1VideoClock *p1_display_video_clock_create()
+P1VideoClock *p1_display_video_clock_create()
 {
     CVReturn ret;
 
@@ -39,7 +34,6 @@ static P1VideoClock *p1_display_video_clock_create()
     assert(clock != NULL);
 
     P1VideoClock *_clock = (P1VideoClock *) clock;
-    _clock->factory = &p1_display_video_clock_factory;
     _clock->free = p1_display_video_clock_free;
     _clock->start = p1_display_video_clock_start;
     _clock->stop = p1_display_video_clock_stop;

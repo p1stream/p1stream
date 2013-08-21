@@ -29,15 +29,10 @@ typedef struct _P1VideoClockFactory P1VideoClockFactory;
 
 struct _P1VideoClock {
     P1Context *ctx;
-    P1VideoClockFactory *factory;
     void (*free)(P1VideoClock *clock);
 
     bool (*start)(P1VideoClock *clock);
     void (*stop)(P1VideoClock *clock);
-};
-
-struct _P1VideoClockFactory {
-    P1VideoClock *(*create)();
 };
 
 
@@ -46,16 +41,11 @@ typedef struct _P1VideoSourceFactory P1VideoSourceFactory;
 
 struct _P1VideoSource {
     P1Context *ctx;
-    P1VideoSourceFactory *factory;
     void (*free)(P1VideoSource *source);
 
     bool (*start)(P1VideoSource *source);
     void (*frame)(P1VideoSource *source);
     void (*stop)(P1VideoSource *source);
-};
-
-struct _P1VideoSourceFactory {
-    P1VideoSource *(*create)();
 };
 
 
@@ -64,15 +54,10 @@ typedef struct _P1AudioSourceFactory P1AudioSourceFactory;
 
 struct _P1AudioSource {
     P1Context *ctx;
-    P1AudioSourceFactory *factory;
     void (*free)(P1AudioSource *src);
 
     bool (*start)(P1AudioSource *src);
     void (*stop)(P1AudioSource *src);
-};
-
-struct _P1AudioSourceFactory {
-    P1AudioSource *(*create)();
 };
 
 

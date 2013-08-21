@@ -6,12 +6,12 @@
 #include "p1stream.h"
 
 
-P1Config *p1_conf_plist_from_file(const char *file);
-
-extern P1VideoClockFactory p1_display_video_clock_factory;
-extern P1VideoSourceFactory p1_display_video_source_factory;
-extern P1AudioSourceFactory p1_input_audio_source_factory;
-
 void p1_video_frame_iosurface(P1VideoSource *src, IOSurfaceRef buffer);
+
+P1Config *p1_conf_plist_from_file(const char *file);
+P1AudioSource *p1_input_audio_source_create();
+P1VideoClock *p1_display_video_clock_create();
+P1VideoSource *p1_display_video_source_create();
+P1VideoSource *p1_capture_video_source_create();
 
 #endif

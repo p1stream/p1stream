@@ -22,23 +22,17 @@ struct _P1InputAudioSource {
     AudioQueueBufferRef buffers[num_buffers];
 };
 
-static P1AudioSource *p1_input_audio_source_create();
 static void p1_input_audio_source_free(P1AudioSource *_source);
 static bool p1_input_audio_source_start(P1AudioSource *_source);
 static void p1_input_audio_source_stop(P1AudioSource *_source);
 
-P1AudioSourceFactory p1_input_audio_source_factory = {
-    .create = p1_input_audio_source_create,
-};
 
-
-static P1AudioSource *p1_input_audio_source_create()
+P1AudioSource *p1_input_audio_source_create()
 {
     P1InputAudioSource *source = calloc(1, sizeof(P1InputAudioSource));
     assert(source != NULL);
 
     P1AudioSource *_source = (P1AudioSource *) source;
-    _source->factory = &p1_input_audio_source_factory;
     _source->free = p1_input_audio_source_free;
     _source->start = p1_input_audio_source_start;
     _source->stop = p1_input_audio_source_stop;

@@ -21,7 +21,6 @@ struct _P1DisplayVideoSource {
     CGDisplayStreamRef display_stream;
 };
 
-static P1VideoSource *p1_display_video_source_create();
 static void p1_display_video_source_free(P1VideoSource *_source);
 static bool p1_display_video_source_start(P1VideoSource *_source);
 static void p1_display_video_source_frame(P1VideoSource *_source);
@@ -31,18 +30,13 @@ static void p1_display_video_source_callback(
     CGDisplayStreamFrameStatus status,
     IOSurfaceRef frame);
 
-P1VideoSourceFactory p1_display_video_source_factory = {
-    .create = p1_display_video_source_create
-};
 
-
-static P1VideoSource *p1_display_video_source_create()
+P1VideoSource *p1_display_video_source_create()
 {
     P1DisplayVideoSource *source = calloc(1, sizeof(P1DisplayVideoSource));
     assert(source != NULL);
 
     P1VideoSource *_source = (P1VideoSource *) source;
-    _source->factory = &p1_display_video_source_factory;
     _source->free = p1_display_video_source_free;
     _source->start = p1_display_video_source_start;
     _source->frame = p1_display_video_source_frame;
