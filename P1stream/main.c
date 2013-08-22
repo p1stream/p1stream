@@ -18,7 +18,7 @@ int main(int argc, const char * argv[])
         return 2;
     }
 
-    P1Config *cfg = p1_conf_plist_from_file(argv[1]);
+    P1Config *cfg = p1_plist_config_create_from_file(argv[1]);
     P1Context *ctx = p1_create(cfg, NULL);
 
     create_audio_sources(ctx, cfg);

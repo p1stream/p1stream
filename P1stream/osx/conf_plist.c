@@ -1,5 +1,4 @@
 #include <string.h>
-#include <CoreFoundation/CoreFoundation.h>
 
 #include "p1stream.h"
 
@@ -20,26 +19,12 @@ static bool p1_plist_config_each_section(P1Config *_cfg, P1ConfigSection *sect, 
 static bool p1_plist_config_each_string(P1Config *_cfg, P1ConfigSection *sect, const char *key, P1ConfigIterString iter, void *data);
 
 
-P1Config *p1_conf_plist_from_file(const char *file)
+P1Config *p1_plist_config_create(CFDictionaryRef root)
 {
     P1PlistConfig *cfg = calloc(1, sizeof(P1PlistConfig));
     assert(cfg != NULL);
 
-    Boolean res;
-
-    CFURLRef file_url = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8 *)file, strlen(file), FALSE);
-    assert(file_url != NULL);
-    CFURLCreateData(NULL, file_url, kCFStringEncodingUTF8, FALSE);
-
-    CFDataRef file_data;
-    res = CFURLCreateDataAndPropertiesFromResource(NULL, file_url, &file_data, NULL, NULL, NULL);
-    CFRelease(file_url);
-    assert(res == TRUE);
-
-    cfg->root = CFPropertyListCreateWithData(NULL, file_data, kCFPropertyListImmutable, NULL, NULL);
-    CFRelease(file_data);
-    assert(cfg->root != NULL);
-    assert(CFGetTypeID(cfg->root) == CFDictionaryGetTypeID());
+    cfg->root = CFRetain(root);
 
     P1Config *_cfg = (P1Config *) cfg;
     _cfg->free = p1_plist_config_free;
@@ -47,6 +32,27 @@ P1Config *p1_conf_plist_from_file(const char *file)
     _cfg->get_string = p1_plist_config_get_string;
     _cfg->each_section = p1_plist_config_each_section;
     _cfg->each_string = p1_plist_config_each_string;
+    return _cfg;
+}
+
+P1Config *p1_plist_config_create_from_file(const char *file)
+{
+    CFURLRef file_url = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8 *)file, strlen(file), FALSE);
+    assert(file_url != NULL);
+    CFURLCreateData(NULL, file_url, kCFStringEncodingUTF8, FALSE);
+
+    CFDataRef file_data;
+    Boolean res = CFURLCreateDataAndPropertiesFromResource(NULL, file_url, &file_data, NULL, NULL, NULL);
+    CFRelease(file_url);
+    assert(res == TRUE);
+
+    CFDictionaryRef root = CFPropertyListCreateWithData(NULL, file_data, kCFPropertyListImmutable, NULL, NULL);
+    CFRelease(file_data);
+    assert(root != NULL);
+    assert(CFGetTypeID(root) == CFDictionaryGetTypeID());
+
+    P1Config *_cfg = p1_plist_config_create(root);
+    CFRelease(root);
     return _cfg;
 }
 
