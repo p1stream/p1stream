@@ -17,7 +17,7 @@
 typedef struct _P1Config P1Config;
 
 // Abstract handle, the implementation is free to define this any way it needs.
-typedef struct _P1ConfigSection P1ConfigSection;
+typedef void P1ConfigSection;
 
 // Iterator callbacks.
 typedef bool (*P1ConfigIterSection)(P1Config *cfg, P1ConfigSection *sect, void *data);
