@@ -8,13 +8,13 @@
 
 static const char *default_url = "rtmp://localhost/app/test";
 
-static RTMPPacket *p1_stream_new_packet(P1Context *ctx, uint8_t type, int64_t time, uint32_t body_size);
-static void p1_stream_submit_packet(P1Context *ctx, RTMPPacket *pkt);
-static void p1_stream_submit_packet_on_thread(P1Context *ctx, RTMPPacket *pkt);
+static RTMPPacket *p1_stream_new_packet(P1ContextFull *ctx, uint8_t type, int64_t time, uint32_t body_size);
+static void p1_stream_submit_packet(P1ContextFull *ctx, RTMPPacket *pkt);
+static void p1_stream_submit_packet_on_thread(P1ContextFull *ctx, RTMPPacket *pkt);
 
 
 // Setup state and connect.
-void p1_stream_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect)
+void p1_stream_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 {
     int res;
     RTMP * const r = &ctx->rtmp;
@@ -40,7 +40,7 @@ void p1_stream_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect)
 }
 
 // Send video configuration.
-void p1_stream_video_config(P1Context *ctx, x264_nal_t *nals, int len)
+void p1_stream_video_config(P1ContextFull *ctx, x264_nal_t *nals, int len)
 {
     int i;
 
@@ -94,7 +94,7 @@ void p1_stream_video_config(P1Context *ctx, x264_nal_t *nals, int len)
 }
 
 // Send video data.
-void p1_stream_video(P1Context *ctx, x264_nal_t *nals, int len, x264_picture_t *pic)
+void p1_stream_video(P1ContextFull *ctx, x264_nal_t *nals, int len, x264_picture_t *pic)
 {
     uint32_t size = 0;
     for (int i = 0; i < len; i++)
@@ -114,7 +114,7 @@ void p1_stream_video(P1Context *ctx, x264_nal_t *nals, int len, x264_picture_t *
 }
 
 // Send audio configuration.
-void p1_stream_audio_config(P1Context *ctx)
+void p1_stream_audio_config(P1ContextFull *ctx)
 {
     const uint32_t tag_size = 2 + 2;
 
@@ -132,7 +132,7 @@ void p1_stream_audio_config(P1Context *ctx)
 }
 
 // Send audio data.
-void p1_stream_audio(P1Context *ctx, int64_t mtime, void *buf, int len)
+void p1_stream_audio(P1ContextFull *ctx, int64_t mtime, void *buf, int len)
 {
     const uint32_t tag_size = 2 + len;
 
@@ -149,7 +149,7 @@ void p1_stream_audio(P1Context *ctx, int64_t mtime, void *buf, int len)
 }
 
 // Allocate a new packet and set header fields.
-static RTMPPacket *p1_stream_new_packet(P1Context *ctx, uint8_t type, int64_t time, uint32_t body_size)
+static RTMPPacket *p1_stream_new_packet(P1ContextFull *ctx, uint8_t type, int64_t time, uint32_t body_size)
 {
     const size_t prelude_size = sizeof(RTMPPacket) + RTMP_MAX_HEADER_SIZE;
 
@@ -187,7 +187,7 @@ static RTMPPacket *p1_stream_new_packet(P1Context *ctx, uint8_t type, int64_t ti
 }
 
 // Submit a packet. It'll either be sent immediately, or queued.
-static void p1_stream_submit_packet(P1Context *ctx, RTMPPacket *pkt)
+static void p1_stream_submit_packet(P1ContextFull *ctx, RTMPPacket *pkt)
 {
     dispatch_async(ctx->dispatch, ^{
         p1_stream_submit_packet_on_thread(ctx, pkt);
@@ -195,7 +195,7 @@ static void p1_stream_submit_packet(P1Context *ctx, RTMPPacket *pkt)
 }
 
 // Continuation of p1_stream_submit_packet when on the correct thread.
-static void p1_stream_submit_packet_on_thread(P1Context *ctx, RTMPPacket *pkt)
+static void p1_stream_submit_packet_on_thread(P1ContextFull *ctx, RTMPPacket *pkt)
 {
     int err;
     RTMP * const r = &ctx->rtmp;

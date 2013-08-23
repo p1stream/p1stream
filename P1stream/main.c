@@ -25,6 +25,8 @@ int main(int argc, const char * argv[])
     create_video_clock(ctx, cfg);
     create_video_sources(ctx, cfg);
 
+    p1_start(ctx);
+
     CFRunLoopRun();
 
     return 0;
@@ -50,10 +52,7 @@ static void create_video_clock(P1Context *ctx, P1Config *cfg)
     P1VideoClock *clock = factory(cfg, sect);
     assert(clock != NULL);
 
-    p1_video_set_clock(ctx, clock);
-
-    b_ret = clock->start(clock);
-    assert(b_ret == true);
+    ctx->clock = clock;
 }
 
 static void create_audio_sources(P1Context *ctx, P1Config *cfg)
@@ -80,10 +79,7 @@ static bool create_audio_source(P1Config *cfg, P1ConfigSection *sect, void *data
     P1AudioSource *src = factory(cfg, sect);
     assert(src != NULL);
 
-    p1_audio_add_source(ctx, src);
-
-    b_ret = src->start(src);
-    assert(b_ret == true);
+    p1_list_before(&ctx->audio_sources, src);
 
     return true;
 }
@@ -114,10 +110,7 @@ static bool create_video_source(P1Config *cfg, P1ConfigSection *sect, void *data
     P1VideoSource *src = factory(cfg, sect);
     assert(src != NULL);
 
-    p1_video_add_source(ctx, src);
-
-    b_ret = src->start(src);
-    assert(b_ret == true);
+    p1_list_before(&ctx->video_sources, src);
 
     return true;
 }

@@ -3,8 +3,7 @@
 
 void p1_video_frame_iosurface(P1VideoSource *src, IOSurfaceRef buffer)
 {
-    P1Context *ctx = src->ctx;
-    assert(src == ctx->video_src);
+    P1ContextFull *ctx = (P1ContextFull *) src->ctx;
 
     GLsizei width = (GLsizei) IOSurfaceGetWidth(buffer);
     GLsizei height = (GLsizei) IOSurfaceGetHeight(buffer);

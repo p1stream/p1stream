@@ -21,13 +21,17 @@ static const int out_min_size = 6144 / 8 * num_channels;
 // Complete output buffer size, also one full second.
 static const int out_size = out_min_size * 64;
 
-static int p1_audio_write(P1Context *ctx, void **in, int *in_len);
-static int p1_audio_read(P1Context *ctx, int num);
-static int64_t p1_audio_bytes_to_mach_time(P1Context *ctx, int bytes);
+static int p1_audio_write(P1ContextFull *ctx, void **in, int *in_len);
+static int p1_audio_read(P1ContextFull *ctx, int num);
+static int64_t p1_audio_bytes_to_mach_time(P1ContextFull *ctx, int bytes);
 
 
-void p1_audio_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect)
+void p1_audio_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 {
+    P1Context *_ctx = (P1Context *) ctx;
+
+    P1_LIST_INIT(&_ctx->audio_sources);
+
     AACENC_ERROR err;
 
     ctx->mix = calloc(1, mix_size);
@@ -49,21 +53,11 @@ void p1_audio_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect)
 
     err = aacEncEncode(ctx->aac, NULL, NULL, NULL, NULL);
     assert(err == AACENC_OK);
-
-    mach_timebase_info(&ctx->timebase);
-}
-
-void p1_audio_add_source(P1Context *ctx, P1AudioSource *src)
-{
-    assert(ctx->audio_src == NULL);
-    ctx->audio_src = src;
-    src->ctx = ctx;
 }
 
 void p1_audio_mix(P1AudioSource *src, int64_t time, void *in, int in_len)
 {
-    P1Context *ctx = src->ctx;
-    assert(src == ctx->audio_src);
+    P1ContextFull *ctx = (P1ContextFull *) src->ctx;
 
     if (!ctx->sent_audio_config) {
         ctx->sent_audio_config = true;
@@ -93,7 +87,7 @@ void p1_audio_mix(P1AudioSource *src, int64_t time, void *in, int in_len)
 }
 
 // Write as much as possible to the mix buffer.
-static int p1_audio_write(P1Context *ctx, void **in, int *in_len)
+static int p1_audio_write(P1ContextFull *ctx, void **in, int *in_len)
 {
     int bytes = mix_size - ctx->mix_len;
     if (*in_len < bytes)
@@ -112,7 +106,7 @@ static int p1_audio_write(P1Context *ctx, void **in, int *in_len)
 }
 
 // Read as much as possible from the ring buffer.
-static int p1_audio_read(P1Context *ctx, int bytes)
+static int p1_audio_read(P1ContextFull *ctx, int bytes)
 {
     // Prepare encoder arguments.
     INT el_sizes[] = { sample_size };
@@ -175,7 +169,7 @@ static int p1_audio_read(P1Context *ctx, int bytes)
     return mix_read;
 }
 
-static int64_t p1_audio_bytes_to_mach_time(P1Context *ctx, int bytes)
+static int64_t p1_audio_bytes_to_mach_time(P1ContextFull *ctx, int bytes)
 {
     int samples = bytes / frame_size;
     int64_t nanosec = samples * 1000000000 / sample_rate;

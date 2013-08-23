@@ -15,13 +15,16 @@
 
 #define P1_PACKET_QUEUE_LENGTH 256
 
-struct _P1Context {
+typedef struct _P1ContextFull P1ContextFull;
+
+
+struct _P1ContextFull {
+    P1Context super;
+
     mach_timebase_info_data_t timebase;
 
 
     // Audio
-    P1AudioSource *audio_src;
-
     HANDLE_AACENCODER aac;
     void *mix;
     int mix_len;
@@ -33,9 +36,6 @@ struct _P1Context {
 
 
     // Video
-    P1VideoClock *video_clock;
-    P1VideoSource *video_src;
-
     size_t skip_counter;
 
     CGLContextObj gl;
@@ -75,14 +75,17 @@ struct _P1Context {
     uint64_t start;
 };
 
-void p1_audio_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect);
-void p1_video_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect);
-void p1_stream_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect);
 
-void p1_stream_video_config(P1Context *ctx, x264_nal_t *nals, int len);
-void p1_stream_video(P1Context *ctx, x264_nal_t *nals, int len, x264_picture_t *pic);
+#define P1_LIST_INIT(list) (list)->prev = (list)->next = (list)
 
-void p1_stream_audio_config(P1Context *ctx);
-void p1_stream_audio(P1Context *ctx, int64_t time, void *buf, int len);
+void p1_audio_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
+void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
+void p1_stream_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
+
+void p1_stream_video_config(P1ContextFull *ctx, x264_nal_t *nals, int len);
+void p1_stream_video(P1ContextFull *ctx, x264_nal_t *nals, int len, x264_picture_t *pic);
+
+void p1_stream_audio_config(P1ContextFull *ctx);
+void p1_stream_audio(P1ContextFull *ctx, int64_t time, void *buf, int len);
 
 #endif

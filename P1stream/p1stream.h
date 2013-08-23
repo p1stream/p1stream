@@ -7,10 +7,14 @@
 // Object types.
 typedef struct _P1Config P1Config;
 typedef void P1ConfigSection; // abstract
+typedef enum _P1State P1State;
+typedef enum _P1TargetState P1TargetState;
+typedef struct _P1ListNode P1ListNode;
 typedef struct _P1VideoClock P1VideoClock;
 typedef struct _P1VideoSource P1VideoSource;
 typedef struct _P1AudioSource P1AudioSource;
 typedef struct _P1Context P1Context;
+typedef enum _P1FreeOptions P1FreeOptions;
 
 // Callback signatures.
 typedef bool (*P1ConfigIterSection)(P1Config *cfg, P1ConfigSection *sect, void *data);
@@ -50,19 +54,52 @@ struct _P1Config {
 };
 
 
+// Sources can be in one of the following states.
+enum _P1State {
+    P1StateIdle = 0, // Initial value.
+    P1StateStarting = 1,
+    P1StateRunning = 2,
+    P1StateStopping = 3
+};
+
+// This is the state the source should be in, and should be worked towards.
+enum _P1TargetState {
+    P1TargetRunning, // Initial value.
+    P1TargetIdle,
+    P1TargetRemove  // Pending removal, source will be freed.
+};
+
+
+// Sources are tracked in circular linked lists. Each list has an empty head
+// node. Helper methods are provided, but direct access is also possible.
+
+struct _P1ListNode {
+    P1ListNode *prev;
+    P1ListNode *next;
+};
+
+
 // Video sources may be added, removed and rearranged at run-time, but a stable
 // clock is needed to produce output with a constant frame rate. This is the
 // interface we expect such a clock implementation to provide.
 
-struct _P1VideoClock {
-    // Back reference, set on p1_video_set_clock.
-    P1Context *ctx;
+// Clocks should emit ticks on a thread. All video processing will happen on
+// this thread.
 
-    // Free the source and associated resources. (Assume already stopped.)
+struct _P1VideoClock {
+    // Back reference, set automatically before start.
+    P1Context *ctx;
+    // Current state.
+    P1State state;
+    // Target state. P1stream will call start/stop/free accordingly.
+    P1TargetState target;
+
+    // Free the source and associated resources. (Assume idle.)
     void (*free)(P1VideoClock *clock);
-    // Start the clock. Emit ticks using p1_video_clock_tick.
+
+    // Start the clock. This should update the state and start the thread.
     bool (*start)(P1VideoClock *clock);
-    // Stop the clock.
+    // Stop the clock. This will only be called from the clocks own thread.
     void (*stop)(P1VideoClock *clock);
 };
 
@@ -70,15 +107,27 @@ struct _P1VideoClock {
 // Video sources produce images on each clock tick. Several may be added to a
 // context, to be combined into a single output image.
 
-struct _P1VideoSource {
-    // Back reference, set on p1_video_add_source.
-    P1Context *ctx;
+// Video sources may be called from an arbitrary thread, but all calls are
+// always done in a thread-safe manner.
 
-    // Free the source and associated resources. (Assume already stopped.)
+struct _P1VideoSource {
+    P1ListNode super;
+
+    // Back reference, set automatically before start.
+    P1Context *ctx;
+    // Current state.
+    P1State state;
+    // Target state. P1stream will call start/stop/free accordingly.
+    P1TargetState target;
+
+    // Free the source and associated resources. (Assume idle.)
     void (*free)(P1VideoSource *source);
-    // Start the source. (Ie. open resources, start reading.)
+
+    // The following methods are always called from the clock thread.
+
+    // Start the source. This should update the state and open resources.
     bool (*start)(P1VideoSource *source);
-    // Produce the latest frames using p1_video_frame.
+    // Produce the latest frame using p1_video_frame.
     void (*frame)(P1VideoSource *source);
     // Stop the source.
     void (*stop)(P1VideoSource *source);
@@ -88,30 +137,92 @@ struct _P1VideoSource {
 // Audio sources produce buffers as they become available. Several may be added
 // to a context, to be mixed into a single output stream.
 
-struct _P1AudioSource {
-    // Back reference, set on p1_audio_add_source.
-    P1Context *ctx;
+// Audio sources may emit buffers from any thread. Method calls on the audio
+// source happen in a thread-safe manner, with the exception that they may
+// overlap with the audio source's own internal processing.
 
-    // Free the source and associated resources. (Assume already stopped.)
+struct _P1AudioSource {
+    P1ListNode super;
+
+    // Back reference, set automatically before start.
+    P1Context *ctx;
+    // Current state.
+    P1State state;
+    // Target state. P1stream will call start/stop/free accordingly.
+    P1TargetState target;
+
+    // Free the source and associated resources. (Assume idle.)
     void (*free)(P1AudioSource *src);
-    // Start the source. (Ie. open resources, start reading.)
-    // Produce buffers using p1_audio_mix.
+
+    // Start the source. This should update the state and open resources.
+    // Start producing buffers using p1_audio_mix as they are read.
     bool (*start)(P1AudioSource *src);
     // Stop the source.
     void (*stop)(P1AudioSource *src);
 };
 
 
+struct _P1Context {
+    // FIXME: add locks.
+    P1VideoClock *clock;
+    P1ListNode video_sources;
+    P1ListNode audio_sources;
+};
+
+
+// Options for p1_free.
+enum _P1FreeOptions {
+    P1FreeOnlySelf = 0,
+    P1FreeVideoClock = 1,
+    P1FreeVideoSources = 2,
+    P1FreeAudioSource = 4,
+    P1FreeEverything = 7
+};
+
+
+// Low-level list manipulation helper.
+#define _p1_list_manip(_src, _prev, _next) {        \
+    _src->prev = _prev;                             \
+    _src->next = _next;                             \
+    _prev->next = _src;                             \
+    _next->prev = _src;                             \
+}
+
+// Insert a source node before the reference node.
+// Inserting before the head node is basically an append.
+#define p1_list_before(_ref, _src) {                \
+    P1ListNode *_p1_src = (P1ListNode *) (_src);    \
+    P1ListNode *_p1_next = (P1ListNode *) (_ref);   \
+    P1ListNode *_p1_prev = _p1_next->prev;          \
+    _p1_list_manip(_p1_src, _p1_prev, _p1_next);    \
+}
+
+// Insert a source node after the reference node.
+// Inserting after the head node is basically a preprend.
+#define p1_list_after(_ref, _src) {                 \
+    P1ListNode *_p1_src = (P1ListNode *) (_src);    \
+    P1ListNode *_p1_prev = (P1ListNode *) (_ref);   \
+    P1ListNode *_p1_next = _p1_prev->next;          \
+    _p1_list_manip(_p1_src, _p1_prev, _p1_next);    \
+}
+
+
 // Create a new context based on the given configuration.
 P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect);
 
-void p1_video_set_clock(P1Context *ctx, P1VideoClock *clock);
-void p1_video_add_source(P1Context *ctx, P1VideoSource *src);
+// Free all resources related to the context, and optionally other objects.
+void p1_free(P1Context *ctx, P1FreeOptions options);
 
+// Start running with the current configuration.
+void p1_start(P1Context *ctx);
+// Stop all processing and all sources.
+void p1_stop(P1Context *ctx);
+
+// Callback for video clocks to emit ticks.
 void p1_video_clock_tick(P1VideoClock *src, int64_t time);
+// Callback for video sources to provide frame data.
 void p1_video_frame(P1VideoSource *src, int width, int height, void *data);
-
-void p1_audio_add_source(P1Context *ctx, P1AudioSource *src);
+// Callback for audio sources to provide audio buffer data.
 void p1_audio_mix(P1AudioSource *dtv, int64_t time, void *in, int in_len);
 
 
