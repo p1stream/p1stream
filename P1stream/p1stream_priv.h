@@ -76,11 +76,11 @@ struct _P1ContextFull {
 };
 
 
-#define P1_LIST_INIT(list) (list)->prev = (list)->next = (list)
-
 void p1_audio_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
 void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
 void p1_stream_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
+
+void p1_video_output(P1VideoClock *vclock, int64_t time);
 
 void p1_stream_video_config(P1ContextFull *ctx, x264_nal_t *nals, int len);
 void p1_stream_video(P1ContextFull *ctx, x264_nal_t *nals, int len, x264_picture_t *pic);

@@ -22,24 +22,25 @@ struct _P1InputAudioSource {
     AudioQueueBufferRef buffers[num_buffers];
 };
 
-static void p1_input_audio_source_free(P1AudioSource *_source);
-static bool p1_input_audio_source_start(P1AudioSource *_source);
-static void p1_input_audio_source_stop(P1AudioSource *_source);
+static void p1_input_audio_source_free(P1Source *src);
+static bool p1_input_audio_source_start(P1Source *src);
+static void p1_input_audio_source_stop(P1Source *src);
 
 
 P1AudioSource *p1_input_audio_source_create()
 {
-    P1InputAudioSource *source = calloc(1, sizeof(P1InputAudioSource));
-    assert(source != NULL);
+    P1InputAudioSource *iasrc = calloc(1, sizeof(P1InputAudioSource));
+    P1AudioSource *asrc = (P1AudioSource *) iasrc;
+    P1Source *src = (P1Source *) iasrc;
+    assert(iasrc != NULL);
 
-    P1AudioSource *_source = (P1AudioSource *) source;
-    _source->free = p1_input_audio_source_free;
-    _source->start = p1_input_audio_source_start;
-    _source->stop = p1_input_audio_source_stop;
+    src->free = p1_input_audio_source_free;
+    src->start = p1_input_audio_source_start;
+    src->stop = p1_input_audio_source_stop;
 
     OSStatus ret;
 
-    source->dispatch = dispatch_queue_create("audio_input", DISPATCH_QUEUE_SERIAL);
+    iasrc->dispatch = dispatch_queue_create("audio_input", DISPATCH_QUEUE_SERIAL);
 
     AudioStreamBasicDescription fmt;
     fmt.mFormatID = kAudioFormatLinearPCM;
@@ -53,49 +54,55 @@ P1AudioSource *p1_input_audio_source_create()
     fmt.mReserved = 0;
 
     ret = AudioQueueNewInputWithDispatchQueue(
-        &source->queue, &fmt, 0, source->dispatch,
+        &iasrc->queue, &fmt, 0, iasrc->dispatch,
         ^(AudioQueueRef queue, AudioQueueBufferRef buf,
           const AudioTimeStamp *time, UInt32 num_descs,
           const AudioStreamPacketDescription *descs) {
-            p1_audio_mix(_source, time->mHostTime, buf->mAudioData, buf->mAudioDataByteSize);
+            p1_audio_buffer(asrc, time->mHostTime, buf->mAudioData, buf->mAudioDataByteSize);
 
-            OSStatus ret = AudioQueueEnqueueBuffer(source->queue, buf, 0, NULL);
+            OSStatus ret = AudioQueueEnqueueBuffer(iasrc->queue, buf, 0, NULL);
             assert(ret == noErr);
         });
     assert(ret == noErr);
 
     for (int i = 0; i < num_buffers; i++) {
-        ret = AudioQueueAllocateBuffer(source->queue, 0x5000, &source->buffers[i]);
+        ret = AudioQueueAllocateBuffer(iasrc->queue, 0x5000, &iasrc->buffers[i]);
         assert(ret == noErr);
-        ret = AudioQueueEnqueueBuffer(source->queue, source->buffers[i], 0, NULL);
+        ret = AudioQueueEnqueueBuffer(iasrc->queue, iasrc->buffers[i], 0, NULL);
         assert(ret == noErr);
     }
 
-    return _source;
+    return asrc;
 }
 
-static void p1_input_audio_source_free(P1AudioSource *_source)
+static void p1_input_audio_source_free(P1Source *src)
 {
-    P1InputAudioSource *source = (P1InputAudioSource *)_source;
+    P1InputAudioSource *iasrc = (P1InputAudioSource *)src;
 
-    AudioQueueDispose(source->queue, TRUE);
-    dispatch_release(source->dispatch);
+    AudioQueueDispose(iasrc->queue, TRUE);
+    dispatch_release(iasrc->dispatch);
 }
 
-static bool p1_input_audio_source_start(P1AudioSource *_source)
+static bool p1_input_audio_source_start(P1Source *src)
 {
-    P1InputAudioSource *source = (P1InputAudioSource *)_source;
+    P1InputAudioSource *iasrc = (P1InputAudioSource *)src;
 
-    OSStatus ret = AudioQueueStart(source->queue, NULL);
+    OSStatus ret = AudioQueueStart(iasrc->queue, NULL);
     assert(ret == noErr);
+
+    // FIXME: Should we wait for anything?
+    src->state = P1StateRunning;
 
     return true;
 }
 
-static void p1_input_audio_source_stop(P1AudioSource *_source)
+static void p1_input_audio_source_stop(P1Source *src)
 {
-    P1InputAudioSource *source = (P1InputAudioSource *)_source;
+    P1InputAudioSource *iasrc = (P1InputAudioSource *)src;
 
-    OSStatus ret = AudioQueueStop(source->queue, TRUE);
+    OSStatus ret = AudioQueueStop(iasrc->queue, TRUE);
     assert(ret == noErr);
+
+    // FIXME: Async.
+    src->state = P1StateIdle;
 }

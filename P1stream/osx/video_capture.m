@@ -24,7 +24,7 @@ struct _P1CaptureVideoSource {
 // Delegate class we use internally for the capture session.
 @interface P1VideoCaptureDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 {
-    P1CaptureVideoSource *source;
+    P1CaptureVideoSource *cvsrc;
 }
 
 - (id)initWithSource:(P1CaptureVideoSource *)_source;
@@ -38,27 +38,28 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 @end
 
 // Plugin definition.
-static void p1_capture_video_source_free(P1VideoSource *_source);
-static bool p1_capture_video_source_start(P1VideoSource *_source);
-static void p1_capture_video_source_frame(P1VideoSource *_source);
-static void p1_capture_video_source_stop(P1VideoSource *_source);
+static void p1_capture_video_source_free(P1Source *src);
+static bool p1_capture_video_source_start(P1Source *src);
+static void p1_capture_video_source_stop(P1Source *src);
+static void p1_capture_video_source_frame(P1VideoSource *vsrc);
 
 
 P1VideoSource *p1_capture_video_source_create()
 {
-    P1CaptureVideoSource *source = calloc(1, sizeof(P1CaptureVideoSource));
-    assert(source != NULL);
+    P1CaptureVideoSource *cvsrc = calloc(1, sizeof(P1CaptureVideoSource));
+    P1VideoSource *vsrc = (P1VideoSource *) cvsrc;
+    P1Source *src = (P1Source *) cvsrc;
+    assert(cvsrc != NULL);
 
-    P1VideoSource *_source = (P1VideoSource *) source;
-    _source->free = p1_capture_video_source_free;
-    _source->start = p1_capture_video_source_start;
-    _source->frame = p1_capture_video_source_frame;
-    _source->stop = p1_capture_video_source_stop;
+    src->free = p1_capture_video_source_free;
+    src->start = p1_capture_video_source_start;
+    src->stop = p1_capture_video_source_stop;
+    vsrc->frame = p1_capture_video_source_frame;
 
-    pthread_mutex_init(&source->frame_lock, NULL);
+    pthread_mutex_init(&cvsrc->frame_lock, NULL);
 
     @autoreleasepool {
-        P1VideoCaptureDelegate *delegate = [[P1VideoCaptureDelegate alloc] initWithSource:source];
+        P1VideoCaptureDelegate *delegate = [[P1VideoCaptureDelegate alloc] initWithSource:cvsrc];
 
         // Create a capture session, listen for errors.
         AVCaptureSession *session = [[AVCaptureSession alloc] init];
@@ -85,82 +86,88 @@ P1VideoSource *p1_capture_video_source_create()
         [session addOutput:output];
 
         // Retain session in state.
-        source->delegate = CFBridgingRetain(delegate);
-        source->session = CFBridgingRetain(session);
+        cvsrc->delegate = CFBridgingRetain(delegate);
+        cvsrc->session = CFBridgingRetain(session);
     }
 
-    return _source;
+    return vsrc;
 }
 
-static void p1_capture_video_source_free(P1VideoSource *_source)
+static void p1_capture_video_source_free(P1Source *src)
 {
-    P1CaptureVideoSource *source = (P1CaptureVideoSource *) _source;
+    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) src;
 
-    CFRelease(source->session);
-    CFRelease(source->delegate);
+    CFRelease(cvsrc->session);
+    CFRelease(cvsrc->delegate);
 
-    pthread_mutex_destroy(&source->frame_lock);
+    pthread_mutex_destroy(&cvsrc->frame_lock);
 }
 
-static bool p1_capture_video_source_start(P1VideoSource *_source)
+static bool p1_capture_video_source_start(P1Source *src)
 {
-    P1CaptureVideoSource *source = (P1CaptureVideoSource *) _source;
+    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) src;
 
     @autoreleasepool {
-        AVCaptureSession *session = (__bridge AVCaptureSession *)source->session;
+        AVCaptureSession *session = (__bridge AVCaptureSession *) cvsrc->session;
         [session startRunning];
     }
+
+    // FIXME: Should we wait for anything?
+    src->state = P1StateRunning;
 
     return true;
 }
 
-static void p1_capture_video_source_frame(P1VideoSource *_source)
+static void p1_capture_video_source_stop(P1Source *src)
 {
-    P1CaptureVideoSource *source = (P1CaptureVideoSource *) _source;
+    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) src;
+
+    @autoreleasepool {
+        AVCaptureSession *session = (__bridge AVCaptureSession *) cvsrc->session;
+        [session stopRunning];
+    }
+
+    // FIXME: Should we wait for anything?
+    src->state = P1StateIdle;
+}
+
+static void p1_capture_video_source_frame(P1VideoSource *vsrc)
+{
+    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) vsrc;
     CVPixelBufferRef frame;
 
-    pthread_mutex_lock(&source->frame_lock);
-    frame = source->frame;
+    pthread_mutex_lock(&cvsrc->frame_lock);
+    frame = cvsrc->frame;
     if (frame)
         CFRetain(frame);
-    pthread_mutex_unlock(&source->frame_lock);
+    pthread_mutex_unlock(&cvsrc->frame_lock);
 
     if (!frame)
         return;
 
     IOSurfaceRef surface = CVPixelBufferGetIOSurface(frame);
     if (surface != NULL) {
-        p1_video_frame_iosurface(_source, surface);
+        p1_video_frame_iosurface(vsrc, surface);
     }
     else {
         CVPixelBufferLockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
         int width = (int) CVPixelBufferGetWidth(frame);
         int height = (int) CVPixelBufferGetHeight(frame);
         void *data = CVPixelBufferGetBaseAddress(frame);
-        p1_video_frame(_source, width, height, data);
+        p1_video_frame(vsrc, width, height, data);
         CVPixelBufferUnlockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
     }
 
     CFRelease(frame);
 }
 
-static void p1_capture_video_source_stop(P1VideoSource *_source)
-{
-    P1CaptureVideoSource *source = (P1CaptureVideoSource *) _source;
-
-    @autoreleasepool {
-        AVCaptureSession *session = (__bridge AVCaptureSession *)source->session;
-        [session stopRunning];
-    }
-}
-
 @implementation P1VideoCaptureDelegate
 
-- (id)initWithSource:(P1CaptureVideoSource *)_source
+- (id)initWithSource:(P1CaptureVideoSource *)_cvsrc
 {
     self = [super init];
     if (self) {
-        source = _source;
+        cvsrc = _cvsrc;
     }
     return self;
 }
@@ -176,10 +183,10 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
     CVPixelBufferRef old_frame;
 
-    pthread_mutex_lock(&source->frame_lock);
-    old_frame = source->frame;
-    source->frame = frame;
-    pthread_mutex_unlock(&source->frame_lock);
+    pthread_mutex_lock(&cvsrc->frame_lock);
+    old_frame = cvsrc->frame;
+    cvsrc->frame = frame;
+    pthread_mutex_unlock(&cvsrc->frame_lock);
 
     if (old_frame)
         CFRelease(old_frame);

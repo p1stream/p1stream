@@ -1,8 +1,9 @@
 #include "p1stream_priv.h"
 
 
-void p1_video_frame_iosurface(P1VideoSource *src, IOSurfaceRef buffer)
+void p1_video_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer)
 {
+    P1Source *src = (P1Source *) vsrc;
     P1ContextFull *ctx = (P1ContextFull *) src->ctx;
 
     GLsizei width = (GLsizei) IOSurfaceGetWidth(buffer);

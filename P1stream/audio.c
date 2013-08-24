@@ -30,7 +30,7 @@ void p1_audio_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Context *_ctx = (P1Context *) ctx;
 
-    P1_LIST_INIT(&_ctx->audio_sources);
+    p1_list_init(&_ctx->audio_sources);
 
     AACENC_ERROR err;
 
@@ -55,8 +55,9 @@ void p1_audio_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
     assert(err == AACENC_OK);
 }
 
-void p1_audio_mix(P1AudioSource *src, int64_t time, void *in, int in_len)
+void p1_audio_buffer(P1AudioSource *asrc, int64_t time, void *in, int in_len)
 {
+    P1Source *src = (P1Source *) asrc;
     P1ContextFull *ctx = (P1ContextFull *) src->ctx;
 
     if (!ctx->sent_audio_config) {

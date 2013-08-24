@@ -14,9 +14,9 @@ struct _P1DisplayVideoClock {
     CVDisplayLinkRef display_link;
 };
 
-static void p1_display_video_clock_free(P1VideoClock *_clock);
-static bool p1_display_video_clock_start(P1VideoClock *_clock);
-static void p1_display_video_clock_stop(P1VideoClock *_clock);
+static void p1_display_video_clock_free(P1VideoClock *vclock);
+static bool p1_display_video_clock_start(P1VideoClock *vclock);
+static void p1_display_video_clock_stop(P1VideoClock *vclock);
 static CVReturn p1_display_video_clock_callback(
     CVDisplayLinkRef displayLink,
     const CVTimeStamp *inNow,
@@ -28,49 +28,54 @@ static CVReturn p1_display_video_clock_callback(
 
 P1VideoClock *p1_display_video_clock_create()
 {
+    P1DisplayVideoClock *dvclock = calloc(1, sizeof(P1DisplayVideoClock));
+    P1VideoClock *vclock = (P1VideoClock *) dvclock;
+    assert(vclock != NULL);
+
+    vclock->free = p1_display_video_clock_free;
+    vclock->start = p1_display_video_clock_start;
+    vclock->stop = p1_display_video_clock_stop;
+
     CVReturn ret;
-
-    P1DisplayVideoClock *clock = calloc(1, sizeof(P1DisplayVideoClock));
-    assert(clock != NULL);
-
-    P1VideoClock *_clock = (P1VideoClock *) clock;
-    _clock->free = p1_display_video_clock_free;
-    _clock->start = p1_display_video_clock_start;
-    _clock->stop = p1_display_video_clock_stop;
-
     const CGDirectDisplayID display_id = kCGDirectMainDisplay;
 
-    ret = CVDisplayLinkCreateWithCGDisplay(display_id, &clock->display_link);
+    ret = CVDisplayLinkCreateWithCGDisplay(display_id, &dvclock->display_link);
     assert(ret == kCVReturnSuccess);
-    ret = CVDisplayLinkSetOutputCallback(clock->display_link, p1_display_video_clock_callback, clock);
+    ret = CVDisplayLinkSetOutputCallback(dvclock->display_link, p1_display_video_clock_callback, vclock);
     assert(ret == kCVReturnSuccess);
 
-    return _clock;
+    return vclock;
 }
 
-static void p1_display_video_clock_free(P1VideoClock *_clock)
+static void p1_display_video_clock_free(P1VideoClock *vclock)
 {
-    P1DisplayVideoClock *clock = (P1DisplayVideoClock *) _clock;
+    P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) vclock;
 
-    CFRelease(clock->display_link);
+    CFRelease(dvclock->display_link);
 }
 
-static bool p1_display_video_clock_start(P1VideoClock *_clock)
+static bool p1_display_video_clock_start(P1VideoClock *vclock)
 {
-    P1DisplayVideoClock *clock = (P1DisplayVideoClock *) _clock;
+    P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) vclock;
 
-    CVReturn cv_ret = CVDisplayLinkStart(clock->display_link);
+    CVReturn cv_ret = CVDisplayLinkStart(dvclock->display_link);
     assert(cv_ret == kCVReturnSuccess);
+
+    // FIXME: Should we wait for anything?
+    vclock->state = P1StateRunning;
 
     return true;
 }
 
-static void p1_display_video_clock_stop(P1VideoClock *_clock)
+static void p1_display_video_clock_stop(P1VideoClock *vclock)
 {
-    P1DisplayVideoClock *clock = (P1DisplayVideoClock *) _clock;
+    P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) vclock;
 
-    CVReturn cv_ret = CVDisplayLinkStop(clock->display_link);
+    CVReturn cv_ret = CVDisplayLinkStop(dvclock->display_link);
     assert(cv_ret == kCVReturnSuccess);
+
+    // FIXME: Should we wait for anything?
+    vclock->state = P1StateIdle;
 }
 
 static CVReturn p1_display_video_clock_callback(
@@ -81,9 +86,9 @@ static CVReturn p1_display_video_clock_callback(
     CVOptionFlags *flagsOut,
     void *displayLinkContext)
 {
-    P1VideoClock *_clock = (P1VideoClock *) displayLinkContext;
+    P1VideoClock *vclock = (P1VideoClock *) displayLinkContext;
 
-    p1_video_clock_tick(_clock, inNow->hostTime);
+    p1_clock_tick(vclock, inNow->hostTime);
 
     return kCVReturnSuccess;
 }

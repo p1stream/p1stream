@@ -21,97 +21,104 @@ struct _P1DisplayVideoSource {
     CGDisplayStreamRef display_stream;
 };
 
-static void p1_display_video_source_free(P1VideoSource *_source);
-static bool p1_display_video_source_start(P1VideoSource *_source);
-static void p1_display_video_source_frame(P1VideoSource *_source);
-static void p1_display_video_source_stop(P1VideoSource *_source);
+static void p1_display_video_source_free(P1Source *src);
+static bool p1_display_video_source_start(P1Source *src);
+static void p1_display_video_source_stop(P1Source *src);
+static void p1_display_video_source_frame(P1VideoSource *vsrc);
 static void p1_display_video_source_callback(
-    P1DisplayVideoSource *source,
+    P1DisplayVideoSource *dvsrc,
     CGDisplayStreamFrameStatus status,
     IOSurfaceRef frame);
 
 
 P1VideoSource *p1_display_video_source_create()
 {
-    P1DisplayVideoSource *source = calloc(1, sizeof(P1DisplayVideoSource));
-    assert(source != NULL);
+    P1DisplayVideoSource *dvsrc = calloc(1, sizeof(P1DisplayVideoSource));
+    P1VideoSource *vsrc = (P1VideoSource *) dvsrc;
+    P1Source *src = (P1Source *) dvsrc;
+    assert(dvsrc != NULL);
 
-    P1VideoSource *_source = (P1VideoSource *) source;
-    _source->free = p1_display_video_source_free;
-    _source->start = p1_display_video_source_start;
-    _source->frame = p1_display_video_source_frame;
-    _source->stop = p1_display_video_source_stop;
+    src->free = p1_display_video_source_free;
+    src->start = p1_display_video_source_start;
+    src->stop = p1_display_video_source_stop;
+    vsrc->frame = p1_display_video_source_frame;
 
-    source->dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
+    dvsrc->dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
 
-    pthread_mutex_init(&source->frame_lock, NULL);
+    pthread_mutex_init(&dvsrc->frame_lock, NULL);
 
     const CGDirectDisplayID display_id = kCGDirectMainDisplay;
     size_t width  = CGDisplayPixelsWide(display_id);
     size_t height = CGDisplayPixelsHigh(display_id);
 
-    source->display_stream = CGDisplayStreamCreateWithDispatchQueue(
-        display_id, width, height, 'BGRA', NULL, source->dispatch, ^(
+    dvsrc->display_stream = CGDisplayStreamCreateWithDispatchQueue(
+        display_id, width, height, 'BGRA', NULL, dvsrc->dispatch, ^(
             CGDisplayStreamFrameStatus status,
             uint64_t displayTime,
             IOSurfaceRef frameSurface,
             CGDisplayStreamUpdateRef updateRef)
         {
-            p1_display_video_source_callback(source, status, frameSurface);
+            p1_display_video_source_callback(dvsrc, status, frameSurface);
         });
-    assert(source->display_stream);
+    assert(dvsrc->display_stream);
 
-    return _source;
+    return vsrc;
 }
 
-static void p1_display_video_source_free(P1VideoSource *_source)
+static void p1_display_video_source_free(P1Source *src)
 {
-    P1DisplayVideoSource *source = (P1DisplayVideoSource *)_source;
+    P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *)src;
 
-    CFRelease(source->display_stream);
-    dispatch_release(source->dispatch);
+    CFRelease(dvsrc->display_stream);
+    dispatch_release(dvsrc->dispatch);
 
-    pthread_mutex_destroy(&source->frame_lock);
+    pthread_mutex_destroy(&dvsrc->frame_lock);
 }
 
-static bool p1_display_video_source_start(P1VideoSource *_source)
+static bool p1_display_video_source_start(P1Source *src)
 {
-    P1DisplayVideoSource *source = (P1DisplayVideoSource *)_source;
+    P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *)src;
 
-    CGError cg_ret = CGDisplayStreamStart(source->display_stream);
+    CGError cg_ret = CGDisplayStreamStart(dvsrc->display_stream);
     assert(cg_ret == kCGErrorSuccess);
+
+    // FIXME: Should we wait for anything?
+    src->state = P1StateRunning;
 
     return true;
 }
 
-static void p1_display_video_source_frame(P1VideoSource *_source)
+static void p1_display_video_source_stop(P1Source *src)
 {
-    P1DisplayVideoSource *source = (P1DisplayVideoSource *)_source;
+    P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *)src;
+
+    CGError cg_ret = CGDisplayStreamStop(dvsrc->display_stream);
+    assert(cg_ret == kCGErrorSuccess);
+
+    // FIXME: Should we wait for anything?
+    src->state = P1StateIdle;
+}
+
+static void p1_display_video_source_frame(P1VideoSource *vsrc)
+{
+    P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *)vsrc;
     IOSurfaceRef frame;
 
-    pthread_mutex_lock(&source->frame_lock);
-    frame = source->frame;
+    pthread_mutex_lock(&dvsrc->frame_lock);
+    frame = dvsrc->frame;
     if (frame) {
         CFRetain(frame);
         IOSurfaceIncrementUseCount(frame);
     }
-    pthread_mutex_unlock(&source->frame_lock);
+    pthread_mutex_unlock(&dvsrc->frame_lock);
 
     if (!frame)
         return;
 
-    p1_video_frame_iosurface(_source, frame);
+    p1_video_frame_iosurface(vsrc, frame);
 
     IOSurfaceDecrementUseCount(frame);
     CFRelease(frame);
-}
-
-static void p1_display_video_source_stop(P1VideoSource *_source)
-{
-    P1DisplayVideoSource *source = (P1DisplayVideoSource *)_source;
-
-    CGError cg_ret = CGDisplayStreamStop(source->display_stream);
-    assert(cg_ret == kCGErrorSuccess);
 }
 
 static void p1_display_video_source_callback(

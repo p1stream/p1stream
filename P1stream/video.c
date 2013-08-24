@@ -7,8 +7,7 @@
 
 static void p1_video_init_encoder(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);
-static bool p1_video_frame_prep(P1ContextFull *ctx, P1VideoSource *src);
-static void p1_video_frame_finish(P1ContextFull *ctx, int64_t time);
+static void p1_video_finish(P1ContextFull *ctx, int64_t time);
 static GLuint p1_build_shader(GLuint type, const char *source);
 static void p1_video_build_program(GLuint program, const char *vertexShader, const char *fragmentShader);
 
@@ -106,7 +105,7 @@ void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Context *_ctx = (P1Context *) ctx;
 
-    P1_LIST_INIT(&_ctx->video_sources);
+    p1_list_init(&_ctx->video_sources);
 
     CGLError cgl_err;
     cl_int cl_err;
@@ -259,12 +258,12 @@ static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *v
     return x264_param_parse(params, key, val) == 0;
 }
 
-void p1_video_clock_tick(P1VideoClock *clock, int64_t time)
+void p1_video_output(P1VideoClock *vclock, int64_t time)
 {
-    P1Context *_ctx = clock->ctx;
+    P1Context *_ctx = vclock->ctx;
     P1ContextFull *ctx = (P1ContextFull *) _ctx;
-
-    assert(clock == _ctx->clock);
+    P1ListNode *head;
+    P1ListNode *node;
 
     if (ctx->skip_counter >= fps_div)
         ctx->skip_counter = 0;
@@ -274,29 +273,21 @@ void p1_video_clock_tick(P1VideoClock *clock, int64_t time)
     CGLSetCurrentContext(ctx->gl);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    P1ListNode *head = &_ctx->video_sources;
-    P1ListNode *node = head->next;
-    while (node != head) {
-        P1VideoSource *src = (P1VideoSource *) node;
-
-        if (src->ctx != _ctx) {
-            src->ctx = _ctx;
-            // FIXME: target states
-            src->start(src);
-        }
+    head = &_ctx->video_sources;
+    p1_list_iterate(head, node) {
+        P1Source *src = (P1Source *) node;
+        P1VideoSource *vsrc = (P1VideoSource *) node;
 
         if (src->state == P1StateRunning) {
-            src->frame(src);
+            vsrc->frame(vsrc);
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         }
-
-        node = node->next;
     }
 
     glFinish();
     assert(glGetError() == GL_NO_ERROR);
 
-    p1_video_frame_finish(ctx, time);
+    p1_video_finish(ctx, time);
 }
 
 void p1_video_frame(P1VideoSource *src, int width, int height, void *data)
@@ -305,7 +296,7 @@ void p1_video_frame(P1VideoSource *src, int width, int height, void *data)
                  GL_BGRA, GL_UNSIGNED_BYTE, data);
 }
 
-static void p1_video_frame_finish(P1ContextFull *ctx, int64_t time)
+static void p1_video_finish(P1ContextFull *ctx, int64_t time)
 {
     cl_int cl_err;
 
