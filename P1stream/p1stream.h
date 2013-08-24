@@ -23,9 +23,9 @@ typedef bool (*P1ConfigIterString)(P1Config *cfg, const char *key, char *val, vo
 
 // These types are for convenience. Sources usually want to have a function
 // following one of these signatures to instantiate them.
-typedef P1AudioSource *(P1AudioSourceFactory)(P1Config *cfg, P1ConfigSection *sect);
 typedef P1VideoClock *(P1VideoClockFactory)(P1Config *cfg, P1ConfigSection *sect);
 typedef P1VideoSource *(P1VideoSourceFactory)(P1Config *cfg, P1ConfigSection *sect);
+typedef P1AudioSource *(P1AudioSourceFactory)(P1Config *cfg, P1ConfigSection *sect);
 
 
 // The interfaces below define the set of operations used to read configuration.
@@ -57,17 +57,17 @@ struct _P1Config {
 
 // Sources can be in one of the following states.
 enum _P1State {
-    P1StateIdle = 0, // Initial value.
+    P1StateIdle     = 0, // Initial value.
     P1StateStarting = 1,
-    P1StateRunning = 2,
+    P1StateRunning  = 2,
     P1StateStopping = 3
 };
 
 // This is the state the source should be in, and should be worked towards.
 enum _P1TargetState {
-    P1TargetRunning, // Initial value.
-    P1TargetIdle,
-    P1TargetRemove  // Pending removal, source will be freed.
+    P1TargetRunning = 0, // Initial value.
+    P1TargetIdle    = 1,
+    P1TargetRemove  = 2  // Pending removal, source will be freed.
 };
 
 
@@ -92,7 +92,7 @@ struct _P1VideoClock {
     // Current state.
     P1State state;
 
-    // Free the source and associated resources. (Assume idle.)
+    // Free the clock and associated resources. (Assume idle.)
     void (*free)(P1VideoClock *clock);
 
     // Start the clock. This should update the state and start the thread.
