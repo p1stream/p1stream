@@ -226,11 +226,11 @@ void p1_start(P1Context *ctx);
 void p1_stop(P1Context *ctx);
 
 // Callback for video clocks to emit ticks.
-void p1_clock_tick(P1VideoClock *src, int64_t time);
+void p1_clock_tick(P1VideoClock *vclock, int64_t time);
 // Callback for video sources to provide frame data.
-void p1_video_frame(P1VideoSource *src, int width, int height, void *data);
+void p1_video_frame(P1VideoSource *vsrc, int width, int height, void *data);
 // Callback for audio sources to provide audio buffer data.
-void p1_audio_buffer(P1AudioSource *dtv, int64_t time, void *in, int in_len);
+void p1_audio_buffer(P1AudioSource *asrc, int64_t time, void *in, int in_len);
 
 
 // Platform-specific functionality.

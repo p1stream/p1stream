@@ -290,7 +290,7 @@ void p1_video_output(P1VideoClock *vclock, int64_t time)
     p1_video_finish(ctx, time);
 }
 
-void p1_video_frame(P1VideoSource *src, int width, int height, void *data)
+void p1_video_frame(P1VideoSource *vsrc, int width, int height, void *data)
 {
     glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, width, height, 0,
                  GL_BGRA, GL_UNSIGNED_BYTE, data);
