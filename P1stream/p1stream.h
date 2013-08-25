@@ -3,11 +3,13 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <pthread.h>
 
 // Object types.
 typedef struct _P1Config P1Config;
 typedef void P1ConfigSection; // abstract
+typedef enum _P1LogLevel P1LogLevel;
 typedef enum _P1State P1State;
 typedef enum _P1TargetState P1TargetState;
 typedef struct _P1VideoClock P1VideoClock;
@@ -24,6 +26,7 @@ typedef struct _P1Notification P1Notification;
 // Callback signatures.
 typedef bool (*P1ConfigIterSection)(P1Config *cfg, P1ConfigSection *sect, void *data);
 typedef bool (*P1ConfigIterString)(P1Config *cfg, const char *key, char *val, void *data);
+typedef void (*P1LogCallback)(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args, void *user_data);
 
 // These types are for convenience. Sources usually want to have a function
 // following one of these signatures to instantiate them.
@@ -56,6 +59,16 @@ struct _P1Config {
     bool (*each_section)(P1Config *cfg, P1ConfigSection *sect, const char *key, P1ConfigIterSection iter, void *data);
     // Iterate keys and string values in a section.
     bool (*each_string)(P1Config *cfg, P1ConfigSection *sect, const char *key, P1ConfigIterString iter, void *data);
+};
+
+
+// Log levels. These match x264s.
+enum _P1LogLevel {
+    P1_LOG_NONE     = -1,
+    P1_LOG_ERROR    =  0,
+    P1_LOG_WARNING  =  1,
+    P1_LOG_INFO     =  2,
+    P1_LOG_DEBUG    =  3
 };
 
 
@@ -151,6 +164,12 @@ struct _P1AudioSource {
 
 struct _P1Context {
     pthread_mutex_t lock;
+
+    // Log function, defaults to stderr logging.
+    P1LogCallback log_fn;
+    void *log_user_data;
+    // Maximum log level, defaults to P1_LOG_INFO.
+    P1LogLevel log_level;
 
     // Current state.
     P1State state;

@@ -3,6 +3,7 @@
 
 #include "p1stream_priv.h"
 
+static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args, void *user_data);
 static void *p1_ctrl_main(void *data);
 static void p1_ctrl_progress(P1ContextFull *ctx);
 static void p1_ctrl_progress_clock(P1Context *ctx, P1VideoClock *clock);
@@ -14,6 +15,9 @@ P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
 {
     P1ContextFull *ctx = calloc(1, sizeof(P1ContextFull));
     P1Context *_ctx = (P1Context *) ctx;
+
+    _ctx->log_level = P1_LOG_INFO;
+    _ctx->log_fn = p1_log_default;
 
     int ret;
 
@@ -95,6 +99,34 @@ void _p1_notify(P1Context *_ctx, P1Notification notification)
     ssize_t size = sizeof(P1Notification);
     ssize_t ret = write(ctx->ctrl_pipe[1], &notification, size);
     assert(ret == size);
+}
+
+void p1_log(P1Context *ctx, P1LogLevel level, const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    p1_logv(ctx, level, fmt, args);
+    va_end(args);
+}
+
+void p1_logv(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args)
+{
+    if (level <= ctx->log_level)
+        ctx->log_fn(ctx, level, fmt, args, ctx->log_user_data);
+}
+
+static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args, void *user_data)
+{
+    const char *pre;
+    switch (level) {
+        case P1_LOG_ERROR:      pre = "error";      break;
+        case P1_LOG_WARNING:    pre = "warning";    break;
+        case P1_LOG_INFO:       pre = "info";       break;
+        case P1_LOG_DEBUG:      pre = "debug";      break;
+        default: pre = "error"; break;
+    }
+    fprintf(stderr, "[%s] ", pre);
+    vfprintf(stderr, fmt, args);
 }
 
 static void *p1_ctrl_main(void *data)

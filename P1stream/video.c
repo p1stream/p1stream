@@ -7,6 +7,7 @@
 
 static void p1_video_init_encoder(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);
+static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args);
 static void p1_video_finish(P1ContextFull *ctx, int64_t time);
 static GLuint p1_build_shader(GLuint type, const char *source);
 static void p1_video_build_program(GLuint program, const char *vertexShader, const char *fragmentShader);
@@ -223,6 +224,10 @@ static void p1_video_init_encoder(P1ContextFull *ctx, P1Config *cfg, P1ConfigSec
         abort();
     }
 
+    params.pf_log = p1_video_encoder_log_callback;
+    params.p_log_private = ctx;
+    params.i_log_level = X264_LOG_DEBUG;
+
     mach_timebase_info_data_t timebase;
     mach_timebase_info(&timebase);
     params.i_timebase_num = timebase.numer;
@@ -256,6 +261,12 @@ static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *v
         return true;
 
     return x264_param_parse(params, key, val) == 0;
+}
+
+static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args)
+{
+    P1Context *ctx = (P1Context *) data;
+    p1_logv(ctx, (P1LogLevel) level, fmt, args);
 }
 
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
