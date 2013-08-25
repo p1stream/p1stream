@@ -84,7 +84,7 @@ struct _P1ListNode {
 };
 
 
-// The video clock runs at the video frame rate. The clock should start a
+// The video clock ticks at the video frame rate. The clock should start a
 // thread and call back on p1_video_clock_tick. All video processing and
 // encoding will happen on this thread.
 
@@ -133,6 +133,7 @@ struct _P1VideoSource {
     P1Source super;
 
     // Produce the latest frame using p1_video_frame.
+    // This is called from the clock thread.
     void (*frame)(P1VideoSource *source);
 };
 
@@ -171,7 +172,16 @@ enum _P1FreeOptions {
 };
 
 
-// These are types used to communicate with the control thread.
+// Notifications are sent to the control thread so that it may track important
+// changes that require it to take action.
+
+// The same notification system is also used to update the user, which can be
+// read from with p1_read. The user MUST read these notifications, or the
+// control thread may eventually stall.
+
+// Internally, the communication channel is backed by pipe(8), and buffers are
+// large enough to make it difficult for actual stalling to occur, even if the
+// users main thread is unable to read for seconds.
 
 enum _P1NotificationType {
     P1_NTYPE_UNKNOWN        = 0,
@@ -189,15 +199,22 @@ enum _P1ObjectType {
 
 struct _P1Notification {
     P1NotificationType type;
+
+    // Object that sent the notification.
     P1ObjectType object_type;
     void *object;
+
+    // Content depends on the type field.
     union {
+
         struct {
             P1State state;
         } state_change;
+
         struct {
             P1TargetState target;
         } target_change;
+
     };
 };
 
@@ -227,7 +244,7 @@ struct _P1Notification {
 }
 
 // Insert a source node after the reference node.
-// Inserting after the head node is basically a preprend.
+// Inserting after the head node is basically a prepend.
 #define p1_list_after(_ref, _node) {                \
     P1ListNode *_p1_node = (P1ListNode *) (_node);  \
     P1ListNode *_p1_prev = (P1ListNode *) (_ref);   \
@@ -260,8 +277,7 @@ void p1_start(P1Context *ctx);
 // Stop all processing and all sources.
 void p1_stop(P1Context *ctx);
 
-// Read a P1StateNotification. This method will block.
-// The user must read these notifications.
+// Read a P1Notification. This method will block.
 void p1_read(P1Context *ctx, P1Notification *out);
 // Returns a file descriptor that can be used with poll(2) or select(2),
 // to determine if p1_read will not block on the next call.
@@ -270,7 +286,7 @@ int p1_fd(P1Context *ctx);
 // This function should be used to change the state field on objects.
 #define p1_set_state(_ctx, _object_type, _object, _state) {     \
     (_object)->state = (_state);                                \
-    p1_notify((_ctx), (P1Notification) {                        \
+    _p1_notify((_ctx), (P1Notification) {                       \
         .type = P1_NTYPE_STATE_CHANGE,                          \
         .object_type = (_object_type),                          \
         .object = (_object),                                    \
@@ -282,7 +298,7 @@ int p1_fd(P1Context *ctx);
 // This function should be used to change the target field on objects.
 #define p1_set_target(_ctx, _object_type, _object, _target) {   \
     (_object)->target = (_target);                              \
-    p1_notify((_ctx), (P1Notification) {                        \
+    _p1_notify((_ctx), (P1Notification) {                       \
         .type = P1_NTYPE_TARGET_CHANGE,                         \
         .object_type = (_object_type),                          \
         .object = (_object),                                    \
@@ -291,8 +307,8 @@ int p1_fd(P1Context *ctx);
         }                                                       \
     });                                                         \
 }
-// Helper used to send notifications.
-void p1_notify(P1Context *ctx, P1Notification notification);
+// Low-level notification helper.
+void _p1_notify(P1Context *ctx, P1Notification notification);
 
 // Callback for video clocks to emit ticks.
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time);

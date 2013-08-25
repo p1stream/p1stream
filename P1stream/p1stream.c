@@ -88,7 +88,7 @@ int p1_fd(P1Context *_ctx)
     return ctx->user_pipe[0];
 }
 
-void p1_notify(P1Context *_ctx, P1Notification notification)
+void _p1_notify(P1Context *_ctx, P1Notification notification)
 {
     P1ContextFull *ctx = (P1ContextFull *) _ctx;
 
