@@ -4,6 +4,7 @@
 #include "p1stream.h"
 
 
+static void notify_fd_callback(CFFileDescriptorRef f, CFOptionFlags callBackTypes, void *info);
 static void create_video_clock(P1Context *ctx, P1Config *cfg);
 static void create_audio_sources(P1Context *ctx, P1Config *cfg);
 static bool create_audio_source(P1Config *cfg, P1ConfigSection *sect, void *data);
@@ -21,6 +22,20 @@ int main(int argc, const char * argv[])
     P1Config *cfg = p1_plist_config_create_from_file(argv[1]);
     P1Context *ctx = p1_create(cfg, NULL);
 
+    CFFileDescriptorContext fdctx = {
+        .version = 0,
+        .info = ctx,
+        .retain = NULL,
+        .release = NULL,
+        .copyDescription = NULL
+    };
+    CFFileDescriptorRef fd = CFFileDescriptorCreate(kCFAllocatorDefault, p1_fd(ctx), false, notify_fd_callback, &fdctx);
+    CFFileDescriptorEnableCallBacks(fd, kCFFileDescriptorReadCallBack);
+    CFRunLoopSourceRef source = CFFileDescriptorCreateRunLoopSource(kCFAllocatorDefault, fd, 0);
+    CFRelease(fd);
+    CFRunLoopAddSource(CFRunLoopGetMain(), source, kCFRunLoopDefaultMode);
+    CFRelease(source);
+
     create_audio_sources(ctx, cfg);
     create_video_clock(ctx, cfg);
     create_video_sources(ctx, cfg);
@@ -30,6 +45,16 @@ int main(int argc, const char * argv[])
     CFRunLoopRun();
 
     return 0;
+}
+
+static void notify_fd_callback(CFFileDescriptorRef fd, CFOptionFlags callBackTypes, void *info)
+{
+    P1Context *ctx = (P1Context *) info;
+
+    P1Notification notification;
+    p1_read(ctx, &notification);
+
+    CFFileDescriptorEnableCallBacks(fd, kCFFileDescriptorReadCallBack);
 }
 
 static void create_video_clock(P1Context *ctx, P1Config *cfg)
