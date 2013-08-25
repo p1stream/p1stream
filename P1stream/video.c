@@ -280,7 +280,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
         P1Source *src = (P1Source *) node;
         P1VideoSource *vsrc = (P1VideoSource *) node;
 
-        if (src->state == P1StateRunning) {
+        if (src->state == P1_STATE_RUNNING) {
             vsrc->frame(vsrc);
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         }

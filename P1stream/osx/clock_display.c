@@ -62,7 +62,7 @@ static bool p1_display_video_clock_start(P1VideoClock *vclock)
     assert(cv_ret == kCVReturnSuccess);
 
     // FIXME: Should we wait for anything?
-    p1_set_state(vclock->ctx, P1_OBJECT_VIDEO_CLOCK, vclock, P1StateRunning);
+    p1_set_state(vclock->ctx, P1_OTYPE_VIDEO_CLOCK, vclock, P1_STATE_RUNNING);
 
     return true;
 }
@@ -75,7 +75,7 @@ static void p1_display_video_clock_stop(P1VideoClock *vclock)
     assert(cv_ret == kCVReturnSuccess);
 
     // FIXME: Should we wait for anything?
-    p1_set_state(vclock->ctx, P1_OBJECT_VIDEO_CLOCK, vclock, P1StateIdle);
+    p1_set_state(vclock->ctx, P1_OTYPE_VIDEO_CLOCK, vclock, P1_STATE_IDLE);
 }
 
 static CVReturn p1_display_video_clock_callback(

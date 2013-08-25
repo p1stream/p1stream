@@ -85,7 +85,7 @@ static bool p1_display_video_source_start(P1Source *src)
     assert(cg_ret == kCGErrorSuccess);
 
     // FIXME: Should we wait for anything?
-    p1_set_state(src->ctx, P1_OBJECT_VIDEO_SOURCE, src, P1StateRunning);
+    p1_set_state(src->ctx, P1_OTYPE_VIDEO_SOURCE, src, P1_STATE_RUNNING);
 
     return true;
 }
@@ -98,7 +98,7 @@ static void p1_display_video_source_stop(P1Source *src)
     assert(cg_ret == kCGErrorSuccess);
 
     // FIXME: Should we wait for anything?
-    p1_set_state(src->ctx, P1_OBJECT_VIDEO_SOURCE, src, P1StateIdle);
+    p1_set_state(src->ctx, P1_OTYPE_VIDEO_SOURCE, src, P1_STATE_IDLE);
 }
 
 static void p1_display_video_source_frame(P1VideoSource *vsrc)

@@ -61,17 +61,17 @@ struct _P1Config {
 
 // Sources can be in one of the following states.
 enum _P1State {
-    P1StateIdle     = 0, // Initial value.
-    P1StateStarting = 1,
-    P1StateRunning  = 2,
-    P1StateStopping = 3
+    P1_STATE_IDLE       = 0, // Initial value.
+    P1_STATE_STARTING   = 1,
+    P1_STATE_RUNNING    = 2,
+    P1_STATE_STOPPING   = 3
 };
 
 // This is the state the source should be in, and should be worked towards.
 enum _P1TargetState {
-    P1TargetRunning = 0, // Initial value.
-    P1TargetIdle    = 1,
-    P1TargetRemove  = 2  // Pending removal, source will be freed.
+    P1_TARGET_RUNNING   = 0, // Initial value.
+    P1_TARGET_IDLE      = 1,
+    P1_TARGET_REMOVE    = 2  // Pending removal, source will be freed.
 };
 
 
@@ -163,11 +163,11 @@ struct _P1Context {
 
 // Options for p1_free.
 enum _P1FreeOptions {
-    P1FreeOnlySelf      = 0,
-    P1FreeVideoClock    = 1,
-    P1FreeVideoSources  = 2,
-    P1FreeAudioSource   = 4,
-    P1FreeEverything    = 7
+    P1_FREE_ONLY_SELF       = 0,
+    P1_FREE_VIDEO_CLOCK     = 1,
+    P1_FREE_VIDEO_SOURCES   = 2,
+    P1_FREE_AUDIO_SOURCES   = 4,
+    P1_FREE_EVERYTHING      = 7
 };
 
 
@@ -180,11 +180,11 @@ enum _P1NotificationType {
 };
 
 enum _P1ObjectType {
-    P1_OBJECT_UNKNOWN       = 0,
-    P1_OBJECT_CONTEXT       = 1,
-    P1_OBJECT_VIDEO_CLOCK   = 2,
-    P1_OBJECT_VIDEO_SOURCE  = 3,
-    P1_OBJECT_AUDIO_SOURCE  = 4
+    P1_OTYPE_UNKNOWN        = 0,
+    P1_OTYPE_CONTEXT        = 1,
+    P1_OTYPE_VIDEO_CLOCK    = 2,
+    P1_OTYPE_VIDEO_SOURCE   = 3,
+    P1_OTYPE_AUDIO_SOURCE   = 4
 };
 
 struct _P1Notification {

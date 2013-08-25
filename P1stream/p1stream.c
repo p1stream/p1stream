@@ -48,10 +48,10 @@ void p1_start(P1Context *_ctx)
 {
     P1ContextFull *ctx = (P1ContextFull *) _ctx;
 
-    if (_ctx->state != P1StateIdle)
+    if (_ctx->state != P1_STATE_IDLE)
         return;
 
-    p1_set_state(_ctx, P1_OBJECT_CONTEXT, _ctx, P1StateStarting);
+    p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_STARTING);
 
     int ret = pthread_create(&ctx->ctrl_thread, NULL, p1_ctrl_main, ctx);
     assert(ret == 0);
@@ -61,12 +61,12 @@ void p1_stop(P1Context *_ctx)
 {
     P1ContextFull *ctx = (P1ContextFull *) _ctx;
 
-    if (_ctx->state != P1StateRunning)
+    if (_ctx->state != P1_STATE_RUNNING)
         return;
 
     // FIXME: Lock for this? Especially if the context thread can eventually
     // stop itself for whatever reason.
-    p1_set_state(_ctx, P1_OBJECT_CONTEXT, _ctx, P1StateStopping);
+    p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_STOPPING);
 
     int ret = pthread_join(ctx->ctrl_thread, NULL);
     assert(ret == 0);
@@ -102,7 +102,7 @@ static void *p1_ctrl_main(void *data)
     P1Context *_ctx = (P1Context *) data;
     P1ContextFull *ctx = (P1ContextFull *) data;
 
-    p1_set_state(_ctx, P1_OBJECT_CONTEXT, _ctx, P1StateRunning);
+    p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_RUNNING);
 
     do {
         p1_ctrl_comm(ctx);
@@ -111,7 +111,7 @@ static void *p1_ctrl_main(void *data)
         // FIXME: handle stop
     } while (true);
 
-    p1_set_state(_ctx, P1_OBJECT_CONTEXT, _ctx, P1StateIdle);
+    p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_IDLE);
     p1_ctrl_comm(ctx);
 
     return NULL;
@@ -181,7 +181,7 @@ static void p1_ctrl_progress(P1ContextFull *ctx)
 
 static void p1_ctrl_progress_clock(P1Context *ctx, P1VideoClock *clock)
 {
-    if (clock->state == P1StateIdle) {
+    if (clock->state == P1_STATE_IDLE) {
         clock->ctx = ctx;
         clock->start(clock);
     }
@@ -189,17 +189,17 @@ static void p1_ctrl_progress_clock(P1Context *ctx, P1VideoClock *clock)
 
 static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src)
 {
-    if (src->target == P1TargetRunning) {
-        if (src->state == P1StateIdle) {
+    if (src->target == P1_TARGET_RUNNING) {
+        if (src->state == P1_STATE_IDLE) {
             src->ctx = ctx;
             src->start(src);
         }
     }
     else {
-        if (src->state == P1StateRunning) {
+        if (src->state == P1_STATE_RUNNING) {
             src->stop(src);
         }
-        if (src->target == P1TargetRemove && src->state == P1TargetIdle) {
+        if (src->target == P1_TARGET_REMOVE && src->state == P1_TARGET_IDLE) {
             p1_list_remove(src);
             src->free(src);
         }
