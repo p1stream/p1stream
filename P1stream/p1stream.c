@@ -9,6 +9,7 @@ static void p1_ctrl_progress(P1ContextFull *ctx);
 static void p1_ctrl_progress_clock(P1Context *ctx, P1VideoClock *clock);
 static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src);
 static void p1_ctrl_comm(P1ContextFull *ctx);
+static void p1_ctrl_log_notification(P1ContextFull *ctx, P1Notification *notification);
 
 
 P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
@@ -172,6 +173,9 @@ static void p1_ctrl_comm(P1ContextFull *ctx)
         s_ret = read(fd.fd, &notification, size);
         assert(s_ret == size);
 
+        // Log notification.
+        p1_ctrl_log_notification(ctx, &notification);
+
         // Pass it on to the user.
         s_ret = write(ctx->user_pipe[1], &notification, size);
         assert(s_ret == size);
@@ -236,4 +240,42 @@ static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src)
             src->free(src);
         }
     }
+}
+
+static void p1_ctrl_log_notification(P1ContextFull *ctx, P1Notification *notification)
+{
+    P1Context *_ctx = (P1Context *) ctx;
+
+    const char *action;
+    switch (notification->type) {
+        case P1_NTYPE_STATE_CHANGE:
+            switch (notification->state_change.state) {
+                case P1_STATE_IDLE:     action = "is idle";     break;
+                case P1_STATE_STARTING: action = "is starting"; break;
+                case P1_STATE_RUNNING:  action = "is running";  break;
+                case P1_STATE_STOPPING: action = "is stopping"; break;
+                default: return;
+            }
+            break;
+        case P1_NTYPE_TARGET_CHANGE:
+            switch (notification->target_change.target) {
+                case P1_TARGET_RUNNING: action = "target running";  break;
+                case P1_TARGET_IDLE:    action = "target idle";     break;
+                case P1_TARGET_REMOVE:  action = "target remove";   break;
+                default: return;
+            }
+            break;
+        default: return;
+    }
+
+    const char *obj_descr;
+    switch (notification->object_type) {
+        case P1_OTYPE_CONTEXT:      obj_descr = "context";      break;
+        case P1_OTYPE_VIDEO_CLOCK:  obj_descr = "video clock";  break;
+        case P1_OTYPE_VIDEO_SOURCE: obj_descr = "video source"; break;
+        case P1_OTYPE_AUDIO_SOURCE: obj_descr = "audio source"; break;
+        default: return;
+    }
+
+    p1_log(_ctx, P1_LOG_INFO, "%s %p %s\n", obj_descr, notification->object, action);
 }
