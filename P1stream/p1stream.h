@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <pthread.h>
 
 // Object types.
 typedef struct _P1Config P1Config;
@@ -16,6 +17,9 @@ typedef struct _P1VideoSource P1VideoSource;
 typedef struct _P1AudioSource P1AudioSource;
 typedef struct _P1Context P1Context;
 typedef enum _P1FreeOptions P1FreeOptions;
+typedef enum _P1NotificationType P1NotificationType;
+typedef enum _P1ObjectType P1ObjectType;
+typedef struct _P1Notification P1Notification;
 
 // Callback signatures.
 typedef bool (*P1ConfigIterSection)(P1Config *cfg, P1ConfigSection *sect, void *data);
@@ -80,11 +84,9 @@ struct _P1ListNode {
 };
 
 
-// The video clock drives the main loop, which runs at the same rate as video
-// output. The clock should start a thread and call back on p1_clock_tick.
-
-// All state changes are handled on this thread, including state changes of
-// audio sources, followed by video processing and encoding.
+// The video clock runs at the video frame rate. The clock should start a
+// thread and call back on p1_video_clock_tick. All video processing and
+// encoding will happen on this thread.
 
 struct _P1VideoClock {
     // Back reference, set automatically before start.
@@ -147,6 +149,8 @@ struct _P1AudioSource {
 // The main context containing all state.
 
 struct _P1Context {
+    pthread_mutex_t lock;
+
     // Current state.
     P1State state;
 
@@ -159,11 +163,42 @@ struct _P1Context {
 
 // Options for p1_free.
 enum _P1FreeOptions {
-    P1FreeOnlySelf = 0,
-    P1FreeVideoClock = 1,
-    P1FreeVideoSources = 2,
-    P1FreeAudioSource = 4,
-    P1FreeEverything = 7
+    P1FreeOnlySelf      = 0,
+    P1FreeVideoClock    = 1,
+    P1FreeVideoSources  = 2,
+    P1FreeAudioSource   = 4,
+    P1FreeEverything    = 7
+};
+
+
+// These are types used to communicate with the control thread.
+
+enum _P1NotificationType {
+    P1_NTYPE_UNKNOWN        = 0,
+    P1_NTYPE_STATE_CHANGE   = 1,
+    P1_NTYPE_TARGET_CHANGE  = 2
+};
+
+enum _P1ObjectType {
+    P1_OBJECT_UNKNOWN       = 0,
+    P1_OBJECT_CONTEXT       = 1,
+    P1_OBJECT_VIDEO_CLOCK   = 2,
+    P1_OBJECT_VIDEO_SOURCE  = 3,
+    P1_OBJECT_AUDIO_SOURCE  = 4
+};
+
+struct _P1Notification {
+    P1NotificationType type;
+    P1ObjectType object_type;
+    void *object;
+    union {
+        struct {
+            P1State state;
+        } state_change;
+        struct {
+            P1TargetState target;
+        } target_change;
+    };
 };
 
 
@@ -225,8 +260,42 @@ void p1_start(P1Context *ctx);
 // Stop all processing and all sources.
 void p1_stop(P1Context *ctx);
 
+// Read a P1StateNotification. This method will block.
+// The user must read these notifications.
+void p1_read(P1Context *ctx, P1Notification *out);
+// Returns a file descriptor that can be used with poll(2) or select(2),
+// to determine if p1_read will not block on the next call.
+int p1_fd(P1Context *ctx);
+
+// This function should be used to change the state field on objects.
+#define p1_set_state(_ctx, _object_type, _object, _state) {     \
+    (_object)->state = (_state);                                \
+    p1_notify((_ctx), (P1Notification) {                        \
+        .type = P1_NTYPE_STATE_CHANGE,                          \
+        .object_type = (_object_type),                          \
+        .object = (_object),                                    \
+        .state_change = {                                       \
+            .state = (_state)                                   \
+        }                                                       \
+    });                                                         \
+}
+// This function should be used to change the target field on objects.
+#define p1_set_target(_ctx, _object_type, _object, _target) {   \
+    (_object)->target = (_target);                              \
+    p1_notify((_ctx), (P1Notification) {                        \
+        .type = P1_NTYPE_TARGET_CHANGE,                         \
+        .object_type = (_object_type),                          \
+        .object = (_object),                                    \
+        .target_change = {                                      \
+            .target = (_target)                                 \
+        }                                                       \
+    });                                                         \
+}
+// Helper used to send notifications.
+void p1_notify(P1Context *ctx, P1Notification notification);
+
 // Callback for video clocks to emit ticks.
-void p1_clock_tick(P1VideoClock *vclock, int64_t time);
+void p1_video_clock_tick(P1VideoClock *vclock, int64_t time);
 // Callback for video sources to provide frame data.
 void p1_video_frame(P1VideoSource *vsrc, int width, int height, void *data);
 // Callback for audio sources to provide audio buffer data.

@@ -45,7 +45,8 @@ P1VideoSource *p1_display_video_source_create()
 
     dvsrc->dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
 
-    pthread_mutex_init(&dvsrc->frame_lock, NULL);
+    int ret = pthread_mutex_init(&dvsrc->frame_lock, NULL);
+    assert(ret == 0);
 
     const CGDirectDisplayID display_id = kCGDirectMainDisplay;
     size_t width  = CGDisplayPixelsWide(display_id);
@@ -72,7 +73,8 @@ static void p1_display_video_source_free(P1Source *src)
     CFRelease(dvsrc->display_stream);
     dispatch_release(dvsrc->dispatch);
 
-    pthread_mutex_destroy(&dvsrc->frame_lock);
+    int ret = pthread_mutex_destroy(&dvsrc->frame_lock);
+    assert(ret == 0);
 }
 
 static bool p1_display_video_source_start(P1Source *src)
@@ -83,7 +85,7 @@ static bool p1_display_video_source_start(P1Source *src)
     assert(cg_ret == kCGErrorSuccess);
 
     // FIXME: Should we wait for anything?
-    src->state = P1StateRunning;
+    p1_set_state(src->ctx, P1_OBJECT_VIDEO_SOURCE, src, P1StateRunning);
 
     return true;
 }
@@ -96,7 +98,7 @@ static void p1_display_video_source_stop(P1Source *src)
     assert(cg_ret == kCGErrorSuccess);
 
     // FIXME: Should we wait for anything?
-    src->state = P1StateIdle;
+    p1_set_state(src->ctx, P1_OBJECT_VIDEO_SOURCE, src, P1StateIdle);
 }
 
 static void p1_display_video_source_frame(P1VideoSource *vsrc)

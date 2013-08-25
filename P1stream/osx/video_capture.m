@@ -56,7 +56,8 @@ P1VideoSource *p1_capture_video_source_create()
     src->stop = p1_capture_video_source_stop;
     vsrc->frame = p1_capture_video_source_frame;
 
-    pthread_mutex_init(&cvsrc->frame_lock, NULL);
+    int ret = pthread_mutex_init(&cvsrc->frame_lock, NULL);
+    assert(ret == 0);
 
     @autoreleasepool {
         P1VideoCaptureDelegate *delegate = [[P1VideoCaptureDelegate alloc] initWithSource:cvsrc];
@@ -100,7 +101,8 @@ static void p1_capture_video_source_free(P1Source *src)
     CFRelease(cvsrc->session);
     CFRelease(cvsrc->delegate);
 
-    pthread_mutex_destroy(&cvsrc->frame_lock);
+    int ret = pthread_mutex_destroy(&cvsrc->frame_lock);
+    assert(ret == 0);
 }
 
 static bool p1_capture_video_source_start(P1Source *src)
@@ -113,7 +115,7 @@ static bool p1_capture_video_source_start(P1Source *src)
     }
 
     // FIXME: Should we wait for anything?
-    src->state = P1StateRunning;
+    p1_set_state(src->ctx, P1_OBJECT_VIDEO_SOURCE, src, P1StateRunning);
 
     return true;
 }
@@ -128,7 +130,7 @@ static void p1_capture_video_source_stop(P1Source *src)
     }
 
     // FIXME: Should we wait for anything?
-    src->state = P1StateIdle;
+    p1_set_state(src->ctx, P1_OBJECT_VIDEO_SOURCE, src, P1StateIdle);
 }
 
 static void p1_capture_video_source_frame(P1VideoSource *vsrc)

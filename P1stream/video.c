@@ -258,7 +258,7 @@ static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *v
     return x264_param_parse(params, key, val) == 0;
 }
 
-void p1_video_output(P1VideoClock *vclock, int64_t time)
+void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
 {
     P1Context *_ctx = vclock->ctx;
     P1ContextFull *ctx = (P1ContextFull *) _ctx;
@@ -273,6 +273,8 @@ void p1_video_output(P1VideoClock *vclock, int64_t time)
     CGLSetCurrentContext(ctx->gl);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    pthread_mutex_lock(&_ctx->lock);
+
     head = &_ctx->video_sources;
     p1_list_iterate(head, node) {
         P1Source *src = (P1Source *) node;
@@ -283,6 +285,8 @@ void p1_video_output(P1VideoClock *vclock, int64_t time)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         }
     }
+
+    pthread_mutex_unlock(&_ctx->lock);
 
     glFinish();
     assert(glGetError() == GL_NO_ERROR);

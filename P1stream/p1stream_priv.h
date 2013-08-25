@@ -21,6 +21,11 @@ typedef struct _P1ContextFull P1ContextFull;
 struct _P1ContextFull {
     P1Context super;
 
+    // Control thread
+    pthread_t ctrl_thread;
+    int ctrl_pipe[2];
+    int user_pipe[2];
+
     mach_timebase_info_data_t timebase;
 
 

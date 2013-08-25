@@ -91,7 +91,7 @@ static bool p1_input_audio_source_start(P1Source *src)
     assert(ret == noErr);
 
     // FIXME: Should we wait for anything?
-    src->state = P1StateRunning;
+    p1_set_state(src->ctx, P1_OBJECT_AUDIO_SOURCE, src, P1StateRunning);
 
     return true;
 }
@@ -104,5 +104,5 @@ static void p1_input_audio_source_stop(P1Source *src)
     assert(ret == noErr);
 
     // FIXME: Async.
-    src->state = P1StateIdle;
+    p1_set_state(src->ctx, P1_OBJECT_AUDIO_SOURCE, src, P1StateIdle);
 }
