@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <pthread.h>
+#include <OpenGL/OpenGL.h>
+#include <OpenGL/gl3.h>
 
 // Object types.
 typedef struct _P1Config P1Config;
@@ -51,9 +53,14 @@ struct _P1Config {
     // Get a reference to the section. If this returns NULL, all items expected
     // to be inside should be treated as undefined.
     P1ConfigSection *(*get_section)(P1Config *cfg, P1ConfigSection *sect, const char *key);
-    // Copy a string value to the output buffer. True if successful, false if
-    // undefined. Unexpected types / values should be treated as undefined.
+
+    // The following methods return true if successful and false if undefined.
+    // Unexpected types / values should be treated as undefined.
+
+    // Copy a string value to the output buffer.
     bool (*get_string)(P1Config *cfg, P1ConfigSection *sect, const char *key, char *buf, size_t bufsize);
+    // Read a float value.
+    bool (*get_float)(P1Config *cfg, P1ConfigSection *sect, const char *key, float *out);
 
     // Iterate sections in an array, used to gather sources.
     bool (*each_section)(P1Config *cfg, P1ConfigSection *sect, const char *key, P1ConfigIterSection iter, void *data);
@@ -144,6 +151,21 @@ struct _P1Source {
 
 struct _P1VideoSource {
     P1Source super;
+
+    // FIXME: separate compositor, and its data.
+
+    // Texture name. The source need not touch this.
+    GLuint texture;
+
+    // The following coordinates are in the range [-1, +1].
+    // They are pairs of bottom left and top right coordinates.
+
+    // Top left and bottom right coordinates of where to place frames in the
+    // output image. These are in the range [-1, +1].
+    float x1, y1, x2, y2;
+    // Top left and bottom right coordinates of the area in the frame to grab,
+    // used to achieve clipping. These are in the range [0, 1].
+    float u1, v1, u2, v2;
 
     // Produce the latest frame using p1_video_frame.
     // This is called from the clock thread.
@@ -328,6 +350,9 @@ int p1_fd(P1Context *ctx);
 }
 // Low-level notification helper.
 void _p1_notify(P1Context *ctx, P1Notification notification);
+
+// Set a video source's position from configuration.
+bool p1_video_source_position(P1VideoSource *src, P1Config *cfg, P1ConfigSection *sect);
 
 // Callback for video clocks to emit ticks.
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time);

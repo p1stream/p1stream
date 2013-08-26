@@ -5,8 +5,6 @@
 
 #include <mach/mach_time.h>
 #include <dispatch/dispatch.h>
-#include <OpenGL/OpenGL.h>
-#include <OpenGL/gl3.h>
 #include <OpenCL/opencl.h>
 #include <aacenc_lib.h>
 #include <x264.h>
@@ -51,7 +49,6 @@ struct _P1ContextFull {
     GLuint vbo;
     GLuint rbo;
     GLuint fbo;
-    GLuint tex;
     GLuint program;
     GLuint tex_u;
 

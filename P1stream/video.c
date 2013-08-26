@@ -77,12 +77,6 @@ static const char *yuv_kernel_source =
         "output[lenY + lenUV + base] = value;\n"
     "}\n";
 
-static GLfloat vbo_data[4 * 4] = {
-    -1, -1, 0, 0,
-    -1, +1, 0, 1,
-    +1, -1, 1, 0,
-    +1, +1, 1, 1
-};
 static const GLsizei vbo_stride = 4 * sizeof(GLfloat);
 static const GLsizei vbo_size = 4 * vbo_stride;
 static const void *vbo_tex_coord_offset = (void *)(2 * sizeof(GLfloat));
@@ -150,7 +144,6 @@ void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
     glGenBuffers(1, &ctx->vbo);
     glGenRenderbuffers(1, &ctx->rbo);
     glGenFramebuffers(1, &ctx->fbo);
-    glGenTextures(1, &ctx->tex);
     assert(glGetError() == GL_NO_ERROR);
 
     glBindRenderbuffer(GL_RENDERBUFFER, ctx->fbo);
@@ -159,10 +152,6 @@ void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ctx->fbo);
     glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, ctx->rbo);
-    assert(glGetError() == GL_NO_ERROR);
-
-    glBindBuffer(GL_ARRAY_BUFFER, ctx->vbo);
-    glBufferData(GL_ARRAY_BUFFER, vbo_size, vbo_data, GL_DYNAMIC_DRAW);
     assert(glGetError() == GL_NO_ERROR);
 
     ctx->program = glCreateProgram();
@@ -190,7 +179,7 @@ void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
     glViewport(0, 0, output_width, output_height);
     glClearColor(0, 0, 0, 1);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_RECTANGLE, ctx->tex);
+    glBindBuffer(GL_ARRAY_BUFFER, ctx->vbo);
     glUseProgram(ctx->program);
     glUniform1i(ctx->tex_u, 0);
     glBindVertexArray(ctx->vao);
@@ -268,6 +257,18 @@ static void p1_video_encoder_log_callback(void *data, int level, const char *fmt
     p1_logv(ctx, (P1LogLevel) level, fmt, args);
 }
 
+bool p1_video_source_position(P1VideoSource *src, P1Config *cfg, P1ConfigSection *sect)
+{
+    return cfg->get_float(cfg, sect, "x1", &src->x1)
+        && cfg->get_float(cfg, sect, "y1", &src->y1)
+        && cfg->get_float(cfg, sect, "x2", &src->x2)
+        && cfg->get_float(cfg, sect, "y2", &src->y2)
+        && cfg->get_float(cfg, sect, "u1", &src->u1)
+        && cfg->get_float(cfg, sect, "v1", &src->v1)
+        && cfg->get_float(cfg, sect, "u2", &src->u2)
+        && cfg->get_float(cfg, sect, "v2", &src->v2);
+}
+
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
 {
     P1Context *_ctx = vclock->ctx;
@@ -291,7 +292,18 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
         P1VideoSource *vsrc = (P1VideoSource *) node;
 
         if (src->state == P1_STATE_RUNNING) {
+            if (vsrc->texture == 0)
+                glGenTextures(1, &vsrc->texture);
+
+            glBindTexture(GL_TEXTURE_RECTANGLE, vsrc->texture);
             vsrc->frame(vsrc);
+
+            glBufferData(GL_ARRAY_BUFFER, vbo_size, (GLfloat []) {
+                vsrc->x1, vsrc->y1, vsrc->u1, vsrc->v1,
+                vsrc->x1, vsrc->y2, vsrc->u1, vsrc->v2,
+                vsrc->x2, vsrc->y1, vsrc->u2, vsrc->v1,
+                vsrc->x2, vsrc->y2, vsrc->u2, vsrc->v2
+            }, GL_DYNAMIC_DRAW);
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         }
     }

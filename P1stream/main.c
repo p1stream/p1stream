@@ -133,6 +133,9 @@ static bool create_video_source(P1Config *cfg, P1ConfigSection *sect, void *data
     P1VideoSource *src = factory(cfg, sect);
     assert(src != NULL);
 
+    b_ret = p1_video_source_position(src, cfg, sect);
+    assert(b_ret);
+
     p1_list_before(&ctx->video_sources, src);
 
     return true;

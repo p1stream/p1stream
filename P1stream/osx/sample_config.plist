@@ -19,6 +19,42 @@
 			<dict>
 				<key>type</key>
 				<string>display</string>
+				<key>x1</key>
+				<integer>-1</integer>
+				<key>y1</key>
+				<integer>-1</integer>
+				<key>x2</key>
+				<integer>1</integer>
+				<key>y2</key>
+				<integer>1</integer>
+				<key>u1</key>
+				<integer>0</integer>
+				<key>v1</key>
+				<integer>0</integer>
+				<key>u2</key>
+				<integer>1</integer>
+				<key>v2</key>
+				<integer>1</integer>
+			</dict>
+			<dict>
+				<key>type</key>
+				<string>capture</string>
+				<key>x1</key>
+				<real>0.5</real>
+				<key>y1</key>
+				<real>0.5</real>
+				<key>x2</key>
+				<integer>1</integer>
+				<key>y2</key>
+				<integer>1</integer>
+				<key>u1</key>
+				<integer>0</integer>
+				<key>v1</key>
+				<integer>0</integer>
+				<key>u2</key>
+				<integer>1</integer>
+				<key>v2</key>
+				<integer>1</integer>
 			</dict>
 		</array>
 		<key>encoder</key>
