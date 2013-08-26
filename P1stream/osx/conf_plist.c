@@ -41,7 +41,6 @@ P1Config *p1_plist_config_create_from_file(const char *file)
 {
     CFURLRef file_url = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8 *)file, strlen(file), FALSE);
     assert(file_url != NULL);
-    CFURLCreateData(NULL, file_url, kCFStringEncodingUTF8, FALSE);
 
     CFDataRef file_data;
     Boolean res = CFURLCreateDataAndPropertiesFromResource(NULL, file_url, &file_data, NULL, NULL, NULL);
