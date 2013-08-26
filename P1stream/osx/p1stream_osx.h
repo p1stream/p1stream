@@ -1,10 +1,10 @@
 #ifndef p1stream_osx_h
 #define p1stream_osx_h
 
+#include "p1stream.h"
+
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOSurface/IOSurface.h>
-
-#include "p1stream.h"
 
 
 // Fast path for OS X video sources that can provide an IOSurface.

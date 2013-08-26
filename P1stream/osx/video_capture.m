@@ -1,12 +1,12 @@
-#include <stdio.h>
+#include "p1stream.h"
+
+#define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
+
 #include <assert.h>
 #include <pthread.h>
 #include <CoreVideo/CoreVideo.h>
 #include <CoreMedia/CoreMedia.h>
 #include <AVFoundation/AVFoundation.h>
-
-#include "p1stream.h"
-
 
 // Source state.
 typedef struct _P1CaptureVideoSource P1CaptureVideoSource;

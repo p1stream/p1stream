@@ -1,8 +1,6 @@
-#include <stdio.h>
-#include <CoreFoundation/CoreFoundation.h>
-
 #include "p1stream.h"
 
+#include <CoreFoundation/CoreFoundation.h>
 
 static void notify_fd_callback(CFFileDescriptorRef f, CFOptionFlags callBackTypes, void *info);
 static void create_video_clock(P1Context *ctx, P1Config *cfg);

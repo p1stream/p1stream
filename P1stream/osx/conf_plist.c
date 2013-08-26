@@ -1,6 +1,6 @@
-#include <string.h>
-
 #include "p1stream.h"
+
+#include <string.h>
 
 
 typedef struct _P1PlistConfig P1PlistConfig;

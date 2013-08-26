@@ -1,10 +1,9 @@
+#include "p1stream_priv.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
-#include "p1stream_priv.h"
-
 
 static const char *default_url = "rtmp://localhost/app/test";
 

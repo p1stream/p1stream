@@ -1,12 +1,8 @@
-// Video source that captures the display using CGDisplayStream (10.8+).
+#include "p1stream.h"
 
-#include <stdio.h>
 #include <pthread.h>
 #include <dispatch/dispatch.h>
 #include <CoreGraphics/CoreGraphics.h>
-
-#include "p1stream.h"
-
 
 typedef struct _P1DisplayVideoSource P1DisplayVideoSource;
 

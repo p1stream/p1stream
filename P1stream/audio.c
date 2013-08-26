@@ -1,10 +1,9 @@
+#include "p1stream_priv.h"
+
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory.h>
-
-#include "p1stream_priv.h"
-
 
 // Fixed internal mixing buffer parameters.
 static const int sample_rate = 44100;

@@ -1,6 +1,8 @@
 #ifndef p1stream_priv_h
 #define p1stream_priv_h
 
+#include "p1stream.h"
+
 #include <mach/mach_time.h>
 #include <dispatch/dispatch.h>
 #include <OpenGL/OpenGL.h>
@@ -9,9 +11,6 @@
 #include <aacenc_lib.h>
 #include <x264.h>
 #include <rtmp.h>
-
-#include "p1stream.h"
-
 
 #define P1_PACKET_QUEUE_LENGTH 256
 

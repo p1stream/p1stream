@@ -1,9 +1,8 @@
-// Video clock based on display refresh rate, using CVDisplayLink.
-
-#include <stdio.h>
-#include <CoreVideo/CoreVideo.h>
-
 #include "p1stream.h"
+
+#define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
+
+#include <CoreVideo/CoreVideo.h>
 
 
 typedef struct _P1DisplayVideoClock P1DisplayVideoClock;

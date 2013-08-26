@@ -1,7 +1,7 @@
+#include "p1stream_priv.h"
+
 #include <unistd.h>
 #include <sys/poll.h>
-
-#include "p1stream_priv.h"
 
 static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args, void *user_data);
 static void *p1_ctrl_main(void *data);

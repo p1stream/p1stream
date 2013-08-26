@@ -1,9 +1,8 @@
+#include "p1stream_priv.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-
-#include "p1stream_priv.h"
-
 
 static void p1_video_init_encoder(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);

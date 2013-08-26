@@ -1,8 +1,8 @@
+#include "p1stream.h"
+
 #include <stdio.h>
 #include <dispatch/dispatch.h>
 #include <AudioToolbox/AudioToolbox.h>
-
-#include "p1stream.h"
 
 
 static const UInt32 num_buffers = 3;
