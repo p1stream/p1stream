@@ -86,6 +86,11 @@ void p1_audio_buffer(P1AudioSource *asrc, int64_t time, void *in, int in_len)
         printf("Audio mix buffer underrun, dropped %d bytes!", in_len);
 }
 
+bool p1_audio_source_volume(P1AudioSource *src, P1Config *cfg, P1ConfigSection *sect)
+{
+    return cfg->get_float(cfg, sect, "volume", &src->volume);
+}
+
 // Write as much as possible to the mix buffer.
 static int p1_audio_write(P1ContextFull *ctx, void **in, int *in_len)
 {

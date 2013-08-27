@@ -102,6 +102,9 @@ static bool create_audio_source(P1Config *cfg, P1ConfigSection *sect, void *data
     P1AudioSource *src = factory(cfg, sect);
     assert(src != NULL);
 
+    b_ret = p1_audio_source_volume(src, cfg, sect);
+    assert(b_ret);
+
     p1_list_before(&ctx->audio_sources, src);
 
     return true;

@@ -179,6 +179,9 @@ struct _P1VideoSource {
 
 struct _P1AudioSource {
     P1Source super;
+
+    // In the range [0, 1].
+    float volume;
 };
 
 
@@ -351,6 +354,8 @@ int p1_fd(P1Context *ctx);
 // Low-level notification helper.
 void _p1_notify(P1Context *ctx, P1Notification notification);
 
+// Set a audio source's volume from configuration.
+bool p1_audio_source_volume(P1AudioSource *src, P1Config *cfg, P1ConfigSection *sect);
 // Set a video source's position from configuration.
 bool p1_video_source_position(P1VideoSource *src, P1Config *cfg, P1ConfigSection *sect);
 
