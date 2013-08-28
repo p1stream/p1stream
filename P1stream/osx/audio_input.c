@@ -7,7 +7,7 @@
 
 static const UInt32 num_buffers = 3;
 static const UInt32 num_channels = 2;
-static const UInt32 sample_size = 2;
+static const UInt32 sample_size = sizeof(float);
 static const UInt32 sample_size_bits = sample_size * 8;
 static const UInt32 sample_rate = 44100;
 
@@ -44,7 +44,7 @@ P1AudioSource *p1_input_audio_source_create()
 
     AudioStreamBasicDescription fmt;
     fmt.mFormatID = kAudioFormatLinearPCM;
-    fmt.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
+    fmt.mFormatFlags = kLinearPCMFormatFlagIsFloat;
     fmt.mSampleRate = sample_rate;
     fmt.mBitsPerChannel = sample_size_bits;
     fmt.mChannelsPerFrame = num_channels;
@@ -58,7 +58,7 @@ P1AudioSource *p1_input_audio_source_create()
         ^(AudioQueueRef queue, AudioQueueBufferRef buf,
           const AudioTimeStamp *time, UInt32 num_descs,
           const AudioStreamPacketDescription *descs) {
-            p1_audio_buffer(asrc, time->mHostTime, buf->mAudioData, buf->mAudioDataByteSize);
+            p1_audio_buffer(asrc, time->mHostTime, buf->mAudioData, buf->mAudioDataByteSize / sample_size);
 
             OSStatus ret = AudioQueueEnqueueBuffer(iasrc->queue, buf, 0, NULL);
             assert(ret == noErr);

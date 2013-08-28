@@ -131,9 +131,9 @@ void p1_stream_audio_config(P1ContextFull *ctx)
 }
 
 // Send audio data.
-void p1_stream_audio(P1ContextFull *ctx, int64_t mtime, void *buf, int len)
+void p1_stream_audio(P1ContextFull *ctx, int64_t mtime, void *buf, size_t len)
 {
-    const uint32_t tag_size = 2 + len;
+    const uint32_t tag_size = (uint32_t) (2 + len);
 
     RTMPPacket *pkt = p1_stream_new_packet(ctx, RTMP_PACKET_TYPE_AUDIO, mtime, tag_size);
     char * const body = pkt->m_body;

@@ -364,7 +364,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time);
 // Callback for video sources to provide frame data.
 void p1_video_frame(P1VideoSource *vsrc, int width, int height, void *data);
 // Callback for audio sources to provide audio buffer data.
-void p1_audio_buffer(P1AudioSource *asrc, int64_t time, void *in, int in_len);
+void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples);
 
 
 // Platform-specific functionality.

@@ -28,8 +28,9 @@ struct _P1ContextFull {
 
     // Audio
     HANDLE_AACENCODER aac;
-    void *mix;
-    int mix_len;
+    float *mix;
+    size_t mix_pos;
+    INT_PCM *enc_in;
     void *out;
 
     int64_t time;
@@ -90,6 +91,6 @@ void p1_stream_video_config(P1ContextFull *ctx, x264_nal_t *nals, int len);
 void p1_stream_video(P1ContextFull *ctx, x264_nal_t *nals, int len, x264_picture_t *pic);
 
 void p1_stream_audio_config(P1ContextFull *ctx);
-void p1_stream_audio(P1ContextFull *ctx, int64_t time, void *buf, int len);
+void p1_stream_audio(P1ContextFull *ctx, int64_t time, void *buf, size_t len);
 
 #endif

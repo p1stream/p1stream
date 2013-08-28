@@ -7,22 +7,19 @@
 
 // Fixed internal mixing buffer parameters.
 static const int sample_rate = 44100;
-static const int sample_size = 2;
 static const int num_channels = 2;
 // Hardcoded bitrate.
 static const int bit_rate = 128 * 1024;
-// Size of one frame.
-static const int frame_size = num_channels * sample_size;
 // Mix buffer buffer of one full second.
-static const int mix_size = frame_size * sample_rate;
+static const int mix_samples = num_channels * sample_rate;
 // Minimum output buffer size per FDK AAC requirements.
 static const int out_min_size = 6144 / 8 * num_channels;
 // Complete output buffer size, also one full second.
 static const int out_size = out_min_size * 64;
 
-static int p1_audio_write(P1ContextFull *ctx, void **in, int *in_len);
-static int p1_audio_read(P1ContextFull *ctx, int num);
-static int64_t p1_audio_bytes_to_mach_time(P1ContextFull *ctx, int bytes);
+static void p1_audio_write(P1ContextFull *ctx, float **in, size_t *samples);
+static size_t p1_audio_read(P1ContextFull *ctx, size_t samples);
+static int64_t p1_audio_samples_to_mach_time(P1ContextFull *ctx, size_t samples);
 
 
 void p1_audio_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
@@ -33,7 +30,8 @@ void p1_audio_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 
     AACENC_ERROR err;
 
-    ctx->mix = calloc(1, mix_size);
+    ctx->mix = calloc(mix_samples, sizeof(float));
+    ctx->enc_in = malloc(mix_samples * sizeof(INT_PCM));
     ctx->out = malloc(out_size);
 
     err = aacEncOpen(&ctx->aac, 0x01, 2);
@@ -54,7 +52,7 @@ void p1_audio_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
     assert(err == AACENC_OK);
 }
 
-void p1_audio_buffer(P1AudioSource *asrc, int64_t time, void *in, int in_len)
+void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples)
 {
     P1Source *src = (P1Source *) asrc;
     P1ContextFull *ctx = (P1ContextFull *) src->ctx;
@@ -65,25 +63,21 @@ void p1_audio_buffer(P1AudioSource *asrc, int64_t time, void *in, int in_len)
     }
 
     // Calculate time for the start of the mix buffer.
-    ctx->time = time - p1_audio_bytes_to_mach_time(ctx, ctx->mix_len);
+    ctx->time = time - p1_audio_samples_to_mach_time(ctx, ctx->mix_pos);
 
-    int out_size;
+    size_t out_size;
     do {
         // Write to the mix buffer.
-        p1_audio_write(ctx, &in, &in_len);
+        p1_audio_write(ctx, &in, &samples);
 
         // Read, encode and stream from the mix buffer.
-        out_size = p1_audio_read(ctx, ctx->mix_len);
-        if (out_size) {
+        out_size = p1_audio_read(ctx, ctx->mix_pos);
+        if (out_size)
             p1_stream_audio(ctx, time, ctx->out, out_size);
-
-            // Recalculate mix buffer start time.
-            ctx->time += p1_audio_bytes_to_mach_time(ctx, out_size);
-        }
     } while (out_size);
 
-    if (in_len)
-        printf("Audio mix buffer underrun, dropped %d bytes!", in_len);
+    if (samples)
+        printf("Audio mix buffer full, dropped %zd samples!", samples);
 }
 
 bool p1_audio_source_volume(P1AudioSource *src, P1Config *cfg, P1ConfigSection *sect)
@@ -92,33 +86,41 @@ bool p1_audio_source_volume(P1AudioSource *src, P1Config *cfg, P1ConfigSection *
 }
 
 // Write as much as possible to the mix buffer.
-static int p1_audio_write(P1ContextFull *ctx, void **in, int *in_len)
+static void p1_audio_write(P1ContextFull *ctx, float **in, size_t *samples)
 {
-    int bytes = mix_size - ctx->mix_len;
-    if (*in_len < bytes)
-        bytes = *in_len;
+    size_t to_write = mix_samples - ctx->mix_pos;
+    if (*samples < to_write)
+        to_write = *samples;
 
-    if (bytes != 0) {
+    if (to_write != 0) {
         // FIXME: Mixing code goes here!
-        memcpy(ctx->mix + ctx->mix_len, *in, bytes);
+        memcpy(ctx->mix + ctx->mix_pos, *in, to_write * sizeof(float));
 
-        *in += bytes;
-        *in_len -= bytes;
-        ctx->mix_len += bytes;
+        *in += to_write;
+        *samples -= to_write;
+        ctx->mix_pos += to_write;
     }
-
-    return bytes;
 }
 
 // Read as much as possible from the ring buffer.
-static int p1_audio_read(P1ContextFull *ctx, int bytes)
+static size_t p1_audio_read(P1ContextFull *ctx, size_t samples)
 {
-    // Prepare encoder arguments.
-    INT el_sizes[] = { sample_size };
+    // Convert to 16-bit.
+    float *mix = ctx->mix;
+    INT_PCM *enc_in = ctx->enc_in;
+    for (size_t i = 0; i < samples; i++) {
+        float sample = mix[i];
+        if (sample > +1.0) sample = +1.0;
+        if (sample < -1.0) sample = -1.0;
+        enc_in[i] = (INT_PCM) (sample * SAMPLE_MAX);
+    }
 
-    void *enc_bufs[] = { ctx->mix };
+    // Prepare encoder arguments.
+    INT el_sizes[] = { sizeof(INT_PCM) };
+
+    void *enc_bufs[] = { enc_in };
     INT enc_identifiers[] = { IN_AUDIO_DATA };
-    INT enc_sizes[] = { bytes };
+    INT enc_sizes[] = { (INT) (samples * sizeof(INT_PCM)) };
     AACENC_BufDesc in_desc = {
         .numBufs = 1,
         .bufs = enc_bufs,
@@ -139,7 +141,7 @@ static int p1_audio_read(P1ContextFull *ctx, int bytes)
     };
 
     AACENC_InArgs in_args = {
-        .numInSamples = bytes / sample_size,
+        .numInSamples = (INT) samples,
         .numAncBytes = 0
     };
 
@@ -150,7 +152,7 @@ static int p1_audio_read(P1ContextFull *ctx, int bytes)
         err = aacEncEncode(ctx->aac, &in_desc, &out_desc, &in_args, &out_args);
         assert(err == AACENC_OK);
 
-        size_t in_processed = out_args.numInSamples * sample_size;
+        size_t in_processed = out_args.numInSamples * sizeof(INT_PCM);
         in_desc.bufs[0] += in_processed;
         in_desc.bufSizes[0] -= in_processed;
 
@@ -162,21 +164,23 @@ static int p1_audio_read(P1ContextFull *ctx, int bytes)
     }
 
     // Move remaining data up in the mix buffer.
-    int mix_read = (int) (in_desc.bufs[0] - ctx->mix);
+    size_t mix_read = (INT_PCM *) in_desc.bufs[0] - enc_in;
     if (mix_read) {
-        int mix_remaining = ctx->mix_len - mix_read;
+        size_t mix_remaining = ctx->mix_pos - mix_read;
         if (mix_remaining)
-            memmove(ctx->mix, in_desc.bufs[0], mix_remaining);
-        memset(ctx->mix + mix_remaining, 0, mix_read);
-        ctx->mix_len = mix_remaining;
+            memmove(mix, in_desc.bufs[0], mix_remaining * sizeof(float));
+        memset(mix + mix_remaining, 0, mix_read * sizeof(float));
+        ctx->mix_pos = mix_remaining;
+
+        // Recalculate mix buffer start time.
+        ctx->time += p1_audio_samples_to_mach_time(ctx, mix_read);
     }
 
-    return mix_read;
+    return out_desc.bufs[0] - ctx->out;
 }
 
-static int64_t p1_audio_bytes_to_mach_time(P1ContextFull *ctx, int bytes)
+static int64_t p1_audio_samples_to_mach_time(P1ContextFull *ctx, size_t samples)
 {
-    int samples = bytes / frame_size;
-    int64_t nanosec = samples * 1000000000 / sample_rate;
+    int64_t nanosec = samples / num_channels * 1000000000 / sample_rate;
     return nanosec * ctx->timebase.denom / ctx->timebase.numer;
 }
