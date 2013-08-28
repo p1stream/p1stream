@@ -71,6 +71,7 @@ void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t sample
         p1_audio_write(ctx, &in, &samples);
 
         // Read, encode and stream from the mix buffer.
+        time = ctx->time;
         out_size = p1_audio_read(ctx, ctx->mix_pos);
         if (out_size)
             p1_stream_audio(ctx, time, ctx->out, out_size);
