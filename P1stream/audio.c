@@ -107,6 +107,8 @@ static void p1_audio_write(P1ContextFull *ctx, float **in, size_t *samples)
 static size_t p1_audio_read(P1ContextFull *ctx, size_t samples)
 {
     // Convert to 16-bit.
+    // FIXME: this is wasteful, because we potentially do this multiple times
+    // for the same samples. Predict reads using aac->nSamplesToRead.
     float *mix = ctx->mix;
     INT_PCM *enc_in = ctx->enc_in;
     for (size_t i = 0; i < samples; i++) {
