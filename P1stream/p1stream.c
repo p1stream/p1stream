@@ -22,7 +22,9 @@ P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
 
     int ret;
 
-    ret = pthread_mutex_init(&_ctx->lock, NULL);
+    ret = pthread_mutex_init(&_ctx->video_lock, NULL);
+    assert(ret == 0);
+    ret = pthread_mutex_init(&_ctx->audio_lock, NULL);
     assert(ret == 0);
 
     ret = pipe(ctx->ctrl_pipe);
@@ -193,26 +195,25 @@ static void p1_ctrl_progress(P1ContextFull *ctx)
     P1ListNode *head;
     P1ListNode *node;
 
-    pthread_mutex_lock(&_ctx->lock);
-
+    pthread_mutex_lock(&_ctx->video_lock);
     // Progress video clock.
     p1_ctrl_progress_clock(_ctx, _ctx->clock);
-
     // Progress video sources.
     head = &_ctx->video_sources;
     p1_list_iterate(head, node) {
         P1Source *src = (P1Source *) node;
         p1_ctrl_progress_source(_ctx, src);
     }
+    pthread_mutex_unlock(&_ctx->video_lock);
 
+    pthread_mutex_lock(&_ctx->audio_lock);
     // Progress audio sources.
     head = &_ctx->audio_sources;
     p1_list_iterate(head, node) {
         P1Source *src = (P1Source *) node;
         p1_ctrl_progress_source(_ctx, src);
     }
-
-    pthread_mutex_unlock(&_ctx->lock);
+    pthread_mutex_unlock(&_ctx->audio_lock);
 }
 
 static void p1_ctrl_progress_clock(P1Context *ctx, P1VideoClock *clock)

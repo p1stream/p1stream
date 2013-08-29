@@ -180,6 +180,9 @@ struct _P1VideoSource {
 struct _P1AudioSource {
     P1Source super;
 
+    // Mix buffer position. The source need not touch this.
+    size_t mix_pos;
+
     // In the range [0, 1].
     float volume;
 };
@@ -188,8 +191,6 @@ struct _P1AudioSource {
 // The main context containing all state.
 
 struct _P1Context {
-    pthread_mutex_t lock;
-
     // Log function, defaults to stderr logging.
     P1LogCallback log_fn;
     void *log_user_data;
@@ -199,9 +200,11 @@ struct _P1Context {
     // Current state.
     P1State state;
 
-    // FIXME: add locks.
+    pthread_mutex_t video_lock;
     P1VideoClock *clock;
     P1ListNode video_sources;
+
+    pthread_mutex_t audio_lock;
     P1ListNode audio_sources;
 };
 

@@ -29,7 +29,6 @@ struct _P1ContextFull {
     // Audio
     HANDLE_AACENCODER aac;
     float *mix;
-    size_t mix_pos;
     INT_PCM *enc_in;
     void *out;
 

@@ -284,7 +284,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     CGLSetCurrentContext(ctx->gl);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    pthread_mutex_lock(&_ctx->lock);
+    pthread_mutex_lock(&_ctx->video_lock);
 
     head = &_ctx->video_sources;
     p1_list_iterate(head, node) {
@@ -308,7 +308,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
         }
     }
 
-    pthread_mutex_unlock(&_ctx->lock);
+    pthread_mutex_unlock(&_ctx->video_lock);
 
     glFinish();
     assert(glGetError() == GL_NO_ERROR);

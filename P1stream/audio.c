@@ -17,8 +17,8 @@ static const int out_min_size = 6144 / 8 * num_channels;
 // Complete output buffer size, also one full second.
 static const int out_size = out_min_size * 64;
 
-static void p1_audio_write(P1ContextFull *ctx, float **in, size_t *samples);
-static size_t p1_audio_read(P1ContextFull *ctx, size_t samples);
+static void p1_audio_write(P1ContextFull *ctx, P1AudioSource *asrc, float **in, size_t *samples);
+static size_t p1_audio_read(P1ContextFull *ctx);
 static int64_t p1_audio_samples_to_mach_time(P1ContextFull *ctx, size_t samples);
 
 
@@ -55,7 +55,8 @@ void p1_audio_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples)
 {
     P1Source *src = (P1Source *) asrc;
-    P1ContextFull *ctx = (P1ContextFull *) src->ctx;
+    P1Context *_ctx = src->ctx;
+    P1ContextFull *ctx = (P1ContextFull *) _ctx;
 
     if (!ctx->sent_audio_config) {
         ctx->sent_audio_config = true;
@@ -63,19 +64,25 @@ void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t sample
     }
 
     // Calculate time for the start of the mix buffer.
-    ctx->time = time - p1_audio_samples_to_mach_time(ctx, ctx->mix_pos);
+    // FIXME: determine a clock master
+    ctx->time = time - p1_audio_samples_to_mach_time(ctx, asrc->mix_pos);
+
+    // FIXME: we can do better than this.
+    pthread_mutex_lock(&_ctx->audio_lock);
 
     size_t out_size;
     do {
         // Write to the mix buffer.
-        p1_audio_write(ctx, &in, &samples);
+        p1_audio_write(ctx, asrc, &in, &samples);
 
         // Read, encode and stream from the mix buffer.
         time = ctx->time;
-        out_size = p1_audio_read(ctx, ctx->mix_pos);
+        out_size = p1_audio_read(ctx);
         if (out_size)
             p1_stream_audio(ctx, time, ctx->out, out_size);
     } while (out_size);
+
+    pthread_mutex_unlock(&_ctx->audio_lock);
 
     if (samples)
         printf("Audio mix buffer full, dropped %zd samples!", samples);
@@ -87,25 +94,49 @@ bool p1_audio_source_volume(P1AudioSource *src, P1Config *cfg, P1ConfigSection *
 }
 
 // Write as much as possible to the mix buffer.
-static void p1_audio_write(P1ContextFull *ctx, float **in, size_t *samples)
+static void p1_audio_write(P1ContextFull *ctx, P1AudioSource *asrc, float **in, size_t *samples)
 {
-    size_t to_write = mix_samples - ctx->mix_pos;
+    size_t to_write = mix_samples - asrc->mix_pos;
     if (*samples < to_write)
         to_write = *samples;
 
     if (to_write != 0) {
-        // FIXME: Mixing code goes here!
-        memcpy(ctx->mix + ctx->mix_pos, *in, to_write * sizeof(float));
+        // Mix samples.
+        // FIXME: Maybe synchronize based on timestamps?
+        float *p_in = *in;
+        float *p_mix = ctx->mix + asrc->mix_pos;
+        for (size_t i = 0; i < to_write; i++)
+            *(p_mix++) += *(p_in++);
 
-        *in += to_write;
+        // Progress positions.
+        *in = p_in;
         *samples -= to_write;
-        ctx->mix_pos += to_write;
+        asrc->mix_pos += to_write;
     }
 }
 
 // Read as much as possible from the ring buffer.
-static size_t p1_audio_read(P1ContextFull *ctx, size_t samples)
+static size_t p1_audio_read(P1ContextFull *ctx)
 {
+    P1Context *_ctx = (P1Context *) ctx;
+    P1ListNode *head;
+    P1ListNode *node;
+
+    // See how much data is ready.
+    size_t samples = mix_samples + 1;
+    head = &_ctx->audio_sources;
+    p1_list_iterate(head, node) {
+        P1Source *src = (P1Source *) node;
+        P1AudioSource *asrc = (P1AudioSource *) node;
+
+        if (src->state == P1_STATE_RUNNING) {
+            if (asrc->mix_pos < samples)
+                samples = asrc->mix_pos;
+        }
+    }
+    if (samples > mix_samples)
+        return 0;
+
     // Convert to 16-bit.
     // FIXME: this is wasteful, because we potentially do this multiple times
     // for the same samples. Predict reads using aac->nSamplesToRead.
@@ -169,11 +200,16 @@ static size_t p1_audio_read(P1ContextFull *ctx, size_t samples)
     // Move remaining data up in the mix buffer.
     size_t mix_read = (INT_PCM *) in_desc.bufs[0] - enc_in;
     if (mix_read) {
-        size_t mix_remaining = ctx->mix_pos - mix_read;
+        size_t mix_remaining = samples - mix_read;
         if (mix_remaining)
             memmove(mix, in_desc.bufs[0], mix_remaining * sizeof(float));
         memset(mix + mix_remaining, 0, mix_read * sizeof(float));
-        ctx->mix_pos = mix_remaining;
+
+        // Adjust source positions.
+        p1_list_iterate(head, node) {
+            P1AudioSource *asrc = (P1AudioSource *) node;
+            asrc->mix_pos -= mix_read;
+        }
 
         // Recalculate mix buffer start time.
         ctx->time += p1_audio_samples_to_mach_time(ctx, mix_read);
