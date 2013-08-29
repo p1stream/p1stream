@@ -107,7 +107,7 @@ static void p1_audio_write(P1ContextFull *ctx, P1AudioSource *asrc, float **in, 
         float *p_in = *in;
         float *p_mix = ctx->mix + asrc->mix_pos;
         for (size_t i = 0; i < to_write; i++)
-            *(p_mix++) += *(p_in++);
+            *(p_mix++) += *(p_in++) * asrc->volume;
 
         // Progress positions.
         *in = p_in;
