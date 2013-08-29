@@ -74,6 +74,8 @@
 			<dict>
 				<key>type</key>
 				<string>input</string>
+				<key>master</key>
+				<true/>
 				<key>volume</key>
 				<integer>1</integer>
 			</dict>

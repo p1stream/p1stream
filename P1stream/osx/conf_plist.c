@@ -16,6 +16,7 @@ static CFTypeRef p1_plist_config_resolve(P1Config *_cfg, P1ConfigSection *sect, 
 static P1ConfigSection *p1_plist_config_get_section(P1Config *_cfg, P1ConfigSection *sect, const char *key);
 static bool p1_plist_config_get_string(P1Config *_cfg, P1ConfigSection *sect, const char *key, char *buf, size_t bufsize);
 static bool p1_plist_config_get_float(P1Config *_cfg, P1ConfigSection *sect, const char *key, float *out);
+static bool p1_plist_config_get_bool(P1Config *_cfg, P1ConfigSection *sect, const char *key, bool *out);
 static bool p1_plist_config_each_section(P1Config *_cfg, P1ConfigSection *sect, const char *key, P1ConfigIterSection iter, void *data);
 static bool p1_plist_config_each_string(P1Config *_cfg, P1ConfigSection *sect, const char *key, P1ConfigIterString iter, void *data);
 
@@ -32,6 +33,7 @@ P1Config *p1_plist_config_create(CFDictionaryRef root)
     _cfg->get_section = p1_plist_config_get_section;
     _cfg->get_string = p1_plist_config_get_string;
     _cfg->get_float = p1_plist_config_get_float;
+    _cfg->get_bool = p1_plist_config_get_bool;
     _cfg->each_section = p1_plist_config_each_section;
     _cfg->each_string = p1_plist_config_each_string;
     return _cfg;
@@ -122,6 +124,16 @@ static bool p1_plist_config_get_float(P1Config *_cfg, P1ConfigSection *sect, con
         Boolean res = CFNumberGetValue(val, kCFNumberFloatType, out);
         if (res == TRUE)
             return true;
+    }
+    return false;
+}
+
+static bool p1_plist_config_get_bool(P1Config *_cfg, P1ConfigSection *sect, const char *key, bool *out)
+{
+    CFBooleanRef val = p1_plist_config_resolve(_cfg, sect, key, CFBooleanGetTypeID());
+    if (val) {
+        *out = CFBooleanGetValue(val) == TRUE ? true : false;
+        return true;
     }
     return false;
 }

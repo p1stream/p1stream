@@ -63,12 +63,12 @@ void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t sample
         p1_stream_audio_config(ctx);
     }
 
-    // Calculate time for the start of the mix buffer.
-    // FIXME: determine a clock master
-    ctx->time = time - p1_audio_samples_to_mach_time(ctx, asrc->mix_pos);
-
     // FIXME: we can do better than this.
     pthread_mutex_lock(&_ctx->audio_lock);
+
+    // Recalculate time for the start of the mix buffer.
+    if (asrc->master)
+        ctx->time = time - p1_audio_samples_to_mach_time(ctx, asrc->mix_pos);
 
     size_t out_size;
     do {
@@ -88,9 +88,10 @@ void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t sample
         printf("Audio mix buffer full, dropped %zd samples!", samples);
 }
 
-bool p1_audio_source_volume(P1AudioSource *src, P1Config *cfg, P1ConfigSection *sect)
+bool p1_configure_audio_source(P1AudioSource *src, P1Config *cfg, P1ConfigSection *sect)
 {
-    return cfg->get_float(cfg, sect, "volume", &src->volume);
+    return cfg->get_float(cfg, sect, "volume", &src->volume)
+        && cfg->get_bool(cfg, sect, "master", &src->master);
 }
 
 // Write as much as possible to the mix buffer.

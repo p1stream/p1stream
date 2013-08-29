@@ -257,7 +257,7 @@ static void p1_video_encoder_log_callback(void *data, int level, const char *fmt
     p1_logv(ctx, (P1LogLevel) level, fmt, args);
 }
 
-bool p1_video_source_position(P1VideoSource *src, P1Config *cfg, P1ConfigSection *sect)
+bool p1_configure_video_source(P1VideoSource *src, P1Config *cfg, P1ConfigSection *sect)
 {
     return cfg->get_float(cfg, sect, "x1", &src->x1)
         && cfg->get_float(cfg, sect, "y1", &src->y1)

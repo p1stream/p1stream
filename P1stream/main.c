@@ -102,7 +102,7 @@ static bool create_audio_source(P1Config *cfg, P1ConfigSection *sect, void *data
     P1AudioSource *src = factory(cfg, sect);
     assert(src != NULL);
 
-    b_ret = p1_audio_source_volume(src, cfg, sect);
+    b_ret = p1_configure_audio_source(src, cfg, sect);
     assert(b_ret);
 
     p1_list_before(&ctx->audio_sources, src);
@@ -136,7 +136,7 @@ static bool create_video_source(P1Config *cfg, P1ConfigSection *sect, void *data
     P1VideoSource *src = factory(cfg, sect);
     assert(src != NULL);
 
-    b_ret = p1_video_source_position(src, cfg, sect);
+    b_ret = p1_configure_video_source(src, cfg, sect);
     assert(b_ret);
 
     p1_list_before(&ctx->video_sources, src);

@@ -61,6 +61,8 @@ struct _P1Config {
     bool (*get_string)(P1Config *cfg, P1ConfigSection *sect, const char *key, char *buf, size_t bufsize);
     // Read a float value.
     bool (*get_float)(P1Config *cfg, P1ConfigSection *sect, const char *key, float *out);
+    // Read a boolean value.
+    bool (*get_bool)(P1Config *cfg, P1ConfigSection *sect, const char *key, bool *out);
 
     // Iterate sections in an array, used to gather sources.
     bool (*each_section)(P1Config *cfg, P1ConfigSection *sect, const char *key, P1ConfigIterSection iter, void *data);
@@ -183,6 +185,8 @@ struct _P1AudioSource {
     // Mix buffer position. The source need not touch this.
     size_t mix_pos;
 
+    // Whether this audio source is clock master.
+    bool master;
     // In the range [0, 1].
     float volume;
 };
@@ -358,9 +362,9 @@ int p1_fd(P1Context *ctx);
 void _p1_notify(P1Context *ctx, P1Notification notification);
 
 // Set a audio source's volume from configuration.
-bool p1_audio_source_volume(P1AudioSource *src, P1Config *cfg, P1ConfigSection *sect);
+bool p1_configure_audio_source(P1AudioSource *src, P1Config *cfg, P1ConfigSection *sect);
 // Set a video source's position from configuration.
-bool p1_video_source_position(P1VideoSource *src, P1Config *cfg, P1ConfigSection *sect);
+bool p1_configure_video_source(P1VideoSource *src, P1Config *cfg, P1ConfigSection *sect);
 
 // Callback for video clocks to emit ticks.
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time);
