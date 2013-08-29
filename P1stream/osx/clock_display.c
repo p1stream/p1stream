@@ -25,7 +25,7 @@ static CVReturn p1_display_video_clock_callback(
     void *displayLinkContext);
 
 
-P1VideoClock *p1_display_video_clock_create()
+P1VideoClock *p1_display_video_clock_create(P1Config *cfg, P1ConfigSection *sect)
 {
     P1DisplayVideoClock *dvclock = calloc(1, sizeof(P1DisplayVideoClock));
     P1VideoClock *vclock = (P1VideoClock *) dvclock;

@@ -27,7 +27,7 @@ static void p1_display_video_source_callback(
     IOSurfaceRef frame);
 
 
-P1VideoSource *p1_display_video_source_create()
+P1VideoSource *p1_display_video_source_create(P1Config *cfg, P1ConfigSection *sect)
 {
     P1DisplayVideoSource *dvsrc = calloc(1, sizeof(P1DisplayVideoSource));
     P1VideoSource *vsrc = (P1VideoSource *) dvsrc;

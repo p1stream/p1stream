@@ -44,7 +44,7 @@ static void p1_capture_video_source_stop(P1Source *src);
 static void p1_capture_video_source_frame(P1VideoSource *vsrc);
 
 
-P1VideoSource *p1_capture_video_source_create()
+P1VideoSource *p1_capture_video_source_create(P1Config *cfg, P1ConfigSection *sect)
 {
     P1CaptureVideoSource *cvsrc = calloc(1, sizeof(P1CaptureVideoSource));
     P1VideoSource *vsrc = (P1VideoSource *) cvsrc;

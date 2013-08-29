@@ -27,7 +27,7 @@ static bool p1_input_audio_source_start(P1Source *src);
 static void p1_input_audio_source_stop(P1Source *src);
 
 
-P1AudioSource *p1_input_audio_source_create()
+P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect)
 {
     P1InputAudioSource *iasrc = calloc(1, sizeof(P1InputAudioSource));
     P1AudioSource *asrc = (P1AudioSource *) iasrc;
