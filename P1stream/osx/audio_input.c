@@ -65,6 +65,15 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
         });
     assert(ret == noErr);
 
+    char device[128];
+    if (cfg->get_string(cfg, sect, "device", device, sizeof(device))) {
+        CFStringRef str = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, device, kCFStringEncodingASCII, kCFAllocatorNull);
+        if (str) {
+            AudioQueueSetProperty(iasrc->queue, kAudioQueueProperty_CurrentDevice, &str, sizeof(str));
+            CFRelease(str);
+        }
+    }
+
     for (int i = 0; i < num_buffers; i++) {
         ret = AudioQueueAllocateBuffer(iasrc->queue, 0x5000, &iasrc->buffers[i]);
         assert(ret == noErr);
