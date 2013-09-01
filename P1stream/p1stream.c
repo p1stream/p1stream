@@ -138,15 +138,6 @@ static void *p1_ctrl_main(void *data)
     P1Context *_ctx = (P1Context *) data;
     P1ContextFull *ctx = (P1ContextFull *) data;
 
-    P1VideoClock *clock = _ctx->clock;
-    clock->ctx = _ctx;
-    clock->start(clock);
-
-    // FIXME: Wait for clock to go into running state.
-    p1_audio_start(ctx);
-    p1_video_start(ctx);
-    p1_stream_start(ctx);
-
     p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_RUNNING);
 
     do {
@@ -155,9 +146,6 @@ static void *p1_ctrl_main(void *data)
 
         // FIXME: handle stop
     } while (true);
-
-    clock->stop(clock);
-    clock->ctx = NULL;
 
     p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_IDLE);
     p1_ctrl_comm(ctx);
@@ -208,6 +196,16 @@ static void p1_ctrl_progress(P1ContextFull *ctx)
     P1ListNode *head;
     P1ListNode *node;
 
+    // Progress clock.
+    P1VideoClock *clock = _ctx->clock;
+    if (clock->state == P1_STATE_IDLE) {
+        clock->ctx = _ctx;
+        clock->start(clock);
+    }
+    // Clock must be running before we can make anything else happen.
+    if (clock->state != P1_STATE_RUNNING)
+        return;
+
     pthread_mutex_lock(&_ctx->video_lock);
     // Progress video sources.
     head = &_ctx->video_sources;
@@ -225,6 +223,15 @@ static void p1_ctrl_progress(P1ContextFull *ctx)
         p1_ctrl_progress_source(_ctx, src);
     }
     pthread_mutex_unlock(&_ctx->audio_lock);
+
+    // Progress internal components.
+    if (!ctx->audio_ready)
+        p1_audio_start(ctx);
+    if (!ctx->video_ready)
+        p1_video_start(ctx);
+    // FIXME: We may want to delay until sources are running.
+    if (!ctx->stream_ready)
+        p1_stream_start(ctx);
 }
 
 static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src)
