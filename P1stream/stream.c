@@ -41,6 +41,8 @@ void p1_stream_start(P1ContextFull *ctx)
     assert(res == TRUE);
 
     ctx->start = mach_absolute_time();
+
+    ctx->stream_ready = true;
 }
 
 // Send video configuration.

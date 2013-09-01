@@ -53,6 +53,8 @@ void p1_audio_start(P1ContextFull *ctx)
 
     err = aacEncEncode(ctx->aac, NULL, NULL, NULL, NULL);
     assert(err == AACENC_OK);
+
+    ctx->audio_ready = true;
 }
 
 void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples)
@@ -60,6 +62,9 @@ void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t sample
     P1Source *src = (P1Source *) asrc;
     P1Context *_ctx = src->ctx;
     P1ContextFull *ctx = (P1ContextFull *) _ctx;
+
+    if (!ctx->audio_ready || !ctx->stream_ready)
+        return;
 
     if (!ctx->sent_audio_config) {
         ctx->sent_audio_config = true;

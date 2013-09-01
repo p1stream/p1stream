@@ -219,6 +219,8 @@ void p1_video_start(P1ContextFull *ctx)
     assert(cl_err == CL_SUCCESS);
     cl_err = clSetKernelArg(ctx->yuv_kernel, 1, sizeof(cl_mem), &ctx->out_mem);
     assert(cl_err == CL_SUCCESS);
+
+    ctx->video_ready = true;
 }
 
 static void p1_video_init_encoder_params(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
@@ -280,6 +282,9 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     P1ContextFull *ctx = (P1ContextFull *) _ctx;
     P1ListNode *head;
     P1ListNode *node;
+
+    if (!ctx->video_ready || !ctx->stream_ready)
+        return;
 
     if (ctx->skip_counter >= fps_div)
         ctx->skip_counter = 0;

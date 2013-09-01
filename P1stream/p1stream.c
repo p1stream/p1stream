@@ -59,10 +59,6 @@ void p1_start(P1Context *_ctx)
 
     p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_STARTING);
 
-    p1_audio_start(ctx);
-    p1_video_start(ctx);
-    p1_stream_start(ctx);
-
     int ret = pthread_create(&ctx->ctrl_thread, NULL, p1_ctrl_main, ctx);
     assert(ret == 0);
 }
@@ -145,6 +141,10 @@ static void *p1_ctrl_main(void *data)
     P1VideoClock *clock = _ctx->clock;
     clock->ctx = _ctx;
     clock->start(clock);
+
+    p1_audio_start(ctx);
+    p1_video_start(ctx);
+    p1_stream_start(ctx);
 
     p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_RUNNING);
 

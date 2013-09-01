@@ -27,6 +27,8 @@ struct _P1ContextFull {
 
 
     // Audio
+    bool audio_ready;
+
     HANDLE_AACENCODER aac;
     float *mix;
     INT_PCM *enc_in;
@@ -38,6 +40,8 @@ struct _P1ContextFull {
 
 
     // Video
+    bool video_ready;
+
     size_t skip_counter;
 
     CGLContextObj gl;
@@ -64,6 +68,8 @@ struct _P1ContextFull {
 
 
     // Stream
+    bool stream_ready;
+
     dispatch_queue_t dispatch;
 
     RTMP rtmp;
