@@ -84,9 +84,6 @@ struct _P1ContextFull {
 };
 
 
-void p1_log(P1Context *ctx, P1LogLevel level, const char *fmt, ...);
-void p1_logv(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args);
-
 void p1_audio_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
 void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
 void p1_stream_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);

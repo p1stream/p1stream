@@ -373,6 +373,10 @@ void p1_video_frame(P1VideoSource *vsrc, int width, int height, void *data);
 // Callback for audio sources to provide audio buffer data.
 void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples);
 
+// Logging functions.
+void p1_log(P1Context *ctx, P1LogLevel level, const char *fmt, ...);
+void p1_logv(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args);
+
 
 // Platform-specific functionality.
 #if __APPLE__
