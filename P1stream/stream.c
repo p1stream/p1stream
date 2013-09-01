@@ -11,23 +11,28 @@ static RTMPPacket *p1_stream_new_packet(P1ContextFull *ctx, uint8_t type, int64_
 static void p1_stream_submit_packet(P1ContextFull *ctx, RTMPPacket *pkt);
 static void p1_stream_submit_packet_on_thread(P1ContextFull *ctx, RTMPPacket *pkt);
 
-
-// Setup state and connect.
+// Setup state.
 void p1_stream_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 {
-    int res;
     RTMP * const r = &ctx->rtmp;
-
-    ctx->dispatch = dispatch_queue_create("stream", DISPATCH_QUEUE_SERIAL);
 
     RTMP_Init(r);
 
     if (!cfg->get_string(cfg, sect, "url", ctx->url, sizeof(ctx->url)))
         strcpy(ctx->url, default_url);
-    res = RTMP_SetupURL(r, ctx->url);
+    int res = RTMP_SetupURL(r, ctx->url);
     assert(res == TRUE);
 
     RTMP_EnableWrite(r);
+}
+
+// Connect.
+void p1_stream_start(P1ContextFull *ctx)
+{
+    RTMP * const r = &ctx->rtmp;
+    int res;
+
+    ctx->dispatch = dispatch_queue_create("stream", DISPATCH_QUEUE_SERIAL);
 
     res = RTMP_Connect(r, NULL);
     assert(res == TRUE);

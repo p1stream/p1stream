@@ -4,7 +4,7 @@
 #include <string.h>
 #include <assert.h>
 
-static void p1_video_init_encoder(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
+static void p1_video_init_encoder_params(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);
 static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args);
 static void p1_video_finish(P1ContextFull *ctx, int64_t time);
@@ -101,6 +101,12 @@ void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 
     p1_list_init(&_ctx->video_sources);
 
+    p1_video_init_encoder_params(ctx, cfg, sect);
+}
+
+void p1_video_start(P1ContextFull *ctx)
+{
+    x264_param_t *params = &ctx->params;
     CGLError cgl_err;
     cl_int cl_err;
     int i_err;
@@ -136,7 +142,27 @@ void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
     ctx->clq = clCreateCommandQueue(ctx->cl, device_id, 0, NULL);
     assert(ctx->clq != NULL);
 
-    p1_video_init_encoder(ctx, cfg, sect);
+    params->pf_log = p1_video_encoder_log_callback;
+    params->p_log_private = ctx;
+    params->i_log_level = X264_LOG_DEBUG;
+
+    mach_timebase_info_data_t timebase;
+    mach_timebase_info(&timebase);
+    params->i_timebase_num = timebase.numer;
+    params->i_timebase_den = timebase.denom * 1000000000;
+
+    params->b_aud = 1;
+    params->b_annexb = 0;
+
+    params->i_width = output_width;
+    params->i_height = output_height;
+
+    params->i_fps_num = out_fps;
+    params->i_fps_den = 1;
+
+    ctx->enc = x264_encoder_open(params);
+    assert(ctx->enc != NULL);
+
     i_err = x264_picture_alloc(&ctx->enc_pic, X264_CSP_I420, output_width, output_height);
     assert(i_err == 0);
 
@@ -195,50 +221,29 @@ void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
     assert(cl_err == CL_SUCCESS);
 }
 
-static void p1_video_init_encoder(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
+static void p1_video_init_encoder_params(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 {
+    x264_param_t *params = &ctx->params;
     int i_err;
     char tmp[128];
 
-    x264_param_t params;
-    x264_param_default(&params);
+    x264_param_default(params);
 
     if (cfg->get_string(cfg, sect, "encoder.preset", tmp, sizeof(tmp))) {
-        i_err = x264_param_default_preset(&params, tmp, NULL);
+        i_err = x264_param_default_preset(params, tmp, NULL);
         assert(i_err == 0);
     }
 
-    if (!cfg->each_string(cfg, sect, "encoder", p1_video_parse_encoder_param, &params)) {
+    if (!cfg->each_string(cfg, sect, "encoder", p1_video_parse_encoder_param, params)) {
         abort();
     }
 
-    params.pf_log = p1_video_encoder_log_callback;
-    params.p_log_private = ctx;
-    params.i_log_level = X264_LOG_DEBUG;
-
-    mach_timebase_info_data_t timebase;
-    mach_timebase_info(&timebase);
-    params.i_timebase_num = timebase.numer;
-    params.i_timebase_den = timebase.denom * 1000000000;
-
-    params.b_aud = 1;
-    params.b_annexb = 0;
-
-    params.i_width = output_width;
-    params.i_height = output_height;
-
-    params.i_fps_num = out_fps;
-    params.i_fps_den = 1;
-
-    x264_param_apply_fastfirstpass(&params);
+    x264_param_apply_fastfirstpass(params);
 
     if (cfg->get_string(cfg, sect, "encoder.profile", tmp, sizeof(tmp))) {
-        i_err = x264_param_apply_profile(&params, tmp);
+        i_err = x264_param_apply_profile(params, tmp);
         assert(i_err == 0);
     }
-
-    ctx->enc = x264_encoder_open(&params);
-    assert(ctx->enc != NULL);
 }
 
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data)

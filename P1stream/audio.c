@@ -27,7 +27,10 @@ void p1_audio_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
     P1Context *_ctx = (P1Context *) ctx;
 
     p1_list_init(&_ctx->audio_sources);
+}
 
+void p1_audio_start(P1ContextFull *ctx)
+{
     AACENC_ERROR err;
 
     ctx->mix = calloc(mix_samples, sizeof(float));

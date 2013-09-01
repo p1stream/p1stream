@@ -60,6 +60,10 @@ void p1_start(P1Context *_ctx)
 
     p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_STARTING);
 
+    p1_audio_start(ctx);
+    p1_video_start(ctx);
+    p1_stream_start(ctx);
+
     int ret = pthread_create(&ctx->ctrl_thread, NULL, p1_ctrl_main, ctx);
     assert(ret == 0);
 }
@@ -77,6 +81,8 @@ void p1_stop(P1Context *_ctx)
 
     int ret = pthread_join(ctx->ctrl_thread, NULL);
     assert(ret == 0);
+
+    // FIXME: stop streaming.
 }
 
 void p1_read(P1Context *_ctx, P1Notification *out)

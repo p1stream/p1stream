@@ -57,6 +57,7 @@ struct _P1ContextFull {
     cl_kernel yuv_kernel;
 
     x264_t *enc;
+    x264_param_t params;
     x264_picture_t enc_pic;
 
     bool sent_video_config;
@@ -83,6 +84,10 @@ void p1_logv(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args);
 void p1_audio_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
 void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
 void p1_stream_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
+
+void p1_audio_start(P1ContextFull *ctx);
+void p1_video_start(P1ContextFull *ctx);
+void p1_stream_start(P1ContextFull *ctx);
 
 void p1_video_output(P1VideoClock *vclock, int64_t time);
 
