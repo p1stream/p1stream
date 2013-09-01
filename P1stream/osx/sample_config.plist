@@ -63,8 +63,16 @@
 			<string>baseline</string>
 			<key>preset</key>
 			<string>veryfast</string>
-			<key>threads</key>
-			<string>8</string>
+			<key>keyint</key>
+			<string>60</string>
+			<key>bitrate</key>
+			<string>4096</string>
+			<key>vbv-maxrate</key>
+			<string>4096</string>
+			<key>vbv-bufsize</key>
+			<string>4096</string>
+			<key>nal-hrd</key>
+			<string>cbr</string>
 		</dict>
 	</dict>
 	<key>audio</key>
