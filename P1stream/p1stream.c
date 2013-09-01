@@ -6,7 +6,6 @@
 static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args, void *user_data);
 static void *p1_ctrl_main(void *data);
 static void p1_ctrl_progress(P1ContextFull *ctx);
-static void p1_ctrl_progress_clock(P1Context *ctx, P1VideoClock *clock);
 static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src);
 static void p1_ctrl_comm(P1ContextFull *ctx);
 static void p1_ctrl_log_notification(P1ContextFull *ctx, P1Notification *notification);
@@ -143,6 +142,10 @@ static void *p1_ctrl_main(void *data)
     P1Context *_ctx = (P1Context *) data;
     P1ContextFull *ctx = (P1ContextFull *) data;
 
+    P1VideoClock *clock = _ctx->clock;
+    clock->ctx = _ctx;
+    clock->start(clock);
+
     p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_RUNNING);
 
     do {
@@ -151,6 +154,9 @@ static void *p1_ctrl_main(void *data)
 
         // FIXME: handle stop
     } while (true);
+
+    clock->stop(clock);
+    clock->ctx = NULL;
 
     p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_IDLE);
     p1_ctrl_comm(ctx);
@@ -202,8 +208,6 @@ static void p1_ctrl_progress(P1ContextFull *ctx)
     P1ListNode *node;
 
     pthread_mutex_lock(&_ctx->video_lock);
-    // Progress video clock.
-    p1_ctrl_progress_clock(_ctx, _ctx->clock);
     // Progress video sources.
     head = &_ctx->video_sources;
     p1_list_iterate(head, node) {
@@ -222,14 +226,6 @@ static void p1_ctrl_progress(P1ContextFull *ctx)
     pthread_mutex_unlock(&_ctx->audio_lock);
 }
 
-static void p1_ctrl_progress_clock(P1Context *ctx, P1VideoClock *clock)
-{
-    if (clock->state == P1_STATE_IDLE) {
-        clock->ctx = ctx;
-        clock->start(clock);
-    }
-}
-
 static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src)
 {
     if (src->target == P1_TARGET_RUNNING) {
@@ -241,6 +237,7 @@ static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src)
     else {
         if (src->state == P1_STATE_RUNNING) {
             src->stop(src);
+            src->ctx = NULL;
         }
         if (src->target == P1_TARGET_REMOVE && src->state == P1_TARGET_IDLE) {
             p1_list_remove(src);
