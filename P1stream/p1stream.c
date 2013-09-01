@@ -142,6 +142,7 @@ static void *p1_ctrl_main(void *data)
     clock->ctx = _ctx;
     clock->start(clock);
 
+    // FIXME: Wait for clock to go into running state.
     p1_audio_start(ctx);
     p1_video_start(ctx);
     p1_stream_start(ctx);

@@ -42,8 +42,6 @@ struct _P1ContextFull {
     // Video
     bool video_ready;
 
-    size_t skip_counter;
-
     CGLContextObj gl;
 
     cl_context cl;

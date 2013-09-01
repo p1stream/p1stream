@@ -116,6 +116,11 @@ struct _P1VideoClock {
     // Current state.
     P1State state;
 
+    // The frame rate as a fraction. This should be set by the time the clock
+    // goes into the running state.
+    uint32_t fps_num;
+    uint32_t fps_den;
+
     // Free the clock and associated resources. (Assume idle.)
     void (*free)(P1VideoClock *clock);
 

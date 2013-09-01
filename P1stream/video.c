@@ -89,10 +89,6 @@ static const size_t yuv_work_size[] = {
     output_height / 2
 };
 
-static const size_t in_fps = 60;
-static const size_t fps_div = 2;
-static const size_t out_fps = in_fps / fps_div;
-
 
 void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 {
@@ -105,6 +101,7 @@ void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 
 void p1_video_start(P1ContextFull *ctx)
 {
+    P1Context *_ctx = (P1Context *) ctx;
     x264_param_t *params = &ctx->params;
     CGLError cgl_err;
     cl_int cl_err;
@@ -156,8 +153,8 @@ void p1_video_start(P1ContextFull *ctx)
     params->i_width = output_width;
     params->i_height = output_height;
 
-    params->i_fps_num = out_fps;
-    params->i_fps_den = 1;
+    params->i_fps_num = _ctx->clock->fps_num;
+    params->i_fps_den = _ctx->clock->fps_den;
 
     ctx->enc = x264_encoder_open(params);
     assert(ctx->enc != NULL);
@@ -287,11 +284,6 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     int ret;
 
     if (!ctx->video_ready || !ctx->stream_ready)
-        return;
-
-    if (ctx->skip_counter >= fps_div)
-        ctx->skip_counter = 0;
-    if (ctx->skip_counter++ != 0)
         return;
 
     CGLSetCurrentContext(ctx->gl);
