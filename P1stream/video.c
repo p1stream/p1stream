@@ -7,7 +7,6 @@
 static void p1_video_init_encoder_params(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);
 static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args);
-static void p1_video_finish(P1ContextFull *ctx, int64_t time);
 static GLuint p1_build_shader(GLuint type, const char *source);
 static void p1_video_build_program(GLuint program, const char *vertexShader, const char *fragmentShader);
 
@@ -282,6 +281,10 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     P1ContextFull *ctx = (P1ContextFull *) _ctx;
     P1ListNode *head;
     P1ListNode *node;
+    cl_int cl_err;
+    x264_nal_t *nals;
+    int len;
+    int ret;
 
     if (!ctx->video_ready || !ctx->stream_ready)
         return;
@@ -323,19 +326,6 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     glFinish();
     assert(glGetError() == GL_NO_ERROR);
 
-    p1_video_finish(ctx, time);
-}
-
-void p1_video_frame(P1VideoSource *vsrc, int width, int height, void *data)
-{
-    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, width, height, 0,
-                 GL_BGRA, GL_UNSIGNED_BYTE, data);
-}
-
-static void p1_video_finish(P1ContextFull *ctx, int64_t time)
-{
-    cl_int cl_err;
-
     cl_err = clEnqueueAcquireGLObjects(ctx->clq, 1, &ctx->rbo_mem, 0, NULL, NULL);
     assert(cl_err == CL_SUCCESS);
     cl_err = clEnqueueNDRangeKernel(ctx->clq, ctx->yuv_kernel, 2, NULL, yuv_work_size, NULL, 0, NULL, NULL);
@@ -346,10 +336,6 @@ static void p1_video_finish(P1ContextFull *ctx, int64_t time)
     assert(cl_err == CL_SUCCESS);
     cl_err = clFinish(ctx->clq);
     assert(cl_err == CL_SUCCESS);
-
-    x264_nal_t *nals;
-    int len;
-    int ret;
 
     if (!ctx->sent_video_config) {
         ctx->sent_video_config = true;
@@ -365,6 +351,12 @@ static void p1_video_finish(P1ContextFull *ctx, int64_t time)
     assert(ret >= 0);
     if (len)
         p1_stream_video(ctx, nals, len, &out_pic);
+}
+
+void p1_video_frame(P1VideoSource *vsrc, int width, int height, void *data)
+{
+    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, width, height, 0,
+                 GL_BGRA, GL_UNSIGNED_BYTE, data);
 }
 
 static GLuint p1_build_shader(GLuint type, const char *source)
