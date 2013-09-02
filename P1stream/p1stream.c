@@ -230,7 +230,7 @@ static void p1_ctrl_progress(P1ContextFull *ctx)
     if (!ctx->video_ready)
         p1_video_start(ctx);
     // FIXME: We may want to delay until sources are running.
-    if (!ctx->stream_ready)
+    if (ctx->stream_state == P1_STATE_IDLE)
         p1_stream_start(ctx);
 }
 

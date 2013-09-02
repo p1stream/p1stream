@@ -282,7 +282,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     int len;
     int ret;
 
-    if (!ctx->video_ready || !ctx->stream_ready)
+    if (!ctx->video_ready || ctx->stream_state != P1_STATE_RUNNING)
         return;
 
     CGLSetCurrentContext(ctx->gl);

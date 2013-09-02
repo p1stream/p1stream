@@ -8,18 +8,26 @@ static const char *default_url = "rtmp://localhost/app/test";
 
 static RTMPPacket *p1_stream_new_packet(P1ContextFull *ctx, uint8_t type, int64_t time, uint32_t body_size);
 static void p1_stream_submit_packet(P1ContextFull *ctx, RTMPPacket *pkt);
-static void p1_stream_submit_packet_on_thread(P1ContextFull *ctx, RTMPPacket *pkt);
+static void *p1_stream_main(void *data);
+static void p1_stream_flush(P1ContextFull *ctx);
 
 // Setup state.
 void p1_stream_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 {
     RTMP * const r = &ctx->rtmp;
+    int res;
+
+    res = pthread_mutex_init(&ctx->stream_lock, NULL);
+    assert(res == 0);
+
+    res = pthread_cond_init(&ctx->stream_cond, NULL);
+    assert(res == 0);
 
     RTMP_Init(r);
 
     if (!cfg->get_string(cfg, sect, "url", ctx->url, sizeof(ctx->url)))
         strcpy(ctx->url, default_url);
-    int res = RTMP_SetupURL(r, ctx->url);
+    res = RTMP_SetupURL(r, ctx->url);
     assert(res == TRUE);
 
     RTMP_EnableWrite(r);
@@ -28,20 +36,11 @@ void p1_stream_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
 // Connect.
 void p1_stream_start(P1ContextFull *ctx)
 {
-    RTMP * const r = &ctx->rtmp;
-    int res;
+    // FIXME: proper notifications.
+    ctx->stream_state = P1_STATE_STARTING;
 
-    ctx->dispatch = dispatch_queue_create("stream", DISPATCH_QUEUE_SERIAL);
-
-    res = RTMP_Connect(r, NULL);
-    assert(res == TRUE);
-
-    res = RTMP_ConnectStream(r, 0);
-    assert(res == TRUE);
-
-    ctx->start = mach_absolute_time();
-
-    ctx->stream_ready = true;
+    int res = pthread_create(&ctx->stream_thread, NULL, p1_stream_main, ctx);
+    assert(res == 0);
 }
 
 // Send video configuration.
@@ -191,71 +190,138 @@ static RTMPPacket *p1_stream_new_packet(P1ContextFull *ctx, uint8_t type, int64_
     return pkt;
 }
 
-// Submit a packet. It'll either be sent immediately, or queued.
+// Submit a packet to the queue.
 static void p1_stream_submit_packet(P1ContextFull *ctx, RTMPPacket *pkt)
 {
-    dispatch_async(ctx->dispatch, ^{
-        p1_stream_submit_packet_on_thread(ctx, pkt);
-    });
+    P1Context *_ctx = (P1Context *) ctx;
+    int res;
+
+    P1PacketQueue *q;
+    switch (pkt->m_packetType) {
+        case RTMP_PACKET_TYPE_AUDIO: q = &ctx->audio_queue; break;
+        case RTMP_PACKET_TYPE_VIDEO: q = &ctx->video_queue; break;
+        default: abort();
+    }
+
+    res = pthread_mutex_lock(&ctx->stream_lock);
+    assert(res == 0);
+
+    if (q->length == UINT8_MAX) {
+        free(pkt);
+        p1_log(_ctx, P1_LOG_WARNING, "Packet queue full, dropping packet!\n");
+        goto end;
+    }
+
+    // Deliberate overflow of q->write.
+    q->head[q->write++] = pkt;
+    q->length++;
+
+    res = pthread_cond_signal(&ctx->stream_cond);
+    assert(res == 0);
+
+end:
+    res = pthread_mutex_unlock(&ctx->stream_lock);
+    assert(res == 0);
 }
 
-// Continuation of p1_stream_submit_packet when on the correct thread.
-static void p1_stream_submit_packet_on_thread(P1ContextFull *ctx, RTMPPacket *pkt)
+// The main loop of the streaming thread.
+static void *p1_stream_main(void *data)
 {
-    P1Context *_ctx = (P1Context *) ctx;
+    P1ContextFull *ctx = (P1ContextFull *) data;
     RTMP * const r = &ctx->rtmp;
-    int err;
+    int res;
 
-    // The logic here assumes there will only ever be two types of packets
-    // in the queue. We only send audio and video packets.
+    res = RTMP_Connect(r, NULL);
+    assert(res == TRUE);
 
-    // We only need to queue packets with relative timestamps.
-    if (pkt->m_hasAbsTimestamp)
-        goto send;
+    res = RTMP_ConnectStream(r, 0);
+    assert(res == TRUE);
 
-    // Queue is empty, always queue the packet.
-    if (ctx->q_len == 0)
-        goto queue;
+    res = pthread_mutex_lock(&ctx->stream_lock);
+    assert(res == 0);
 
-    // Already queuing packets of this type.
-    if (ctx->q[ctx->q_start]->m_packetType == pkt->m_packetType)
-        goto queue;
+    ctx->start = mach_absolute_time();
+    ctx->stream_state = P1_STATE_RUNNING;
 
-    // Dequeue all packets of other types that come before this one.
-    while (ctx->q_len) {
-        RTMPPacket *dequeue_pkt = ctx->q[ctx->q_start];
+    do {
+        p1_stream_flush(ctx);
 
-        // FIXME: doesn't account for wrapping
-        if (dequeue_pkt->m_nTimeStamp > pkt->m_nTimeStamp) break;
+        res = pthread_cond_wait(&ctx->stream_cond, &ctx->stream_lock);
+        assert(res == 0);
+    } while (ctx->stream_state == P1_STATE_RUNNING);
 
-        err = RTMP_SendPacket(r, dequeue_pkt, FALSE);
-        free(dequeue_pkt);
-        assert(err == TRUE);
+    res = pthread_mutex_unlock(&ctx->stream_lock);
+    assert(res == 0);
 
-        ctx->q_start = (ctx->q_start + 1) % P1_PACKET_QUEUE_LENGTH;
-        ctx->q_len--;
+    return NULL;
+}
+
+// Flush as many queued packets as we can to the connection.
+// This is called with the stream lock held.
+static void p1_stream_flush(P1ContextFull *ctx)
+{
+    RTMP * const r = &ctx->rtmp;
+    P1PacketQueue *aq = &ctx->audio_queue;
+    P1PacketQueue *vq = &ctx->video_queue;
+    int res;
+
+    // We release the lock while writing, but that means another thread may
+    // have signalled in the meantime. Thus we loop until exhausted.
+
+    while (true) {
+
+        // We need to chronologically order packets, but they arrive separately.
+        // Wait until we have at least one audio and one video packet to compare.
+
+        // (In other words, if we don't have one of either, it's possible the other
+        // stream will generate a packet with an earlier timestamp.)
+
+        RTMPPacket *last_audio = (aq->length != 0) ? aq->head[aq->write - 1] : NULL;
+        RTMPPacket *last_video = (vq->length != 0) ? vq->head[vq->write - 1] : NULL;
+        if (last_audio == NULL || last_video == NULL)
+            return;
+
+        // Gather a list of packets to send.
+
+        RTMPPacket *list[UINT8_MAX * 2];
+        RTMPPacket **i = list;
+
+        RTMPPacket *ap = aq->head[aq->read];
+        RTMPPacket *vp = vq->head[vq->read];
+        RTMPPacket *pkt;
+        do {
+            if (ap->m_nTimeStamp < vp->m_nTimeStamp) {
+                pkt = ap;
+
+                ap = aq->head[++aq->read];
+                aq->length--;
+            }
+            else {
+                pkt = vp;
+
+                vp = vq->head[++vq->read];
+                vq->length--;
+            }
+
+            *(i++) = pkt;
+        } while (pkt != last_audio && pkt != last_video);
+
+        // Now write out the list. Release the lock so blocking doesn't affect
+        // other threads queuing new packets.
+
+        res = pthread_mutex_unlock(&ctx->stream_lock);
+        assert(res == 0);
+
+        RTMPPacket **end = i;
+        for (i = list; i != end; i++) {
+            pkt = *i;
+
+            res = RTMP_SendPacket(r, pkt, FALSE);
+            free(pkt);
+            assert(res == TRUE);
+        }
+
+        res = pthread_mutex_lock(&ctx->stream_lock);
+        assert(res == 0);
     }
-
-    // Queue is empty again, queue the packet.
-    if (ctx->q_len == 0)
-        goto queue;
-
-    // Remaining packets come after this one, so send immediately.
-    goto send;
-
-queue:
-    if (ctx->q_len == P1_PACKET_QUEUE_LENGTH) {
-        p1_log(_ctx, P1_LOG_WARNING, "A/V desync, dropping packet!\n");
-        free(pkt);
-    }
-    else {
-        size_t pos = (ctx->q_start + ctx->q_len++) % P1_PACKET_QUEUE_LENGTH;
-        ctx->q[pos] = pkt;
-    }
-    return;
-
-send:
-    err = RTMP_SendPacket(r, pkt, FALSE);
-    free(pkt);
-    assert(err == TRUE);
 }

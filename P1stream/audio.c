@@ -62,7 +62,7 @@ void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t sample
     P1Context *_ctx = src->ctx;
     P1ContextFull *ctx = (P1ContextFull *) _ctx;
 
-    if (!ctx->audio_ready || !ctx->stream_ready)
+    if (!ctx->audio_ready || ctx->stream_state != P1_STATE_RUNNING)
         return;
 
     if (!ctx->sent_audio_config) {

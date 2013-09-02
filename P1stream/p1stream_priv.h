@@ -4,16 +4,21 @@
 #include "p1stream.h"
 
 #include <mach/mach_time.h>
-#include <dispatch/dispatch.h>
 #include <OpenCL/opencl.h>
 #include <aacenc_lib.h>
 #include <x264.h>
 #include <rtmp.h>
 
-#define P1_PACKET_QUEUE_LENGTH 256
-
+typedef struct _P1PacketQueue P1PacketQueue;
 typedef struct _P1ContextFull P1ContextFull;
 
+
+struct _P1PacketQueue {
+    RTMPPacket *head[UINT8_MAX + 1];
+    uint8_t read;
+    uint8_t write;
+    uint8_t length;
+};
 
 struct _P1ContextFull {
     P1Context super;
@@ -66,19 +71,18 @@ struct _P1ContextFull {
 
 
     // Stream
-    bool stream_ready;
-
-    dispatch_queue_t dispatch;
+    P1State stream_state;
 
     RTMP rtmp;
     char url[256];
 
-    // ring buffer
-    RTMPPacket *q[P1_PACKET_QUEUE_LENGTH];
-    size_t q_start;
-    size_t q_len;
-
     uint64_t start;
+
+    pthread_t stream_thread;
+    pthread_mutex_t stream_lock;
+    pthread_cond_t stream_cond;
+    P1PacketQueue video_queue;
+    P1PacketQueue audio_queue;
 };
 
 
