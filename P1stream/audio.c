@@ -2,7 +2,6 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <memory.h>
 
 // Fixed internal mixing buffer parameters.
@@ -93,7 +92,7 @@ void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t sample
     pthread_mutex_unlock(&_ctx->audio_lock);
 
     if (samples)
-        printf("Audio mix buffer full, dropped %zd samples!", samples);
+        p1_log(_ctx, P1_LOG_WARNING, "Audio mix buffer full, dropped %zd samples!\n", samples);
 }
 
 bool p1_configure_audio_source(P1AudioSource *src, P1Config *cfg, P1ConfigSection *sect)

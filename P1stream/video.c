@@ -1,14 +1,13 @@
 #include "p1stream_priv.h"
 
-#include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
 static void p1_video_init_encoder_params(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);
 static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args);
-static GLuint p1_build_shader(GLuint type, const char *source);
-static void p1_video_build_program(GLuint program, const char *vertexShader, const char *fragmentShader);
+static GLuint p1_build_shader(P1Context *ctx, GLuint type, const char *source);
+static void p1_video_build_program(P1Context *ctx, GLuint program, const char *vertexShader, const char *fragmentShader);
 
 static const char *simple_vertex_shader =
     "#version 150\n"
@@ -180,7 +179,7 @@ void p1_video_start(P1ContextFull *ctx)
     glBindAttribLocation(ctx->program, 0, "a_Position");
     glBindAttribLocation(ctx->program, 1, "a_TexCoords");
     glBindFragDataLocation(ctx->program, 0, "o_FragColor");
-    p1_video_build_program(ctx->program, simple_vertex_shader, simple_fragment_shader);
+    p1_video_build_program(_ctx, ctx->program, simple_vertex_shader, simple_fragment_shader);
     ctx->tex_u = glGetUniformLocation(ctx->program, "u_Texture");
 
     ctx->rbo_mem = clCreateFromGLRenderbuffer(ctx->cl, CL_MEM_READ_ONLY, ctx->rbo, NULL);
@@ -351,7 +350,7 @@ void p1_video_frame(P1VideoSource *vsrc, int width, int height, void *data)
                  GL_BGRA, GL_UNSIGNED_BYTE, data);
 }
 
-static GLuint p1_build_shader(GLuint type, const char *source)
+static GLuint p1_build_shader(P1Context *ctx, GLuint type, const char *source)
 {
     GLuint shader = glCreateShader(type);
     glShaderSource(shader, 1, &source, NULL);
@@ -363,7 +362,7 @@ static GLuint p1_build_shader(GLuint type, const char *source)
         GLchar *log = malloc(log_size);
         if (log) {
             glGetShaderInfoLog(shader, log_size, NULL, log);
-            printf("Shader compiler log:\n%s", log);
+            p1_log(ctx, P1_LOG_INFO, "Shader compiler log:\n%s", log);
             free(log);
         }
     }
@@ -376,10 +375,10 @@ static GLuint p1_build_shader(GLuint type, const char *source)
     return shader;
 }
 
-static void p1_video_build_program(GLuint program, const char *vertex_source, const char *fragment_source)
+static void p1_video_build_program(P1Context *ctx, GLuint program, const char *vertex_source, const char *fragment_source)
 {
-    GLuint vertex_shader = p1_build_shader(GL_VERTEX_SHADER, vertex_source);
-    GLuint fragment_shader = p1_build_shader(GL_FRAGMENT_SHADER, fragment_source);
+    GLuint vertex_shader = p1_build_shader(ctx, GL_VERTEX_SHADER, vertex_source);
+    GLuint fragment_shader = p1_build_shader(ctx, GL_FRAGMENT_SHADER, fragment_source);
 
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
@@ -396,7 +395,7 @@ static void p1_video_build_program(GLuint program, const char *vertex_source, co
         GLchar *log = malloc(log_size);
         if (log) {
             glGetProgramInfoLog(program, log_size, NULL, log);
-            printf("Shader linker log:\n%s", log);
+            p1_log(ctx, P1_LOG_INFO, "Shader linker log:\n%s", log);
             free(log);
         }
     }

@@ -120,10 +120,12 @@ static void p1_display_video_source_frame(P1VideoSource *vsrc)
 }
 
 static void p1_display_video_source_callback(
-    P1DisplayVideoSource *source,
+    P1DisplayVideoSource *dvsrc,
     CGDisplayStreamFrameStatus status,
     IOSurfaceRef frame)
 {
+    P1Source *src = (P1Source *) dvsrc;
+
     if (status == kCGDisplayStreamFrameStatusFrameComplete) {
         CFRetain(frame);
         IOSurfaceIncrementUseCount(frame);
@@ -131,15 +133,15 @@ static void p1_display_video_source_callback(
 
     IOSurfaceRef old_frame = NULL;
 
-    pthread_mutex_lock(&source->frame_lock);
+    pthread_mutex_lock(&dvsrc->frame_lock);
     if (status != kCGDisplayStreamFrameStatusFrameIdle) {
-        old_frame = source->frame;
-        source->frame = NULL;
+        old_frame = dvsrc->frame;
+        dvsrc->frame = NULL;
     }
     if (status == kCGDisplayStreamFrameStatusFrameComplete) {
-        source->frame = frame;
+        dvsrc->frame = frame;
     }
-    pthread_mutex_unlock(&source->frame_lock);
+    pthread_mutex_unlock(&dvsrc->frame_lock);
 
     if (old_frame) {
         IOSurfaceDecrementUseCount(old_frame);
@@ -147,7 +149,7 @@ static void p1_display_video_source_callback(
     }
 
     if (status == kCGDisplayStreamFrameStatusStopped) {
-        printf("Display stream stopped.");
+        p1_log(src->ctx, P1_LOG_ERROR, "Display stream stopped.");
         abort();
     }
 }

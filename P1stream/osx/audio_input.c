@@ -1,6 +1,5 @@
 #include "p1stream.h"
 
-#include <stdio.h>
 #include <dispatch/dispatch.h>
 #include <AudioToolbox/AudioToolbox.h>
 

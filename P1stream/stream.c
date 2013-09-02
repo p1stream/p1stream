@@ -1,6 +1,5 @@
 #include "p1stream_priv.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -203,8 +202,9 @@ static void p1_stream_submit_packet(P1ContextFull *ctx, RTMPPacket *pkt)
 // Continuation of p1_stream_submit_packet when on the correct thread.
 static void p1_stream_submit_packet_on_thread(P1ContextFull *ctx, RTMPPacket *pkt)
 {
-    int err;
+    P1Context *_ctx = (P1Context *) ctx;
     RTMP * const r = &ctx->rtmp;
+    int err;
 
     // The logic here assumes there will only ever be two types of packets
     // in the queue. We only send audio and video packets.
@@ -245,7 +245,7 @@ static void p1_stream_submit_packet_on_thread(P1ContextFull *ctx, RTMPPacket *pk
 
 queue:
     if (ctx->q_len == P1_PACKET_QUEUE_LENGTH) {
-        printf("A/V desync, dropping packet!\n");
+        p1_log(_ctx, P1_LOG_WARNING, "A/V desync, dropping packet!\n");
         free(pkt);
     }
     else {
