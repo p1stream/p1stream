@@ -74,7 +74,7 @@ struct _P1Config {
 };
 
 
-// Sources can be in one of the following states.
+// Many objects track simple state. These are the possible states.
 enum _P1State {
     P1_STATE_IDLE       = 0, // Initial value.
     P1_STATE_STARTING   = 1,
@@ -96,7 +96,7 @@ enum _P1State {
 }
 
 
-// This is the state the source should be in, and should be worked towards.
+// This is the state we want an object to be in, and should be worked towards.
 enum _P1TargetState {
     P1_TARGET_RUNNING   = 0, // Initial value.
     P1_TARGET_IDLE      = 1,
@@ -327,7 +327,6 @@ void p1_audio_source_init(P1AudioSource *asrc, P1Config *cfg, P1ConfigSection *s
 
 // Callback for audio sources to provide audio buffer data.
 void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples);
-
 
 
 // Audio mixer component.
