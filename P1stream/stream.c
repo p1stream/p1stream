@@ -11,7 +11,6 @@ static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt);
 static void *p1_conn_main(void *data);
 static void p1_conn_flush(P1ConnectionFull *connf);
 
-// Setup state.
 void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 {
     RTMP *r = &connf->rtmp;
@@ -33,7 +32,6 @@ void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
     RTMP_EnableWrite(r);
 }
 
-// Connect.
 void p1_conn_start(P1ConnectionFull *connf)
 {
     P1Connection *conn = (P1Connection *) connf;
@@ -43,6 +41,11 @@ void p1_conn_start(P1ConnectionFull *connf)
 
     int res = pthread_create(&connf->thread, NULL, p1_conn_main, connf);
     assert(res == 0);
+}
+
+void p1_conn_stop(P1ConnectionFull *connf)
+{
+    // FIXME
 }
 
 // Send video configuration.

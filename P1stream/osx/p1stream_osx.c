@@ -1,7 +1,7 @@
 #include "p1stream_priv.h"
 
 
-void p1_video_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer)
+void p1_video_source_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer)
 {
     P1Source *src = (P1Source *) vsrc;
     P1Video *video = src->ctx->video;

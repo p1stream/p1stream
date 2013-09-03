@@ -51,6 +51,8 @@ P1VideoSource *p1_capture_video_source_create(P1Config *cfg, P1ConfigSection *se
     P1Source *src = (P1Source *) cvsrc;
     assert(cvsrc != NULL);
 
+    p1_video_source_init(vsrc, cfg, sect);
+
     src->free = p1_capture_video_source_free;
     src->start = p1_capture_video_source_start;
     src->stop = p1_capture_video_source_stop;
@@ -149,14 +151,14 @@ static void p1_capture_video_source_frame(P1VideoSource *vsrc)
 
     IOSurfaceRef surface = CVPixelBufferGetIOSurface(frame);
     if (surface != NULL) {
-        p1_video_frame_iosurface(vsrc, surface);
+        p1_video_source_frame_iosurface(vsrc, surface);
     }
     else {
         CVPixelBufferLockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
         int width = (int) CVPixelBufferGetWidth(frame);
         int height = (int) CVPixelBufferGetHeight(frame);
         void *data = CVPixelBufferGetBaseAddress(frame);
-        p1_video_frame(vsrc, width, height, data);
+        p1_video_source_frame(vsrc, width, height, data);
         CVPixelBufferUnlockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
     }
 

@@ -54,6 +54,10 @@ struct _P1VideoFull {
     bool sent_config;
 };
 
+void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
+void p1_video_start(P1VideoFull *videof);
+void p1_video_stop(P1VideoFull *videof);
+
 
 // Private part of P1Audio.
 
@@ -69,6 +73,10 @@ struct _P1AudioFull {
 
     bool sent_config;
 };
+
+void p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect);
+void p1_audio_start(P1AudioFull *audiof);
+void p1_audio_stop(P1AudioFull *audiof);
 
 
 // Private part of P1StreamConnection.
@@ -88,6 +96,14 @@ struct _P1ConnectionFull {
     P1PacketQueue audio_queue;
 };
 
+void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect);
+void p1_conn_start(P1ConnectionFull *connf);
+void p1_conn_stop(P1ConnectionFull *connf);
+void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len);
+void p1_conn_video(P1ConnectionFull *connf, x264_nal_t *nals, int len, x264_picture_t *pic);
+void p1_conn_audio_config(P1ConnectionFull *connf);
+void p1_conn_audio(P1ConnectionFull *connf, int64_t time, void *buf, size_t len);
+
 
 // Private part of P1Context.
 
@@ -100,22 +116,5 @@ struct _P1ContextFull {
 
     mach_timebase_info_data_t timebase;
 };
-
-
-void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
-void p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect);
-void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect);
-
-void p1_video_start(P1VideoFull *videof);
-void p1_audio_start(P1AudioFull *audiof);
-void p1_conn_start(P1ConnectionFull *connf);
-
-void p1_video_output(P1VideoClock *vclock, int64_t time);
-
-void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len);
-void p1_conn_video(P1ConnectionFull *connf, x264_nal_t *nals, int len, x264_picture_t *pic);
-
-void p1_conn_audio_config(P1ConnectionFull *connf);
-void p1_conn_audio(P1ConnectionFull *connf, int64_t time, void *buf, size_t len);
 
 #endif

@@ -33,6 +33,8 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
     P1Source *src = (P1Source *) iasrc;
     assert(iasrc != NULL);
 
+    p1_audio_source_init(asrc, cfg, sect);
+
     src->free = p1_input_audio_source_free;
     src->start = p1_input_audio_source_start;
     src->stop = p1_input_audio_source_stop;
@@ -57,7 +59,7 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
         ^(AudioQueueRef queue, AudioQueueBufferRef buf,
           const AudioTimeStamp *time, UInt32 num_descs,
           const AudioStreamPacketDescription *descs) {
-            p1_audio_buffer(asrc, time->mHostTime, buf->mAudioData, buf->mAudioDataByteSize / sample_size);
+            p1_audio_source_buffer(asrc, time->mHostTime, buf->mAudioData, buf->mAudioDataByteSize / sample_size);
 
             OSStatus ret = AudioQueueEnqueueBuffer(iasrc->queue, buf, 0, NULL);
             assert(ret == noErr);

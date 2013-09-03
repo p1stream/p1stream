@@ -34,6 +34,8 @@ P1VideoSource *p1_display_video_source_create(P1Config *cfg, P1ConfigSection *se
     P1Source *src = (P1Source *) dvsrc;
     assert(dvsrc != NULL);
 
+    p1_video_source_init(vsrc, cfg, sect);
+
     src->free = p1_display_video_source_free;
     src->start = p1_display_video_source_start;
     src->stop = p1_display_video_source_stop;
@@ -113,7 +115,7 @@ static void p1_display_video_source_frame(P1VideoSource *vsrc)
     if (!frame)
         return;
 
-    p1_video_frame_iosurface(vsrc, frame);
+    p1_video_source_frame_iosurface(vsrc, frame);
 
     IOSurfaceDecrementUseCount(frame);
     CFRelease(frame);

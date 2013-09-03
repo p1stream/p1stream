@@ -42,9 +42,6 @@ P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
 
     int ret;
 
-    ret = pthread_mutex_init(&video->lock, NULL);
-    assert(ret == 0);
-
     ret = pipe(ctxf->ctrl_pipe);
     assert(ret == 0);
     ret = pipe(ctxf->user_pipe);

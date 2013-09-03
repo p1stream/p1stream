@@ -60,7 +60,22 @@ void p1_audio_start(P1AudioFull *audiof)
     p1_set_state(audio->ctx, P1_OTYPE_AUDIO, audio, P1_STATE_RUNNING);
 }
 
-void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples)
+void p1_audio_stop(P1AudioFull *audiof)
+{
+    // FIXME
+}
+
+void p1_audio_source_init(P1AudioSource *src, P1Config *cfg, P1ConfigSection *sect)
+{
+    bool res;
+
+    res = cfg->get_float(cfg, sect, "volume", &src->volume)
+       && cfg->get_bool(cfg, sect, "master", &src->master);
+
+    assert(res == true);
+}
+
+void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples)
 {
     P1Source *src = (P1Source *) asrc;
     P1Context *ctx = src->ctx;
@@ -101,12 +116,6 @@ void p1_audio_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t sample
 
     if (samples)
         p1_log(ctx, P1_LOG_WARNING, "Audio mix buffer full, dropped %zd samples!\n", samples);
-}
-
-bool p1_configure_audio_source(P1AudioSource *src, P1Config *cfg, P1ConfigSection *sect)
-{
-    return cfg->get_float(cfg, sect, "volume", &src->volume)
-        && cfg->get_bool(cfg, sect, "master", &src->master);
 }
 
 // Write as much as possible to the mix buffer.

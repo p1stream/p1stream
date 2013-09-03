@@ -92,8 +92,12 @@ static const size_t yuv_work_size[] = {
 void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Video *video = (P1Video *) videof;
+    int ret;
 
     p1_list_init(&video->sources);
+
+    ret = pthread_mutex_init(&video->lock, NULL);
+    assert(ret == 0);
 
     p1_video_init_encoder_params(videof, cfg, sect);
 }
@@ -219,6 +223,11 @@ void p1_video_start(P1VideoFull *videof)
     p1_set_state(ctx, P1_OTYPE_VIDEO, video, P1_STATE_RUNNING);
 }
 
+void p1_video_stop(P1VideoFull *videof)
+{
+    // FIXME
+}
+
 static void p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
 {
     x264_param_t *params = &videof->params;
@@ -258,18 +267,6 @@ static void p1_video_encoder_log_callback(void *data, int level, const char *fmt
 {
     P1Context *ctx = (P1Context *) data;
     p1_logv(ctx, (P1LogLevel) level, fmt, args);
-}
-
-bool p1_configure_video_source(P1VideoSource *src, P1Config *cfg, P1ConfigSection *sect)
-{
-    return cfg->get_float(cfg, sect, "x1", &src->x1)
-        && cfg->get_float(cfg, sect, "y1", &src->y1)
-        && cfg->get_float(cfg, sect, "x2", &src->x2)
-        && cfg->get_float(cfg, sect, "y2", &src->y2)
-        && cfg->get_float(cfg, sect, "u1", &src->u1)
-        && cfg->get_float(cfg, sect, "v1", &src->v1)
-        && cfg->get_float(cfg, sect, "u2", &src->u2)
-        && cfg->get_float(cfg, sect, "v2", &src->v2);
 }
 
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
@@ -348,7 +345,23 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
         p1_conn_video(connf, nals, len, &out_pic);
 }
 
-void p1_video_frame(P1VideoSource *vsrc, int width, int height, void *data)
+void p1_video_source_init(P1VideoSource *src, P1Config *cfg, P1ConfigSection *sect)
+{
+    bool res;
+
+    res = cfg->get_float(cfg, sect, "x1", &src->x1)
+       && cfg->get_float(cfg, sect, "y1", &src->y1)
+       && cfg->get_float(cfg, sect, "x2", &src->x2)
+       && cfg->get_float(cfg, sect, "y2", &src->y2)
+       && cfg->get_float(cfg, sect, "u1", &src->u1)
+       && cfg->get_float(cfg, sect, "v1", &src->v1)
+       && cfg->get_float(cfg, sect, "u2", &src->u2)
+       && cfg->get_float(cfg, sect, "v2", &src->v2);
+
+    assert(res == true);
+}
+
+void p1_video_source_frame(P1VideoSource *vsrc, int width, int height, void *data)
 {
     glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, width, height, 0,
                  GL_BGRA, GL_UNSIGNED_BYTE, data);
