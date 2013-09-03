@@ -284,9 +284,6 @@ struct _P1VideoSource {
     // Texture name. The source need not touch this.
     GLuint texture;
 
-    // The following coordinates are in the range [-1, +1].
-    // They are pairs of bottom left and top right coordinates.
-
     // Top left and bottom right coordinates of where to place frames in the
     // output image. These are in the range [-1, +1].
     float x1, y1, x2, y2;
