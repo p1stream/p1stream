@@ -19,6 +19,9 @@ typedef struct _P1ListNode P1ListNode;
 typedef struct _P1Source P1Source;
 typedef struct _P1VideoSource P1VideoSource;
 typedef struct _P1AudioSource P1AudioSource;
+typedef struct _P1Video P1Video;
+typedef struct _P1Audio P1Audio;
+typedef struct _P1Connection P1Connection;
 typedef struct _P1Context P1Context;
 typedef enum _P1FreeOptions P1FreeOptions;
 typedef enum _P1NotificationType P1NotificationType;
@@ -197,24 +200,52 @@ struct _P1AudioSource {
 };
 
 
-// The main context containing all state.
 
+// Audio mixer component.
+struct _P1Audio {
+    P1Context *ctx;
+    
+    P1TargetState target;
+    P1State state;
+
+    pthread_mutex_t lock;
+    P1ListNode sources;
+};
+
+// Video mixer component.
+struct _P1Video {
+    P1Context *ctx;
+
+    P1TargetState target;
+    P1State state;
+    
+    P1VideoClock *clock;
+    
+    pthread_mutex_t lock;
+    P1ListNode sources;
+};
+
+// Stream connection component.
+struct _P1Connection {
+    P1Context *ctx;
+
+    P1TargetState target;
+    P1State state;
+};
+
+// Context that encapsulates everything else.
 struct _P1Context {
+    P1State state;
+
     // Log function, defaults to stderr logging.
     P1LogCallback log_fn;
     void *log_user_data;
     // Maximum log level, defaults to P1_LOG_INFO.
     P1LogLevel log_level;
 
-    // Current state.
-    P1State state;
-
-    pthread_mutex_t video_lock;
-    P1VideoClock *clock;
-    P1ListNode video_sources;
-
-    pthread_mutex_t audio_lock;
-    P1ListNode audio_sources;
+    P1Video *video;
+    P1Audio *audio;
+    P1Connection *conn;
 };
 
 
@@ -248,9 +279,12 @@ enum _P1NotificationType {
 enum _P1ObjectType {
     P1_OTYPE_UNKNOWN        = 0,
     P1_OTYPE_CONTEXT        = 1,
-    P1_OTYPE_VIDEO_CLOCK    = 2,
-    P1_OTYPE_VIDEO_SOURCE   = 3,
-    P1_OTYPE_AUDIO_SOURCE   = 4
+    P1_OTYPE_VIDEO          = 2,
+    P1_OTYPE_AUDIO          = 3,
+    P1_OTYPE_CONNECTION     = 4,
+    P1_OTYPE_VIDEO_CLOCK    = 5,
+    P1_OTYPE_VIDEO_SOURCE   = 6,
+    P1_OTYPE_AUDIO_SOURCE   = 7
 };
 
 struct _P1Notification {

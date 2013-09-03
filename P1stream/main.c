@@ -75,7 +75,7 @@ static void create_video_clock(P1Context *ctx, P1Config *cfg)
     P1VideoClock *clock = factory(cfg, sect);
     assert(clock != NULL);
 
-    ctx->clock = clock;
+    ctx->video->clock = clock;
 }
 
 static void create_audio_sources(P1Context *ctx, P1Config *cfg)
@@ -105,7 +105,7 @@ static bool create_audio_source(P1Config *cfg, P1ConfigSection *sect, void *data
     b_ret = p1_configure_audio_source(src, cfg, sect);
     assert(b_ret);
 
-    p1_list_before(&ctx->audio_sources, src);
+    p1_list_before(&ctx->audio->sources, src);
 
     return true;
 }
@@ -139,7 +139,7 @@ static bool create_video_source(P1Config *cfg, P1ConfigSection *sect, void *data
     b_ret = p1_configure_video_source(src, cfg, sect);
     assert(b_ret);
 
-    p1_list_before(&ctx->video_sources, src);
+    p1_list_before(&ctx->video->sources, src);
 
     return true;
 }

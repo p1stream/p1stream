@@ -5,44 +5,58 @@
 
 static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args, void *user_data);
 static void *p1_ctrl_main(void *data);
-static void p1_ctrl_progress(P1ContextFull *ctx);
+static void p1_ctrl_progress(P1Context *ctx);
 static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src);
-static void p1_ctrl_comm(P1ContextFull *ctx);
-static void p1_ctrl_log_notification(P1ContextFull *ctx, P1Notification *notification);
+static void p1_ctrl_comm(P1ContextFull *ctxf);
+static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notification);
 
 
 P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
 {
-    P1ContextFull *ctx = calloc(1, sizeof(P1ContextFull));
-    P1Context *_ctx = (P1Context *) ctx;
+    P1ConfigSection *video_sect = cfg->get_section(cfg, sect, "video");
+    P1ConfigSection *audio_sect = cfg->get_section(cfg, sect, "audio");
+    P1ConfigSection *stream_sect = cfg->get_section(cfg, sect, "stream");
 
-    _ctx->log_level = P1_LOG_INFO;
-    _ctx->log_fn = p1_log_default;
+    P1ContextFull *ctxf = calloc(1,
+        sizeof(P1ContextFull) + sizeof(P1VideoFull) +
+        sizeof(P1AudioFull) + sizeof(P1ConnectionFull));
+    P1VideoFull *videof = (P1VideoFull *) (ctxf + 1);
+    P1AudioFull *audiof = (P1AudioFull *) (videof + 1);
+    P1ConnectionFull *connf = (P1ConnectionFull *) (audiof + 1);
+
+    P1Context *ctx = (P1Context *) ctxf;
+    P1Video *video = (P1Video *) videof;
+    P1Audio *audio = (P1Audio *) audiof;
+    P1Connection *conn = (P1Connection *) connf;
+
+    ctx->video = video;
+    ctx->audio = audio;
+    ctx->conn = conn;
+
+    video->ctx = ctx;
+    audio->ctx = ctx;
+    conn->ctx = ctx;
+
+    ctx->log_level = P1_LOG_INFO;
+    ctx->log_fn = p1_log_default;
 
     int ret;
 
-    ret = pthread_mutex_init(&_ctx->video_lock, NULL);
-    assert(ret == 0);
-    ret = pthread_mutex_init(&_ctx->audio_lock, NULL);
+    ret = pthread_mutex_init(&video->lock, NULL);
     assert(ret == 0);
 
-    ret = pipe(ctx->ctrl_pipe);
+    ret = pipe(ctxf->ctrl_pipe);
     assert(ret == 0);
-    ret = pipe(ctx->user_pipe);
+    ret = pipe(ctxf->user_pipe);
     assert(ret == 0);
 
-    mach_timebase_info(&ctx->timebase);
+    mach_timebase_info(&ctxf->timebase);
 
-    P1ConfigSection *audio_sect = cfg->get_section(cfg, sect, "audio");
-    p1_audio_init(ctx, cfg, audio_sect);
+    p1_video_init(videof, cfg, video_sect);
+    p1_audio_init(audiof, cfg, audio_sect);
+    p1_conn_init(connf, cfg, stream_sect);
 
-    P1ConfigSection *video_sect = cfg->get_section(cfg, sect, "video");
-    p1_video_init(ctx, cfg, video_sect);
-
-    P1ConfigSection *stream_sect = cfg->get_section(cfg, sect, "stream");
-    p1_stream_init(ctx, cfg, stream_sect);
-
-    return _ctx;
+    return ctx;
 }
 
 void p1_free(P1Context *ctx, P1FreeOptions options)
@@ -135,29 +149,30 @@ static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va
 
 static void *p1_ctrl_main(void *data)
 {
-    P1Context *_ctx = (P1Context *) data;
-    P1ContextFull *ctx = (P1ContextFull *) data;
+    P1Context *ctx = (P1Context *) data;
+    P1ContextFull *ctxf = (P1ContextFull *) ctx;
 
-    p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_RUNNING);
+    p1_set_state(ctx, P1_OTYPE_CONTEXT, ctx, P1_STATE_RUNNING);
 
     do {
-        p1_ctrl_comm(ctx);
+        p1_ctrl_comm(ctxf);
         p1_ctrl_progress(ctx);
 
         // FIXME: handle stop
     } while (true);
 
-    p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_IDLE);
-    p1_ctrl_comm(ctx);
+    p1_set_state(ctx, P1_OTYPE_CONTEXT, ctx, P1_STATE_IDLE);
+    p1_ctrl_comm(ctxf);
 
     return NULL;
 }
 
-static void p1_ctrl_comm(P1ContextFull *ctx)
+static void p1_ctrl_comm(P1ContextFull *ctxf)
 {
+    P1Context *ctx = (P1Context *) ctxf;
     int i_ret;
     struct pollfd fd = {
-        .fd = ctx->ctrl_pipe[0],
+        .fd = ctxf->ctrl_pipe[0],
         .events = POLLIN
     };
 
@@ -180,7 +195,7 @@ static void p1_ctrl_comm(P1ContextFull *ctx)
         p1_ctrl_log_notification(ctx, &notification);
 
         // Pass it on to the user.
-        s_ret = write(ctx->user_pipe[1], &notification, size);
+        s_ret = write(ctxf->user_pipe[1], &notification, size);
         assert(s_ret == size);
 
         // Flush other notifications.
@@ -189,49 +204,54 @@ static void p1_ctrl_comm(P1ContextFull *ctx)
     } while (i_ret == 1);
 }
 
-static void p1_ctrl_progress(P1ContextFull *ctx)
+static void p1_ctrl_progress(P1Context *ctx)
 {
-    P1Context *_ctx = (P1Context *) ctx;
-
+    P1Video *video = ctx->video;
+    P1VideoFull *videof = (P1VideoFull *) video;
+    P1Audio *audio = ctx->audio;
+    P1AudioFull *audiof = (P1AudioFull *) audio;
+    P1Connection *conn = ctx->conn;
+    P1ConnectionFull *connf = (P1ConnectionFull *) conn;
     P1ListNode *head;
     P1ListNode *node;
 
     // Progress clock.
-    P1VideoClock *clock = _ctx->clock;
+    P1VideoClock *clock = ctx->video->clock;
     if (clock->state == P1_STATE_IDLE) {
-        clock->ctx = _ctx;
+        clock->ctx = ctx;
         clock->start(clock);
     }
     // Clock must be running before we can make anything else happen.
     if (clock->state != P1_STATE_RUNNING)
         return;
 
-    pthread_mutex_lock(&_ctx->video_lock);
+    pthread_mutex_lock(&video->lock);
     // Progress video sources.
-    head = &_ctx->video_sources;
+    head = &video->sources;
     p1_list_iterate(head, node) {
         P1Source *src = (P1Source *) node;
-        p1_ctrl_progress_source(_ctx, src);
+        p1_ctrl_progress_source(ctx, src);
     }
-    pthread_mutex_unlock(&_ctx->video_lock);
+    pthread_mutex_unlock(&video->lock);
 
-    pthread_mutex_lock(&_ctx->audio_lock);
+    pthread_mutex_lock(&audio->lock);
     // Progress audio sources.
-    head = &_ctx->audio_sources;
+    head = &audio->sources;
     p1_list_iterate(head, node) {
         P1Source *src = (P1Source *) node;
-        p1_ctrl_progress_source(_ctx, src);
+        p1_ctrl_progress_source(ctx, src);
     }
-    pthread_mutex_unlock(&_ctx->audio_lock);
+    pthread_mutex_unlock(&audio->lock);
 
     // Progress internal components.
-    if (!ctx->audio_ready)
-        p1_audio_start(ctx);
-    if (!ctx->video_ready)
-        p1_video_start(ctx);
+    // FIXME: honour target
+    if (audio->state == P1_STATE_IDLE)
+        p1_audio_start(audiof);
+    if (video->state == P1_STATE_IDLE)
+        p1_video_start(videof);
     // FIXME: We may want to delay until sources are running.
-    if (ctx->stream_state == P1_STATE_IDLE)
-        p1_stream_start(ctx);
+    if (conn->state == P1_STATE_IDLE)
+        p1_conn_start(connf);
 }
 
 static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src)
@@ -254,10 +274,8 @@ static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src)
     }
 }
 
-static void p1_ctrl_log_notification(P1ContextFull *ctx, P1Notification *notification)
+static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notification)
 {
-    P1Context *_ctx = (P1Context *) ctx;
-
     const char *action;
     switch (notification->type) {
         case P1_NTYPE_STATE_CHANGE:
@@ -283,11 +301,14 @@ static void p1_ctrl_log_notification(P1ContextFull *ctx, P1Notification *notific
     const char *obj_descr;
     switch (notification->object_type) {
         case P1_OTYPE_CONTEXT:      obj_descr = "context";      break;
+        case P1_OTYPE_VIDEO:        obj_descr = "video mixer";  break;
+        case P1_OTYPE_AUDIO:        obj_descr = "audio mixer";  break;
+        case P1_OTYPE_CONNECTION:   obj_descr = "connection";   break;
         case P1_OTYPE_VIDEO_CLOCK:  obj_descr = "video clock";  break;
         case P1_OTYPE_VIDEO_SOURCE: obj_descr = "video source"; break;
         case P1_OTYPE_AUDIO_SOURCE: obj_descr = "audio source"; break;
         default: return;
     }
 
-    p1_log(_ctx, P1_LOG_INFO, "%s %p %s\n", obj_descr, notification->object, action);
+    p1_log(ctx, P1_LOG_INFO, "%s %p %s\n", obj_descr, notification->object, action);
 }

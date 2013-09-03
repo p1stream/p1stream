@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
-static void p1_video_init_encoder_params(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect);
+static void p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);
 static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args);
 static GLuint p1_build_shader(P1Context *ctx, GLuint type, const char *source);
@@ -89,19 +89,20 @@ static const size_t yuv_work_size[] = {
 };
 
 
-void p1_video_init(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
+void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
 {
-    P1Context *_ctx = (P1Context *) ctx;
+    P1Video *video = (P1Video *) videof;
 
-    p1_list_init(&_ctx->video_sources);
+    p1_list_init(&video->sources);
 
-    p1_video_init_encoder_params(ctx, cfg, sect);
+    p1_video_init_encoder_params(videof, cfg, sect);
 }
 
-void p1_video_start(P1ContextFull *ctx)
+void p1_video_start(P1VideoFull *videof)
 {
-    P1Context *_ctx = (P1Context *) ctx;
-    x264_param_t *params = &ctx->params;
+    P1Video *video = (P1Video *) videof;
+    P1Context *ctx = video->ctx;
+    x264_param_t *params = &videof->params;
     CGLError cgl_err;
     cl_int cl_err;
     int i_err;
@@ -116,26 +117,26 @@ void p1_video_start(P1ContextFull *ctx)
     cgl_err = CGLChoosePixelFormat(attribs, &pixel_format, &npix);
     assert(cgl_err == kCGLNoError);
 
-    cgl_err = CGLCreateContext(pixel_format, NULL, &ctx->gl);
+    cgl_err = CGLCreateContext(pixel_format, NULL, &videof->gl);
     CGLReleasePixelFormat(pixel_format);
     assert(cgl_err == kCGLNoError);
 
-    CGLSetCurrentContext(ctx->gl);
+    CGLSetCurrentContext(videof->gl);
 
-    CGLShareGroupObj share_group = CGLGetShareGroup(ctx->gl);
+    CGLShareGroupObj share_group = CGLGetShareGroup(videof->gl);
     cl_context_properties props[] = {
         CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE, (cl_context_properties) share_group,
         0
     };
-    ctx->cl = clCreateContext(props, 0, NULL, clLogMessagesToStdoutAPPLE, NULL, NULL);
-    assert(ctx->cl != NULL);
+    videof->cl = clCreateContext(props, 0, NULL, clLogMessagesToStdoutAPPLE, NULL, NULL);
+    assert(videof->cl != NULL);
 
     cl_device_id device_id;
-    cl_err = clGetContextInfo(ctx->cl, CL_CONTEXT_DEVICES, sizeof(cl_device_id), &device_id, &size);
+    cl_err = clGetContextInfo(videof->cl, CL_CONTEXT_DEVICES, sizeof(cl_device_id), &device_id, &size);
     assert(cl_err == CL_SUCCESS);
     assert(size != 0);
-    ctx->clq = clCreateCommandQueue(ctx->cl, device_id, 0, NULL);
-    assert(ctx->clq != NULL);
+    videof->clq = clCreateCommandQueue(videof->cl, device_id, 0, NULL);
+    assert(videof->clq != NULL);
 
     params->pf_log = p1_video_encoder_log_callback;
     params->p_log_private = ctx;
@@ -152,75 +153,75 @@ void p1_video_start(P1ContextFull *ctx)
     params->i_width = output_width;
     params->i_height = output_height;
 
-    params->i_fps_num = _ctx->clock->fps_num;
-    params->i_fps_den = _ctx->clock->fps_den;
+    params->i_fps_num = video->clock->fps_num;
+    params->i_fps_den = video->clock->fps_den;
 
-    ctx->enc = x264_encoder_open(params);
-    assert(ctx->enc != NULL);
+    videof->enc = x264_encoder_open(params);
+    assert(videof->enc != NULL);
 
-    i_err = x264_picture_alloc(&ctx->enc_pic, X264_CSP_I420, output_width, output_height);
+    i_err = x264_picture_alloc(&videof->enc_pic, X264_CSP_I420, output_width, output_height);
     assert(i_err == 0);
 
-    glGenVertexArrays(1, &ctx->vao);
-    glGenBuffers(1, &ctx->vbo);
-    glGenRenderbuffers(1, &ctx->rbo);
-    glGenFramebuffers(1, &ctx->fbo);
+    glGenVertexArrays(1, &videof->vao);
+    glGenBuffers(1, &videof->vbo);
+    glGenRenderbuffers(1, &videof->rbo);
+    glGenFramebuffers(1, &videof->fbo);
     assert(glGetError() == GL_NO_ERROR);
 
-    glBindRenderbuffer(GL_RENDERBUFFER, ctx->fbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, videof->fbo);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, output_width, output_height);
     assert(glGetError() == GL_NO_ERROR);
 
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ctx->fbo);
-    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, ctx->rbo);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, videof->fbo);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, videof->rbo);
     assert(glGetError() == GL_NO_ERROR);
 
-    ctx->program = glCreateProgram();
-    glBindAttribLocation(ctx->program, 0, "a_Position");
-    glBindAttribLocation(ctx->program, 1, "a_TexCoords");
-    glBindFragDataLocation(ctx->program, 0, "o_FragColor");
-    p1_video_build_program(_ctx, ctx->program, simple_vertex_shader, simple_fragment_shader);
-    ctx->tex_u = glGetUniformLocation(ctx->program, "u_Texture");
+    videof->program = glCreateProgram();
+    glBindAttribLocation(videof->program, 0, "a_Position");
+    glBindAttribLocation(videof->program, 1, "a_TexCoords");
+    glBindFragDataLocation(videof->program, 0, "o_FragColor");
+    p1_video_build_program(ctx, videof->program, simple_vertex_shader, simple_fragment_shader);
+    videof->tex_u = glGetUniformLocation(videof->program, "u_Texture");
 
-    ctx->rbo_mem = clCreateFromGLRenderbuffer(ctx->cl, CL_MEM_READ_ONLY, ctx->rbo, NULL);
-    assert(ctx->rbo_mem != NULL);
+    videof->rbo_mem = clCreateFromGLRenderbuffer(videof->cl, CL_MEM_READ_ONLY, videof->rbo, NULL);
+    assert(videof->rbo_mem != NULL);
 
-    ctx->out_mem = clCreateBuffer(ctx->cl, CL_MEM_WRITE_ONLY, output_yuv_size, NULL, NULL);
-    assert(ctx->out_mem != NULL);
+    videof->out_mem = clCreateBuffer(videof->cl, CL_MEM_WRITE_ONLY, output_yuv_size, NULL, NULL);
+    assert(videof->out_mem != NULL);
 
-    cl_program yuv_program = clCreateProgramWithSource(ctx->cl, 1, &yuv_kernel_source, NULL, NULL);
+    cl_program yuv_program = clCreateProgramWithSource(videof->cl, 1, &yuv_kernel_source, NULL, NULL);
     assert(yuv_program != NULL);
     cl_err = clBuildProgram(yuv_program, 0, NULL, NULL, NULL, NULL);
     assert(cl_err == CL_SUCCESS);
-    ctx->yuv_kernel = clCreateKernel(yuv_program, "yuv", NULL);
-    assert(ctx->yuv_kernel != NULL);
+    videof->yuv_kernel = clCreateKernel(yuv_program, "yuv", NULL);
+    assert(videof->yuv_kernel != NULL);
     clReleaseProgram(yuv_program);
 
     /* State init. This is only up here because we can. */
     glViewport(0, 0, output_width, output_height);
     glClearColor(0, 0, 0, 1);
     glActiveTexture(GL_TEXTURE0);
-    glBindBuffer(GL_ARRAY_BUFFER, ctx->vbo);
-    glUseProgram(ctx->program);
-    glUniform1i(ctx->tex_u, 0);
-    glBindVertexArray(ctx->vao);
+    glBindBuffer(GL_ARRAY_BUFFER, videof->vbo);
+    glUseProgram(videof->program);
+    glUniform1i(videof->tex_u, 0);
+    glBindVertexArray(videof->vao);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, vbo_stride, 0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, vbo_stride, vbo_tex_coord_offset);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     assert(glGetError() == GL_NO_ERROR);
 
-    cl_err = clSetKernelArg(ctx->yuv_kernel, 0, sizeof(cl_mem), &ctx->rbo_mem);
+    cl_err = clSetKernelArg(videof->yuv_kernel, 0, sizeof(cl_mem), &videof->rbo_mem);
     assert(cl_err == CL_SUCCESS);
-    cl_err = clSetKernelArg(ctx->yuv_kernel, 1, sizeof(cl_mem), &ctx->out_mem);
+    cl_err = clSetKernelArg(videof->yuv_kernel, 1, sizeof(cl_mem), &videof->out_mem);
     assert(cl_err == CL_SUCCESS);
 
-    ctx->video_ready = true;
+    p1_set_state(ctx, P1_OTYPE_VIDEO, video, P1_STATE_RUNNING);
 }
 
-static void p1_video_init_encoder_params(P1ContextFull *ctx, P1Config *cfg, P1ConfigSection *sect)
+static void p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
 {
-    x264_param_t *params = &ctx->params;
+    x264_param_t *params = &videof->params;
     int i_err;
     char tmp[128];
 
@@ -273,8 +274,11 @@ bool p1_configure_video_source(P1VideoSource *src, P1Config *cfg, P1ConfigSectio
 
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
 {
-    P1Context *_ctx = vclock->ctx;
-    P1ContextFull *ctx = (P1ContextFull *) _ctx;
+    P1Context *ctx = vclock->ctx;
+    P1Video *video = ctx->video;
+    P1VideoFull *videof = (P1VideoFull *) video;
+    P1Connection *conn = ctx->conn;
+    P1ConnectionFull *connf = (P1ConnectionFull *) ctx->conn;
     P1ListNode *head;
     P1ListNode *node;
     cl_int cl_err;
@@ -282,15 +286,15 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     int len;
     int ret;
 
-    if (!ctx->video_ready || ctx->stream_state != P1_STATE_RUNNING)
+    if (video->state != P1_STATE_RUNNING || conn->state != P1_STATE_RUNNING)
         return;
 
-    CGLSetCurrentContext(ctx->gl);
+    CGLSetCurrentContext(videof->gl);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    pthread_mutex_lock(&_ctx->video_lock);
+    pthread_mutex_lock(&video->lock);
 
-    head = &_ctx->video_sources;
+    head = &video->sources;
     p1_list_iterate(head, node) {
         P1Source *src = (P1Source *) node;
         P1VideoSource *vsrc = (P1VideoSource *) node;
@@ -312,36 +316,36 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
         }
     }
 
-    pthread_mutex_unlock(&_ctx->video_lock);
+    pthread_mutex_unlock(&video->lock);
 
     glFinish();
     assert(glGetError() == GL_NO_ERROR);
 
-    cl_err = clEnqueueAcquireGLObjects(ctx->clq, 1, &ctx->rbo_mem, 0, NULL, NULL);
+    cl_err = clEnqueueAcquireGLObjects(videof->clq, 1, &videof->rbo_mem, 0, NULL, NULL);
     assert(cl_err == CL_SUCCESS);
-    cl_err = clEnqueueNDRangeKernel(ctx->clq, ctx->yuv_kernel, 2, NULL, yuv_work_size, NULL, 0, NULL, NULL);
+    cl_err = clEnqueueNDRangeKernel(videof->clq, videof->yuv_kernel, 2, NULL, yuv_work_size, NULL, 0, NULL, NULL);
     assert(cl_err == CL_SUCCESS);
-    cl_err = clEnqueueReleaseGLObjects(ctx->clq, 1, &ctx->rbo_mem, 0, NULL, NULL);
+    cl_err = clEnqueueReleaseGLObjects(videof->clq, 1, &videof->rbo_mem, 0, NULL, NULL);
     assert(cl_err == CL_SUCCESS);
-    cl_err = clEnqueueReadBuffer(ctx->clq, ctx->out_mem, CL_FALSE, 0, output_yuv_size, ctx->enc_pic.img.plane[0], 0, NULL, NULL);
+    cl_err = clEnqueueReadBuffer(videof->clq, videof->out_mem, CL_FALSE, 0, output_yuv_size, videof->enc_pic.img.plane[0], 0, NULL, NULL);
     assert(cl_err == CL_SUCCESS);
-    cl_err = clFinish(ctx->clq);
+    cl_err = clFinish(videof->clq);
     assert(cl_err == CL_SUCCESS);
 
-    if (!ctx->sent_video_config) {
-        ctx->sent_video_config = true;
-        ret = x264_encoder_headers(ctx->enc, &nals, &len);
+    if (!videof->sent_config) {
+        videof->sent_config = true;
+        ret = x264_encoder_headers(videof->enc, &nals, &len);
         assert(ret >= 0);
-        p1_stream_video_config(ctx, nals, len);
+        p1_conn_video_config(connf, nals, len);
     }
 
     x264_picture_t out_pic;
-    ctx->enc_pic.i_dts = time;
-    ctx->enc_pic.i_pts = time;
-    ret = x264_encoder_encode(ctx->enc, &nals, &len, &ctx->enc_pic, &out_pic);
+    videof->enc_pic.i_dts = time;
+    videof->enc_pic.i_pts = time;
+    ret = x264_encoder_encode(videof->enc, &nals, &len, &videof->enc_pic, &out_pic);
     assert(ret >= 0);
     if (len)
-        p1_stream_video(ctx, nals, len, &out_pic);
+        p1_conn_video(connf, nals, len, &out_pic);
 }
 
 void p1_video_frame(P1VideoSource *vsrc, int width, int height, void *data)
