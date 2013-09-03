@@ -241,14 +241,21 @@ static void p1_ctrl_progress(P1Context *ctx)
     pthread_mutex_unlock(&audio->lock);
 
     // Progress internal components.
-    // FIXME: honour target
-    if (audio->state == P1_STATE_IDLE)
+    if (audio->target == P1_TARGET_RUNNING && audio->state == P1_STATE_IDLE)
         p1_audio_start(audiof);
-    if (video->state == P1_STATE_IDLE)
+    else if (audio->target != P1_TARGET_RUNNING && audio->state == P1_STATE_RUNNING)
+        p1_audio_stop(audiof);
+
+    if (video->target == P1_TARGET_RUNNING && video->state == P1_STATE_IDLE)
         p1_video_start(videof);
+    else if (video->target != P1_TARGET_RUNNING && video->state == P1_STATE_RUNNING)
+        p1_video_stop(videof);
+
     // FIXME: We may want to delay until sources are running.
-    if (conn->state == P1_STATE_IDLE)
+    if (conn->target == P1_TARGET_RUNNING && conn->state == P1_STATE_IDLE)
         p1_conn_start(connf);
+    else if (conn->target != P1_TARGET_RUNNING && conn->state == P1_STATE_RUNNING)
+        p1_conn_stop(connf);
 }
 
 static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src)
