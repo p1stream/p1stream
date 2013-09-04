@@ -3,12 +3,23 @@
 #include <unistd.h>
 #include <sys/poll.h>
 
+typedef enum _P1Action P1Action;
+
 static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args, void *user_data);
 static void *p1_ctrl_main(void *data);
-static void p1_ctrl_progress(P1Context *ctx);
-static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src);
+static bool p1_ctrl_progress(P1Context *ctx);
+static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1TargetState target);
 static void p1_ctrl_comm(P1ContextFull *ctxf);
 static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notification);
+
+// Based on state and target, one of these actions is taken.
+enum _P1Action {
+    P1_ACTION_NONE      = 0,
+    P1_ACTION_WAIT      = 1,    // Same as none, but don't exit yet if stopping.
+    P1_ACTION_START     = 2,
+    P1_ACTION_STOP      = 3,
+    P1_ACTION_REMOVE    = 4
+};
 
 
 P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
@@ -87,8 +98,6 @@ void p1_stop(P1Context *_ctx)
 
     int ret = pthread_join(ctx->ctrl_thread, NULL);
     assert(ret == 0);
-
-    // FIXME: stop streaming.
 }
 
 void p1_read(P1Context *_ctx, P1Notification *out)
@@ -130,6 +139,7 @@ void p1_logv(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args)
         ctx->log_fn(ctx, level, fmt, args, ctx->log_user_data);
 }
 
+// Default log function.
 static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args, void *user_data)
 {
     const char *pre;
@@ -144,6 +154,7 @@ static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va
     vfprintf(stderr, fmt, args);
 }
 
+// The control thread main loop.
 static void *p1_ctrl_main(void *data)
 {
     P1Context *ctx = (P1Context *) data;
@@ -151,12 +162,11 @@ static void *p1_ctrl_main(void *data)
 
     p1_set_state(ctx, P1_OTYPE_CONTEXT, ctx, P1_STATE_RUNNING);
 
+    // Loop until we hit the exit condition. This only happens when we're
+    // stopping and are no longer waiting on objects to stop.
     do {
         p1_ctrl_comm(ctxf);
-        p1_ctrl_progress(ctx);
-
-        // FIXME: handle stop
-    } while (true);
+    } while (p1_ctrl_progress(ctx));
 
     p1_set_state(ctx, P1_OTYPE_CONTEXT, ctx, P1_STATE_IDLE);
     p1_ctrl_comm(ctxf);
@@ -164,6 +174,7 @@ static void *p1_ctrl_main(void *data)
     return NULL;
 }
 
+// Handle communication on pipes.
 static void p1_ctrl_comm(P1ContextFull *ctxf)
 {
     P1Context *ctx = (P1Context *) ctxf;
@@ -201,7 +212,8 @@ static void p1_ctrl_comm(P1ContextFull *ctxf)
     } while (i_ret == 1);
 }
 
-static void p1_ctrl_progress(P1Context *ctx)
+// Check all objects and try to progress state.
+static bool p1_ctrl_progress(P1Context *ctx)
 {
     P1Video *video = ctx->video;
     P1VideoFull *videof = (P1VideoFull *) video;
@@ -211,73 +223,149 @@ static void p1_ctrl_progress(P1Context *ctx)
     P1ConnectionFull *connf = (P1ConnectionFull *) conn;
     P1ListNode *head;
     P1ListNode *node;
+    P1TargetState target;
+    bool wait = false;
 
-    // Progress clock.
+// After an action, check if we need to wait.
+#define P1_CHECK_WAIT(_obj)                                 \
+    if ((_obj)->state == P1_STATE_STARTING ||               \
+        (_obj)->state == P1_STATE_STOPPING)                 \
+        wait = true;
+
+// Common action handling for plugins.
+#define P1_PLUGIN_COMMON_ACTIONS(_obj)                      \
+    case P1_ACTION_WAIT:                                    \
+        wait = true;                                        \
+        break;                                              \
+    case P1_ACTION_START:                                   \
+        (_obj)->ctx = ctx;                                  \
+        (_obj)->start(_obj);                                \
+        P1_CHECK_WAIT(_obj);                                \
+        break;                                              \
+    case P1_ACTION_STOP:                                    \
+        (_obj)->stop(_obj);                                 \
+        P1_CHECK_WAIT(_obj);                                \
+        break;
+
+// Common action handling for fixed components
+#define P1_COMPONENT_COMMON_ACTIONS(_obj, _start, _stop)    \
+    case P1_ACTION_WAIT:                                    \
+        wait = true;                                        \
+        break;                                              \
+    case P1_ACTION_START:                                   \
+        (_start)(_obj);                                     \
+        P1_CHECK_WAIT(&(_obj)->super);                      \
+        break;                                              \
+    case P1_ACTION_STOP:                                    \
+        (_stop)(_obj);                                      \
+        P1_CHECK_WAIT(&(_obj)->super);                      \
+        break;
+
+// Source remove action handling.
+#define P1_SOURCE_REMOVE_ACTION(_obj)                       \
+    case P1_ACTION_REMOVE:                                  \
+        p1_list_remove(_obj);                               \
+        (_obj)->free(_obj);                                 \
+        break;
+
+// Short-hand for empty default case.
+#define P1_EMPTY_DEFAULT                                    \
+    default:                                                \
+        break;
+
+    // Progress clock. Clock target state is tied to the context.
     P1VideoClock *clock = ctx->video->clock;
-    if (clock->state == P1_STATE_IDLE) {
-        clock->ctx = ctx;
-        clock->start(clock);
+    target = ctx->state == P1_STATE_STOPPING ? P1_TARGET_IDLE : P1_TARGET_RUNNING;
+    switch (p1_ctrl_determine_action(ctx, clock->state, target)) {
+        P1_PLUGIN_COMMON_ACTIONS(clock)
+        P1_EMPTY_DEFAULT
     }
-    // Clock must be running before we can make anything else happen.
-    if (clock->state != P1_STATE_RUNNING)
-        return;
 
-    pthread_mutex_lock(&video->lock);
     // Progress video sources.
+    pthread_mutex_lock(&video->lock);
     head = &video->sources;
     p1_list_iterate(head, node) {
         P1Source *src = (P1Source *) node;
-        p1_ctrl_progress_source(ctx, src);
+        switch (p1_ctrl_determine_action(ctx, src->state, src->target)) {
+            P1_PLUGIN_COMMON_ACTIONS(src)
+            P1_SOURCE_REMOVE_ACTION(src)
+            P1_EMPTY_DEFAULT
+        }
     }
     pthread_mutex_unlock(&video->lock);
 
-    pthread_mutex_lock(&audio->lock);
     // Progress audio sources.
+    pthread_mutex_lock(&audio->lock);
     head = &audio->sources;
     p1_list_iterate(head, node) {
         P1Source *src = (P1Source *) node;
-        p1_ctrl_progress_source(ctx, src);
+        switch (p1_ctrl_determine_action(ctx, src->state, src->target)) {
+            P1_PLUGIN_COMMON_ACTIONS(src)
+            P1_SOURCE_REMOVE_ACTION(src)
+            P1_EMPTY_DEFAULT
+        }
     }
     pthread_mutex_unlock(&audio->lock);
 
-    // Progress internal components.
-    if (audio->target == P1_TARGET_RUNNING && audio->state == P1_STATE_IDLE)
-        p1_audio_start(audiof);
-    else if (audio->target != P1_TARGET_RUNNING && audio->state == P1_STATE_RUNNING)
-        p1_audio_stop(audiof);
+    // Progress video mixer. We need a running clock for this.
+    if (clock->state != P1_STATE_RUNNING)
+        target = P1_TARGET_IDLE;
+    else
+        target = video->target;
+    switch (p1_ctrl_determine_action(ctx, video->state, target)) {
+        P1_COMPONENT_COMMON_ACTIONS(videof, p1_video_start, p1_video_stop)
+        P1_EMPTY_DEFAULT
+    }
 
-    if (video->target == P1_TARGET_RUNNING && video->state == P1_STATE_IDLE)
-        p1_video_start(videof);
-    else if (video->target != P1_TARGET_RUNNING && video->state == P1_STATE_RUNNING)
-        p1_video_stop(videof);
+    // Progress audio mixer.
+    switch (p1_ctrl_determine_action(ctx, audio->state, audio->target)) {
+        P1_COMPONENT_COMMON_ACTIONS(audiof, p1_audio_start, p1_audio_stop)
+        P1_EMPTY_DEFAULT
+    }
 
-    // FIXME: We may want to delay until sources are running.
-    if (conn->target == P1_TARGET_RUNNING && conn->state == P1_STATE_IDLE)
-        p1_conn_start(connf);
-    else if (conn->target != P1_TARGET_RUNNING && conn->state == P1_STATE_RUNNING)
-        p1_conn_stop(connf);
+    // Progress stream connnection. Delay until everything else is running.
+    if (!wait) {
+        switch (p1_ctrl_determine_action(ctx, conn->state, conn->target)) {
+            P1_COMPONENT_COMMON_ACTIONS(connf, p1_conn_start, p1_conn_stop)
+            P1_EMPTY_DEFAULT
+        }
+    }
+
+    // Return whether we can exit.
+    return wait || ctx->state != P1_STATE_STOPPING;
 }
 
-static void p1_ctrl_progress_source(P1Context *ctx, P1Source *src)
+// Determine action to take on an object.
+static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1TargetState target)
 {
-    if (src->target == P1_TARGET_RUNNING) {
-        if (src->state == P1_STATE_IDLE) {
-            src->ctx = ctx;
-            src->start(src);
-        }
+    // We need to wait on the transition to finish.
+    if (state == P1_STATE_STARTING || state == P1_STATE_STOPPING)
+        return P1_ACTION_WAIT;
+
+    // If the context is stopping, override target.
+    // Make sure we preserve remove targets.
+    if (target == P1_TARGET_RUNNING && ctx->state == P1_STATE_STOPPING)
+        target = P1_TARGET_IDLE;
+
+    // Take steps towards target.
+    if (target == P1_TARGET_RUNNING) {
+        if (state == P1_STATE_IDLE)
+            return P1_ACTION_START;
+
+        return P1_ACTION_NONE;
     }
     else {
-        if (src->state == P1_STATE_RUNNING) {
-            src->stop(src);
-            src->ctx = NULL;
-        }
-        if (src->target == P1_TARGET_REMOVE && src->state == P1_TARGET_IDLE) {
-            p1_list_remove(src);
-            src->free(src);
-        }
+        if (state == P1_STATE_RUNNING)
+            return P1_ACTION_STOP;
+
+        if (target == P1_TARGET_REMOVE && state == P1_TARGET_IDLE)
+            return P1_ACTION_REMOVE;
+
+        return P1_ACTION_NONE;
     }
 }
 
+// Log a notification.
 static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notification)
 {
     const char *action;
