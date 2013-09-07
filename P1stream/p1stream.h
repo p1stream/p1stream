@@ -8,6 +8,31 @@
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/gl3.h>
 
+
+// The P1stream interface consist of a context that models a simple media
+// pipeline containing elements, each taking responsibility for part of the
+// media processing.
+//
+// There are three fixed elements in each context:
+//
+//  - An instance of P1Video that assembles the video frames, does colorspace
+//    conversion and encoding to H.264.
+//
+//  - An instance of P1Audio that mixes audio buffers, and encodes to AAC.
+//
+//  - An instance of P1Connection that manages the RTMP streaming connection,
+//    muxing of the streams and buffering.
+//
+// The remaining elements are plugins provided by the user:
+//
+//  - A single instance of a P1VideoClock subclass that provides video timing.
+//  - Any number of instances of P1VideoSources subclasses.
+//  - Any number of instances of P1AudioSources subclasses.
+//
+// P1stream bundles several plugins for the most common tasks, but the user is
+// free to implement their own.
+
+
 // Object types.
 typedef struct _P1Config P1Config;
 typedef struct _P1Element P1Element;
@@ -78,7 +103,30 @@ struct _P1Config {
 };
 
 
+// Log levels. These match x264s.
+
+enum _P1LogLevel {
+    P1_LOG_NONE     = -1,
+    P1_LOG_ERROR    =  0,
+    P1_LOG_WARNING  =  1,
+    P1_LOG_INFO     =  2,
+    P1_LOG_DEBUG    =  3
+};
+
+
+// Options for p1_free.
+
+enum _P1FreeOptions {
+    P1_FREE_ONLY_SELF       = 0,
+    P1_FREE_VIDEO_CLOCK     = 1,
+    P1_FREE_VIDEO_SOURCES   = 2,
+    P1_FREE_AUDIO_SOURCES   = 4,
+    P1_FREE_EVERYTHING      = 7
+};
+
+
 // Elements track simple state. These are the possible states.
+
 enum _P1State {
     P1_STATE_IDLE       = 0, // Initial value.
     P1_STATE_STARTING   = 1,
@@ -103,6 +151,7 @@ enum _P1State {
 
 
 // This is the state we want an element to be in, and should be worked towards.
+
 enum _P1TargetState {
     P1_TARGET_RUNNING   = 0, // Initial value.
     P1_TARGET_IDLE      = 1,
@@ -247,7 +296,7 @@ struct _P1Element {
     P1TargetState target;
 };
 
-// Element lock methods.
+// Convenience methods for acquiring the element lock.
 #define p1_element_lock(_el) assert(pthread_mutex_lock(&(_el)->lock) == 0)
 #define p1_element_unlock(_el) assert(pthread_mutex_unlock(&(_el)->lock) == 0)
 
@@ -356,6 +405,7 @@ void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t
 
 
 // Fixed audio mixer element.
+
 struct _P1Audio {
     P1Element super;
 
@@ -366,6 +416,7 @@ struct _P1Audio {
 
 
 // Fixed video mixer element.
+
 struct _P1Video {
     P1Element super;
 
@@ -379,30 +430,14 @@ struct _P1Video {
 
 
 // Fixed stream connection element.
+
 struct _P1Connection {
     P1Element super;
 };
 
 
-// Log levels. These match x264s.
-enum _P1LogLevel {
-    P1_LOG_NONE     = -1,
-    P1_LOG_ERROR    =  0,
-    P1_LOG_WARNING  =  1,
-    P1_LOG_INFO     =  2,
-    P1_LOG_DEBUG    =  3
-};
-
-// Options for p1_free.
-enum _P1FreeOptions {
-    P1_FREE_ONLY_SELF       = 0,
-    P1_FREE_VIDEO_CLOCK     = 1,
-    P1_FREE_VIDEO_SOURCES   = 2,
-    P1_FREE_AUDIO_SOURCES   = 4,
-    P1_FREE_EVERYTHING      = 7
-};
-
 // Context that encapsulates everything else.
+
 struct _P1Context {
     // Current state.
     P1State state;
@@ -446,6 +481,7 @@ void _p1_notify(P1Context *ctx, P1Notification notification);
 
 
 // Platform-specific functionality.
+
 #if __APPLE__
 #   include <TargetConditionals.h>
 #   if TARGET_OS_MAC
