@@ -36,7 +36,7 @@ void p1_conn_start(P1ConnectionFull *connf)
 {
     P1Element *connel = (P1Element *) connf;
 
-    p1_set_state(connel->ctx, P1_OTYPE_CONNECTION, connel, P1_STATE_STARTING);
+    p1_set_state(connel, P1_OTYPE_CONNECTION, P1_STATE_STARTING);
 
     int res = pthread_create(&connf->thread, NULL, p1_conn_main, connf);
     assert(res == 0);
@@ -247,7 +247,7 @@ static void *p1_conn_main(void *data)
     p1_element_lock(connel);
 
     connf->start = mach_absolute_time();
-    p1_set_state(connel->ctx, P1_OTYPE_CONNECTION, connel, P1_STATE_RUNNING);
+    p1_set_state(connel, P1_OTYPE_CONNECTION, P1_STATE_RUNNING);
 
     do {
         p1_conn_flush(connf);

@@ -52,7 +52,7 @@ static bool p1_display_video_clock_start(P1PluginElement *pel)
     P1Element *el = (P1Element *) pel;
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
 
-    p1_set_state(el->ctx, P1_OTYPE_VIDEO_CLOCK, el, P1_STATE_STARTING);
+    p1_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_STARTING);
 
     CVReturn ret;
 
@@ -79,7 +79,7 @@ static void p1_display_video_clock_stop(P1PluginElement *pel)
     dvclock->display_link = NULL;
 
     // FIXME: Should we wait for anything?
-    p1_set_state(el->ctx, P1_OTYPE_VIDEO_CLOCK, el, P1_STATE_IDLE);
+    p1_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_IDLE);
 }
 
 static CVReturn p1_display_video_clock_callback(
@@ -108,7 +108,7 @@ static CVReturn p1_display_video_clock_callback(
         vclock->fps_den = dvclock->divisor;
 
         // Report running.
-        p1_set_state(el->ctx, P1_OTYPE_VIDEO_CLOCK, el, P1_STATE_RUNNING);
+        p1_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_RUNNING);
     }
 
     // Skip tick based on divisor.

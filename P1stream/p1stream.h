@@ -87,14 +87,16 @@ enum _P1State {
 };
 
 // This function should be used to change the state field on elements.
-#define p1_set_state(_ctx, _object_type, _object, _state) {     \
-    (_object)->state = (_state);                                \
-    _p1_notify((_ctx), (P1Notification) {                       \
+#define p1_set_state(_el, _type, _state) {                      \
+    P1Element *_p1_el = (_el);                                  \
+    P1State _p1_state = (_state);                               \
+    _p1_el->state = _p1_state;                                  \
+    _p1_notify(_p1_el->ctx, (P1Notification) {                  \
         .type = P1_NTYPE_STATE_CHANGE,                          \
-        .object_type = (_object_type),                          \
-        .object = (_object),                                    \
+        .object_type = (_type),                                 \
+        .object = _p1_el,                                       \
         .state_change = {                                       \
-            .state = (_state)                                   \
+            .state = _p1_state                                  \
         }                                                       \
     });                                                         \
 }
@@ -108,14 +110,16 @@ enum _P1TargetState {
 };
 
 // This function should be used to change the target field on elements.
-#define p1_set_target(_ctx, _object_type, _object, _target) {   \
-    (_object)->target = (_target);                              \
+#define p1_set_target(_el, _type, _target) {                    \
+    P1Element *_p1_el = (_el);                                  \
+    P1TargetState _p1_target = (_target);                       \
+    _p1_el->target = _p1_target;                                \
     _p1_notify((_ctx), (P1Notification) {                       \
         .type = P1_NTYPE_TARGET_CHANGE,                         \
-        .object_type = (_object_type),                          \
-        .object = (_object),                                    \
+        .object_type = (_type),                                 \
+        .object = _p1_el,                                       \
         .target_change = {                                      \
-            .target = (_target)                                 \
+            .target = _p1_target                                \
         }                                                       \
     });                                                         \
 }

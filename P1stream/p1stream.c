@@ -12,6 +12,18 @@ static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1Target
 static void p1_ctrl_comm(P1ContextFull *ctxf);
 static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notification);
 
+#define p1_context_set_state(_ctx, _state) {                    \
+    (_ctx)->state = (_state);                                   \
+    _p1_notify((_ctx), (P1Notification) {                       \
+        .type = P1_NTYPE_STATE_CHANGE,                          \
+        .object_type = P1_OTYPE_CONTEXT,                        \
+        .object = _ctx,                                         \
+        .state_change = {                                       \
+            .state = (_state)                                   \
+        }                                                       \
+    });                                                         \
+}
+
 // Based on state and target, one of these actions is taken.
 enum _P1Action {
     P1_ACTION_NONE      = 0,
@@ -91,16 +103,16 @@ void p1_free(P1Context *ctx, P1FreeOptions options)
     // FIXME
 }
 
-void p1_start(P1Context *_ctx)
+void p1_start(P1Context *ctx)
 {
-    P1ContextFull *ctx = (P1ContextFull *) _ctx;
+    P1ContextFull *ctxf = (P1ContextFull *) ctx;
 
-    if (_ctx->state != P1_STATE_IDLE)
+    if (ctx->state != P1_STATE_IDLE)
         return;
 
-    p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_STARTING);
+    p1_context_set_state(ctx, P1_STATE_STARTING);
 
-    int ret = pthread_create(&ctx->ctrl_thread, NULL, p1_ctrl_main, ctx);
+    int ret = pthread_create(&ctxf->ctrl_thread, NULL, p1_ctrl_main, ctx);
     assert(ret == 0);
 }
 
@@ -113,7 +125,7 @@ void p1_stop(P1Context *_ctx)
 
     // FIXME: Lock for this? Especially if the context thread can eventually
     // stop itself for whatever reason.
-    p1_set_state(_ctx, P1_OTYPE_CONTEXT, _ctx, P1_STATE_STOPPING);
+    p1_context_set_state(_ctx, P1_STATE_STOPPING);
 
     int ret = pthread_join(ctx->ctrl_thread, NULL);
     assert(ret == 0);
@@ -179,7 +191,7 @@ static void *p1_ctrl_main(void *data)
     P1Context *ctx = (P1Context *) data;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
 
-    p1_set_state(ctx, P1_OTYPE_CONTEXT, ctx, P1_STATE_RUNNING);
+    p1_context_set_state(ctx, P1_STATE_RUNNING);
 
     // Loop until we hit the exit condition. This only happens when we're
     // stopping and are no longer waiting on objects to stop.
@@ -187,7 +199,7 @@ static void *p1_ctrl_main(void *data)
         p1_ctrl_comm(ctxf);
     } while (p1_ctrl_progress(ctx));
 
-    p1_set_state(ctx, P1_OTYPE_CONTEXT, ctx, P1_STATE_IDLE);
+    p1_context_set_state(ctx, P1_STATE_IDLE);
     p1_ctrl_comm(ctxf);
 
     return NULL;
