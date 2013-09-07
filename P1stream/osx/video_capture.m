@@ -14,11 +14,10 @@ typedef struct _P1CaptureVideoSource P1CaptureVideoSource;
 struct _P1CaptureVideoSource {
     P1VideoSource super;
 
-    CVPixelBufferRef frame;
-    pthread_mutex_t frame_lock;
-
     CFTypeRef delegate;
     CFTypeRef session;
+
+    CVPixelBufferRef frame;
 };
 
 // Delegate class we use internally for the capture session.
@@ -38,7 +37,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 @end
 
 // Plugin definition.
-static void p1_capture_video_source_free(P1PluginElement *pel);
 static bool p1_capture_video_source_start(P1PluginElement *pel);
 static void p1_capture_video_source_stop(P1PluginElement *pel);
 static void p1_capture_video_source_frame(P1VideoSource *vsrc);
@@ -53,13 +51,17 @@ P1VideoSource *p1_capture_video_source_create(P1Config *cfg, P1ConfigSection *se
 
     p1_video_source_init(vsrc, cfg, sect);
 
-    pel->free = p1_capture_video_source_free;
     pel->start = p1_capture_video_source_start;
     pel->stop = p1_capture_video_source_stop;
     vsrc->frame = p1_capture_video_source_frame;
 
-    int ret = pthread_mutex_init(&cvsrc->frame_lock, NULL);
-    assert(ret == 0);
+    return vsrc;
+}
+
+static bool p1_capture_video_source_start(P1PluginElement *pel)
+{
+    P1Element *el = (P1Element *) pel;
+    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
 
     @autoreleasepool {
         P1VideoCaptureDelegate *delegate = [[P1VideoCaptureDelegate alloc] initWithSource:cvsrc];
@@ -91,33 +93,11 @@ P1VideoSource *p1_capture_video_source_create(P1Config *cfg, P1ConfigSection *se
         // Retain session in state.
         cvsrc->delegate = CFBridgingRetain(delegate);
         cvsrc->session = CFBridgingRetain(session);
-    }
 
-    return vsrc;
-}
-
-static void p1_capture_video_source_free(P1PluginElement *pel)
-{
-    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
-
-    CFRelease(cvsrc->session);
-    CFRelease(cvsrc->delegate);
-
-    int ret = pthread_mutex_destroy(&cvsrc->frame_lock);
-    assert(ret == 0);
-}
-
-static bool p1_capture_video_source_start(P1PluginElement *pel)
-{
-    P1Element *el = (P1Element *) pel;
-    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
-
-    @autoreleasepool {
-        AVCaptureSession *session = (__bridge AVCaptureSession *) cvsrc->session;
+        // Start. This is sync, unfortunately.
         [session startRunning];
     }
 
-    // FIXME: Should we wait for anything?
     p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
 
     return true;
@@ -130,10 +110,15 @@ static void p1_capture_video_source_stop(P1PluginElement *pel)
 
     @autoreleasepool {
         AVCaptureSession *session = (__bridge AVCaptureSession *) cvsrc->session;
+
+        // Stop. This is sync, unfortunately.
         [session stopRunning];
+
+        // Release references.
+        CFRelease(cvsrc->session);
+        CFRelease(cvsrc->delegate);
     }
 
-    // FIXME: Should we wait for anything?
     p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
 }
 
@@ -142,29 +127,21 @@ static void p1_capture_video_source_frame(P1VideoSource *vsrc)
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) vsrc;
     CVPixelBufferRef frame;
 
-    pthread_mutex_lock(&cvsrc->frame_lock);
     frame = cvsrc->frame;
-    if (frame)
-        CFRetain(frame);
-    pthread_mutex_unlock(&cvsrc->frame_lock);
-
-    if (!frame)
-        return;
-
-    IOSurfaceRef surface = CVPixelBufferGetIOSurface(frame);
-    if (surface != NULL) {
-        p1_video_source_frame_iosurface(vsrc, surface);
+    if (frame) {
+        IOSurfaceRef surface = CVPixelBufferGetIOSurface(frame);
+        if (surface != NULL) {
+            p1_video_source_frame_iosurface(vsrc, surface);
+        }
+        else {
+            CVPixelBufferLockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
+            int width = (int) CVPixelBufferGetWidth(frame);
+            int height = (int) CVPixelBufferGetHeight(frame);
+            void *data = CVPixelBufferGetBaseAddress(frame);
+            p1_video_source_frame(vsrc, width, height, data);
+            CVPixelBufferUnlockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
+        }
     }
-    else {
-        CVPixelBufferLockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
-        int width = (int) CVPixelBufferGetWidth(frame);
-        int height = (int) CVPixelBufferGetHeight(frame);
-        void *data = CVPixelBufferGetBaseAddress(frame);
-        p1_video_source_frame(vsrc, width, height, data);
-        CVPixelBufferUnlockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
-    }
-
-    CFRelease(frame);
 }
 
 @implementation P1VideoCaptureDelegate
@@ -182,20 +159,20 @@ static void p1_capture_video_source_frame(P1VideoSource *vsrc)
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection
 {
-    // Get the image data.
+    P1Element *el = (P1Element *) cvsrc;
+
+    p1_element_lock(el);
+
+    if (cvsrc->frame)
+        CFRelease(cvsrc->frame);
+
     CVPixelBufferRef frame = CMSampleBufferGetImageBuffer(sampleBuffer);
     assert(frame != NULL);
+
     CFRetain(frame);
-
-    CVPixelBufferRef old_frame;
-
-    pthread_mutex_lock(&cvsrc->frame_lock);
-    old_frame = cvsrc->frame;
     cvsrc->frame = frame;
-    pthread_mutex_unlock(&cvsrc->frame_lock);
 
-    if (old_frame)
-        CFRelease(old_frame);
+    p1_element_unlock(el);
 }
 
 - (void)handleError:(NSNotification *)obj
