@@ -9,15 +9,14 @@ typedef struct _P1DisplayVideoSource P1DisplayVideoSource;
 struct _P1DisplayVideoSource {
     P1VideoSource super;
 
+    CGDirectDisplayID display_id;
+
     dispatch_queue_t dispatch;
+    CGDisplayStreamRef display_stream;
 
     IOSurfaceRef frame;
-    pthread_mutex_t frame_lock;
-
-    CGDisplayStreamRef display_stream;
 };
 
-static void p1_display_video_source_free(P1PluginElement *pel);
 static bool p1_display_video_source_start(P1PluginElement *pel);
 static void p1_display_video_source_stop(P1PluginElement *pel);
 static void p1_display_video_source_frame(P1VideoSource *vsrc);
@@ -36,43 +35,14 @@ P1VideoSource *p1_display_video_source_create(P1Config *cfg, P1ConfigSection *se
 
     p1_video_source_init(vsrc, cfg, sect);
 
-    pel->free = p1_display_video_source_free;
     pel->start = p1_display_video_source_start;
     pel->stop = p1_display_video_source_stop;
     vsrc->frame = p1_display_video_source_frame;
 
-    dvsrc->dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
-
-    int ret = pthread_mutex_init(&dvsrc->frame_lock, NULL);
-    assert(ret == 0);
-
-    const CGDirectDisplayID display_id = kCGDirectMainDisplay;
-    size_t width  = CGDisplayPixelsWide(display_id);
-    size_t height = CGDisplayPixelsHigh(display_id);
-
-    dvsrc->display_stream = CGDisplayStreamCreateWithDispatchQueue(
-        display_id, width, height, 'BGRA', NULL, dvsrc->dispatch, ^(
-            CGDisplayStreamFrameStatus status,
-            uint64_t displayTime,
-            IOSurfaceRef frameSurface,
-            CGDisplayStreamUpdateRef updateRef)
-        {
-            p1_display_video_source_callback(dvsrc, status, frameSurface);
-        });
-    assert(dvsrc->display_stream);
+    // FIXME: configurable
+    dvsrc->display_id = kCGDirectMainDisplay;
 
     return vsrc;
-}
-
-static void p1_display_video_source_free(P1PluginElement *pel)
-{
-    P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) pel;
-
-    CFRelease(dvsrc->display_stream);
-    dispatch_release(dvsrc->dispatch);
-
-    int ret = pthread_mutex_destroy(&dvsrc->frame_lock);
-    assert(ret == 0);
 }
 
 static bool p1_display_video_source_start(P1PluginElement *pel)
@@ -80,11 +50,27 @@ static bool p1_display_video_source_start(P1PluginElement *pel)
     P1Element *el = (P1Element *) pel;
     P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) pel;
 
+    p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STARTING);
+
+    size_t width  = CGDisplayPixelsWide(dvsrc->display_id);
+    size_t height = CGDisplayPixelsHigh(dvsrc->display_id);
+
+    dvsrc->dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
+    assert(dvsrc->dispatch != NULL);
+
+    dvsrc->display_stream = CGDisplayStreamCreateWithDispatchQueue(
+        dvsrc->display_id, width, height, 'BGRA', NULL, dvsrc->dispatch, ^(
+            CGDisplayStreamFrameStatus status,
+            uint64_t displayTime,
+            IOSurfaceRef frameSurface,
+            CGDisplayStreamUpdateRef updateRef)
+        {
+            p1_display_video_source_callback(dvsrc, status, frameSurface);
+        });
+    assert(dvsrc->display_stream != NULL);
+
     CGError cg_ret = CGDisplayStreamStart(dvsrc->display_stream);
     assert(cg_ret == kCGErrorSuccess);
-
-    // FIXME: Should we wait for anything?
-    p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
 
     return true;
 }
@@ -92,35 +78,20 @@ static bool p1_display_video_source_start(P1PluginElement *pel)
 static void p1_display_video_source_stop(P1PluginElement *pel)
 {
     P1Element *el = (P1Element *) pel;
-    P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *)pel;
+    P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) pel;
+
+    p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STOPPING);
 
     CGError cg_ret = CGDisplayStreamStop(dvsrc->display_stream);
     assert(cg_ret == kCGErrorSuccess);
-
-    // FIXME: Should we wait for anything?
-    p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
 }
 
 static void p1_display_video_source_frame(P1VideoSource *vsrc)
 {
-    P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *)vsrc;
-    IOSurfaceRef frame;
+    P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) vsrc;
 
-    pthread_mutex_lock(&dvsrc->frame_lock);
-    frame = dvsrc->frame;
-    if (frame) {
-        CFRetain(frame);
-        IOSurfaceIncrementUseCount(frame);
-    }
-    pthread_mutex_unlock(&dvsrc->frame_lock);
-
-    if (!frame)
-        return;
-
-    p1_video_source_frame_iosurface(vsrc, frame);
-
-    IOSurfaceDecrementUseCount(frame);
-    CFRelease(frame);
+    if (dvsrc->frame)
+        p1_video_source_frame_iosurface(vsrc, dvsrc->frame);
 }
 
 static void p1_display_video_source_callback(
@@ -130,30 +101,41 @@ static void p1_display_video_source_callback(
 {
     P1Element *el = (P1Element *) dvsrc;
 
+    p1_element_lock(el);
+
+    // Ditch any previous frame, unless it's the same.
+    // This also doubles as cleanup when stopping.
+    if (dvsrc->frame && status != kCGDisplayStreamFrameStatusFrameIdle) {
+        IOSurfaceDecrementUseCount(dvsrc->frame);
+        CFRelease(dvsrc->frame);
+        dvsrc->frame = NULL;
+    }
+
+    // A new frame arrived, retain it.
     if (status == kCGDisplayStreamFrameStatusFrameComplete) {
+        dvsrc->frame = frame;
         CFRetain(frame);
         IOSurfaceIncrementUseCount(frame);
     }
 
-    IOSurfaceRef old_frame = NULL;
-
-    pthread_mutex_lock(&dvsrc->frame_lock);
-    if (status != kCGDisplayStreamFrameStatusFrameIdle) {
-        old_frame = dvsrc->frame;
-        dvsrc->frame = NULL;
-    }
-    if (status == kCGDisplayStreamFrameStatusFrameComplete) {
-        dvsrc->frame = frame;
-    }
-    pthread_mutex_unlock(&dvsrc->frame_lock);
-
-    if (old_frame) {
-        IOSurfaceDecrementUseCount(old_frame);
-        CFRelease(old_frame);
-    }
-
+    // State handling.
     if (status == kCGDisplayStreamFrameStatusStopped) {
-        p1_log(el->ctx, P1_LOG_ERROR, "Display stream stopped.");
-        abort();
+        if (el->state == P1_STATE_STOPPING) {
+            CFRelease(dvsrc->display_stream);
+
+            dispatch_release(dvsrc->dispatch);
+
+            p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
+        }
+        else {
+            p1_log(el->ctx, P1_LOG_ERROR, "Display stream stopped.");
+            abort();
+        }
     }
+    else {
+        if (el->state == P1_STATE_STARTING)
+            p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
+    }
+
+    p1_element_unlock(el);
 }
