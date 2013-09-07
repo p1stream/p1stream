@@ -1,6 +1,5 @@
 #include "p1stream.h"
 
-#include <dispatch/dispatch.h>
 #include <AudioToolbox/AudioToolbox.h>
 
 
@@ -15,8 +14,6 @@ typedef struct _P1InputAudioSource P1InputAudioSource;
 struct _P1InputAudioSource {
     P1AudioSource super;
 
-    dispatch_queue_t dispatch;
-
     AudioQueueRef queue;
     AudioQueueBufferRef buffers[num_buffers];
 };
@@ -24,6 +21,13 @@ struct _P1InputAudioSource {
 static void p1_input_audio_source_free(P1PluginElement *pel);
 static bool p1_input_audio_source_start(P1PluginElement *pel);
 static void p1_input_audio_source_stop(P1PluginElement *pel);
+static void p1_input_audio_source_input_callback(
+    void *inUserData,
+    AudioQueueRef inAQ,
+    AudioQueueBufferRef inBuffer,
+    const AudioTimeStamp *inStartTime,
+    UInt32 inNumberPacketDescriptions,
+    const AudioStreamPacketDescription *inPacketDescs);
 
 
 P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect)
@@ -41,8 +45,6 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
 
     OSStatus ret;
 
-    iasrc->dispatch = dispatch_queue_create("audio_input", DISPATCH_QUEUE_SERIAL);
-
     AudioStreamBasicDescription fmt;
     fmt.mFormatID = kAudioFormatLinearPCM;
     fmt.mFormatFlags = kLinearPCMFormatFlagIsFloat;
@@ -54,16 +56,7 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
     fmt.mBytesPerPacket = fmt.mBytesPerFrame;
     fmt.mReserved = 0;
 
-    ret = AudioQueueNewInputWithDispatchQueue(
-        &iasrc->queue, &fmt, 0, iasrc->dispatch,
-        ^(AudioQueueRef queue, AudioQueueBufferRef buf,
-          const AudioTimeStamp *time, UInt32 num_descs,
-          const AudioStreamPacketDescription *descs) {
-            p1_audio_source_buffer(asrc, time->mHostTime, buf->mAudioData, buf->mAudioDataByteSize / sample_size);
-
-            OSStatus ret = AudioQueueEnqueueBuffer(iasrc->queue, buf, 0, NULL);
-            assert(ret == noErr);
-        });
+    ret = AudioQueueNewInput(&fmt, p1_input_audio_source_input_callback, asrc, NULL, kCFRunLoopCommonModes, 0, &iasrc->queue);
     assert(ret == noErr);
 
     char device[128];
@@ -90,7 +83,6 @@ static void p1_input_audio_source_free(P1PluginElement *pel)
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
 
     AudioQueueDispose(iasrc->queue, TRUE);
-    dispatch_release(iasrc->dispatch);
 }
 
 static bool p1_input_audio_source_start(P1PluginElement *pel)
@@ -117,4 +109,21 @@ static void p1_input_audio_source_stop(P1PluginElement *pel)
 
     // FIXME: Async.
     p1_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_IDLE);
+}
+
+static void p1_input_audio_source_input_callback(
+    void *inUserData,
+    AudioQueueRef inAQ,
+    AudioQueueBufferRef inBuffer,
+    const AudioTimeStamp *inStartTime,
+    UInt32 inNumberPacketDescriptions,
+    const AudioStreamPacketDescription *inPacketDescs)
+{
+    P1AudioSource *asrc = (P1AudioSource *) inUserData;
+
+    p1_audio_source_buffer(asrc, inStartTime->mHostTime, inBuffer->mAudioData,
+                           inBuffer->mAudioDataByteSize / sample_size);
+
+    OSStatus ret = AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
+    assert(ret == noErr);
 }
