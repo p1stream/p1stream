@@ -26,8 +26,8 @@
 // The remaining elements are plugins provided by the user:
 //
 //  - A single instance of a P1VideoClock subclass that provides video timing.
-//  - Any number of instances of P1VideoSources subclasses.
-//  - Any number of instances of P1AudioSources subclasses.
+//  - Any number of instances of P1VideoSource subclasses.
+//  - Any number of instances of P1AudioSource subclasses.
 //
 // P1stream bundles several plugins for the most common tasks, but the user is
 // free to implement their own.
