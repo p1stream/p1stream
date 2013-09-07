@@ -21,23 +21,23 @@ struct _P1InputAudioSource {
     AudioQueueBufferRef buffers[num_buffers];
 };
 
-static void p1_input_audio_source_free(P1Source *src);
-static bool p1_input_audio_source_start(P1Source *src);
-static void p1_input_audio_source_stop(P1Source *src);
+static void p1_input_audio_source_free(P1PluginElement *pel);
+static bool p1_input_audio_source_start(P1PluginElement *pel);
+static void p1_input_audio_source_stop(P1PluginElement *pel);
 
 
 P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect)
 {
     P1InputAudioSource *iasrc = calloc(1, sizeof(P1InputAudioSource));
     P1AudioSource *asrc = (P1AudioSource *) iasrc;
-    P1Source *src = (P1Source *) iasrc;
+    P1PluginElement *pel = (P1PluginElement *) iasrc;
     assert(iasrc != NULL);
 
     p1_audio_source_init(asrc, cfg, sect);
 
-    src->free = p1_input_audio_source_free;
-    src->start = p1_input_audio_source_start;
-    src->stop = p1_input_audio_source_stop;
+    pel->free = p1_input_audio_source_free;
+    pel->start = p1_input_audio_source_start;
+    pel->stop = p1_input_audio_source_stop;
 
     OSStatus ret;
 
@@ -85,34 +85,36 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
     return asrc;
 }
 
-static void p1_input_audio_source_free(P1Source *src)
+static void p1_input_audio_source_free(P1PluginElement *pel)
 {
-    P1InputAudioSource *iasrc = (P1InputAudioSource *)src;
+    P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
 
     AudioQueueDispose(iasrc->queue, TRUE);
     dispatch_release(iasrc->dispatch);
 }
 
-static bool p1_input_audio_source_start(P1Source *src)
+static bool p1_input_audio_source_start(P1PluginElement *pel)
 {
-    P1InputAudioSource *iasrc = (P1InputAudioSource *)src;
+    P1Element *el = (P1Element *) pel;
+    P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
 
     OSStatus ret = AudioQueueStart(iasrc->queue, NULL);
     assert(ret == noErr);
 
     // FIXME: Should we wait for anything?
-    p1_set_state(src->ctx, P1_OTYPE_AUDIO_SOURCE, src, P1_STATE_RUNNING);
+    p1_set_state(el->ctx, P1_OTYPE_AUDIO_SOURCE, el, P1_STATE_RUNNING);
 
     return true;
 }
 
-static void p1_input_audio_source_stop(P1Source *src)
+static void p1_input_audio_source_stop(P1PluginElement *pel)
 {
-    P1InputAudioSource *iasrc = (P1InputAudioSource *)src;
+    P1Element *el = (P1Element *) pel;
+    P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
 
     OSStatus ret = AudioQueueStop(iasrc->queue, TRUE);
     assert(ret == noErr);
 
     // FIXME: Async.
-    p1_set_state(src->ctx, P1_OTYPE_AUDIO_SOURCE, src, P1_STATE_IDLE);
+    p1_set_state(el->ctx, P1_OTYPE_AUDIO_SOURCE, el, P1_STATE_IDLE);
 }

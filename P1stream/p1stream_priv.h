@@ -16,6 +16,11 @@ typedef struct _P1ConnectionFull P1ConnectionFull;
 typedef struct _P1ContextFull P1ContextFull;
 
 
+// P1Element methods.
+void p1_element_init(P1Element *obj);
+void p1_element_destroy(P1Element *obj);
+
+
 // This is a ringbuffer of RMTPPacket pointers.
 
 struct _P1PacketQueue {
@@ -90,7 +95,6 @@ struct _P1ConnectionFull {
     uint64_t start;
 
     pthread_t thread;
-    pthread_mutex_t lock;
     pthread_cond_t cond;
     P1PacketQueue video_queue;
     P1PacketQueue audio_queue;

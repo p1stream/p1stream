@@ -92,12 +92,11 @@ static const size_t yuv_work_size[] = {
 void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Video *video = (P1Video *) videof;
-    int ret;
+    P1Element *videoel = (P1Element *) videof;
+
+    p1_element_init(videoel);
 
     p1_list_init(&video->sources);
-
-    ret = pthread_mutex_init(&video->lock, NULL);
-    assert(ret == 0);
 
     p1_video_init_encoder_params(videof, cfg, sect);
 }
@@ -105,7 +104,8 @@ void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
 void p1_video_start(P1VideoFull *videof)
 {
     P1Video *video = (P1Video *) videof;
-    P1Context *ctx = video->ctx;
+    P1Element *videoel = (P1Element *) videof;
+    P1Context *ctx = videoel->ctx;
     x264_param_t *params = &videof->params;
     CGLError cgl_err;
     cl_int cl_err;
@@ -220,7 +220,7 @@ void p1_video_start(P1VideoFull *videof)
     cl_err = clSetKernelArg(videof->yuv_kernel, 1, sizeof(cl_mem), &videof->out_mem);
     assert(cl_err == CL_SUCCESS);
 
-    p1_set_state(ctx, P1_OTYPE_VIDEO, video, P1_STATE_RUNNING);
+    p1_set_state(videoel->ctx, P1_OTYPE_VIDEO, videoel, P1_STATE_RUNNING);
 }
 
 void p1_video_stop(P1VideoFull *videof)
@@ -271,10 +271,11 @@ static void p1_video_encoder_log_callback(void *data, int level, const char *fmt
 
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
 {
-    P1Context *ctx = vclock->ctx;
+    P1Element *el = (P1Element *) vclock;
+    P1Context *ctx = el->ctx;
     P1Video *video = ctx->video;
     P1VideoFull *videof = (P1VideoFull *) video;
-    P1Connection *conn = ctx->conn;
+    P1Element *videoel = (P1Element *) video;
     P1ConnectionFull *connf = (P1ConnectionFull *) ctx->conn;
     P1ListNode *head;
     P1ListNode *node;
@@ -283,20 +284,24 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     int len;
     int ret;
 
-    if (video->state != P1_STATE_RUNNING || conn->state != P1_STATE_RUNNING)
+    p1_element_lock(videoel);
+
+    if (videoel->state != P1_STATE_RUNNING) {
+        p1_element_unlock(videoel);
         return;
+    }
 
     CGLSetCurrentContext(videof->gl);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    pthread_mutex_lock(&video->lock);
-
     head = &video->sources;
     p1_list_iterate(head, node) {
-        P1Source *src = (P1Source *) node;
-        P1VideoSource *vsrc = (P1VideoSource *) node;
+        P1Source *src = p1_list_get_container(node, P1Source, link);
+        P1Element *el = (P1Element *) src;
+        P1VideoSource *vsrc = (P1VideoSource *) src;
 
-        if (src->state == P1_STATE_RUNNING) {
+        p1_element_lock(el);
+        if (el->state == P1_STATE_RUNNING) {
             if (vsrc->texture == 0)
                 glGenTextures(1, &vsrc->texture);
 
@@ -311,9 +316,8 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
             }, GL_DYNAMIC_DRAW);
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         }
+        p1_element_unlock(el);
     }
-
-    pthread_mutex_unlock(&video->lock);
 
     glFinish();
     assert(glGetError() == GL_NO_ERROR);
@@ -343,20 +347,32 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     assert(ret >= 0);
     if (len)
         p1_conn_video(connf, nals, len, &out_pic);
+
+    p1_element_unlock(videoel);
 }
 
-void p1_video_source_init(P1VideoSource *src, P1Config *cfg, P1ConfigSection *sect)
+void p1_video_clock_init(P1VideoClock *vclock, P1Config *cfg, P1ConfigSection *sect)
 {
+    P1Element *el = (P1Element *) vclock;
+
+    p1_element_init(el);
+}
+
+void p1_video_source_init(P1VideoSource *vsrc, P1Config *cfg, P1ConfigSection *sect)
+{
+    P1Element *el = (P1Element *) vsrc;
     bool res;
 
-    res = cfg->get_float(cfg, sect, "x1", &src->x1)
-       && cfg->get_float(cfg, sect, "y1", &src->y1)
-       && cfg->get_float(cfg, sect, "x2", &src->x2)
-       && cfg->get_float(cfg, sect, "y2", &src->y2)
-       && cfg->get_float(cfg, sect, "u1", &src->u1)
-       && cfg->get_float(cfg, sect, "v1", &src->v1)
-       && cfg->get_float(cfg, sect, "u2", &src->u2)
-       && cfg->get_float(cfg, sect, "v2", &src->v2);
+    p1_element_init(el);
+
+    res = cfg->get_float(cfg, sect, "x1", &vsrc->x1)
+       && cfg->get_float(cfg, sect, "y1", &vsrc->y1)
+       && cfg->get_float(cfg, sect, "x2", &vsrc->x2)
+       && cfg->get_float(cfg, sect, "y2", &vsrc->y2)
+       && cfg->get_float(cfg, sect, "u1", &vsrc->u1)
+       && cfg->get_float(cfg, sect, "v1", &vsrc->v1)
+       && cfg->get_float(cfg, sect, "u2", &vsrc->u2)
+       && cfg->get_float(cfg, sect, "v2", &vsrc->v2);
 
     assert(res == true);
 }

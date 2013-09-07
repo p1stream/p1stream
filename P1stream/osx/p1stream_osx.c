@@ -3,8 +3,8 @@
 
 void p1_video_source_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer)
 {
-    P1Source *src = (P1Source *) vsrc;
-    P1Video *video = src->ctx->video;
+    P1Element *el = (P1Element *) vsrc;
+    P1Video *video = el->ctx->video;
     P1VideoFull *videof = (P1VideoFull *) video;
 
     GLsizei width = (GLsizei) IOSurfaceGetWidth(buffer);

@@ -26,16 +26,16 @@ static int64_t p1_audio_samples_to_mach_time(P1ContextFull *ctx, size_t samples)
 void p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Audio *audio = (P1Audio *) audiof;
+    P1Element *audioel = (P1Element *) audiof;
+
+    p1_element_init(audioel);
 
     p1_list_init(&audio->sources);
-
-    int ret = pthread_mutex_init(&audio->lock, NULL);
-    assert(ret == 0);
 }
 
 void p1_audio_start(P1AudioFull *audiof)
 {
-    P1Audio *audio = (P1Audio *) audiof;
+    P1Element *audioel = (P1Element *) audiof;
     AACENC_ERROR err;
 
     audiof->mix = calloc(mix_samples, sizeof(float));
@@ -59,7 +59,7 @@ void p1_audio_start(P1AudioFull *audiof)
     err = aacEncEncode(audiof->aac, NULL, NULL, NULL, NULL);
     assert(err == AACENC_OK);
 
-    p1_set_state(audio->ctx, P1_OTYPE_AUDIO, audio, P1_STATE_RUNNING);
+    p1_set_state(audioel->ctx, P1_OTYPE_AUDIO, audioel, P1_STATE_RUNNING);
 }
 
 void p1_audio_stop(P1AudioFull *audiof)
@@ -67,36 +67,39 @@ void p1_audio_stop(P1AudioFull *audiof)
     // FIXME
 }
 
-void p1_audio_source_init(P1AudioSource *src, P1Config *cfg, P1ConfigSection *sect)
+void p1_audio_source_init(P1AudioSource *asrc, P1Config *cfg, P1ConfigSection *sect)
 {
+    P1Element *el = (P1Element *) asrc;
     bool res;
 
-    res = cfg->get_float(cfg, sect, "volume", &src->volume)
-       && cfg->get_bool(cfg, sect, "master", &src->master);
+    p1_element_init(el);
+
+    res = cfg->get_float(cfg, sect, "volume", &asrc->volume)
+       && cfg->get_bool(cfg, sect, "master", &asrc->master);
 
     assert(res == true);
 }
 
 void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples)
 {
-    P1Source *src = (P1Source *) asrc;
-    P1Context *ctx = src->ctx;
+    P1Element *el = (P1Element *) asrc;
+    P1Context *ctx = el->ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
     P1Audio *audio = ctx->audio;
     P1AudioFull *audiof = (P1AudioFull *) audio;
+    P1Element *audioel = (P1Element *) audio;
     P1Connection *conn = ctx->conn;
-    P1ConnectionFull *connf = (P1ConnectionFull *) ctx->conn;
+    P1ConnectionFull *connf = (P1ConnectionFull *) conn;
 
-    if (audio->state != P1_STATE_RUNNING || conn->state != P1_STATE_RUNNING)
-        return;
+    p1_element_lock(audioel);
+
+    if (audioel->state != P1_STATE_RUNNING)
+        goto end;
 
     if (!audiof->sent_config) {
         audiof->sent_config = true;
         p1_conn_audio_config(connf);
     }
-
-    // FIXME: we can do better than this.
-    pthread_mutex_lock(&audio->lock);
 
     // Recalculate time for the start of the mix buffer.
     if (asrc->master)
@@ -114,10 +117,11 @@ void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t
             p1_conn_audio(connf, time, audiof->out, out_size);
     } while (out_size);
 
-    pthread_mutex_unlock(&audio->lock);
-
     if (samples)
         p1_log(ctx, P1_LOG_WARNING, "Audio mix buffer full, dropped %zd samples!\n", samples);
+
+end:
+    p1_element_unlock(audioel);
 }
 
 // Write as much as possible to the mix buffer.
@@ -146,7 +150,8 @@ static void p1_audio_write(P1AudioFull *audiof, P1AudioSource *asrc, float **in,
 static size_t p1_audio_read(P1AudioFull *audiof)
 {
     P1Audio *audio = (P1Audio *) audiof;
-    P1Context *ctx = audio->ctx;
+    P1Element *audioel = (P1Element *) audio;
+    P1Context *ctx = audioel->ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
     P1ListNode *head;
     P1ListNode *node;
@@ -155,10 +160,11 @@ static size_t p1_audio_read(P1AudioFull *audiof)
     size_t samples = mix_samples + 1;
     head = &audio->sources;
     p1_list_iterate(head, node) {
-        P1Source *src = (P1Source *) node;
-        P1AudioSource *asrc = (P1AudioSource *) node;
+        P1Source *src = p1_list_get_container(node, P1Source, link);
+        P1Element *el = (P1Element *) src;
+        P1AudioSource *asrc = (P1AudioSource *) src;
 
-        if (src->state == P1_STATE_RUNNING) {
+        if (el->state == P1_STATE_RUNNING) {
             if (asrc->mix_pos < samples)
                 samples = asrc->mix_pos;
         }
@@ -236,7 +242,8 @@ static size_t p1_audio_read(P1AudioFull *audiof)
 
         // Adjust source positions.
         p1_list_iterate(head, node) {
-            P1AudioSource *asrc = (P1AudioSource *) node;
+            P1Source *src = p1_list_get_container(node, P1Source, link);
+            P1AudioSource *asrc = (P1AudioSource *) src;
             asrc->mix_pos -= mix_read;
         }
 

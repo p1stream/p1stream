@@ -38,9 +38,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 @end
 
 // Plugin definition.
-static void p1_capture_video_source_free(P1Source *src);
-static bool p1_capture_video_source_start(P1Source *src);
-static void p1_capture_video_source_stop(P1Source *src);
+static void p1_capture_video_source_free(P1PluginElement *pel);
+static bool p1_capture_video_source_start(P1PluginElement *pel);
+static void p1_capture_video_source_stop(P1PluginElement *pel);
 static void p1_capture_video_source_frame(P1VideoSource *vsrc);
 
 
@@ -48,14 +48,14 @@ P1VideoSource *p1_capture_video_source_create(P1Config *cfg, P1ConfigSection *se
 {
     P1CaptureVideoSource *cvsrc = calloc(1, sizeof(P1CaptureVideoSource));
     P1VideoSource *vsrc = (P1VideoSource *) cvsrc;
-    P1Source *src = (P1Source *) cvsrc;
+    P1PluginElement *pel = (P1PluginElement *) cvsrc;
     assert(cvsrc != NULL);
 
     p1_video_source_init(vsrc, cfg, sect);
 
-    src->free = p1_capture_video_source_free;
-    src->start = p1_capture_video_source_start;
-    src->stop = p1_capture_video_source_stop;
+    pel->free = p1_capture_video_source_free;
+    pel->start = p1_capture_video_source_start;
+    pel->stop = p1_capture_video_source_stop;
     vsrc->frame = p1_capture_video_source_frame;
 
     int ret = pthread_mutex_init(&cvsrc->frame_lock, NULL);
@@ -96,9 +96,9 @@ P1VideoSource *p1_capture_video_source_create(P1Config *cfg, P1ConfigSection *se
     return vsrc;
 }
 
-static void p1_capture_video_source_free(P1Source *src)
+static void p1_capture_video_source_free(P1PluginElement *pel)
 {
-    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) src;
+    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
 
     CFRelease(cvsrc->session);
     CFRelease(cvsrc->delegate);
@@ -107,9 +107,10 @@ static void p1_capture_video_source_free(P1Source *src)
     assert(ret == 0);
 }
 
-static bool p1_capture_video_source_start(P1Source *src)
+static bool p1_capture_video_source_start(P1PluginElement *pel)
 {
-    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) src;
+    P1Element *el = (P1Element *) pel;
+    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
 
     @autoreleasepool {
         AVCaptureSession *session = (__bridge AVCaptureSession *) cvsrc->session;
@@ -117,14 +118,15 @@ static bool p1_capture_video_source_start(P1Source *src)
     }
 
     // FIXME: Should we wait for anything?
-    p1_set_state(src->ctx, P1_OTYPE_VIDEO_SOURCE, src, P1_STATE_RUNNING);
+    p1_set_state(el->ctx, P1_OTYPE_VIDEO_SOURCE, el, P1_STATE_RUNNING);
 
     return true;
 }
 
-static void p1_capture_video_source_stop(P1Source *src)
+static void p1_capture_video_source_stop(P1PluginElement *pel)
 {
-    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) src;
+    P1Element *el = (P1Element *) pel;
+    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
 
     @autoreleasepool {
         AVCaptureSession *session = (__bridge AVCaptureSession *) cvsrc->session;
@@ -132,7 +134,7 @@ static void p1_capture_video_source_stop(P1Source *src)
     }
 
     // FIXME: Should we wait for anything?
-    p1_set_state(src->ctx, P1_OTYPE_VIDEO_SOURCE, src, P1_STATE_IDLE);
+    p1_set_state(el->ctx, P1_OTYPE_VIDEO_SOURCE, el, P1_STATE_IDLE);
 }
 
 static void p1_capture_video_source_frame(P1VideoSource *vsrc)

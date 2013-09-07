@@ -10,23 +10,27 @@
 
 // Object types.
 typedef struct _P1Config P1Config;
-typedef void P1ConfigSection; // abstract
-typedef enum _P1LogLevel P1LogLevel;
-typedef enum _P1State P1State;
-typedef enum _P1TargetState P1TargetState;
-typedef struct _P1VideoClock P1VideoClock;
-typedef struct _P1ListNode P1ListNode;
+typedef struct _P1Element P1Element;
+typedef struct _P1PluginElement P1PluginElement;
 typedef struct _P1Source P1Source;
+typedef struct _P1VideoClock P1VideoClock;
 typedef struct _P1VideoSource P1VideoSource;
 typedef struct _P1AudioSource P1AudioSource;
 typedef struct _P1Video P1Video;
 typedef struct _P1Audio P1Audio;
 typedef struct _P1Connection P1Connection;
 typedef struct _P1Context P1Context;
+
+// Misc. types.
+typedef enum _P1LogLevel P1LogLevel;
+typedef enum _P1State P1State;
+typedef enum _P1TargetState P1TargetState;
 typedef enum _P1FreeOptions P1FreeOptions;
 typedef enum _P1NotificationType P1NotificationType;
 typedef enum _P1ObjectType P1ObjectType;
+typedef struct _P1ListNode P1ListNode;
 typedef struct _P1Notification P1Notification;
+typedef void P1ConfigSection; // abstract
 
 // Callback signatures.
 typedef bool (*P1ConfigIterSection)(P1Config *cfg, P1ConfigSection *sect, void *data);
@@ -74,7 +78,7 @@ struct _P1Config {
 };
 
 
-// Many objects track simple state. These are the possible states.
+// Elements track simple state. These are the possible states.
 enum _P1State {
     P1_STATE_IDLE       = 0, // Initial value.
     P1_STATE_STARTING   = 1,
@@ -82,7 +86,7 @@ enum _P1State {
     P1_STATE_STOPPING   = 3
 };
 
-// This function should be used to change the state field on objects.
+// This function should be used to change the state field on elements.
 #define p1_set_state(_ctx, _object_type, _object, _state) {     \
     (_object)->state = (_state);                                \
     _p1_notify((_ctx), (P1Notification) {                       \
@@ -96,14 +100,14 @@ enum _P1State {
 }
 
 
-// This is the state we want an object to be in, and should be worked towards.
+// This is the state we want an element to be in, and should be worked towards.
 enum _P1TargetState {
     P1_TARGET_RUNNING   = 0, // Initial value.
     P1_TARGET_IDLE      = 1,
     P1_TARGET_REMOVE    = 2  // Pending removal, source will be freed.
 };
 
-// This function should be used to change the target field on objects.
+// This function should be used to change the target field on elements.
 #define p1_set_target(_ctx, _object_type, _object, _target) {   \
     (_object)->target = (_target);                              \
     _p1_notify((_ctx), (P1Notification) {                       \
@@ -175,42 +179,34 @@ struct _P1ListNode {
     P1ListNode *next;
 };
 
-// Low-level list manipulation helper.
-#define _p1_list_manip(_src, _prev, _next) {        \
-    _src->prev = _prev;                             \
-    _src->next = _next;                             \
-    _prev->next = _src;                             \
-    _next->prev = _src;                             \
-}
-
 // Initialize a list.
 #define p1_list_init(_head) {                       \
-    P1ListNode *_p1_head = (P1ListNode *) (_head);  \
+    P1ListNode *_p1_head = (_head);                 \
     _p1_head->prev = _p1_head;                      \
     _p1_head->next = _p1_head;                      \
 }
 
+// Get the struct containing this node.
+#define p1_list_get_container(_node, _type, _field) \
+    (_type *) ((void *) (_node) - offsetof(_type, _field))
+
 // Insert a source node before the reference node.
 // Inserting before the head node is basically an append.
-#define p1_list_before(_ref, _node) {               \
-    P1ListNode *_p1_node = (P1ListNode *) (_node);  \
-    P1ListNode *_p1_next = (P1ListNode *) (_ref);   \
-    P1ListNode *_p1_prev = _p1_next->prev;          \
-    _p1_list_manip(_p1_node, _p1_prev, _p1_next);   \
-}
+#define p1_list_before(_ref, _node)                 \
+    P1ListNode *_p1_ref = (_ref);                   \
+    P1ListNode *_p1_node = (_node);                 \
+    _p1_list_between(_p1_ref->prev, _p1_ref, _p1_node)
 
 // Insert a source node after the reference node.
 // Inserting after the head node is basically a prepend.
-#define p1_list_after(_ref, _node) {                \
-    P1ListNode *_p1_node = (P1ListNode *) (_node);  \
-    P1ListNode *_p1_prev = (P1ListNode *) (_ref);   \
-    P1ListNode *_p1_next = _p1_prev->next;          \
-    _p1_list_manip(_p1_node, _p1_prev, _p1_next);   \
-}
+#define p1_list_after(_ref, _node)                  \
+    P1ListNode *_p1_ref = (_ref);                   \
+    P1ListNode *_p1_node = (_node);                 \
+    _p1_list_between(_p1_ref, _p1_ref->next, _p1_node)
 
 // Remove a node from the list.
 #define p1_list_remove(_node) {                     \
-    P1ListNode *_p1_node = (P1ListNode *) (_node);  \
+    P1ListNode *_p1_node = (_node);                 \
     P1ListNode *_p1_prev = _p1_node->prev;          \
     P1ListNode *_p1_next = _p1_node->next;          \
     _p1_prev->next = _p1_next;                      \
@@ -221,56 +217,85 @@ struct _P1ListNode {
 #define p1_list_iterate(_head, _node)  \
     for (_node = _head->next; _node != _head; _node = _node->next)
 
+// List manipulation helper.
+#define _p1_list_between(_prev, _next, _src) {      \
+    _src->prev = _prev;                             \
+    _src->next = _next;                             \
+    _prev->next = _src;                             \
+    _next->prev = _src;                             \
+}
+
+
+// Base of all elements that live in a context.
+
+struct _P1Element {
+    // Back reference. This will be set automatically.
+    P1Context *ctx;
+
+    // All operations on an element should be done while its lock is held.
+    // (Certain exceptions are possible, e.g. the source or context is idle.)
+    pthread_mutex_t lock;
+
+    // Current state. Only the element itself should update this field, and do
+    // so with p1_set_state.
+    P1State state;
+    // Target state. This field can be updated with p1_set_target.
+    P1TargetState target;
+};
+
+// Element lock methods.
+#define p1_element_lock(_el) assert(pthread_mutex_lock(&(_el)->lock) == 0)
+#define p1_element_unlock(_el) assert(pthread_mutex_unlock(&(_el)->lock) == 0)
+
+
+// Base for all plugin (non-fixed) elements.
+
+struct _P1PluginElement {
+    P1Element super;
+
+    // Free the object and associated resources. (Assume idle.)
+    // Implementation is optional. If NULL, a regular free() is used instead.
+    void (*free)(P1PluginElement *pel);
+
+    // Start the source. This should update the state and open resources.
+    bool (*start)(P1PluginElement *pel);
+    // Stop the source. This should update the state and close resources.
+    void (*stop)(P1PluginElement *pel);
+};
+
+// Call this to free a plugin element. This is rarely needed. Instead, set the
+// target state to remove, or free it on context destruction with p1_free.
+void p1_plugin_element_free(P1PluginElement *obj);
+
+
+// Base for audio and video sources.
+
+struct _P1Source {
+    P1PluginElement super;
+
+    // Link in the source list.
+    P1ListNode link;
+};
+
 
 // The video clock ticks at the video frame rate. The clock should start a
 // thread and call back on p1_video_clock_tick. All video processing and
 // encoding will happen on this thread.
 
 struct _P1VideoClock {
-    // Back reference, set automatically before start.
-    P1Context *ctx;
-    // Current state. The clock should update this with p1_set_state.
-    P1State state;
+    P1PluginElement super;
 
     // The frame rate as a fraction. This should be set by the time the clock
     // goes into the running state.
     uint32_t fps_num;
     uint32_t fps_den;
-
-    // Free the clock and associated resources. (Assume idle.)
-    void (*free)(P1VideoClock *clock);
-
-    // Start the clock. This should update the state and start the thread.
-    bool (*start)(P1VideoClock *clock);
-    // Stop the clock. This will only be called from the clocks own thread.
-    void (*stop)(P1VideoClock *clock);
 };
+
+// Subclasses should call into this from the initializer.
+void p1_video_clock_init(P1VideoClock *vclock, P1Config *cfg, P1ConfigSection *sect);
 
 // Callback for video clocks to emit ticks.
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time);
-
-
-// Common interface for audio and video sources.
-
-struct _P1Source {
-    P1ListNode super;
-
-    // Back reference, set automatically before start.
-    P1Context *ctx;
-
-    // Current state. The source should update this with p1_set_state.
-    P1State state;
-    // Target state. Change this with p1_set_target.
-    P1TargetState target;
-
-    // Free the source and associated resources. (Assume idle.)
-    void (*free)(P1Source *src);
-
-    // Start the source. This should update the state and open resources.
-    bool (*start)(P1Source *src);
-    // Stop the source.
-    void (*stop)(P1Source *src);
-};
 
 
 // Video sources produce images on each clock tick. Several may be added to a
@@ -326,49 +351,32 @@ void p1_audio_source_init(P1AudioSource *asrc, P1Config *cfg, P1ConfigSection *s
 void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples);
 
 
-// Audio mixer component.
+// Fixed audio mixer element.
 struct _P1Audio {
-    P1Context *ctx;
-
-    // Current state.
-    P1State state;
-    // Target state. Change this with p1_set_target.
-    P1TargetState target;
+    P1Element super;
 
     // The source list. Can be modified while running, as long as the lock is
     // held. Use the p1_list_* functions for convenience.
-    pthread_mutex_t lock;
     P1ListNode sources;
 };
 
 
-// Video mixer component.
+// Fixed video mixer element.
 struct _P1Video {
-    P1Context *ctx;
-
-    // Current state.
-    P1State state;
-    // Target state. Change this with p1_set_target.
-    P1TargetState target;
+    P1Element super;
 
     // The video clock. Only modify this when the video mixer is idle.
     P1VideoClock *clock;
 
     // The source list. Can be modified while running, as long as the lock is
     // held. Use the p1_list_* functions for convenience.
-    pthread_mutex_t lock;
     P1ListNode sources;
 };
 
 
-// Stream connection component.
+// Fixed stream connection element.
 struct _P1Connection {
-    P1Context *ctx;
-
-    // Current state.
-    P1State state;
-    // Target state. Change this with p1_set_target.
-    P1TargetState target;
+    P1Element super;
 };
 
 
@@ -429,7 +437,7 @@ int p1_fd(P1Context *ctx);
 void p1_log(P1Context *ctx, P1LogLevel level, const char *fmt, ...) __printflike(3, 4);
 void p1_logv(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args) __printflike(3, 0);
 
-// Low-level notification helper.
+// Notification helper.
 void _p1_notify(P1Context *ctx, P1Notification notification);
 
 

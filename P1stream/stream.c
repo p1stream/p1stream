@@ -6,18 +6,18 @@
 
 static const char *default_url = "rtmp://localhost/app/test";
 
-static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, int64_t time, uint32_t body_size);
-static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt);
+static RTMPPacket *p1_conn_new_packet(uint8_t type, uint32_t body_size);
+static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time);
 static void *p1_conn_main(void *data);
 static void p1_conn_flush(P1ConnectionFull *connf);
 
 void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 {
+    P1Element *connel = (P1Element *) connf;
     RTMP *r = &connf->rtmp;
     int res;
 
-    res = pthread_mutex_init(&connf->lock, NULL);
-    assert(res == 0);
+    p1_element_init(connel);
 
     res = pthread_cond_init(&connf->cond, NULL);
     assert(res == 0);
@@ -34,10 +34,9 @@ void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 
 void p1_conn_start(P1ConnectionFull *connf)
 {
-    P1Connection *conn = (P1Connection *) connf;
-    P1Context *ctx = conn->ctx;
+    P1Element *connel = (P1Element *) connf;
 
-    p1_set_state(ctx, P1_OTYPE_CONNECTION, conn, P1_STATE_STARTING);
+    p1_set_state(connel->ctx, P1_OTYPE_CONNECTION, connel, P1_STATE_STARTING);
 
     int res = pthread_create(&connf->thread, NULL, p1_conn_main, connf);
     assert(res == 0);
@@ -73,7 +72,7 @@ void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
     int pps_size = nal_pps->i_payload-4;
     uint32_t tag_size = 16 + sps_size + pps_size;
 
-    RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_VIDEO, 0, tag_size);
+    RTMPPacket *pkt = p1_conn_new_packet(RTMP_PACKET_TYPE_VIDEO, tag_size);
     char * const body = pkt->m_body;
 
     body[0] = 0x10 | 0x07; // keyframe, AVC
@@ -99,7 +98,7 @@ void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
     *(uint16_t *) (body+i) = htons(pps_size);
     memcpy(body+i+2, nal_pps->p_payload+4, pps_size);
 
-    p1_conn_submit_packet(connf, pkt);
+    p1_conn_submit_packet(connf, pkt, 0);
 }
 
 // Send video data.
@@ -110,7 +109,7 @@ void p1_conn_video(P1ConnectionFull *connf, x264_nal_t *nals, int len, x264_pict
         size += nals[i].i_payload;
     const uint32_t tag_size = size + 5;
 
-    RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_VIDEO, pic->i_dts, tag_size);
+    RTMPPacket *pkt = p1_conn_new_packet(RTMP_PACKET_TYPE_VIDEO, tag_size);
     char * const body = pkt->m_body;
 
     body[0] = (pic->b_keyframe ? 0x10 : 0x20) | 0x07; // keyframe/IDR, AVC
@@ -119,7 +118,7 @@ void p1_conn_video(P1ConnectionFull *connf, x264_nal_t *nals, int len, x264_pict
 
     memcpy(body + 5, nals[0].p_payload, size);
 
-    p1_conn_submit_packet(connf, pkt);
+    p1_conn_submit_packet(connf, pkt, pic->i_dts);
 }
 
 // Send audio configuration.
@@ -127,7 +126,7 @@ void p1_conn_audio_config(P1ConnectionFull *connf)
 {
     const uint32_t tag_size = 2 + 2;
 
-    RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_AUDIO, 0, tag_size);
+    RTMPPacket *pkt = p1_conn_new_packet(RTMP_PACKET_TYPE_AUDIO, tag_size);
     char * const body = pkt->m_body;
 
     body[0] = 0xa0 | 0x0c | 0x02 | 0x01; // AAC, 44.1kHz, 16-bit, Stereo
@@ -137,7 +136,7 @@ void p1_conn_audio_config(P1ConnectionFull *connf)
     body[2] = 0x10 | 0x02;
     body[3] = 0x10;
 
-    p1_conn_submit_packet(connf, pkt);
+    p1_conn_submit_packet(connf, pkt, 0);
 }
 
 // Send audio data.
@@ -145,7 +144,7 @@ void p1_conn_audio(P1ConnectionFull *connf, int64_t mtime, void *buf, size_t len
 {
     const uint32_t tag_size = (uint32_t) (2 + len);
 
-    RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_AUDIO, mtime, tag_size);
+    RTMPPacket *pkt = p1_conn_new_packet(RTMP_PACKET_TYPE_AUDIO, tag_size);
     char * const body = pkt->m_body;
 
     body[0] = 0xa0 | 0x0c | 0x02 | 0x01; // AAC, 44.1kHz, 16-bit, Stereo
@@ -154,20 +153,13 @@ void p1_conn_audio(P1ConnectionFull *connf, int64_t mtime, void *buf, size_t len
     // FIXME: Do the extra work to avoid this copy.
     memcpy(body + 2, buf, len);
 
-    p1_conn_submit_packet(connf, pkt);
+    p1_conn_submit_packet(connf, pkt, mtime);
 }
 
 // Allocate a new packet and set header fields.
-static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, int64_t time, uint32_t body_size)
+static RTMPPacket *p1_conn_new_packet(uint8_t type, uint32_t body_size)
 {
-    P1Connection *conn = (P1Connection *) connf;
-    P1Context *ctx = conn->ctx;
-    P1ContextFull *ctxf = (P1ContextFull *) ctx;
-    RTMP *r = &connf->rtmp;
     const size_t prelude_size = sizeof(RTMPPacket) + RTMP_MAX_HEADER_SIZE;
-
-    // We read some state without synchronisation here, but that's okay,
-    // because we only touch parts that don't change during the connection.
 
     // Allocate packet memory.
     RTMPPacket *pkt = calloc(1, prelude_size + body_size);
@@ -176,9 +168,40 @@ static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, int
     // Fill basic fields.
     pkt->m_packetType = type;
     pkt->m_nChannel = 0x04;
-    pkt->m_nInfoField2 = r->m_stream_id;
     pkt->m_nBodySize = body_size;
     pkt->m_body = (char *)pkt + prelude_size;
+
+    return pkt;
+}
+
+// Submit a packet to the queue.
+static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time)
+{
+    P1Element *connel = (P1Element *) connf;
+    P1Context *ctx = connel->ctx;
+    P1ContextFull *ctxf = (P1ContextFull *) ctx;
+    RTMP *r = &connf->rtmp;
+    int res;
+
+    p1_element_lock(connel);
+
+    if (connel->state != P1_STATE_RUNNING) {
+        free(pkt);
+        goto end;
+    }
+
+    // Determine which queue to use.
+    P1PacketQueue *q;
+    switch (pkt->m_packetType) {
+        case RTMP_PACKET_TYPE_AUDIO: q = &connf->audio_queue; break;
+        case RTMP_PACKET_TYPE_VIDEO: q = &connf->video_queue; break;
+        default: abort();
+    }
+    if (q->length == UINT8_MAX) {
+        free(pkt);
+        p1_log(ctx, P1_LOG_WARNING, "Packet queue full, dropping packet!\n");
+        goto end;
+    }
 
     // Set timestamp, if one was given.
     if (time) {
@@ -195,51 +218,23 @@ static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, int
     // Start stream with a large header.
     pkt->m_headerType = time ? RTMP_PACKET_SIZE_MEDIUM : RTMP_PACKET_SIZE_LARGE;
     pkt->m_hasAbsTimestamp = pkt->m_headerType == RTMP_PACKET_SIZE_LARGE;
+    pkt->m_nInfoField2 = r->m_stream_id;
 
-    return pkt;
-}
-
-// Submit a packet to the queue.
-static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt)
-{
-    P1Connection *conn = (P1Connection *) connf;
-    P1Context *ctx = conn->ctx;
-    int res;
-
-    P1PacketQueue *q;
-    switch (pkt->m_packetType) {
-        case RTMP_PACKET_TYPE_AUDIO: q = &connf->audio_queue; break;
-        case RTMP_PACKET_TYPE_VIDEO: q = &connf->video_queue; break;
-        default: abort();
-    }
-
-    res = pthread_mutex_lock(&connf->lock);
-    assert(res == 0);
-
-    if (q->length == UINT8_MAX) {
-        free(pkt);
-        p1_log(ctx, P1_LOG_WARNING, "Packet queue full, dropping packet!\n");
-        goto end;
-    }
-
-    // Deliberate overflow of q->write.
-    q->head[q->write++] = pkt;
+    // Queue the packet.
+    q->head[q->write++] = pkt;  // Deliberate overflow of q->write.
     q->length++;
-
     res = pthread_cond_signal(&connf->cond);
     assert(res == 0);
 
 end:
-    res = pthread_mutex_unlock(&connf->lock);
-    assert(res == 0);
+    p1_element_unlock(connel);
 }
 
 // The main loop of the streaming thread.
 static void *p1_conn_main(void *data)
 {
     P1ConnectionFull *connf = (P1ConnectionFull *) data;
-    P1Connection *conn = (P1Connection *) connf;
-    P1Context *ctx = conn->ctx;
+    P1Element *connel = (P1Element *) data;
     RTMP *r = &connf->rtmp;
     int res;
 
@@ -249,21 +244,19 @@ static void *p1_conn_main(void *data)
     res = RTMP_ConnectStream(r, 0);
     assert(res == TRUE);
 
-    res = pthread_mutex_lock(&connf->lock);
-    assert(res == 0);
+    p1_element_lock(connel);
 
     connf->start = mach_absolute_time();
-    p1_set_state(ctx, P1_OTYPE_CONNECTION, conn, P1_STATE_RUNNING);
+    p1_set_state(connel->ctx, P1_OTYPE_CONNECTION, connel, P1_STATE_RUNNING);
 
     do {
         p1_conn_flush(connf);
 
-        res = pthread_cond_wait(&connf->cond, &connf->lock);
+        res = pthread_cond_wait(&connf->cond, &connel->lock);
         assert(res == 0);
-    } while (conn->state == P1_STATE_RUNNING);
+    } while (connel->state == P1_STATE_RUNNING);
 
-    res = pthread_mutex_unlock(&connf->lock);
-    assert(res == 0);
+    p1_element_unlock(connel);
 
     return NULL;
 }
@@ -272,6 +265,7 @@ static void *p1_conn_main(void *data)
 // This is called with the stream lock held.
 static void p1_conn_flush(P1ConnectionFull *connf)
 {
+    P1Element *connel = (P1Element *) connf;
     RTMP *r = &connf->rtmp;
     P1PacketQueue *aq = &connf->audio_queue;
     P1PacketQueue *vq = &connf->video_queue;
@@ -313,8 +307,7 @@ static void p1_conn_flush(P1ConnectionFull *connf)
         if (i == list)
             return;
 
-        res = pthread_mutex_unlock(&connf->lock);
-        assert(res == 0);
+        p1_element_unlock(connel);
 
         RTMPPacket **end = i;
         for (i = list; i != end; i++) {
@@ -325,7 +318,6 @@ static void p1_conn_flush(P1ConnectionFull *connf)
             assert(res == TRUE);
         }
 
-        res = pthread_mutex_lock(&connf->lock);
-        assert(res == 0);
+        p1_element_lock(connel);
     }
 }
