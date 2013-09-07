@@ -29,6 +29,10 @@ static void p1_input_audio_source_input_callback(
     const AudioTimeStamp *inStartTime,
     UInt32 inNumberPacketDescriptions,
     const AudioStreamPacketDescription *inPacketDescs);
+static void p1_input_audio_source_running_callback(
+    void *inUserData,
+    AudioQueueRef inAQ,
+    AudioQueuePropertyID inID);
 
 
 P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect)
@@ -55,6 +59,8 @@ static bool p1_input_audio_source_start(P1PluginElement *pel)
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
+    p1_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STARTING);
+
     AudioStreamBasicDescription fmt;
     fmt.mFormatID = kAudioFormatLinearPCM;
     fmt.mFormatFlags = kLinearPCMFormatFlagIsFloat;
@@ -67,6 +73,9 @@ static bool p1_input_audio_source_start(P1PluginElement *pel)
     fmt.mReserved = 0;
 
     ret = AudioQueueNewInput(&fmt, p1_input_audio_source_input_callback, asrc, NULL, kCFRunLoopCommonModes, 0, &iasrc->queue);
+    assert(ret == noErr);
+
+    ret = AudioQueueAddPropertyListener(iasrc->queue, kAudioQueueProperty_IsRunning, p1_input_audio_source_running_callback, iasrc);
     assert(ret == noErr);
 
     if (iasrc->device[0]) {
@@ -87,9 +96,6 @@ static bool p1_input_audio_source_start(P1PluginElement *pel)
     ret = AudioQueueStart(iasrc->queue, NULL);
     assert(ret == noErr);
 
-    // FIXME: Should we wait for anything?
-    p1_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_RUNNING);
-
     return true;
 }
 
@@ -99,14 +105,11 @@ static void p1_input_audio_source_stop(P1PluginElement *pel)
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
-    // FIXME: Async.
-    ret = AudioQueueStop(iasrc->queue, TRUE);
+    p1_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STOPPING);
+
+    ret = AudioQueueStop(iasrc->queue, FALSE);
     assert(ret == noErr);
 
-    ret = AudioQueueDispose(iasrc->queue, TRUE);
-    assert(ret == noErr);
-
-    p1_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_IDLE);
 }
 
 static void p1_input_audio_source_input_callback(
@@ -117,11 +120,50 @@ static void p1_input_audio_source_input_callback(
     UInt32 inNumberPacketDescriptions,
     const AudioStreamPacketDescription *inPacketDescs)
 {
+    P1Element *el = (P1Element *) inUserData;
     P1AudioSource *asrc = (P1AudioSource *) inUserData;
 
-    p1_audio_source_buffer(asrc, inStartTime->mHostTime, inBuffer->mAudioData,
-                           inBuffer->mAudioDataByteSize / sample_size);
+    p1_element_lock(el);
+
+    if (el->state == P1_STATE_RUNNING)
+        p1_audio_source_buffer(asrc, inStartTime->mHostTime, inBuffer->mAudioData,
+                               inBuffer->mAudioDataByteSize / sample_size);
 
     OSStatus ret = AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
     assert(ret == noErr);
+
+    p1_element_unlock(el);
+}
+
+static void p1_input_audio_source_running_callback(
+    void *inUserData,
+    AudioQueueRef inAQ,
+    AudioQueuePropertyID inID)
+{
+    P1Element *el = (P1Element *) inUserData;
+    OSStatus ret;
+    UInt32 running;
+    UInt32 size;
+
+    p1_element_lock(el);
+
+    size = sizeof(running);
+    ret = AudioQueueGetProperty(inAQ, kAudioQueueProperty_IsRunning, &running, &size);
+    assert(ret == noErr);
+
+    // FIXME: handle unexpected transitions in other states
+    if (running) {
+        if (el->state == P1_STATE_STARTING)
+            p1_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_RUNNING);
+    }
+    else {
+        if (el->state == P1_STATE_STOPPING) {
+            ret = AudioQueueDispose(inAQ, TRUE);
+            assert(ret == noErr);
+
+            p1_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_IDLE);
+        }
+    }
+
+    p1_element_unlock(el);
 }
