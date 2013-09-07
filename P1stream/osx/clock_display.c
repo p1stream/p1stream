@@ -51,19 +51,20 @@ static bool p1_display_video_clock_start(P1PluginElement *pel)
 {
     P1Element *el = (P1Element *) pel;
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
+    CVReturn ret;
 
     p1_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_STARTING);
 
-    CVReturn ret;
+    dvclock->skip_counter = 0;
 
     ret = CVDisplayLinkCreateWithCGDisplay(dvclock->display_id, &dvclock->display_link);
     assert(ret == kCVReturnSuccess);
+
     ret = CVDisplayLinkSetOutputCallback(dvclock->display_link, p1_display_video_clock_callback, dvclock);
     assert(ret == kCVReturnSuccess);
+
     CVReturn cv_ret = CVDisplayLinkStart(dvclock->display_link);
     assert(cv_ret == kCVReturnSuccess);
-
-    dvclock->skip_counter = 0;
 
     return true;
 }
@@ -73,10 +74,12 @@ static void p1_display_video_clock_stop(P1PluginElement *pel)
     P1Element *el = (P1Element *) pel;
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
 
+    p1_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_STOPPING);
+
     CVReturn cv_ret = CVDisplayLinkStop(dvclock->display_link);
     assert(cv_ret == kCVReturnSuccess);
+
     CFRelease(dvclock->display_link);
-    dvclock->display_link = NULL;
 
     // FIXME: Should we wait for anything?
     p1_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_IDLE);
@@ -96,12 +99,11 @@ static CVReturn p1_display_video_clock_callback(
 
     p1_element_lock(el);
 
-    // Finish up after start.
     if (el->state == P1_STATE_STARTING) {
         // Get the display refresh period.
         double period = CVDisplayLinkGetActualOutputVideoRefreshPeriod(dvclock->display_link);
         if (period == 0.0)
-            return kCVReturnSuccess;
+            goto end;
 
         // Set the frame rate based on this and the divisor.
         vclock->fps_num = (uint32_t) round(1.0 / period);
@@ -111,12 +113,17 @@ static CVReturn p1_display_video_clock_callback(
         p1_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_RUNNING);
     }
 
-    // Skip tick based on divisor.
-    if (dvclock->skip_counter >= dvclock->divisor)
-        dvclock->skip_counter = 0;
-    if (dvclock->skip_counter++ == 0)
-        p1_video_clock_tick(vclock, inNow->hostTime);
+    if (el->state == P1_STATE_RUNNING) {
+        // Skip tick based on divisor.
+        if (dvclock->skip_counter >= dvclock->divisor)
+            dvclock->skip_counter = 0;
+        if (dvclock->skip_counter++ != 0)
+            goto end;
 
+        p1_video_clock_tick(vclock, inNow->hostTime);
+    }
+
+end:
     p1_element_unlock(el);
 
     return kCVReturnSuccess;
