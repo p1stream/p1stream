@@ -282,51 +282,43 @@ static void p1_conn_flush(P1ConnectionFull *connf)
 
     while (true) {
 
-        // We need to chronologically order packets, but they arrive separately.
-        // Wait until we have at least one audio and one video packet to compare.
-
-        // (In other words, if we don't have one of either, it's possible the other
-        // stream will generate a packet with an earlier timestamp.)
-
-        RTMPPacket *last_audio = (aq->length != 0) ? aq->head[aq->write - 1] : NULL;
-        RTMPPacket *last_video = (vq->length != 0) ? vq->head[vq->write - 1] : NULL;
-        if (last_audio == NULL || last_video == NULL)
-            return;
-
         // Gather a list of packets to send.
+
+        // We need to chronologically order packets, but they arrive separately.
+        // Make sure there is at least one video and audio packet to compare.
+
+        // (In other words, if we don't have one of either, it's possible the
+        // other stream will generate a packet with an earlier timestamp.)
 
         RTMPPacket *list[UINT8_MAX * 2];
         RTMPPacket **i = list;
-
-        RTMPPacket *ap = aq->head[aq->read];
-        RTMPPacket *vp = vq->head[vq->read];
-        RTMPPacket *pkt;
-        do {
+        while (aq->length != 0 && vq->length != 0) {
+            RTMPPacket *ap = aq->head[aq->read];
+            RTMPPacket *vp = vq->head[vq->read];
             if (ap->m_nTimeStamp < vp->m_nTimeStamp) {
-                pkt = ap;
-
-                ap = aq->head[++aq->read];
+                *(i++) = ap;
+                aq->read++;
                 aq->length--;
             }
             else {
-                pkt = vp;
-
-                vp = vq->head[++vq->read];
+                *(i++) = vp;
+                vq->read++;
                 vq->length--;
             }
-
-            *(i++) = pkt;
-        } while (pkt != last_audio && pkt != last_video);
+        };
 
         // Now write out the list. Release the lock so blocking doesn't affect
         // other threads queuing new packets.
+
+        if (i == list)
+            return;
 
         res = pthread_mutex_unlock(&connf->lock);
         assert(res == 0);
 
         RTMPPacket **end = i;
         for (i = list; i != end; i++) {
-            pkt = *i;
+            RTMPPacket *pkt = *i;
 
             res = RTMP_SendPacket(r, pkt, FALSE);
             free(pkt);
