@@ -11,6 +11,8 @@ static const int num_channels = 2;
 static const int bit_rate = 128 * 1024;
 // Mix buffer buffer of one full second.
 static const int mix_samples = num_channels * sample_rate;
+// Minimum number of samples to gather before encoding.
+static const int out_min_samples = mix_samples / 2;
 // Minimum output buffer size per FDK AAC requirements.
 static const int out_min_size = 6144 / 8 * num_channels;
 // Complete output buffer size, also one full second.
@@ -161,7 +163,7 @@ static size_t p1_audio_read(P1AudioFull *audiof)
                 samples = asrc->mix_pos;
         }
     }
-    if (samples > mix_samples)
+    if (samples > mix_samples || samples < out_min_samples)
         return 0;
 
     // Convert to 16-bit.
