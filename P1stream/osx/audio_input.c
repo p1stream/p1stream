@@ -14,11 +14,12 @@ typedef struct _P1InputAudioSource P1InputAudioSource;
 struct _P1InputAudioSource {
     P1AudioSource super;
 
+    char device[128];
+
     AudioQueueRef queue;
     AudioQueueBufferRef buffers[num_buffers];
 };
 
-static void p1_input_audio_source_free(P1PluginElement *pel);
 static bool p1_input_audio_source_start(P1PluginElement *pel);
 static void p1_input_audio_source_stop(P1PluginElement *pel);
 static void p1_input_audio_source_input_callback(
@@ -39,10 +40,19 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
 
     p1_audio_source_init(asrc, cfg, sect);
 
-    pel->free = p1_input_audio_source_free;
     pel->start = p1_input_audio_source_start;
     pel->stop = p1_input_audio_source_stop;
 
+    cfg->get_string(cfg, sect, "device", iasrc->device, sizeof(iasrc->device));
+
+    return asrc;
+}
+
+static bool p1_input_audio_source_start(P1PluginElement *pel)
+{
+    P1Element *el = (P1Element *) pel;
+    P1AudioSource *asrc = (P1AudioSource *) pel;
+    P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
     AudioStreamBasicDescription fmt;
@@ -59,9 +69,8 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
     ret = AudioQueueNewInput(&fmt, p1_input_audio_source_input_callback, asrc, NULL, kCFRunLoopCommonModes, 0, &iasrc->queue);
     assert(ret == noErr);
 
-    char device[128];
-    if (cfg->get_string(cfg, sect, "device", device, sizeof(device))) {
-        CFStringRef str = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, device, kCFStringEncodingASCII, kCFAllocatorNull);
+    if (iasrc->device[0]) {
+        CFStringRef str = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, iasrc->device, kCFStringEncodingASCII, kCFAllocatorNull);
         if (str) {
             AudioQueueSetProperty(iasrc->queue, kAudioQueueProperty_CurrentDevice, &str, sizeof(str));
             CFRelease(str);
@@ -75,22 +84,7 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
         assert(ret == noErr);
     }
 
-    return asrc;
-}
-
-static void p1_input_audio_source_free(P1PluginElement *pel)
-{
-    P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
-
-    AudioQueueDispose(iasrc->queue, TRUE);
-}
-
-static bool p1_input_audio_source_start(P1PluginElement *pel)
-{
-    P1Element *el = (P1Element *) pel;
-    P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
-
-    OSStatus ret = AudioQueueStart(iasrc->queue, NULL);
+    ret = AudioQueueStart(iasrc->queue, NULL);
     assert(ret == noErr);
 
     // FIXME: Should we wait for anything?
@@ -103,11 +97,15 @@ static void p1_input_audio_source_stop(P1PluginElement *pel)
 {
     P1Element *el = (P1Element *) pel;
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
-
-    OSStatus ret = AudioQueueStop(iasrc->queue, TRUE);
-    assert(ret == noErr);
+    OSStatus ret;
 
     // FIXME: Async.
+    ret = AudioQueueStop(iasrc->queue, TRUE);
+    assert(ret == noErr);
+
+    ret = AudioQueueDispose(iasrc->queue, TRUE);
+    assert(ret == noErr);
+
     p1_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_IDLE);
 }
 
