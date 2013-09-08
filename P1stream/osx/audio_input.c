@@ -109,7 +109,6 @@ static void p1_input_audio_source_stop(P1Plugin *pel)
 
     ret = AudioQueueStop(iasrc->queue, FALSE);
     assert(ret == noErr);
-
 }
 
 static void p1_input_audio_source_input_callback(

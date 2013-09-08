@@ -76,12 +76,14 @@ static void p1_display_video_clock_stop(P1Plugin *pel)
 
     p1_object_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_STOPPING);
 
+    // Stop the display link. This apparently blocks.
+    p1_object_unlock(el);
     CVReturn cv_ret = CVDisplayLinkStop(dvclock->display_link);
+    p1_object_lock(el);
     assert(cv_ret == kCVReturnSuccess);
 
     CFRelease(dvclock->display_link);
 
-    // FIXME: Should we wait for anything?
     p1_object_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_IDLE);
 }
 

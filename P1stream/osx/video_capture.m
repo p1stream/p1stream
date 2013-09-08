@@ -60,8 +60,10 @@ P1VideoSource *p1_capture_video_source_create(P1Config *cfg, P1ConfigSection *se
 
 static bool p1_capture_video_source_start(P1Plugin *pel)
 {
-    P1Object *el = (P1Object *) pel;
+    P1Object *obj = (P1Object *) pel;
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
+
+    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STARTING);
 
     @autoreleasepool {
         P1VideoCaptureDelegate *delegate = [[P1VideoCaptureDelegate alloc] initWithSource:cvsrc];
@@ -95,31 +97,37 @@ static bool p1_capture_video_source_start(P1Plugin *pel)
         cvsrc->session = CFBridgingRetain(session);
 
         // Start. This is sync, unfortunately.
+        p1_object_unlock(obj);
         [session startRunning];
+        p1_object_lock(obj);
     }
 
-    p1_object_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
+    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
 
     return true;
 }
 
 static void p1_capture_video_source_stop(P1Plugin *pel)
 {
-    P1Object *el = (P1Object *) pel;
+    P1Object *obj = (P1Object *) pel;
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
+
+    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STOPPING);
 
     @autoreleasepool {
         AVCaptureSession *session = (__bridge AVCaptureSession *) cvsrc->session;
 
         // Stop. This is sync, unfortunately.
+        p1_object_unlock(obj);
         [session stopRunning];
+        p1_object_lock(obj);
 
         // Release references.
         CFRelease(cvsrc->session);
         CFRelease(cvsrc->delegate);
     }
 
-    p1_object_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
+    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
 }
 
 static void p1_capture_video_source_frame(P1VideoSource *vsrc)
