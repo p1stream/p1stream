@@ -37,8 +37,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 @end
 
 // Plugin definition.
-static bool p1_capture_video_source_start(P1PluginElement *pel);
-static void p1_capture_video_source_stop(P1PluginElement *pel);
+static bool p1_capture_video_source_start(P1Plugin *pel);
+static void p1_capture_video_source_stop(P1Plugin *pel);
 static void p1_capture_video_source_frame(P1VideoSource *vsrc);
 
 
@@ -46,7 +46,7 @@ P1VideoSource *p1_capture_video_source_create(P1Config *cfg, P1ConfigSection *se
 {
     P1CaptureVideoSource *cvsrc = calloc(1, sizeof(P1CaptureVideoSource));
     P1VideoSource *vsrc = (P1VideoSource *) cvsrc;
-    P1PluginElement *pel = (P1PluginElement *) cvsrc;
+    P1Plugin *pel = (P1Plugin *) cvsrc;
     assert(cvsrc != NULL);
 
     p1_video_source_init(vsrc, cfg, sect);
@@ -58,9 +58,9 @@ P1VideoSource *p1_capture_video_source_create(P1Config *cfg, P1ConfigSection *se
     return vsrc;
 }
 
-static bool p1_capture_video_source_start(P1PluginElement *pel)
+static bool p1_capture_video_source_start(P1Plugin *pel)
 {
-    P1Element *el = (P1Element *) pel;
+    P1Object *el = (P1Object *) pel;
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
 
     @autoreleasepool {
@@ -98,14 +98,14 @@ static bool p1_capture_video_source_start(P1PluginElement *pel)
         [session startRunning];
     }
 
-    p1_element_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
+    p1_object_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
 
     return true;
 }
 
-static void p1_capture_video_source_stop(P1PluginElement *pel)
+static void p1_capture_video_source_stop(P1Plugin *pel)
 {
-    P1Element *el = (P1Element *) pel;
+    P1Object *el = (P1Object *) pel;
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
 
     @autoreleasepool {
@@ -119,7 +119,7 @@ static void p1_capture_video_source_stop(P1PluginElement *pel)
         CFRelease(cvsrc->delegate);
     }
 
-    p1_element_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
+    p1_object_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
 }
 
 static void p1_capture_video_source_frame(P1VideoSource *vsrc)
@@ -159,9 +159,9 @@ static void p1_capture_video_source_frame(P1VideoSource *vsrc)
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection
 {
-    P1Element *el = (P1Element *) cvsrc;
+    P1Object *el = (P1Object *) cvsrc;
 
-    p1_element_lock(el);
+    p1_object_lock(el);
 
     if (cvsrc->frame)
         CFRelease(cvsrc->frame);
@@ -172,7 +172,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     CFRetain(frame);
     cvsrc->frame = frame;
 
-    p1_element_unlock(el);
+    p1_object_unlock(el);
 }
 
 - (void)handleError:(NSNotification *)obj

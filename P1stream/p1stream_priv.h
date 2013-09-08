@@ -16,9 +16,9 @@ typedef struct _P1ConnectionFull P1ConnectionFull;
 typedef struct _P1ContextFull P1ContextFull;
 
 
-// P1Element methods.
-void p1_element_init(P1Element *obj);
-void p1_element_destroy(P1Element *obj);
+// Private P1Object methods.
+void p1_object_init(P1Object *obj);
+void p1_object_destroy(P1Object *obj);
 
 
 // This is a ringbuffer of RMTPPacket pointers.

@@ -92,9 +92,9 @@ static const size_t yuv_work_size[] = {
 void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Video *video = (P1Video *) videof;
-    P1Element *videoel = (P1Element *) videof;
+    P1Object *videoobj = (P1Object *) videof;
 
-    p1_element_init(videoel);
+    p1_object_init(videoobj);
 
     p1_list_init(&video->sources);
 
@@ -104,8 +104,8 @@ void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
 void p1_video_start(P1VideoFull *videof)
 {
     P1Video *video = (P1Video *) videof;
-    P1Element *videoel = (P1Element *) videof;
-    P1Context *ctx = videoel->ctx;
+    P1Object *videoobj = (P1Object *) videof;
+    P1Context *ctx = videoobj->ctx;
     x264_param_t *params = &videof->params;
     CGLError cgl_err;
     cl_int cl_err;
@@ -220,7 +220,7 @@ void p1_video_start(P1VideoFull *videof)
     cl_err = clSetKernelArg(videof->yuv_kernel, 1, sizeof(cl_mem), &videof->out_mem);
     assert(cl_err == CL_SUCCESS);
 
-    p1_element_set_state(videoel, P1_OTYPE_VIDEO, P1_STATE_RUNNING);
+    p1_object_set_state(videoobj, P1_OTYPE_VIDEO, P1_STATE_RUNNING);
 }
 
 void p1_video_stop(P1VideoFull *videof)
@@ -271,11 +271,11 @@ static void p1_video_encoder_log_callback(void *data, int level, const char *fmt
 
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
 {
-    P1Element *el = (P1Element *) vclock;
-    P1Context *ctx = el->ctx;
+    P1Object *obj = (P1Object *) vclock;
+    P1Context *ctx = obj->ctx;
     P1Video *video = ctx->video;
     P1VideoFull *videof = (P1VideoFull *) video;
-    P1Element *videoel = (P1Element *) video;
+    P1Object *videoobj = (P1Object *) video;
     P1ConnectionFull *connf = (P1ConnectionFull *) ctx->conn;
     P1ListNode *head;
     P1ListNode *node;
@@ -284,10 +284,10 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     int len;
     int ret;
 
-    p1_element_lock(videoel);
+    p1_object_lock(videoobj);
 
-    if (videoel->state != P1_STATE_RUNNING) {
-        p1_element_unlock(videoel);
+    if (videoobj->state != P1_STATE_RUNNING) {
+        p1_object_unlock(videoobj);
         return;
     }
 
@@ -297,10 +297,10 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     head = &video->sources;
     p1_list_iterate(head, node) {
         P1Source *src = p1_list_get_container(node, P1Source, link);
-        P1Element *el = (P1Element *) src;
+        P1Object *el = (P1Object *) src;
         P1VideoSource *vsrc = (P1VideoSource *) src;
 
-        p1_element_lock(el);
+        p1_object_lock(el);
         if (el->state == P1_STATE_RUNNING) {
             if (vsrc->texture == 0)
                 glGenTextures(1, &vsrc->texture);
@@ -316,7 +316,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
             }, GL_DYNAMIC_DRAW);
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         }
-        p1_element_unlock(el);
+        p1_object_unlock(el);
     }
 
     glFinish();
@@ -348,22 +348,22 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     if (len)
         p1_conn_video(connf, nals, len, &out_pic);
 
-    p1_element_unlock(videoel);
+    p1_object_unlock(videoobj);
 }
 
 void p1_video_clock_init(P1VideoClock *vclock, P1Config *cfg, P1ConfigSection *sect)
 {
-    P1Element *el = (P1Element *) vclock;
+    P1Object *obj = (P1Object *) vclock;
 
-    p1_element_init(el);
+    p1_object_init(obj);
 }
 
 void p1_video_source_init(P1VideoSource *vsrc, P1Config *cfg, P1ConfigSection *sect)
 {
-    P1Element *el = (P1Element *) vsrc;
+    P1Object *obj = (P1Object *) vsrc;
     bool res;
 
-    p1_element_init(el);
+    p1_object_init(obj);
 
     res = cfg->get_float(cfg, sect, "x1", &vsrc->x1)
        && cfg->get_float(cfg, sect, "y1", &vsrc->y1)

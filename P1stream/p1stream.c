@@ -22,23 +22,23 @@ enum _P1Action {
 };
 
 
-void p1_element_init(P1Element *el)
+void p1_object_init(P1Object *obj)
 {
-    int res = pthread_mutex_init(&el->lock, NULL);
+    int res = pthread_mutex_init(&obj->lock, NULL);
     assert(res == 0);
 }
 
-void p1_element_destroy(P1Element *el)
+void p1_object_destroy(P1Object *obj)
 {
-    int res = pthread_mutex_destroy(&el->lock);
+    int res = pthread_mutex_destroy(&obj->lock);
     assert(res == 0);
 }
 
-void p1_plugin_element_free(P1PluginElement *pel)
+void p1_plugin_free(P1Plugin *pel)
 {
-    P1Element *el = (P1Element *) pel;
+    P1Object *obj = (P1Object *) pel;
 
-    p1_element_destroy(el);
+    p1_object_destroy(obj);
 
     if (pel->free)
         pel->free(pel);
@@ -64,11 +64,11 @@ P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
     ctx->audio = (P1Audio *) audiof;
     ctx->conn = (P1Connection *) connf;
 
-    P1Element *ctxel = (P1Element *) ctxf;
-    ctxel->ctx = ctx;
-    ((P1Element *) videof)->ctx = ctx;
-    ((P1Element *) audiof)->ctx = ctx;
-    ((P1Element *) connf)->ctx = ctx;
+    P1Object *ctxobj = (P1Object *) ctxf;
+    ctxobj->ctx = ctx;
+    ((P1Object *) videof)->ctx = ctx;
+    ((P1Object *) audiof)->ctx = ctx;
+    ((P1Object *) connf)->ctx = ctx;
 
     ctx->log_level = P1_LOG_INFO;
     ctx->log_fn = p1_log_default;
@@ -82,7 +82,7 @@ P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
 
     mach_timebase_info(&ctxf->timebase);
 
-    p1_element_init(ctxel);
+    p1_object_init(ctxobj);
     p1_video_init(videof, cfg, video_sect);
     p1_audio_init(audiof, cfg, audio_sect);
     p1_conn_init(connf, cfg, stream_sect);
@@ -97,30 +97,30 @@ void p1_free(P1Context *ctx, P1FreeOptions options)
 
 void p1_start(P1Context *ctx)
 {
-    P1Element *ctxel = (P1Element *) ctx;
+    P1Object *ctxobj = (P1Object *) ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
 
-    p1_element_lock(ctxel);
+    p1_object_lock(ctxobj);
 
-    p1_element_set_target(ctxel, P1_OTYPE_CONTEXT, P1_TARGET_RUNNING);
+    p1_object_set_target(ctxobj, P1_OTYPE_CONTEXT, P1_TARGET_RUNNING);
 
-    if (ctxel->state == P1_STATE_IDLE) {
+    if (ctxobj->state == P1_STATE_IDLE) {
         int ret = pthread_create(&ctxf->ctrl_thread, NULL, p1_ctrl_main, ctx);
         assert(ret == 0);
     }
 
-    p1_element_unlock(ctxel);
+    p1_object_unlock(ctxobj);
 }
 
 void p1_stop(P1Context *ctx)
 {
-    P1Element *ctxel = (P1Element *) ctx;
+    P1Object *ctxobj = (P1Object *) ctx;
 
-    p1_element_lock(ctxel);
+    p1_object_lock(ctxobj);
 
-    p1_element_set_target(ctxel, P1_OTYPE_CONTEXT, P1_TARGET_IDLE);
+    p1_object_set_target(ctxobj, P1_OTYPE_CONTEXT, P1_TARGET_IDLE);
 
-    p1_element_unlock(ctxel);
+    p1_object_unlock(ctxobj);
 }
 
 void p1_read(P1Context *_ctx, P1Notification *out)
@@ -181,10 +181,10 @@ static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va
 static void *p1_ctrl_main(void *data)
 {
     P1Context *ctx = (P1Context *) data;
-    P1Element *ctxel = (P1Element *) data;
+    P1Object *ctxobj = (P1Object *) data;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
 
-    p1_element_set_state(ctxel, P1_OTYPE_CONTEXT, P1_STATE_RUNNING);
+    p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_RUNNING);
 
     // Loop until we hit the exit condition. This only happens when we're
     // stopping and are no longer waiting on objects to stop.
@@ -192,7 +192,7 @@ static void *p1_ctrl_main(void *data)
         p1_ctrl_comm(ctxf);
     } while (p1_ctrl_progress(ctx));
 
-    p1_element_set_state(ctxel, P1_OTYPE_CONTEXT, P1_STATE_IDLE);
+    p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_IDLE);
     p1_ctrl_comm(ctxf);
 
     return NULL;
@@ -239,8 +239,8 @@ static void p1_ctrl_comm(P1ContextFull *ctxf)
 // Check all objects and try to progress state.
 static bool p1_ctrl_progress(P1Context *ctx)
 {
-    P1Element *ctxel = (P1Element *) ctx;
-    P1Element *fixed;
+    P1Object *ctxobj = (P1Object *) ctx;
+    P1Object *fixed;
     P1Video *video = ctx->video;
     P1VideoFull *videof = (P1VideoFull *) video;
     P1Audio *audio = ctx->audio;
@@ -252,45 +252,45 @@ static bool p1_ctrl_progress(P1Context *ctx)
     bool wait = false;
 
 // After an action, check if we need to wait.
-#define P1_CHECK_WAIT(_el)                                  \
-    if ((_el)->state == P1_STATE_STARTING ||                \
-        (_el)->state == P1_STATE_STOPPING)                  \
+#define P1_CHECK_WAIT(_obj)                                 \
+    if ((_obj)->state == P1_STATE_STARTING ||               \
+        (_obj)->state == P1_STATE_STOPPING)                 \
         wait = true;
 
-// Common action handling for plugins.
-#define P1_PLUGIN_ELEMENT_ACTIONS(_el, _pel)                \
+// Common action handling for plugin elements.
+#define P1_PLUGIN_ACTIONS(_obj, _pel)                       \
     case P1_ACTION_WAIT:                                    \
         wait = true;                                        \
         break;                                              \
     case P1_ACTION_START:                                   \
-        (_el)->ctx = ctx;                                   \
+        (_obj)->ctx = ctx;                                  \
         (_pel)->start(_pel);                                \
-        P1_CHECK_WAIT(_el);                                 \
+        P1_CHECK_WAIT(_obj);                                \
         break;                                              \
     case P1_ACTION_STOP:                                    \
         (_pel)->stop(_pel);                                 \
-        P1_CHECK_WAIT(_el);                                 \
+        P1_CHECK_WAIT(_obj);                                \
         break;
 
-// Common action handling for fixed components
-#define P1_FIXED_ELEMENT_ACTIONS(_el, _full, _start, _stop) \
+// Common action handling for fixed elements.
+#define P1_FIXED_ACTIONS(_obj, _full, _start, _stop)        \
     case P1_ACTION_WAIT:                                    \
         wait = true;                                        \
         break;                                              \
     case P1_ACTION_START:                                   \
         (_start)(_full);                                    \
-        P1_CHECK_WAIT(_el);                                 \
+        P1_CHECK_WAIT(_obj);                                \
         break;                                              \
     case P1_ACTION_STOP:                                    \
         (_stop)(_full);                                     \
-        P1_CHECK_WAIT(_el);                                 \
+        P1_CHECK_WAIT(_obj);                                \
         break;
 
 // Source remove action handling.
 #define P1_SOURCE_ACTIONS(_pel, _src)                       \
     case P1_ACTION_REMOVE:                                  \
         p1_list_remove(&(_src)->link);                      \
-        p1_plugin_element_free(_pel);                       \
+        p1_plugin_free(_pel);                               \
         break;
 
 // Short-hand for empty default case.
@@ -298,42 +298,42 @@ static bool p1_ctrl_progress(P1Context *ctx)
     default:                                                \
         break;
 
-    fixed = (P1Element *) video;
-    p1_element_lock(fixed);
+    fixed = (P1Object *) video;
+    p1_object_lock(fixed);
 
     // Progress clock. Clock target state is tied to the context.
     P1State vclock_state;
     {
         P1VideoClock *vclock = ctx->video->clock;
-        P1PluginElement *pel = (P1PluginElement *) vclock;
-        P1Element *el = (P1Element *) vclock;
+        P1Plugin *pel = (P1Plugin *) vclock;
+        P1Object *obj = (P1Object *) vclock;
 
-        el->target = (ctxel->state == P1_STATE_STOPPING)
-                   ? P1_TARGET_IDLE : P1_TARGET_RUNNING;
+        obj->target = (ctxobj->state == P1_STATE_STOPPING)
+                    ? P1_TARGET_IDLE : P1_TARGET_RUNNING;
 
-        p1_element_lock(el);
-        switch (p1_ctrl_determine_action(ctx, el->state, el->target)) {
-            P1_PLUGIN_ELEMENT_ACTIONS(el, pel)
+        p1_object_lock(obj);
+        switch (p1_ctrl_determine_action(ctx, obj->state, obj->target)) {
+            P1_PLUGIN_ACTIONS(obj, pel)
             P1_EMPTY_DEFAULT
         }
-        vclock_state = el->state;
-        p1_element_unlock(el);
+        vclock_state = obj->state;
+        p1_object_unlock(obj);
     }
 
     // Progress video sources.
     head = &video->sources;
     p1_list_iterate(head, node) {
         P1Source *src = p1_list_get_container(node, P1Source, link);
-        P1PluginElement *pel = (P1PluginElement *) src;
-        P1Element *el = (P1Element *) src;
+        P1Plugin *pel = (P1Plugin *) src;
+        P1Object *obj = (P1Object *) src;
 
-        p1_element_lock(el);
-        switch (p1_ctrl_determine_action(ctx, el->state, el->target)) {
-            P1_PLUGIN_ELEMENT_ACTIONS(el, pel)
+        p1_object_lock(obj);
+        switch (p1_ctrl_determine_action(ctx, obj->state, obj->target)) {
+            P1_PLUGIN_ACTIONS(obj, pel)
             P1_SOURCE_ACTIONS(pel, src)
             P1_EMPTY_DEFAULT
         }
-        p1_element_unlock(el);
+        p1_object_unlock(obj);
     }
 
     // Progress video mixer. We need a running clock for this.
@@ -342,61 +342,61 @@ static bool p1_ctrl_progress(P1Context *ctx)
                              ? P1_TARGET_IDLE : fixed->target;
 
         switch (p1_ctrl_determine_action(ctx, fixed->state, target)) {
-            P1_FIXED_ELEMENT_ACTIONS(fixed, videof, p1_video_start, p1_video_stop)
+            P1_FIXED_ACTIONS(fixed, videof, p1_video_start, p1_video_stop)
             P1_EMPTY_DEFAULT
         }
     }
 
-    p1_element_unlock(fixed);
+    p1_object_unlock(fixed);
 
-    fixed = (P1Element *) audio;
-    p1_element_lock(fixed);
+    fixed = (P1Object *) audio;
+    p1_object_lock(fixed);
 
     // Progress audio sources.
     head = &audio->sources;
     p1_list_iterate(head, node) {
         P1Source *src = p1_list_get_container(node, P1Source, link);
-        P1PluginElement *pel = (P1PluginElement *) src;
-        P1Element *el = (P1Element *) src;
+        P1Plugin *pel = (P1Plugin *) src;
+        P1Object *obj = (P1Object *) src;
 
-        p1_element_lock(el);
-        switch (p1_ctrl_determine_action(ctx, el->state, el->target)) {
-            P1_PLUGIN_ELEMENT_ACTIONS(el, pel)
+        p1_object_lock(obj);
+        switch (p1_ctrl_determine_action(ctx, obj->state, obj->target)) {
+            P1_PLUGIN_ACTIONS(obj, pel)
             P1_SOURCE_ACTIONS(pel, src)
             P1_EMPTY_DEFAULT
         }
-        p1_element_unlock(el);
+        p1_object_unlock(obj);
     }
 
     // Progress audio mixer.
     {
         switch (p1_ctrl_determine_action(ctx, fixed->state, fixed->target)) {
-            P1_FIXED_ELEMENT_ACTIONS(fixed, audiof, p1_audio_start, p1_audio_stop)
+            P1_FIXED_ACTIONS(fixed, audiof, p1_audio_start, p1_audio_stop)
             P1_EMPTY_DEFAULT
         }
     }
 
-    p1_element_unlock(fixed);
+    p1_object_unlock(fixed);
 
     // Progress stream connnection. Delay until everything else is running.
     if (!wait) {
-        fixed = (P1Element *) conn;
-        p1_element_lock(fixed);
+        fixed = (P1Object *) conn;
+        p1_object_lock(fixed);
 
         switch (p1_ctrl_determine_action(ctx, fixed->state, fixed->target)) {
-            P1_FIXED_ELEMENT_ACTIONS(fixed, connf, p1_conn_start, p1_conn_stop)
+            P1_FIXED_ACTIONS(fixed, connf, p1_conn_start, p1_conn_stop)
             P1_EMPTY_DEFAULT
         }
 
-        p1_element_unlock(fixed);
+        p1_object_unlock(fixed);
     }
 
     // Return whether we can exit.
-    return wait || ctxel->state != P1_STATE_STOPPING;
+    return wait || ctxobj->state != P1_STATE_STOPPING;
 
 #undef P1_CHECK_WAIT
-#undef P1_PLUGIN_ELEMENT_ACTIONS
-#undef P1_FIXED_ELEMENT_ACTIONS
+#undef P1_PLUGIN_ACTIONS
+#undef P1_FIXED_ACTIONS
 #undef P1_SOURCE_ACTIONS
 #undef P1_EMPTY_DEFAULT
 }
@@ -404,7 +404,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
 // Determine action to take on an object.
 static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1TargetState target)
 {
-    P1Element *ctxel = (P1Element *) ctx;
+    P1Object *ctxobj = (P1Object *) ctx;
 
     // We need to wait on the transition to finish.
     if (state == P1_STATE_STARTING || state == P1_STATE_STOPPING)
@@ -412,7 +412,7 @@ static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1Target
 
     // If the context is stopping, override target.
     // Make sure we preserve remove targets.
-    if (target == P1_TARGET_RUNNING && ctxel->state == P1_STATE_STOPPING)
+    if (target == P1_TARGET_RUNNING && ctxobj->state == P1_STATE_STOPPING)
         target = P1_TARGET_IDLE;
 
     // Take steps towards target.

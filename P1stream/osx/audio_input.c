@@ -20,8 +20,8 @@ struct _P1InputAudioSource {
     AudioQueueBufferRef buffers[num_buffers];
 };
 
-static bool p1_input_audio_source_start(P1PluginElement *pel);
-static void p1_input_audio_source_stop(P1PluginElement *pel);
+static bool p1_input_audio_source_start(P1Plugin *pel);
+static void p1_input_audio_source_stop(P1Plugin *pel);
 static void p1_input_audio_source_input_callback(
     void *inUserData,
     AudioQueueRef inAQ,
@@ -39,7 +39,7 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
 {
     P1InputAudioSource *iasrc = calloc(1, sizeof(P1InputAudioSource));
     P1AudioSource *asrc = (P1AudioSource *) iasrc;
-    P1PluginElement *pel = (P1PluginElement *) iasrc;
+    P1Plugin *pel = (P1Plugin *) iasrc;
     assert(iasrc != NULL);
 
     p1_audio_source_init(asrc, cfg, sect);
@@ -52,14 +52,14 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
     return asrc;
 }
 
-static bool p1_input_audio_source_start(P1PluginElement *pel)
+static bool p1_input_audio_source_start(P1Plugin *pel)
 {
-    P1Element *el = (P1Element *) pel;
+    P1Object *el = (P1Object *) pel;
     P1AudioSource *asrc = (P1AudioSource *) pel;
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
-    p1_element_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STARTING);
+    p1_object_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STARTING);
 
     AudioStreamBasicDescription fmt;
     fmt.mFormatID = kAudioFormatLinearPCM;
@@ -99,13 +99,13 @@ static bool p1_input_audio_source_start(P1PluginElement *pel)
     return true;
 }
 
-static void p1_input_audio_source_stop(P1PluginElement *pel)
+static void p1_input_audio_source_stop(P1Plugin *pel)
 {
-    P1Element *el = (P1Element *) pel;
+    P1Object *el = (P1Object *) pel;
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
-    p1_element_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STOPPING);
+    p1_object_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STOPPING);
 
     ret = AudioQueueStop(iasrc->queue, FALSE);
     assert(ret == noErr);
@@ -120,10 +120,10 @@ static void p1_input_audio_source_input_callback(
     UInt32 inNumberPacketDescriptions,
     const AudioStreamPacketDescription *inPacketDescs)
 {
-    P1Element *el = (P1Element *) inUserData;
+    P1Object *el = (P1Object *) inUserData;
     P1AudioSource *asrc = (P1AudioSource *) inUserData;
 
-    p1_element_lock(el);
+    p1_object_lock(el);
 
     if (el->state == P1_STATE_RUNNING)
         p1_audio_source_buffer(asrc, inStartTime->mHostTime, inBuffer->mAudioData,
@@ -132,7 +132,7 @@ static void p1_input_audio_source_input_callback(
     OSStatus ret = AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
     assert(ret == noErr);
 
-    p1_element_unlock(el);
+    p1_object_unlock(el);
 }
 
 static void p1_input_audio_source_running_callback(
@@ -140,12 +140,12 @@ static void p1_input_audio_source_running_callback(
     AudioQueueRef inAQ,
     AudioQueuePropertyID inID)
 {
-    P1Element *el = (P1Element *) inUserData;
+    P1Object *el = (P1Object *) inUserData;
     OSStatus ret;
     UInt32 running;
     UInt32 size;
 
-    p1_element_lock(el);
+    p1_object_lock(el);
 
     size = sizeof(running);
     ret = AudioQueueGetProperty(inAQ, kAudioQueueProperty_IsRunning, &running, &size);
@@ -154,16 +154,16 @@ static void p1_input_audio_source_running_callback(
     // FIXME: handle unexpected transitions in other states
     if (running) {
         if (el->state == P1_STATE_STARTING)
-            p1_element_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_RUNNING);
+            p1_object_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_RUNNING);
     }
     else {
         if (el->state == P1_STATE_STOPPING) {
             ret = AudioQueueDispose(inAQ, TRUE);
             assert(ret == noErr);
 
-            p1_element_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_IDLE);
+            p1_object_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_IDLE);
         }
     }
 
-    p1_element_unlock(el);
+    p1_object_unlock(el);
 }

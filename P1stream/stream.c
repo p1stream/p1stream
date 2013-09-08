@@ -13,11 +13,11 @@ static void p1_conn_flush(P1ConnectionFull *connf);
 
 void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 {
-    P1Element *connel = (P1Element *) connf;
+    P1Object *connobj = (P1Object *) connf;
     RTMP *r = &connf->rtmp;
     int res;
 
-    p1_element_init(connel);
+    p1_object_init(connobj);
 
     res = pthread_cond_init(&connf->cond, NULL);
     assert(res == 0);
@@ -34,9 +34,9 @@ void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 
 void p1_conn_start(P1ConnectionFull *connf)
 {
-    P1Element *connel = (P1Element *) connf;
+    P1Object *connobj = (P1Object *) connf;
 
-    p1_element_set_state(connel, P1_OTYPE_CONNECTION, P1_STATE_STARTING);
+    p1_object_set_state(connobj, P1_OTYPE_CONNECTION, P1_STATE_STARTING);
 
     int res = pthread_create(&connf->thread, NULL, p1_conn_main, connf);
     assert(res == 0);
@@ -177,15 +177,15 @@ static RTMPPacket *p1_conn_new_packet(uint8_t type, uint32_t body_size)
 // Submit a packet to the queue.
 static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time)
 {
-    P1Element *connel = (P1Element *) connf;
-    P1Context *ctx = connel->ctx;
+    P1Object *connobj = (P1Object *) connf;
+    P1Context *ctx = connobj->ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
     RTMP *r = &connf->rtmp;
     int res;
 
-    p1_element_lock(connel);
+    p1_object_lock(connobj);
 
-    if (connel->state != P1_STATE_RUNNING) {
+    if (connobj->state != P1_STATE_RUNNING) {
         free(pkt);
         goto end;
     }
@@ -227,14 +227,14 @@ static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     assert(res == 0);
 
 end:
-    p1_element_unlock(connel);
+    p1_object_unlock(connobj);
 }
 
 // The main loop of the streaming thread.
 static void *p1_conn_main(void *data)
 {
     P1ConnectionFull *connf = (P1ConnectionFull *) data;
-    P1Element *connel = (P1Element *) data;
+    P1Object *connobj = (P1Object *) data;
     RTMP *r = &connf->rtmp;
     int res;
 
@@ -244,19 +244,19 @@ static void *p1_conn_main(void *data)
     res = RTMP_ConnectStream(r, 0);
     assert(res == TRUE);
 
-    p1_element_lock(connel);
+    p1_object_lock(connobj);
 
     connf->start = mach_absolute_time();
-    p1_element_set_state(connel, P1_OTYPE_CONNECTION, P1_STATE_RUNNING);
+    p1_object_set_state(connobj, P1_OTYPE_CONNECTION, P1_STATE_RUNNING);
 
     do {
         p1_conn_flush(connf);
 
-        res = pthread_cond_wait(&connf->cond, &connel->lock);
+        res = pthread_cond_wait(&connf->cond, &connobj->lock);
         assert(res == 0);
-    } while (connel->state == P1_STATE_RUNNING);
+    } while (connobj->state == P1_STATE_RUNNING);
 
-    p1_element_unlock(connel);
+    p1_object_unlock(connobj);
 
     return NULL;
 }
@@ -265,7 +265,7 @@ static void *p1_conn_main(void *data)
 // This is called with the stream lock held.
 static void p1_conn_flush(P1ConnectionFull *connf)
 {
-    P1Element *connel = (P1Element *) connf;
+    P1Object *connobj = (P1Object *) connf;
     RTMP *r = &connf->rtmp;
     P1PacketQueue *aq = &connf->audio_queue;
     P1PacketQueue *vq = &connf->video_queue;
@@ -307,7 +307,7 @@ static void p1_conn_flush(P1ConnectionFull *connf)
         if (i == list)
             return;
 
-        p1_element_unlock(connel);
+        p1_object_unlock(connobj);
 
         RTMPPacket **end = i;
         for (i = list; i != end; i++) {
@@ -318,6 +318,6 @@ static void p1_conn_flush(P1ConnectionFull *connf)
             assert(res == TRUE);
         }
 
-        p1_element_lock(connel);
+        p1_object_lock(connobj);
     }
 }

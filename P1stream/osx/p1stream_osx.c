@@ -3,7 +3,7 @@
 
 void p1_video_source_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer)
 {
-    P1Element *el = (P1Element *) vsrc;
+    P1Object *el = (P1Object *) vsrc;
     P1Video *video = el->ctx->video;
     P1VideoFull *videof = (P1VideoFull *) video;
 

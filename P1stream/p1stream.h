@@ -26,7 +26,9 @@
 // The remaining elements are plugins provided by the user:
 //
 //  - A single instance of a P1VideoClock subclass that provides video timing.
+//
 //  - Any number of instances of P1VideoSource subclasses.
+//
 //  - Any number of instances of P1AudioSource subclasses.
 //
 // P1stream bundles several plugins for the most common tasks, but the user is
@@ -35,8 +37,8 @@
 
 // Object types.
 typedef struct _P1Config P1Config;
-typedef struct _P1Element P1Element;
-typedef struct _P1PluginElement P1PluginElement;
+typedef struct _P1Object P1Object;
+typedef struct _P1Plugin P1Plugin;
 typedef struct _P1Source P1Source;
 typedef struct _P1VideoClock P1VideoClock;
 typedef struct _P1VideoSource P1VideoSource;
@@ -91,7 +93,7 @@ enum _P1FreeOptions {
 };
 
 
-// Elements track simple state. These are the possible states.
+// Objects track simple state. These are the possible states.
 
 enum _P1State {
     P1_STATE_IDLE       = 0, // Initial value.
@@ -101,7 +103,7 @@ enum _P1State {
 };
 
 
-// This is the state we want an element to be in, and should be worked towards.
+// This is the state we want an object to be in, and should be worked towards.
 
 enum _P1TargetState {
     P1_TARGET_RUNNING   = 0, // Initial value.
@@ -189,7 +191,7 @@ struct _P1Notification {
 
     // Object that sent the notification.
     P1ObjectType object_type;
-    P1Element *object;
+    P1Object *object;
 
     // Content depends on the type field.
     union {
@@ -261,9 +263,9 @@ struct _P1ListNode {
 }
 
 
-// Base of all elements that live in a context.
+// Base of all objects that live in a context.
 
-struct _P1Element {
+struct _P1Object {
     // Back reference. This will be set automatically.
     P1Context *ctx;
 
@@ -278,19 +280,19 @@ struct _P1Element {
     P1TargetState target;
 };
 
-// Convenience methods for acquiring the element lock.
-#define p1_element_lock(_el) assert(pthread_mutex_lock(&(_el)->lock) == 0)
-#define p1_element_unlock(_el) assert(pthread_mutex_unlock(&(_el)->lock) == 0)
+// Convenience methods for acquiring the object lock.
+#define p1_object_lock(_obj) assert(pthread_mutex_lock(&(_obj)->lock) == 0)
+#define p1_object_unlock(_obj) assert(pthread_mutex_unlock(&(_obj)->lock) == 0)
 
 // This method should be used to change the state field.
-#define p1_element_set_state(_el, _type, _state) {              \
-    P1Element *_p1_el = (_el);                                  \
+#define p1_object_set_state(_obj, _type, _state) {              \
+    P1Object *_p1_obj = (_obj);                                 \
     P1State _p1_state = (_state);                               \
-    _p1_el->state = _p1_state;                                  \
-    _p1_notify(_p1_el->ctx, (P1Notification) {                  \
+    _p1_obj->state = _p1_state;                                 \
+    _p1_notify(_p1_obj->ctx, (P1Notification) {                 \
         .type = P1_NTYPE_STATE_CHANGE,                          \
         .object_type = (_type),                                 \
-        .object = _p1_el,                                       \
+        .object = _p1_obj,                                      \
         .state_change = {                                       \
             .state = _p1_state                                  \
         }                                                       \
@@ -298,14 +300,14 @@ struct _P1Element {
 }
 
 // This method should be used to change the target field.
-#define p1_element_set_target(_el, _type, _target) {            \
-    P1Element *_p1_el = (_el);                                  \
+#define p1_object_set_target(_obj, _type, _target) {            \
+    P1Object *_p1_obj = (_obj);                                 \
     P1TargetState _p1_target = (_target);                       \
-    _p1_el->target = _p1_target;                                \
-    _p1_notify(_p1_el->ctx, (P1Notification) {                  \
+    _p1_obj->target = _p1_target;                               \
+    _p1_notify(_p1_obj->ctx, (P1Notification) {                 \
         .type = P1_NTYPE_TARGET_CHANGE,                         \
         .object_type = (_type),                                 \
-        .object = _p1_el,                                       \
+        .object = _p1_obj,                                      \
         .target_change = {                                      \
             .target = _p1_target                                \
         }                                                       \
@@ -315,28 +317,28 @@ struct _P1Element {
 
 // Base for all plugin (non-fixed) elements.
 
-struct _P1PluginElement {
-    P1Element super;
+struct _P1Plugin {
+    P1Object super;
 
     // Free the object and associated resources. (Assume idle.)
     // Implementation is optional. If NULL, a regular free() is used instead.
-    void (*free)(P1PluginElement *pel);
+    void (*free)(P1Plugin *pel);
 
     // Start the source. This should update the state and open resources.
-    bool (*start)(P1PluginElement *pel);
+    bool (*start)(P1Plugin *pel);
     // Stop the source. This should update the state and close resources.
-    void (*stop)(P1PluginElement *pel);
+    void (*stop)(P1Plugin *pel);
 };
 
 // Call this to free a plugin element. This is rarely needed. Instead, set the
 // target state to remove, or free it on context destruction with p1_free.
-void p1_plugin_element_free(P1PluginElement *obj);
+void p1_plugin_free(P1Plugin *obj);
 
 
 // Base for audio and video sources.
 
 struct _P1Source {
-    P1PluginElement super;
+    P1Plugin super;
 
     // Link in the source list.
     P1ListNode link;
@@ -348,7 +350,7 @@ struct _P1Source {
 // encoding will happen on this thread.
 
 struct _P1VideoClock {
-    P1PluginElement super;
+    P1Plugin super;
 
     // The frame rate as a fraction. This should be set by the time the clock
     // goes into the running state.
@@ -419,7 +421,7 @@ void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t
 // Fixed audio mixer element.
 
 struct _P1Audio {
-    P1Element super;
+    P1Object super;
 
     // The source list. Can be modified while running, as long as the lock is
     // held. Use the p1_list_* functions for convenience.
@@ -430,7 +432,7 @@ struct _P1Audio {
 // Fixed video mixer element.
 
 struct _P1Video {
-    P1Element super;
+    P1Object super;
 
     // The video clock. Only modify this when the video mixer is idle.
     P1VideoClock *clock;
@@ -444,14 +446,14 @@ struct _P1Video {
 // Fixed stream connection element.
 
 struct _P1Connection {
-    P1Element super;
+    P1Object super;
 };
 
 
 // Context that encapsulates everything else.
 
 struct _P1Context {
-    P1Element super;
+    P1Object super;
 
     // Log function, defaults to stderr logging. Only modify this when the
     // context is idle. These can be called on any thread.
