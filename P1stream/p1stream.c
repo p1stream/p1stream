@@ -226,13 +226,11 @@ static void *p1_ctrl_main(void *data)
         // If there's nothing left to wait on, and we're stopping.
         if (!wait && ctxobj->state == P1_STATE_STOPPING) {
             // Restart if our target is no longer to idle.
-            if (ctxobj->target == P1_TARGET_RUNNING) {
+            if (ctxobj->target == P1_TARGET_RUNNING)
                 p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_RUNNING);
-            }
             // Otherwise, we're done.
-            else {
+            else
                 break;
-            }
         }
     };
 
@@ -302,7 +300,8 @@ static bool p1_ctrl_progress(P1Context *ctx)
 // After an action, check if we need to wait.
 #define P1_CHECK_WAIT(_obj)                                 \
     if ((_obj)->state == P1_STATE_STARTING ||               \
-        (_obj)->state == P1_STATE_STOPPING)                 \
+        (_obj)->state == P1_STATE_STOPPING ||               \
+        (_obj)->state == P1_STATE_HALTING)                  \
         wait = true;
 
 // Common action handling for plugin elements.
@@ -454,7 +453,7 @@ static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1Target
     P1Object *ctxobj = (P1Object *) ctx;
 
     // We need to wait on the transition to finish.
-    if (state == P1_STATE_STARTING || state == P1_STATE_STOPPING)
+    if (state == P1_STATE_STARTING || state == P1_STATE_STOPPING || state == P1_STATE_HALTING)
         return P1_ACTION_WAIT;
 
     // If the context is stopping, override target.
@@ -487,11 +486,12 @@ static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notificatio
     switch (notification->type) {
         case P1_NTYPE_STATE_CHANGE:
             switch (notification->state_change.state) {
-                case P1_STATE_IDLE:     action = "is idle";     break;
-                case P1_STATE_STARTING: action = "is starting"; break;
-                case P1_STATE_RUNNING:  action = "is running";  break;
-                case P1_STATE_STOPPING: action = "is stopping"; break;
-                default: return;
+                case P1_STATE_IDLE:     action = "idle";     break;
+                case P1_STATE_STARTING: action = "starting"; break;
+                case P1_STATE_RUNNING:  action = "running";  break;
+                case P1_STATE_STOPPING: action = "stopping"; break;
+                case P1_STATE_HALTING:  action = "halting";  break;
+                case P1_STATE_HALTED:   action = "halted";   break;
             }
             break;
         case P1_NTYPE_TARGET_CHANGE:
@@ -499,7 +499,6 @@ static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notificatio
                 case P1_TARGET_RUNNING: action = "target running";  break;
                 case P1_TARGET_IDLE:    action = "target idle";     break;
                 case P1_TARGET_REMOVE:  action = "target remove";   break;
-                default: return;
             }
             break;
         default: return;
@@ -514,8 +513,7 @@ static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notificatio
         case P1_OTYPE_VIDEO_CLOCK:  obj_descr = "video clock";  break;
         case P1_OTYPE_VIDEO_SOURCE: obj_descr = "video source"; break;
         case P1_OTYPE_AUDIO_SOURCE: obj_descr = "audio source"; break;
-        default: return;
     }
 
-    p1_log(ctx, P1_LOG_INFO, "%s %p %s\n", obj_descr, notification->object, action);
+    p1_log(ctx, P1_LOG_INFO, "%s %p is %s\n", obj_descr, notification->object, action);
 }

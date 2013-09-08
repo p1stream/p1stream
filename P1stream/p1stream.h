@@ -108,7 +108,13 @@ enum _P1State {
     P1_STATE_IDLE       = 0, // Initial value.
     P1_STATE_STARTING   = 1,
     P1_STATE_RUNNING    = 2,
-    P1_STATE_STOPPING   = 3
+    P1_STATE_STOPPING   = 3,
+
+    // These are the same as stopping / idle, but for unexpected situations.
+    // No further action is taken until the situation is resolved with
+    // p1_object_clear_halt.
+    P1_STATE_HALTING    = 4,
+    P1_STATE_HALTED     = 5
 };
 
 
@@ -117,14 +123,16 @@ enum _P1State {
 enum _P1TargetState {
     P1_TARGET_RUNNING   = 0, // Initial value.
     P1_TARGET_IDLE      = 1,
-    P1_TARGET_REMOVE    = 2  // Pending removal, source will be freed.
+
+    // Only valid for sources. This is the same as idle, but will in addition
+    // remove the source from the list and free it, once idle.
+    P1_TARGET_REMOVE    = 2
 };
 
 
 // Notification types.
 
 enum _P1NotificationType {
-    P1_NTYPE_UNKNOWN        = 0,
     P1_NTYPE_STATE_CHANGE   = 1,
     P1_NTYPE_TARGET_CHANGE  = 2
 };
@@ -133,7 +141,6 @@ enum _P1NotificationType {
 // Object types.
 
 enum _P1ObjectType {
-    P1_OTYPE_UNKNOWN        = 0,
     P1_OTYPE_CONTEXT        = 1,
     P1_OTYPE_VIDEO          = 2,
     P1_OTYPE_AUDIO          = 3,
@@ -294,10 +301,11 @@ struct _P1Object {
 #define p1_object_unlock(_obj) assert(pthread_mutex_unlock(&(_obj)->lock) == 0)
 
 // This method should be used to change the state field.
-#define p1_object_set_state(_obj, _obj_type, _state) {          \
+#define p1_object_set_state(_obj, _obj_type, _state) ({         \
     P1Object *_p1_obj = (_obj);                                 \
     P1State _p1_state = (_state);                               \
-    if (_p1_obj->state != _p1_state) {                          \
+    bool _p1_changed = (_p1_obj->state != _p1_state);           \
+    if (_p1_changed) {                                          \
         _p1_obj->state = _p1_state;                             \
         _p1_notify(_p1_obj->ctx, (P1Notification) {             \
             .type = P1_NTYPE_STATE_CHANGE,                      \
@@ -308,13 +316,15 @@ struct _P1Object {
             }                                                   \
         });                                                     \
     }                                                           \
-}
+    _p1_changed;                                                \
+})
 
 // This method should be used to change the target field.
-#define p1_object_set_target(_obj, _obj_type, _target) {        \
+#define p1_object_set_target(_obj, _obj_type, _target) ({       \
     P1Object *_p1_obj = (_obj);                                 \
     P1TargetState _p1_target = (_target);                       \
-    if (_p1_obj->target != _p1_target) {                        \
+    bool _p1_changed = (_p1_obj->target != _p1_target);         \
+    if (_p1_changed) {                                          \
         _p1_obj->target = _p1_target;                           \
         _p1_notify(_p1_obj->ctx, (P1Notification) {             \
             .type = P1_NTYPE_TARGET_CHANGE,                     \
@@ -325,7 +335,17 @@ struct _P1Object {
             }                                                   \
         });                                                     \
     }                                                           \
-}
+    _p1_changed;                                                \
+})
+
+// Clear a situation that has caused the object to go into a halt state.
+#define p1_object_clear_halt(_obj, _obj_type) ({                \
+    P1Object *_p1_objx = (_obj);                                \
+    bool _p1_is_halted = (_p1_objx->state == P1_STATE_HALTED);  \
+    if (_p1_is_halted)                                          \
+        p1_object_set_state(_p1_objx, (_obj_type), P1_STATE_IDLE);  \
+    _p1_is_halted;                                              \
+})
 
 
 // Base for all plugin (non-fixed) elements.
@@ -338,7 +358,7 @@ struct _P1Plugin {
     void (*free)(P1Plugin *pel);
 
     // Start the source. This should update the state and open resources.
-    bool (*start)(P1Plugin *pel);
+    void (*start)(P1Plugin *pel);
     // Stop the source. This should update the state and close resources.
     void (*stop)(P1Plugin *pel);
 };
