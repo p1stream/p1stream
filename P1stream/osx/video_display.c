@@ -47,10 +47,10 @@ P1VideoSource *p1_display_video_source_create(P1Config *cfg, P1ConfigSection *se
 
 static bool p1_display_video_source_start(P1Plugin *pel)
 {
-    P1Object *el = (P1Object *) pel;
+    P1Object *obj = (P1Object *) pel;
     P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) pel;
 
-    p1_object_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STARTING);
+    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STARTING);
 
     size_t width  = CGDisplayPixelsWide(dvsrc->display_id);
     size_t height = CGDisplayPixelsHigh(dvsrc->display_id);
@@ -77,10 +77,10 @@ static bool p1_display_video_source_start(P1Plugin *pel)
 
 static void p1_display_video_source_stop(P1Plugin *pel)
 {
-    P1Object *el = (P1Object *) pel;
+    P1Object *obj = (P1Object *) pel;
     P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) pel;
 
-    p1_object_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STOPPING);
+    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STOPPING);
 
     CGError cg_ret = CGDisplayStreamStop(dvsrc->display_stream);
     assert(cg_ret == kCGErrorSuccess);
@@ -99,9 +99,9 @@ static void p1_display_video_source_callback(
     CGDisplayStreamFrameStatus status,
     IOSurfaceRef frame)
 {
-    P1Object *el = (P1Object *) dvsrc;
+    P1Object *obj = (P1Object *) dvsrc;
 
-    p1_object_lock(el);
+    p1_object_lock(obj);
 
     // Ditch any previous frame, unless it's the same.
     // This also doubles as cleanup when stopping.
@@ -120,22 +120,22 @@ static void p1_display_video_source_callback(
 
     // State handling.
     if (status == kCGDisplayStreamFrameStatusStopped) {
-        if (el->state == P1_STATE_STOPPING) {
+        if (obj->state == P1_STATE_STOPPING) {
             CFRelease(dvsrc->display_stream);
 
             dispatch_release(dvsrc->dispatch);
 
-            p1_object_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
+            p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
         }
         else {
-            p1_log(el->ctx, P1_LOG_ERROR, "Display stream stopped.");
+            p1_log(obj->ctx, P1_LOG_ERROR, "Display stream stopped.");
             abort();
         }
     }
     else {
-        if (el->state == P1_STATE_STARTING)
-            p1_object_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
+        if (obj->state == P1_STATE_STARTING)
+            p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
     }
 
-    p1_object_unlock(el);
+    p1_object_unlock(obj);
 }

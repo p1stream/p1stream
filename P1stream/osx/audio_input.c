@@ -54,12 +54,12 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
 
 static bool p1_input_audio_source_start(P1Plugin *pel)
 {
-    P1Object *el = (P1Object *) pel;
+    P1Object *obj = (P1Object *) pel;
     P1AudioSource *asrc = (P1AudioSource *) pel;
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
-    p1_object_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STARTING);
+    p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STARTING);
 
     AudioStreamBasicDescription fmt;
     fmt.mFormatID = kAudioFormatLinearPCM;
@@ -101,11 +101,11 @@ static bool p1_input_audio_source_start(P1Plugin *pel)
 
 static void p1_input_audio_source_stop(P1Plugin *pel)
 {
-    P1Object *el = (P1Object *) pel;
+    P1Object *obj = (P1Object *) pel;
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
-    p1_object_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STOPPING);
+    p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STOPPING);
 
     ret = AudioQueueStop(iasrc->queue, FALSE);
     assert(ret == noErr);
@@ -119,11 +119,11 @@ static void p1_input_audio_source_input_callback(
     UInt32 inNumberPacketDescriptions,
     const AudioStreamPacketDescription *inPacketDescs)
 {
-    P1Object *el = (P1Object *) inUserData;
+    P1Object *obj = (P1Object *) inUserData;
     P1AudioSource *asrc = (P1AudioSource *) inUserData;
 
     // FIXME: should we worry about this being atomic?
-    if (el->state == P1_STATE_RUNNING)
+    if (obj->state == P1_STATE_RUNNING)
         p1_audio_source_buffer(asrc, inStartTime->mHostTime, inBuffer->mAudioData,
                                inBuffer->mAudioDataByteSize / sample_size);
 
@@ -136,12 +136,12 @@ static void p1_input_audio_source_running_callback(
     AudioQueueRef inAQ,
     AudioQueuePropertyID inID)
 {
-    P1Object *el = (P1Object *) inUserData;
+    P1Object *obj = (P1Object *) inUserData;
     OSStatus ret;
     UInt32 running;
     UInt32 size;
 
-    p1_object_lock(el);
+    p1_object_lock(obj);
 
     size = sizeof(running);
     ret = AudioQueueGetProperty(inAQ, kAudioQueueProperty_IsRunning, &running, &size);
@@ -149,17 +149,17 @@ static void p1_input_audio_source_running_callback(
 
     // FIXME: handle unexpected transitions in other states
     if (running) {
-        if (el->state == P1_STATE_STARTING)
-            p1_object_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_RUNNING);
+        if (obj->state == P1_STATE_STARTING)
+            p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_RUNNING);
     }
     else {
-        if (el->state == P1_STATE_STOPPING) {
+        if (obj->state == P1_STATE_STOPPING) {
             ret = AudioQueueDispose(inAQ, TRUE);
             assert(ret == noErr);
 
-            p1_object_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_IDLE);
+            p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_IDLE);
         }
     }
 
-    p1_object_unlock(el);
+    p1_object_unlock(obj);
 }
