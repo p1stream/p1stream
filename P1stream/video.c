@@ -103,8 +103,9 @@ void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
 
 void p1_video_start(P1VideoFull *videof)
 {
-    P1Video *video = (P1Video *) videof;
     P1Object *videoobj = (P1Object *) videof;
+    P1Video *video = (P1Video *) videof;
+    P1VideoClock *vclock = video->clock;
     P1Context *ctx = videoobj->ctx;
     x264_param_t *params = &videof->params;
     CGLError cgl_err;
@@ -157,8 +158,8 @@ void p1_video_start(P1VideoFull *videof)
     params->i_width = output_width;
     params->i_height = output_height;
 
-    params->i_fps_num = video->clock->fps_num;
-    params->i_fps_den = video->clock->fps_den;
+    params->i_fps_num = vclock->fps_num;
+    params->i_fps_den = vclock->fps_den;
 
     videof->enc = x264_encoder_open(params);
     assert(videof->enc != NULL);
@@ -225,7 +226,16 @@ void p1_video_start(P1VideoFull *videof)
 
 void p1_video_stop(P1VideoFull *videof)
 {
-    // FIXME
+    P1Object *videoobj = (P1Object *) videof;
+
+    clReleaseKernel(videof->yuv_kernel);
+    clReleaseMemObject(videof->out_mem);
+    clReleaseMemObject(videof->rbo_mem);
+    clReleaseCommandQueue(videof->clq);
+    clReleaseContext(videof->cl);
+    CGLReleaseContext(videof->gl);
+
+    p1_object_set_state(videoobj, P1_OTYPE_VIDEO, P1_STATE_IDLE);
 }
 
 static void p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)

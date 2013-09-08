@@ -60,6 +60,7 @@ struct _P1VideoFull {
 };
 
 void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
+#define p1_video_destroy(_videof) p1_object_destroy((P1Object *) _videof)
 void p1_video_start(P1VideoFull *videof);
 void p1_video_stop(P1VideoFull *videof);
 
