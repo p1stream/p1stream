@@ -90,8 +90,7 @@ void p1_audio_stop(P1AudioFull *audiof);
 struct _P1ConnectionFull {
     P1Connection super;
 
-    RTMP rtmp;
-    char url[256];
+    char url[2048];
 
     uint64_t start;
 
