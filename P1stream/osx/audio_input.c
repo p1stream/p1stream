@@ -79,7 +79,7 @@ static bool p1_input_audio_source_start(P1Plugin *pel)
     assert(ret == noErr);
 
     if (iasrc->device[0]) {
-        CFStringRef str = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, iasrc->device, kCFStringEncodingASCII, kCFAllocatorNull);
+        CFStringRef str = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, iasrc->device, kCFStringEncodingUTF8, kCFAllocatorNull);
         if (str) {
             AudioQueueSetProperty(iasrc->queue, kAudioQueueProperty_CurrentDevice, &str, sizeof(str));
             CFRelease(str);

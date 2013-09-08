@@ -84,7 +84,7 @@ static CFTypeRef p1_plist_config_resolve(P1Config *_cfg, P1ConfigSection *sect, 
             break;
 
         if (CFGetTypeID(val) == CFDictionaryGetTypeID()) {
-            CFStringRef token_str = CFStringCreateWithCStringNoCopy(NULL, token, kCFStringEncodingASCII, kCFAllocatorNull);
+            CFStringRef token_str = CFStringCreateWithCStringNoCopy(NULL, token, kCFStringEncodingUTF8, kCFAllocatorNull);
             if (token_str != NULL) {
                 val = CFDictionaryGetValue(val, token_str);
                 CFRelease(token_str);
@@ -110,7 +110,7 @@ static bool p1_plist_config_get_string(P1Config *_cfg, P1ConfigSection *sect, co
 {
     CFStringRef val = p1_plist_config_resolve(_cfg, sect, key, CFStringGetTypeID());
     if (val) {
-        Boolean res = CFStringGetCString(val, buf, bufsize, kCFStringEncodingASCII);
+        Boolean res = CFStringGetCString(val, buf, bufsize, kCFStringEncodingUTF8);
         if (res == TRUE)
             return true;
     }
@@ -180,13 +180,13 @@ static bool p1_plist_config_each_string(P1Config *_cfg, P1ConfigSection *sect, c
 
         size = CFStringGetLength(str_key) + 1;
         char key[size];
-        b_res = CFStringGetCString(str_key, key, size, kCFStringEncodingASCII);
+        b_res = CFStringGetCString(str_key, key, size, kCFStringEncodingUTF8);
         if (b_res == FALSE)
             continue;
 
         size = CFStringGetLength(str_val) + 1;
         char val[size];
-        b_res = CFStringGetCString(str_val, val, size, kCFStringEncodingASCII);
+        b_res = CFStringGetCString(str_val, val, size, kCFStringEncodingUTF8);
         if (b_res == FALSE)
             continue;
 
