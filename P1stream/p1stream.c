@@ -104,7 +104,10 @@ void p1_start(P1Context *ctx)
 
     p1_object_set_target(ctxobj, P1_OTYPE_CONTEXT, P1_TARGET_RUNNING);
 
+    // Bootstrap.
     if (ctxobj->state == P1_STATE_IDLE) {
+        p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_STARTING);
+
         int ret = pthread_create(&ctxf->ctrl_thread, NULL, p1_ctrl_main, ctx);
         assert(ret == 0);
     }
@@ -112,15 +115,22 @@ void p1_start(P1Context *ctx)
     p1_object_unlock(ctxobj);
 }
 
-void p1_stop(P1Context *ctx)
+void p1_stop(P1Context *ctx, P1StopOptions options)
 {
     P1Object *ctxobj = (P1Object *) ctx;
+    P1ContextFull *ctxf = (P1ContextFull *) ctx;
 
     p1_object_lock(ctxobj);
 
     p1_object_set_target(ctxobj, P1_OTYPE_CONTEXT, P1_TARGET_IDLE);
+    bool is_running = ctxobj->state != P1_STATE_IDLE;
 
     p1_object_unlock(ctxobj);
+
+    if (is_running && (options & P1_STOP_SYNC)) {
+        int ret = pthread_join(ctxf->ctrl_thread, NULL);
+        assert(ret == 0);
+    }
 }
 
 void p1_read(P1Context *_ctx, P1Notification *out)
@@ -184,15 +194,41 @@ static void *p1_ctrl_main(void *data)
     P1Object *ctxobj = (P1Object *) data;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
 
+    p1_object_lock(ctxobj);
+
     p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_RUNNING);
 
-    // Loop until we hit the exit condition. This only happens when we're
-    // stopping and are no longer waiting on objects to stop.
-    do {
+    while (true) {
+        // Deal with the notification channels. Don't hold the lock during this.
+        p1_object_unlock(ctxobj);
         p1_ctrl_comm(ctxf);
-    } while (p1_ctrl_progress(ctx));
+        p1_object_lock(ctxobj);
+
+        // Go into stopping state if that's our goal.
+        if (ctxobj->target != P1_TARGET_RUNNING && ctxobj->state == P1_STATE_RUNNING)
+            p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_STOPPING);
+
+        // Progress state of our objects.
+        bool wait = p1_ctrl_progress(ctx);
+
+        // If there's nothing left to wait on, and we're stopping.
+        if (!wait && ctxobj->state == P1_STATE_STOPPING) {
+            // Restart if our target is no longer to idle.
+            if (ctxobj->target == P1_TARGET_RUNNING) {
+                p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_RUNNING);
+            }
+            // Otherwise, we're done.
+            else {
+                break;
+            }
+        }
+    };
 
     p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_IDLE);
+
+    p1_object_unlock(ctxobj);
+
+    // One final run to flush notifications.
     p1_ctrl_comm(ctxf);
 
     return NULL;
@@ -391,8 +427,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
         p1_object_unlock(fixed);
     }
 
-    // Return whether we can exit.
-    return wait || ctxobj->state != P1_STATE_STOPPING;
+    return wait;
 
 #undef P1_CHECK_WAIT
 #undef P1_PLUGIN_ACTIONS

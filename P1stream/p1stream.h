@@ -50,9 +50,10 @@ typedef struct _P1Context P1Context;
 
 // Misc. types.
 typedef enum _P1LogLevel P1LogLevel;
+typedef enum _P1StopOptions P1StopOptions;
+typedef enum _P1FreeOptions P1FreeOptions;
 typedef enum _P1State P1State;
 typedef enum _P1TargetState P1TargetState;
-typedef enum _P1FreeOptions P1FreeOptions;
 typedef enum _P1NotificationType P1NotificationType;
 typedef enum _P1ObjectType P1ObjectType;
 typedef struct _P1ListNode P1ListNode;
@@ -79,6 +80,14 @@ enum _P1LogLevel {
     P1_LOG_WARNING  =  1,
     P1_LOG_INFO     =  2,
     P1_LOG_DEBUG    =  3
+};
+
+
+// Options for p1_stop.
+
+enum _P1StopOptions {
+    P1_STOP_ASYNC           = 0,
+    P1_STOP_SYNC            = 1
 };
 
 
@@ -285,33 +294,37 @@ struct _P1Object {
 #define p1_object_unlock(_obj) assert(pthread_mutex_unlock(&(_obj)->lock) == 0)
 
 // This method should be used to change the state field.
-#define p1_object_set_state(_obj, _type, _state) {              \
+#define p1_object_set_state(_obj, _obj_type, _state) {          \
     P1Object *_p1_obj = (_obj);                                 \
     P1State _p1_state = (_state);                               \
-    _p1_obj->state = _p1_state;                                 \
-    _p1_notify(_p1_obj->ctx, (P1Notification) {                 \
-        .type = P1_NTYPE_STATE_CHANGE,                          \
-        .object_type = (_type),                                 \
-        .object = _p1_obj,                                      \
-        .state_change = {                                       \
-            .state = _p1_state                                  \
-        }                                                       \
-    });                                                         \
+    if (_p1_obj->state != _p1_state) {                          \
+        _p1_obj->state = _p1_state;                             \
+        _p1_notify(_p1_obj->ctx, (P1Notification) {             \
+            .type = P1_NTYPE_STATE_CHANGE,                      \
+            .object_type = (_obj_type),                         \
+            .object = _p1_obj,                                  \
+            .state_change = {                                   \
+                .state = _p1_state                              \
+            }                                                   \
+        });                                                     \
+    }                                                           \
 }
 
 // This method should be used to change the target field.
-#define p1_object_set_target(_obj, _type, _target) {            \
+#define p1_object_set_target(_obj, _obj_type, _target) {        \
     P1Object *_p1_obj = (_obj);                                 \
     P1TargetState _p1_target = (_target);                       \
-    _p1_obj->target = _p1_target;                               \
-    _p1_notify(_p1_obj->ctx, (P1Notification) {                 \
-        .type = P1_NTYPE_TARGET_CHANGE,                         \
-        .object_type = (_type),                                 \
-        .object = _p1_obj,                                      \
-        .target_change = {                                      \
-            .target = _p1_target                                \
-        }                                                       \
-    });                                                         \
+    if (_p1_obj->target != _p1_target) {                        \
+        _p1_obj->target = _p1_target;                           \
+        _p1_notify(_p1_obj->ctx, (P1Notification) {             \
+            .type = P1_NTYPE_TARGET_CHANGE,                     \
+            .object_type = (_obj_type),                         \
+            .object = _p1_obj,                                  \
+            .target_change = {                                  \
+                .target = _p1_target                            \
+            }                                                   \
+        });                                                     \
+    }                                                           \
 }
 
 
@@ -477,7 +490,7 @@ void p1_free(P1Context *ctx, P1FreeOptions options);
 // Start running with the current configuration.
 void p1_start(P1Context *ctx);
 // Stop all processing and all sources.
-void p1_stop(P1Context *ctx);
+void p1_stop(P1Context *ctx, P1StopOptions options);
 
 // Read a P1Notification. This method will block.
 void p1_read(P1Context *ctx, P1Notification *out);

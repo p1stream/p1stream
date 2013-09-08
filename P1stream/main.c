@@ -1,13 +1,18 @@
 #include "p1stream.h"
 
+#include <signal.h>
 #include <CoreFoundation/CoreFoundation.h>
 
-static void notify_fd_callback(CFFileDescriptorRef f, CFOptionFlags callBackTypes, void *info);
+static void terminate_handler(int sig);
+static void notify_fd_callback(CFFileDescriptorRef fd, CFOptionFlags callBackTypes, void *info);
+static void notify_exit_callback(CFFileDescriptorRef fd, CFOptionFlags callBackTypes, void *info);
 static void create_video_clock(P1Context *ctx, P1Config *cfg);
 static void create_audio_sources(P1Context *ctx, P1Config *cfg);
 static bool create_audio_source(P1Config *cfg, P1ConfigSection *sect, void *data);
 static void create_video_sources(P1Context *ctx, P1Config *cfg);
 static bool create_video_source(P1Config *cfg, P1ConfigSection *sect, void *data);
+
+static int sig_handler_pipe[2];
 
 
 int main(int argc, const char * argv[])
@@ -17,9 +22,15 @@ int main(int argc, const char * argv[])
         return 2;
     }
 
+    // Setup.
     P1Config *cfg = p1_plist_config_create_from_file(argv[1]);
     P1Context *ctx = p1_create(cfg, NULL);
+    create_audio_sources(ctx, cfg);
+    create_video_clock(ctx, cfg);
+    create_video_sources(ctx, cfg);
+    p1_config_free(cfg);
 
+    // Shared stuff.
     CFFileDescriptorContext fdctx = {
         .version = 0,
         .info = ctx,
@@ -27,32 +38,73 @@ int main(int argc, const char * argv[])
         .release = NULL,
         .copyDescription = NULL
     };
-    CFFileDescriptorRef fd = CFFileDescriptorCreate(kCFAllocatorDefault, p1_fd(ctx), false, notify_fd_callback, &fdctx);
+    CFFileDescriptorRef fd;
+    CFRunLoopSourceRef src;
+
+    // Listen for notifications.
+    fd = CFFileDescriptorCreate(kCFAllocatorDefault, p1_fd(ctx), false, notify_fd_callback, &fdctx);
     CFFileDescriptorEnableCallBacks(fd, kCFFileDescriptorReadCallBack);
-    CFRunLoopSourceRef source = CFFileDescriptorCreateRunLoopSource(kCFAllocatorDefault, fd, 0);
+    src = CFFileDescriptorCreateRunLoopSource(kCFAllocatorDefault, fd, 0);
     CFRelease(fd);
-    CFRunLoopAddSource(CFRunLoopGetMain(), source, kCFRunLoopDefaultMode);
-    CFRelease(source);
+    CFRunLoopAddSource(CFRunLoopGetMain(), src, kCFRunLoopDefaultMode);
+    CFRelease(src);
 
-    create_audio_sources(ctx, cfg);
-    create_video_clock(ctx, cfg);
-    create_video_sources(ctx, cfg);
+    // Listen for signal handler notifications.
+    int ret = pipe(sig_handler_pipe);
+    assert(ret == 0);
+    fd = CFFileDescriptorCreate(kCFAllocatorDefault, sig_handler_pipe[0], false, notify_exit_callback, &fdctx);
+    CFFileDescriptorEnableCallBacks(fd, kCFFileDescriptorReadCallBack);
+    src = CFFileDescriptorCreateRunLoopSource(kCFAllocatorDefault, fd, 0);
+    CFRelease(fd);
+    CFRunLoopAddSource(CFRunLoopGetMain(), src, kCFRunLoopDefaultMode);
+    CFRelease(src);
 
+    // Action!
     p1_start(ctx);
 
-    CFRunLoopRun();
+    // Signal handler.
+    struct sigaction sa;
+    sa.sa_handler = terminate_handler;
+    sa.sa_mask = 0;
+    sa.sa_flags = SA_NODEFER | SA_RESETHAND;
+    sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGTERM, &sa, NULL);
 
+    CFRunLoopRun();
     return 0;
+}
+
+static void terminate_handler(int sig)
+{
+    char buf = 0;
+    write(sig_handler_pipe[1], &buf, 1);
 }
 
 static void notify_fd_callback(CFFileDescriptorRef fd, CFOptionFlags callBackTypes, void *info)
 {
     P1Context *ctx = (P1Context *) info;
+    P1Object *ctxobj = (P1Object *) info;
 
-    P1Notification notification;
-    p1_read(ctx, &notification);
+    P1Notification n;
+    p1_read(ctx, &n);
 
-    CFFileDescriptorEnableCallBacks(fd, kCFFileDescriptorReadCallBack);
+    if (n.object == ctxobj && n.type == P1_NTYPE_STATE_CHANGE && n.state_change.state == P1_STATE_IDLE) {
+        p1_free(ctx, P1_FREE_EVERYTHING);
+        CFRunLoopStop(CFRunLoopGetMain());
+    }
+    else {
+        CFFileDescriptorEnableCallBacks(fd, kCFFileDescriptorReadCallBack);
+    }
+}
+
+static void notify_exit_callback(CFFileDescriptorRef fd, CFOptionFlags callBackTypes, void *info)
+{
+    P1Context *ctx = (P1Context *) info;
+
+    close(sig_handler_pipe[0]);
+    close(sig_handler_pipe[1]);
+
+    p1_stop(ctx, P1_STOP_ASYNC);
 }
 
 static void create_video_clock(P1Context *ctx, P1Config *cfg)
