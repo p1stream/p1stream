@@ -98,7 +98,7 @@ static bool p1_capture_video_source_start(P1PluginElement *pel)
         [session startRunning];
     }
 
-    p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
+    p1_element_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
 
     return true;
 }
@@ -119,7 +119,7 @@ static void p1_capture_video_source_stop(P1PluginElement *pel)
         CFRelease(cvsrc->delegate);
     }
 
-    p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
+    p1_element_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
 }
 
 static void p1_capture_video_source_frame(P1VideoSource *vsrc)

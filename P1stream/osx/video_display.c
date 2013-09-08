@@ -50,7 +50,7 @@ static bool p1_display_video_source_start(P1PluginElement *pel)
     P1Element *el = (P1Element *) pel;
     P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) pel;
 
-    p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STARTING);
+    p1_element_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STARTING);
 
     size_t width  = CGDisplayPixelsWide(dvsrc->display_id);
     size_t height = CGDisplayPixelsHigh(dvsrc->display_id);
@@ -80,7 +80,7 @@ static void p1_display_video_source_stop(P1PluginElement *pel)
     P1Element *el = (P1Element *) pel;
     P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) pel;
 
-    p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STOPPING);
+    p1_element_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STOPPING);
 
     CGError cg_ret = CGDisplayStreamStop(dvsrc->display_stream);
     assert(cg_ret == kCGErrorSuccess);
@@ -125,7 +125,7 @@ static void p1_display_video_source_callback(
 
             dispatch_release(dvsrc->dispatch);
 
-            p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
+            p1_element_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
         }
         else {
             p1_log(el->ctx, P1_LOG_ERROR, "Display stream stopped.");
@@ -134,7 +134,7 @@ static void p1_display_video_source_callback(
     }
     else {
         if (el->state == P1_STATE_STARTING)
-            p1_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
+            p1_element_set_state(el, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
     }
 
     p1_element_unlock(el);

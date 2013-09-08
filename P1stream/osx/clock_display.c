@@ -53,7 +53,7 @@ static bool p1_display_video_clock_start(P1PluginElement *pel)
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
     CVReturn ret;
 
-    p1_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_STARTING);
+    p1_element_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_STARTING);
 
     dvclock->skip_counter = 0;
 
@@ -74,7 +74,7 @@ static void p1_display_video_clock_stop(P1PluginElement *pel)
     P1Element *el = (P1Element *) pel;
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
 
-    p1_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_STOPPING);
+    p1_element_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_STOPPING);
 
     CVReturn cv_ret = CVDisplayLinkStop(dvclock->display_link);
     assert(cv_ret == kCVReturnSuccess);
@@ -82,7 +82,7 @@ static void p1_display_video_clock_stop(P1PluginElement *pel)
     CFRelease(dvclock->display_link);
 
     // FIXME: Should we wait for anything?
-    p1_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_IDLE);
+    p1_element_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_IDLE);
 }
 
 static CVReturn p1_display_video_clock_callback(
@@ -110,7 +110,7 @@ static CVReturn p1_display_video_clock_callback(
         vclock->fps_den = dvclock->divisor;
 
         // Report running.
-        p1_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_RUNNING);
+        p1_element_set_state(el, P1_OTYPE_VIDEO_CLOCK, P1_STATE_RUNNING);
     }
 
     if (el->state == P1_STATE_RUNNING) {

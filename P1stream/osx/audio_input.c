@@ -59,7 +59,7 @@ static bool p1_input_audio_source_start(P1PluginElement *pel)
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
-    p1_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STARTING);
+    p1_element_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STARTING);
 
     AudioStreamBasicDescription fmt;
     fmt.mFormatID = kAudioFormatLinearPCM;
@@ -105,7 +105,7 @@ static void p1_input_audio_source_stop(P1PluginElement *pel)
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
-    p1_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STOPPING);
+    p1_element_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STOPPING);
 
     ret = AudioQueueStop(iasrc->queue, FALSE);
     assert(ret == noErr);
@@ -154,14 +154,14 @@ static void p1_input_audio_source_running_callback(
     // FIXME: handle unexpected transitions in other states
     if (running) {
         if (el->state == P1_STATE_STARTING)
-            p1_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_RUNNING);
+            p1_element_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_RUNNING);
     }
     else {
         if (el->state == P1_STATE_STOPPING) {
             ret = AudioQueueDispose(inAQ, TRUE);
             assert(ret == noErr);
 
-            p1_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_IDLE);
+            p1_element_set_state(el, P1_OTYPE_AUDIO_SOURCE, P1_STATE_IDLE);
         }
     }
 

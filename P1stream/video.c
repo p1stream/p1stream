@@ -220,7 +220,7 @@ void p1_video_start(P1VideoFull *videof)
     cl_err = clSetKernelArg(videof->yuv_kernel, 1, sizeof(cl_mem), &videof->out_mem);
     assert(cl_err == CL_SUCCESS);
 
-    p1_set_state(videoel, P1_OTYPE_VIDEO, P1_STATE_RUNNING);
+    p1_element_set_state(videoel, P1_OTYPE_VIDEO, P1_STATE_RUNNING);
 }
 
 void p1_video_stop(P1VideoFull *videof)

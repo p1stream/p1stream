@@ -59,7 +59,7 @@ void p1_audio_start(P1AudioFull *audiof)
     err = aacEncEncode(audiof->aac, NULL, NULL, NULL, NULL);
     assert(err == AACENC_OK);
 
-    p1_set_state(audioel, P1_OTYPE_AUDIO, P1_STATE_RUNNING);
+    p1_element_set_state(audioel, P1_OTYPE_AUDIO, P1_STATE_RUNNING);
 }
 
 void p1_audio_stop(P1AudioFull *audiof)

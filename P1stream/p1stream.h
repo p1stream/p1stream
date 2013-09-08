@@ -69,6 +69,70 @@ typedef P1VideoSource *(P1VideoSourceFactory)(P1Config *cfg, P1ConfigSection *se
 typedef P1AudioSource *(P1AudioSourceFactory)(P1Config *cfg, P1ConfigSection *sect);
 
 
+// Log levels. These match x264s.
+
+enum _P1LogLevel {
+    P1_LOG_NONE     = -1,
+    P1_LOG_ERROR    =  0,
+    P1_LOG_WARNING  =  1,
+    P1_LOG_INFO     =  2,
+    P1_LOG_DEBUG    =  3
+};
+
+
+// Options for p1_free.
+
+enum _P1FreeOptions {
+    P1_FREE_ONLY_SELF       = 0,
+    P1_FREE_VIDEO_CLOCK     = 1,
+    P1_FREE_VIDEO_SOURCES   = 2,
+    P1_FREE_AUDIO_SOURCES   = 4,
+    P1_FREE_EVERYTHING      = 7
+};
+
+
+// Elements track simple state. These are the possible states.
+
+enum _P1State {
+    P1_STATE_IDLE       = 0, // Initial value.
+    P1_STATE_STARTING   = 1,
+    P1_STATE_RUNNING    = 2,
+    P1_STATE_STOPPING   = 3
+};
+
+
+// This is the state we want an element to be in, and should be worked towards.
+
+enum _P1TargetState {
+    P1_TARGET_RUNNING   = 0, // Initial value.
+    P1_TARGET_IDLE      = 1,
+    P1_TARGET_REMOVE    = 2  // Pending removal, source will be freed.
+};
+
+
+// Notification types.
+
+enum _P1NotificationType {
+    P1_NTYPE_UNKNOWN        = 0,
+    P1_NTYPE_STATE_CHANGE   = 1,
+    P1_NTYPE_TARGET_CHANGE  = 2
+};
+
+
+// Object types.
+
+enum _P1ObjectType {
+    P1_OTYPE_UNKNOWN        = 0,
+    P1_OTYPE_CONTEXT        = 1,
+    P1_OTYPE_VIDEO          = 2,
+    P1_OTYPE_AUDIO          = 3,
+    P1_OTYPE_CONNECTION     = 4,
+    P1_OTYPE_VIDEO_CLOCK    = 5,
+    P1_OTYPE_VIDEO_SOURCE   = 6,
+    P1_OTYPE_AUDIO_SOURCE   = 7
+};
+
+
 // The interface below defines the set of operations used to read configuration.
 // This should be simple enough to allow backing by a variety of stores like a
 // JSON file, property list file, or registry.
@@ -102,75 +166,10 @@ struct _P1Config {
     bool (*each_string)(P1Config *cfg, P1ConfigSection *sect, const char *key, P1ConfigIterString iter, void *data);
 };
 
-
-// Log levels. These match x264s.
-
-enum _P1LogLevel {
-    P1_LOG_NONE     = -1,
-    P1_LOG_ERROR    =  0,
-    P1_LOG_WARNING  =  1,
-    P1_LOG_INFO     =  2,
-    P1_LOG_DEBUG    =  3
-};
-
-
-// Options for p1_free.
-
-enum _P1FreeOptions {
-    P1_FREE_ONLY_SELF       = 0,
-    P1_FREE_VIDEO_CLOCK     = 1,
-    P1_FREE_VIDEO_SOURCES   = 2,
-    P1_FREE_AUDIO_SOURCES   = 4,
-    P1_FREE_EVERYTHING      = 7
-};
-
-
-// Elements track simple state. These are the possible states.
-
-enum _P1State {
-    P1_STATE_IDLE       = 0, // Initial value.
-    P1_STATE_STARTING   = 1,
-    P1_STATE_RUNNING    = 2,
-    P1_STATE_STOPPING   = 3
-};
-
-// This function should be used to change the state field on elements.
-#define p1_set_state(_el, _type, _state) {                      \
-    P1Element *_p1_el = (_el);                                  \
-    P1State _p1_state = (_state);                               \
-    _p1_el->state = _p1_state;                                  \
-    _p1_notify(_p1_el->ctx, (P1Notification) {                  \
-        .type = P1_NTYPE_STATE_CHANGE,                          \
-        .object_type = (_type),                                 \
-        .object = _p1_el,                                       \
-        .state_change = {                                       \
-            .state = _p1_state                                  \
-        }                                                       \
-    });                                                         \
-}
-
-
-// This is the state we want an element to be in, and should be worked towards.
-
-enum _P1TargetState {
-    P1_TARGET_RUNNING   = 0, // Initial value.
-    P1_TARGET_IDLE      = 1,
-    P1_TARGET_REMOVE    = 2  // Pending removal, source will be freed.
-};
-
-// This function should be used to change the target field on elements.
-#define p1_set_target(_el, _type, _target) {                    \
-    P1Element *_p1_el = (_el);                                  \
-    P1TargetState _p1_target = (_target);                       \
-    _p1_el->target = _p1_target;                                \
-    _p1_notify((_ctx), (P1Notification) {                       \
-        .type = P1_NTYPE_TARGET_CHANGE,                         \
-        .object_type = (_type),                                 \
-        .object = _p1_el,                                       \
-        .target_change = {                                      \
-            .target = _p1_target                                \
-        }                                                       \
-    });                                                         \
+// Free a config object.
+#define p1_config_free(_cfg) {                                  \
+    P1Config *_p1_cfg = (_cfg);                                 \
+    _p1_cfg->free(_p1_cfg);                                     \
 }
 
 
@@ -185,29 +184,12 @@ enum _P1TargetState {
 // large enough to make it difficult for actual stalling to occur, even if the
 // users main thread is unable to read for seconds.
 
-enum _P1NotificationType {
-    P1_NTYPE_UNKNOWN        = 0,
-    P1_NTYPE_STATE_CHANGE   = 1,
-    P1_NTYPE_TARGET_CHANGE  = 2
-};
-
-enum _P1ObjectType {
-    P1_OTYPE_UNKNOWN        = 0,
-    P1_OTYPE_CONTEXT        = 1,
-    P1_OTYPE_VIDEO          = 2,
-    P1_OTYPE_AUDIO          = 3,
-    P1_OTYPE_CONNECTION     = 4,
-    P1_OTYPE_VIDEO_CLOCK    = 5,
-    P1_OTYPE_VIDEO_SOURCE   = 6,
-    P1_OTYPE_AUDIO_SOURCE   = 7
-};
-
 struct _P1Notification {
     P1NotificationType type;
 
     // Object that sent the notification.
     P1ObjectType object_type;
-    void *object;
+    P1Element *object;
 
     // Content depends on the type field.
     union {
@@ -299,6 +281,36 @@ struct _P1Element {
 // Convenience methods for acquiring the element lock.
 #define p1_element_lock(_el) assert(pthread_mutex_lock(&(_el)->lock) == 0)
 #define p1_element_unlock(_el) assert(pthread_mutex_unlock(&(_el)->lock) == 0)
+
+// This method should be used to change the state field.
+#define p1_element_set_state(_el, _type, _state) {              \
+    P1Element *_p1_el = (_el);                                  \
+    P1State _p1_state = (_state);                               \
+    _p1_el->state = _p1_state;                                  \
+    _p1_notify(_p1_el->ctx, (P1Notification) {                  \
+        .type = P1_NTYPE_STATE_CHANGE,                          \
+        .object_type = (_type),                                 \
+        .object = _p1_el,                                       \
+        .state_change = {                                       \
+            .state = _p1_state                                  \
+        }                                                       \
+    });                                                         \
+}
+
+// This method should be used to change the target field.
+#define p1_element_set_target(_el, _type, _target) {            \
+    P1Element *_p1_el = (_el);                                  \
+    P1TargetState _p1_target = (_target);                       \
+    _p1_el->target = _p1_target;                                \
+    _p1_notify(_p1_el->ctx, (P1Notification) {                  \
+        .type = P1_NTYPE_TARGET_CHANGE,                         \
+        .object_type = (_type),                                 \
+        .object = _p1_el,                                       \
+        .target_change = {                                      \
+            .target = _p1_target                                \
+        }                                                       \
+    });                                                         \
+}
 
 
 // Base for all plugin (non-fixed) elements.
@@ -439,8 +451,7 @@ struct _P1Connection {
 // Context that encapsulates everything else.
 
 struct _P1Context {
-    // Current state.
-    P1State state;
+    P1Element super;
 
     // Log function, defaults to stderr logging. Only modify this when the
     // context is idle. These can be called on any thread.
