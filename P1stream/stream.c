@@ -9,27 +9,29 @@ static const char *default_url = "rtmp://localhost/app/test";
 static RTMPPacket *p1_conn_new_packet(uint8_t type, uint32_t body_size);
 static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time);
 static void *p1_conn_main(void *data);
-static void p1_conn_flush(P1ConnectionFull *connf);
+static void p1_conn_flush(RTMP *r, P1ConnectionFull *connf);
 
 void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Object *connobj = (P1Object *) connf;
-    RTMP *r = &connf->rtmp;
-    int res;
 
     p1_object_init(connobj);
 
-    res = pthread_cond_init(&connf->cond, NULL);
+    int res = pthread_cond_init(&connf->cond, NULL);
     assert(res == 0);
-
-    RTMP_Init(r);
 
     if (!cfg->get_string(cfg, sect, "url", connf->url, sizeof(connf->url)))
         strcpy(connf->url, default_url);
-    res = RTMP_SetupURL(r, connf->url);
-    assert(res == TRUE);
+}
 
-    RTMP_EnableWrite(r);
+void p1_conn_destroy(P1ConnectionFull *connf)
+{
+    P1Object *connobj = (P1Object *) connf;
+
+    int res = pthread_cond_destroy(&connf->cond);
+    assert(res == 0);
+
+    p1_object_destroy(connobj);
 }
 
 void p1_conn_start(P1ConnectionFull *connf)
@@ -44,7 +46,12 @@ void p1_conn_start(P1ConnectionFull *connf)
 
 void p1_conn_stop(P1ConnectionFull *connf)
 {
-    // FIXME
+    P1Object *connobj = (P1Object *) connf;
+
+    p1_object_set_state(connobj, P1_OTYPE_CONNECTION, P1_STATE_STOPPING);
+
+    int res = pthread_cond_signal(&connf->cond);
+    assert(res == 0);
 }
 
 // Send video configuration.
@@ -180,7 +187,6 @@ static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     P1Object *connobj = (P1Object *) connf;
     P1Context *ctx = connobj->ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
-    RTMP *r = &connf->rtmp;
     int res;
 
     p1_object_lock(connobj);
@@ -218,7 +224,6 @@ static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     // Start stream with a large header.
     pkt->m_headerType = time ? RTMP_PACKET_SIZE_MEDIUM : RTMP_PACKET_SIZE_LARGE;
     pkt->m_hasAbsTimestamp = pkt->m_headerType == RTMP_PACKET_SIZE_LARGE;
-    pkt->m_nInfoField2 = r->m_stream_id;
 
     // Queue the packet.
     q->head[q->write++] = pkt;  // Deliberate overflow of q->write.
@@ -235,13 +240,20 @@ static void *p1_conn_main(void *data)
 {
     P1ConnectionFull *connf = (P1ConnectionFull *) data;
     P1Object *connobj = (P1Object *) data;
-    RTMP *r = &connf->rtmp;
+    RTMP r;
     int res;
 
-    res = RTMP_Connect(r, NULL);
+    RTMP_Init(&r);
+
+    res = RTMP_SetupURL(&r, connf->url);
     assert(res == TRUE);
 
-    res = RTMP_ConnectStream(r, 0);
+    RTMP_EnableWrite(&r);
+
+    res = RTMP_Connect(&r, NULL);
+    assert(res == TRUE);
+
+    res = RTMP_ConnectStream(&r, 0);
     assert(res == TRUE);
 
     p1_object_lock(connobj);
@@ -250,11 +262,15 @@ static void *p1_conn_main(void *data)
     p1_object_set_state(connobj, P1_OTYPE_CONNECTION, P1_STATE_RUNNING);
 
     do {
-        p1_conn_flush(connf);
+        p1_conn_flush(&r, connf);
 
         res = pthread_cond_wait(&connf->cond, &connobj->lock);
         assert(res == 0);
     } while (connobj->state == P1_STATE_RUNNING);
+
+    RTMP_Close(&r);
+
+    p1_object_set_state(connobj, P1_OTYPE_CONNECTION, P1_STATE_IDLE);
 
     p1_object_unlock(connobj);
 
@@ -263,10 +279,9 @@ static void *p1_conn_main(void *data)
 
 // Flush as many queued packets as we can to the connection.
 // This is called with the stream lock held.
-static void p1_conn_flush(P1ConnectionFull *connf)
+static void p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
-    RTMP *r = &connf->rtmp;
     P1PacketQueue *aq = &connf->audio_queue;
     P1PacketQueue *vq = &connf->video_queue;
     int res;
@@ -312,6 +327,8 @@ static void p1_conn_flush(P1ConnectionFull *connf)
         RTMPPacket **end = i;
         for (i = list; i != end; i++) {
             RTMPPacket *pkt = *i;
+
+            pkt->m_nInfoField2 = r->m_stream_id;
 
             res = RTMP_SendPacket(r, pkt, FALSE);
             free(pkt);

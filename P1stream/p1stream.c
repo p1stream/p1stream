@@ -98,7 +98,7 @@ void p1_free(P1Context *ctx, P1FreeOptions options)
     p1_object_destroy((P1Object *) ctx);
     //p1_video_destroy(videof);
     p1_audio_destroy((P1AudioFull *) ctx->audio);
-    //p1_conn_destroy(connf);
+    p1_conn_destroy((P1ConnectionFull *) ctx->conn);
 
     close(ctxf->ctrl_pipe[0]);
     close(ctxf->ctrl_pipe[1]);

@@ -101,6 +101,7 @@ struct _P1ConnectionFull {
 };
 
 void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect);
+void p1_conn_destroy(P1ConnectionFull *connf);
 void p1_conn_start(P1ConnectionFull *connf);
 void p1_conn_stop(P1ConnectionFull *connf);
 void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len);
