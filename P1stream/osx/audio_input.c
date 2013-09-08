@@ -122,16 +122,13 @@ static void p1_input_audio_source_input_callback(
     P1Object *el = (P1Object *) inUserData;
     P1AudioSource *asrc = (P1AudioSource *) inUserData;
 
-    p1_object_lock(el);
-
+    // FIXME: should we worry about this being atomic?
     if (el->state == P1_STATE_RUNNING)
         p1_audio_source_buffer(asrc, inStartTime->mHostTime, inBuffer->mAudioData,
                                inBuffer->mAudioDataByteSize / sample_size);
 
     OSStatus ret = AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
     assert(ret == noErr);
-
-    p1_object_unlock(el);
 }
 
 static void p1_input_audio_source_running_callback(

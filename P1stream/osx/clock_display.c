@@ -122,7 +122,9 @@ static CVReturn p1_display_video_clock_callback(
         if (dvclock->skip_counter++ != 0)
             goto end;
 
+        p1_object_unlock(el);
         p1_video_clock_tick(vclock, inNow->hostTime);
+        return kCVReturnSuccess;
     }
 
 end:
