@@ -20,7 +20,7 @@ struct _P1InputAudioSource {
     AudioQueueBufferRef buffers[num_buffers];
 };
 
-static bool p1_input_audio_source_start(P1Plugin *pel);
+static void p1_input_audio_source_start(P1Plugin *pel);
 static void p1_input_audio_source_stop(P1Plugin *pel);
 static void p1_input_audio_source_input_callback(
     void *inUserData,
@@ -52,7 +52,7 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
     return asrc;
 }
 
-static bool p1_input_audio_source_start(P1Plugin *pel)
+static void p1_input_audio_source_start(P1Plugin *pel)
 {
     P1Object *obj = (P1Object *) pel;
     P1AudioSource *asrc = (P1AudioSource *) pel;
@@ -95,8 +95,6 @@ static bool p1_input_audio_source_start(P1Plugin *pel)
 
     ret = AudioQueueStart(iasrc->queue, NULL);
     assert(ret == noErr);
-
-    return true;
 }
 
 static void p1_input_audio_source_stop(P1Plugin *pel)

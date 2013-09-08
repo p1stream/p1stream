@@ -17,7 +17,7 @@ struct _P1DisplayVideoSource {
     IOSurfaceRef frame;
 };
 
-static bool p1_display_video_source_start(P1Plugin *pel);
+static void p1_display_video_source_start(P1Plugin *pel);
 static void p1_display_video_source_stop(P1Plugin *pel);
 static void p1_display_video_source_frame(P1VideoSource *vsrc);
 static void p1_display_video_source_callback(
@@ -45,7 +45,7 @@ P1VideoSource *p1_display_video_source_create(P1Config *cfg, P1ConfigSection *se
     return vsrc;
 }
 
-static bool p1_display_video_source_start(P1Plugin *pel)
+static void p1_display_video_source_start(P1Plugin *pel)
 {
     P1Object *obj = (P1Object *) pel;
     P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) pel;
@@ -71,8 +71,6 @@ static bool p1_display_video_source_start(P1Plugin *pel)
 
     CGError cg_ret = CGDisplayStreamStart(dvsrc->display_stream);
     assert(cg_ret == kCGErrorSuccess);
-
-    return true;
 }
 
 static void p1_display_video_source_stop(P1Plugin *pel)

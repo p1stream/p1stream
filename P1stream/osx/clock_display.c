@@ -17,7 +17,7 @@ struct _P1DisplayVideoClock {
     uint8_t skip_counter;
 };
 
-static bool p1_display_video_clock_start(P1Plugin *pel);
+static void p1_display_video_clock_start(P1Plugin *pel);
 static void p1_display_video_clock_stop(P1Plugin *pel);
 static CVReturn p1_display_video_clock_callback(
     CVDisplayLinkRef displayLink,
@@ -47,7 +47,7 @@ P1VideoClock *p1_display_video_clock_create(P1Config *cfg, P1ConfigSection *sect
     return vclock;
 }
 
-static bool p1_display_video_clock_start(P1Plugin *pel)
+static void p1_display_video_clock_start(P1Plugin *pel)
 {
     P1Object *obj = (P1Object *) pel;
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
@@ -65,8 +65,6 @@ static bool p1_display_video_clock_start(P1Plugin *pel)
 
     CVReturn cv_ret = CVDisplayLinkStart(dvclock->display_link);
     assert(cv_ret == kCVReturnSuccess);
-
-    return true;
 }
 
 static void p1_display_video_clock_stop(P1Plugin *pel)
