@@ -64,7 +64,17 @@ void p1_audio_start(P1AudioFull *audiof)
 
 void p1_audio_stop(P1AudioFull *audiof)
 {
-    // FIXME
+    P1Object *audioobj = (P1Object *) audiof;
+    AACENC_ERROR err;
+
+    err = aacEncClose(&audiof->aac);
+    assert(err == AACENC_OK);
+
+    free(audiof->mix);
+    free(audiof->enc_in);
+    free(audiof->out);
+
+    p1_object_set_state(audioobj, P1_OTYPE_AUDIO, P1_STATE_IDLE);
 }
 
 void p1_audio_source_init(P1AudioSource *asrc, P1Config *cfg, P1ConfigSection *sect)

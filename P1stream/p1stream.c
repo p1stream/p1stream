@@ -92,7 +92,20 @@ P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
 
 void p1_free(P1Context *ctx, P1FreeOptions options)
 {
+    P1ContextFull *ctxf = (P1ContextFull *) ctx;
+
     // FIXME
+    p1_object_destroy((P1Object *) ctx);
+    //p1_video_destroy(videof);
+    p1_audio_destroy((P1AudioFull *) ctx->audio);
+    //p1_conn_destroy(connf);
+
+    close(ctxf->ctrl_pipe[0]);
+    close(ctxf->ctrl_pipe[1]);
+    close(ctxf->user_pipe[0]);
+    close(ctxf->user_pipe[1]);
+
+    free(ctxf);
 }
 
 void p1_start(P1Context *ctx)
