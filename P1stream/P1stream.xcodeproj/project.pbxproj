@@ -32,7 +32,7 @@
 		F6F6077717B64C34009E6155 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077617B64C34009E6155 /* CoreFoundation.framework */; };
 		F6F6077917B64CC4009E6155 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077817B64CC4009E6155 /* IOSurface.framework */; };
 		F6F6077B17B65F1F009E6155 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077A17B65F1F009E6155 /* OpenCL.framework */; };
-		F6F6077F17B68E0B009E6155 /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6077E17B68E0B009E6155 /* stream.c */; };
+		F6F6077F17B68E0B009E6155 /* conn.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6077E17B68E0B009E6155 /* conn.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,7 +69,7 @@
 		F6F6077617B64C34009E6155 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		F6F6077817B64CC4009E6155 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		F6F6077A17B65F1F009E6155 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
-		F6F6077E17B68E0B009E6155 /* stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stream.c; sourceTree = "<group>"; };
+		F6F6077E17B68E0B009E6155 /* conn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conn.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,7 +144,7 @@
 				F62DBA3B17C52DC1004DDFD6 /* p1stream.c */,
 				F6A76AD417B6FE31002FE99E /* audio.c */,
 				F6F6077117B6488C009E6155 /* video.c */,
-				F6F6077E17B68E0B009E6155 /* stream.c */,
+				F6F6077E17B68E0B009E6155 /* conn.c */,
 				F62DBA4117C53360004DDFD6 /* osx */,
 				F607450E17B6303F004EA730 /* Frameworks */,
 				F644CB9617B6291D007934C3 /* Products */,
@@ -222,7 +222,7 @@
 			files = (
 				F644CB9917B6291D007934C3 /* main.c in Sources */,
 				F6F6077217B6488C009E6155 /* video.c in Sources */,
-				F6F6077F17B68E0B009E6155 /* stream.c in Sources */,
+				F6F6077F17B68E0B009E6155 /* conn.c in Sources */,
 				F6A76AD517B6FE31002FE99E /* audio.c in Sources */,
 				F62DBA3C17C52DC1004DDFD6 /* p1stream.c in Sources */,
 				F62DBA4A17C53360004DDFD6 /* audio_input.c in Sources */,
