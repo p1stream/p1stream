@@ -3,8 +3,21 @@
 
 #include "p1stream.h"
 
+#ifdef __OBJC__
+#   include <Foundation/Foundation.h>
+#endif
+
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOSurface/IOSurface.h>
+
+
+#ifdef __OBJC__
+
+// Convenience logging methods that build on p1_log.
+void p1_log_ns_string(P1Context *ctx, P1LogLevel level, NSString *str);
+void p1_log_ns_error(P1Context *ctx, P1LogLevel level, NSError *err);
+
+#endif
 
 
 // Fast path for OS X video sources that can provide an IOSurface.

@@ -2,14 +2,13 @@
 
 #define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 
-#include <assert.h>
 #include <pthread.h>
 #include <CoreVideo/CoreVideo.h>
 #include <CoreMedia/CoreMedia.h>
 #include <AVFoundation/AVFoundation.h>
 
-// Source state.
 typedef struct _P1CaptureVideoSource P1CaptureVideoSource;
+
 
 struct _P1CaptureVideoSource {
     P1VideoSource super;
@@ -20,7 +19,14 @@ struct _P1CaptureVideoSource {
     CVPixelBufferRef frame;
 };
 
+static void p1_capture_video_source_start(P1Plugin *pel);
+static void p1_capture_video_source_stop(P1Plugin *pel);
+static void p1_capture_video_source_frame(P1VideoSource *vsrc);
+static void p1_capture_video_source_kill_session(P1CaptureVideoSource *cvsrc);
+
+
 // Delegate class we use internally for the capture session.
+
 @interface P1VideoCaptureDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     P1CaptureVideoSource *cvsrc;
@@ -32,14 +38,9 @@ struct _P1CaptureVideoSource {
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection;
 
-- (void)handleError:(NSNotification *)obj;
+- (void)handleError:(NSNotification *)n;
 
 @end
-
-// Plugin definition.
-static bool p1_capture_video_source_start(P1Plugin *pel);
-static void p1_capture_video_source_stop(P1Plugin *pel);
-static void p1_capture_video_source_frame(P1VideoSource *vsrc);
 
 
 P1VideoSource *p1_capture_video_source_create(P1Config *cfg, P1ConfigSection *sect)
@@ -47,39 +48,57 @@ P1VideoSource *p1_capture_video_source_create(P1Config *cfg, P1ConfigSection *se
     P1CaptureVideoSource *cvsrc = calloc(1, sizeof(P1CaptureVideoSource));
     P1VideoSource *vsrc = (P1VideoSource *) cvsrc;
     P1Plugin *pel = (P1Plugin *) cvsrc;
-    assert(cvsrc != NULL);
 
-    p1_video_source_init(vsrc, cfg, sect);
+    if (cvsrc != NULL) {
+        p1_video_source_init(vsrc, cfg, sect);
 
-    pel->start = p1_capture_video_source_start;
-    pel->stop = p1_capture_video_source_stop;
-    vsrc->frame = p1_capture_video_source_frame;
+        pel->start = p1_capture_video_source_start;
+        pel->stop = p1_capture_video_source_stop;
+        vsrc->frame = p1_capture_video_source_frame;
+    }
 
     return vsrc;
 }
 
-static bool p1_capture_video_source_start(P1Plugin *pel)
+static void p1_capture_video_source_start(P1Plugin *pel)
 {
     P1Object *obj = (P1Object *) pel;
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
+
+#define P1_CVSRC_HALT {                                                 \
+    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTED);   \
+    return;                                                             \
+}
 
     p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STARTING);
 
     @autoreleasepool {
         P1VideoCaptureDelegate *delegate = [[P1VideoCaptureDelegate alloc] initWithSource:cvsrc];
 
-        // Create a capture session, listen for errors.
+        // Create a capture session, .
         AVCaptureSession *session = [[AVCaptureSession alloc] init];
-        [[NSNotificationCenter defaultCenter] addObserver:delegate
-                                                 selector:@selector(handleError:)
-                                                     name:@"AVCaptureSessionRuntimeErrorNotification"
-                                                   object:session];
+
+        // Listen for errors.
+        NSNotificationCenter *notif_center = [NSNotificationCenter defaultCenter];
+        [notif_center addObserver:delegate
+                         selector:@selector(handleError:)
+                             name:@"AVCaptureSessionRuntimeErrorNotification"
+                           object:session];
+
+        if (!delegate || !session || !notif_center) {
+            p1_log(obj->ctx, P1_LOG_ERROR, "Failed to setup capture session\n");
+            P1_CVSRC_HALT;
+        }
 
         // Open the default video capture device.
         NSError *error;
         AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
         AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:device error:&error];
-        assert(input && [session canAddInput:input]);
+        if (!input || ![session canAddInput:input]) {
+            p1_log(obj->ctx, P1_LOG_ERROR, "Failed to open capture device\n");
+            p1_log_ns_error(obj->ctx, P1_LOG_ERROR, error);
+            P1_CVSRC_HALT;
+        }
         [session addInput:input];
 
         // Create a video data output.
@@ -89,7 +108,10 @@ static bool p1_capture_video_source_start(P1Plugin *pel)
         output.videoSettings = @{
             (NSString *) kCVPixelBufferPixelFormatTypeKey: [NSNumber numberWithInt:kCVPixelFormatType_32BGRA]
         };
-        assert([session canAddOutput:output]);
+        if (!output || ![session canAddOutput:output]) {
+            p1_log(obj->ctx, P1_LOG_ERROR, "Failed to setup capture output\n");
+            P1_CVSRC_HALT;
+        }
         [session addOutput:output];
 
         // Retain session in state.
@@ -102,9 +124,11 @@ static bool p1_capture_video_source_start(P1Plugin *pel)
         p1_object_lock(obj);
     }
 
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
+    // We may have gotten an error notification during startRunning.
+    if (obj->state != P1_STATE_HALTED)
+        p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
 
-    return true;
+#undef P1_CVSRC_HALT
 }
 
 static void p1_capture_video_source_stop(P1Plugin *pel)
@@ -115,19 +139,11 @@ static void p1_capture_video_source_stop(P1Plugin *pel)
     p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STOPPING);
 
     @autoreleasepool {
-        AVCaptureSession *session = (__bridge AVCaptureSession *) cvsrc->session;
-
-        // Stop. This is sync, unfortunately.
-        p1_object_unlock(obj);
-        [session stopRunning];
-        p1_object_lock(obj);
-
-        // Release references.
-        CFRelease(cvsrc->session);
-        CFRelease(cvsrc->delegate);
+        p1_capture_video_source_kill_session(cvsrc);
     }
 
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
+    if (obj->state != P1_STATE_HALTED)
+        p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
 }
 
 static void p1_capture_video_source_frame(P1VideoSource *vsrc)
@@ -152,6 +168,23 @@ static void p1_capture_video_source_frame(P1VideoSource *vsrc)
     }
 }
 
+static void p1_capture_video_source_kill_session(P1CaptureVideoSource *cvsrc)
+{
+    P1Object *obj = (P1Object *) cvsrc;
+    AVCaptureSession *session = (__bridge AVCaptureSession *) cvsrc->session;
+
+    // This is sync, unfortunately.
+    p1_object_unlock(obj);
+    [session stopRunning];
+    p1_object_lock(obj);
+
+    if (cvsrc->frame)
+        CFRelease(cvsrc->frame);
+    CFRelease(cvsrc->session);
+    CFRelease(cvsrc->delegate);
+}
+
+
 @implementation P1VideoCaptureDelegate
 
 - (id)initWithSource:(P1CaptureVideoSource *)_cvsrc
@@ -167,26 +200,54 @@ static void p1_capture_video_source_frame(P1VideoSource *vsrc)
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection
 {
-    P1Object *el = (P1Object *) cvsrc;
+    P1Object *obj = (P1Object *) cvsrc;
 
-    p1_object_lock(el);
+    p1_object_lock(obj);
 
     if (cvsrc->frame)
         CFRelease(cvsrc->frame);
 
+    if (obj->state != P1_STATE_RUNNING) {
+        p1_object_unlock(obj);
+        return;
+    }
+
     CVPixelBufferRef frame = CMSampleBufferGetImageBuffer(sampleBuffer);
-    assert(frame != NULL);
+    if (frame == NULL) {
+        p1_log(obj->ctx, P1_LOG_ERROR, "Failed to get image buffer for capture source frame\n");
+        p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTING);
 
-    CFRetain(frame);
-    cvsrc->frame = frame;
+        p1_capture_video_source_kill_session(cvsrc);
 
-    p1_object_unlock(el);
+        p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTED);
+    }
+    else {
+        CFRetain(frame);
+        cvsrc->frame = frame;
+    }
+
+    p1_object_unlock(obj);
 }
 
-- (void)handleError:(NSNotification *)obj
+- (void)handleError:(NSNotification *)n
 {
-    NSLog(@"%@\n", obj.userInfo);
-    assert(0);
+    P1Object *obj = (P1Object *) cvsrc;
+
+    p1_object_lock(obj);
+
+    p1_log(obj->ctx, P1_LOG_ERROR, "Error in capture session\n");
+    NSError *err = [n.userInfo objectForKey:AVCaptureSessionErrorKey];
+    p1_log_ns_error(obj->ctx, P1_LOG_ERROR, err);
+
+    if (obj->state != P1_STATE_STOPPING) {
+        p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTING);
+
+        p1_capture_video_source_kill_session(cvsrc);
+    }
+
+    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTED);
+
+    p1_object_unlock(obj);
 }
 
 @end

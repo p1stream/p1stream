@@ -1,6 +1,20 @@
 #include "p1stream_priv.h"
 
 
+void p1_log_ns_string(P1Context *ctx, P1LogLevel level, NSString *str)
+{
+    p1_log(ctx, level, "%s", [str UTF8String]);
+}
+
+void p1_log_ns_error(P1Context *ctx, P1LogLevel level, NSError *err)
+{
+    while (err != nil) {
+        p1_log_ns_string(ctx, level, [err localizedFailureReason]);
+        err = [err.userInfo objectForKey:NSUnderlyingErrorKey];
+    }
+}
+
+
 void p1_video_source_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer)
 {
     P1Object *el = (P1Object *) vsrc;
