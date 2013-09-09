@@ -17,7 +17,7 @@ typedef struct _P1ContextFull P1ContextFull;
 
 
 // Private P1Object methods.
-void p1_object_init(P1Object *obj);
+void p1_object_init(P1Object *obj, P1ObjectType type);
 void p1_object_destroy(P1Object *obj);
 
 

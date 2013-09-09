@@ -94,7 +94,7 @@ void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
     P1Video *video = (P1Video *) videof;
     P1Object *videoobj = (P1Object *) videof;
 
-    p1_object_init(videoobj);
+    p1_object_init(videoobj, P1_OTYPE_VIDEO);
 
     p1_list_init(&video->sources);
 
@@ -365,7 +365,7 @@ void p1_video_clock_init(P1VideoClock *vclock, P1Config *cfg, P1ConfigSection *s
 {
     P1Object *obj = (P1Object *) vclock;
 
-    p1_object_init(obj);
+    p1_object_init(obj, P1_OTYPE_VIDEO_CLOCK);
 }
 
 void p1_video_source_init(P1VideoSource *vsrc, P1Config *cfg, P1ConfigSection *sect)
@@ -373,7 +373,7 @@ void p1_video_source_init(P1VideoSource *vsrc, P1Config *cfg, P1ConfigSection *s
     P1Object *obj = (P1Object *) vsrc;
     bool res;
 
-    p1_object_init(obj);
+    p1_object_init(obj, P1_OTYPE_VIDEO_SOURCE);
 
     res = cfg->get_float(cfg, sect, "x1", &vsrc->x1)
        && cfg->get_float(cfg, sect, "y1", &vsrc->y1)

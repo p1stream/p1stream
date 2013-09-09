@@ -28,7 +28,7 @@ void p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect)
     P1Audio *audio = (P1Audio *) audiof;
     P1Object *audioobj = (P1Object *) audiof;
 
-    p1_object_init(audioobj);
+    p1_object_init(audioobj, P1_OTYPE_AUDIO);
 
     p1_list_init(&audio->sources);
 }
@@ -82,7 +82,7 @@ void p1_audio_source_init(P1AudioSource *asrc, P1Config *cfg, P1ConfigSection *s
     P1Object *obj = (P1Object *) asrc;
     bool res;
 
-    p1_object_init(obj);
+    p1_object_init(obj, P1_OTYPE_AUDIO_SOURCE);
 
     res = cfg->get_float(cfg, sect, "volume", &asrc->volume)
        && cfg->get_bool(cfg, sect, "master", &asrc->master);

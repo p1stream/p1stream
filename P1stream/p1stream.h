@@ -206,7 +206,6 @@ struct _P1Notification {
     P1NotificationType type;
 
     // Object that sent the notification.
-    P1ObjectType object_type;
     P1Object *object;
 
     // Content depends on the type field.
@@ -285,6 +284,9 @@ struct _P1Object {
     // Back reference. This will be set automatically.
     P1Context *ctx;
 
+    // Basic type of the object.
+    P1ObjectType type;
+
     // All operations on an element should be done while its lock is held.
     // (Certain exceptions are possible, e.g. the source or context is idle.)
     pthread_mutex_t lock;
@@ -309,7 +311,6 @@ struct _P1Object {
         _p1_obj->state = _p1_state;                             \
         _p1_notify(_p1_obj->ctx, (P1Notification) {             \
             .type = P1_NTYPE_STATE_CHANGE,                      \
-            .object_type = (_obj_type),                         \
             .object = _p1_obj,                                  \
             .state_change = {                                   \
                 .state = _p1_state                              \
@@ -328,7 +329,6 @@ struct _P1Object {
         _p1_obj->target = _p1_target;                           \
         _p1_notify(_p1_obj->ctx, (P1Notification) {             \
             .type = P1_NTYPE_TARGET_CHANGE,                     \
-            .object_type = (_obj_type),                         \
             .object = _p1_obj,                                  \
             .target_change = {                                  \
                 .target = _p1_target                            \

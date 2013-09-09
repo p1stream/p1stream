@@ -22,8 +22,10 @@ enum _P1Action {
 };
 
 
-void p1_object_init(P1Object *obj)
+void p1_object_init(P1Object *obj, P1ObjectType type)
 {
+    obj->type = type;
+
     int res = pthread_mutex_init(&obj->lock, NULL);
     assert(res == 0);
 }
@@ -82,7 +84,7 @@ P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
 
     mach_timebase_info(&ctxf->timebase);
 
-    p1_object_init(ctxobj);
+    p1_object_init(ctxobj, P1_OTYPE_CONTEXT);
     p1_video_init(videof, cfg, video_sect);
     p1_audio_init(audiof, cfg, audio_sect);
     p1_conn_init(connf, cfg, stream_sect);
@@ -482,6 +484,8 @@ static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1Target
 // Log a notification.
 static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notification)
 {
+    P1Object *obj = notification->object;
+
     const char *action;
     switch (notification->type) {
         case P1_NTYPE_STATE_CHANGE:
@@ -505,7 +509,7 @@ static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notificatio
     }
 
     const char *obj_descr;
-    switch (notification->object_type) {
+    switch (obj->type) {
         case P1_OTYPE_CONTEXT:      obj_descr = "context";      break;
         case P1_OTYPE_VIDEO:        obj_descr = "video mixer";  break;
         case P1_OTYPE_AUDIO:        obj_descr = "audio mixer";  break;
@@ -515,5 +519,5 @@ static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notificatio
         case P1_OTYPE_AUDIO_SOURCE: obj_descr = "audio source"; break;
     }
 
-    p1_log(ctx, P1_LOG_INFO, "%s %p is %s\n", obj_descr, notification->object, action);
+    p1_log(ctx, P1_LOG_INFO, "%s %p is %s\n", obj_descr, obj, action);
 }

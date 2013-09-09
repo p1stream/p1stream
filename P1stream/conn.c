@@ -15,7 +15,7 @@ void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Object *connobj = (P1Object *) connf;
 
-    p1_object_init(connobj);
+    p1_object_init(connobj, P1_OTYPE_CONNECTION);
 
     int res = pthread_cond_init(&connf->cond, NULL);
     assert(res == 0);
