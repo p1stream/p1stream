@@ -312,7 +312,7 @@ struct _P1Object {
     bool _p1_changed = (_p1_obj->state != _p1_state);           \
     if (_p1_changed) {                                          \
         _p1_obj->state = _p1_state;                             \
-        _p1_notify(_p1_obj->ctx, (P1Notification) {             \
+        _p1_notify((P1Notification) {                           \
             .type = P1_NTYPE_STATE_CHANGE,                      \
             .object = _p1_obj,                                  \
             .state_change = {                                   \
@@ -330,7 +330,7 @@ struct _P1Object {
     bool _p1_changed = (_p1_obj->target != _p1_target);         \
     if (_p1_changed) {                                          \
         _p1_obj->target = _p1_target;                           \
-        _p1_notify(_p1_obj->ctx, (P1Notification) {             \
+        _p1_notify((P1Notification) {                           \
             .type = P1_NTYPE_TARGET_CHANGE,                     \
             .object = _p1_obj,                                  \
             .target_change = {                                  \
@@ -520,12 +520,13 @@ void p1_read(P1Context *ctx, P1Notification *out);
 // to determine if p1_read will not block on the next call.
 int p1_fd(P1Context *ctx);
 
+
 // Logging functions.
 void p1_log(P1Object *obj, P1LogLevel level, const char *fmt, ...) __printflike(3, 4);
 void p1_logv(P1Object *obj, P1LogLevel level, const char *fmt, va_list args) __printflike(3, 0);
 
 // Notification helper.
-void _p1_notify(P1Context *ctx, P1Notification notification);
+void _p1_notify(P1Notification notification);
 
 
 // Platform-specific functionality.

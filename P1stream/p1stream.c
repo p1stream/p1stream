@@ -163,9 +163,11 @@ int p1_fd(P1Context *_ctx)
     return ctx->user_pipe[0];
 }
 
-void _p1_notify(P1Context *_ctx, P1Notification notification)
+void _p1_notify(P1Notification notification)
 {
-    P1ContextFull *ctx = (P1ContextFull *) _ctx;
+    P1ContextFull *ctx = (P1ContextFull *) notification.object->ctx;
+
+    p1_ctrl_log_notification(&notification);
 
     ssize_t size = sizeof(P1Notification);
     ssize_t ret = write(ctx->ctrl_pipe[1], &notification, size);
@@ -270,9 +272,6 @@ static void p1_ctrl_comm(P1ContextFull *ctxf)
         // Read the notification.
         s_ret = read(fd.fd, &notification, size);
         assert(s_ret == size);
-
-        // Log notification.
-        p1_ctrl_log_notification(&notification);
 
         // Pass it on to the user.
         s_ret = write(ctxf->user_pipe[1], &notification, size);
