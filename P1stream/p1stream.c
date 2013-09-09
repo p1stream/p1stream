@@ -5,7 +5,7 @@
 
 typedef enum _P1Action P1Action;
 
-static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args, void *user_data);
+static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args);
 static void *p1_ctrl_main(void *data);
 static bool p1_ctrl_progress(P1Context *ctx);
 static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1TargetState target);
@@ -183,11 +183,11 @@ void p1_log(P1Context *ctx, P1LogLevel level, const char *fmt, ...)
 void p1_logv(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args)
 {
     if (level <= ctx->log_level)
-        ctx->log_fn(ctx, level, fmt, args, ctx->log_user_data);
+        ctx->log_fn(ctx, level, fmt, args);
 }
 
 // Default log function.
-static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args, void *user_data)
+static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args)
 {
     const char *pre;
     switch (level) {

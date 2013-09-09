@@ -63,7 +63,7 @@ typedef void P1ConfigSection; // abstract
 // Callback signatures.
 typedef bool (*P1ConfigIterSection)(P1Config *cfg, P1ConfigSection *sect, void *data);
 typedef bool (*P1ConfigIterString)(P1Config *cfg, const char *key, char *val, void *data);
-typedef void (*P1LogCallback)(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args, void *user_data);
+typedef void (*P1LogCallback)(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args);
 
 // These types are for convenience. Sources usually want to have a function
 // following one of these signatures to instantiate them.
@@ -296,6 +296,9 @@ struct _P1Object {
     P1State state;
     // Target state. This field can be updated with p1_set_target.
     P1TargetState target;
+
+    // Anything the user may want to associate with this object.
+    void *user_data;
 };
 
 // Convenience methods for acquiring the object lock.
@@ -491,7 +494,6 @@ struct _P1Context {
     // Log function, defaults to stderr logging. Only modify this when the
     // context is idle. These can be called on any thread.
     P1LogCallback log_fn;
-    void *log_user_data;
     // Maximum log level, defaults to P1_LOG_INFO.
     P1LogLevel log_level;
 
