@@ -205,7 +205,7 @@ static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     }
     if (q->length == UINT8_MAX) {
         free(pkt);
-        p1_log(ctx, P1_LOG_WARNING, "Packet queue full, dropping packet!\n");
+        p1_log(connobj, P1_LOG_WARNING, "Packet queue full, dropping packet!\n");
         goto end;
     }
 

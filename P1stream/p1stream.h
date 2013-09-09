@@ -63,7 +63,7 @@ typedef void P1ConfigSection; // abstract
 // Callback signatures.
 typedef bool (*P1ConfigIterSection)(P1Config *cfg, P1ConfigSection *sect, void *data);
 typedef bool (*P1ConfigIterString)(P1Config *cfg, const char *key, char *val, void *data);
-typedef void (*P1LogCallback)(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args);
+typedef void (*P1LogCallback)(P1Object *obj, P1LogLevel level, const char *fmt, va_list args);
 
 // These types are for convenience. Sources usually want to have a function
 // following one of these signatures to instantiate them.
@@ -521,8 +521,8 @@ void p1_read(P1Context *ctx, P1Notification *out);
 int p1_fd(P1Context *ctx);
 
 // Logging functions.
-void p1_log(P1Context *ctx, P1LogLevel level, const char *fmt, ...) __printflike(3, 4);
-void p1_logv(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args) __printflike(3, 0);
+void p1_log(P1Object *obj, P1LogLevel level, const char *fmt, ...) __printflike(3, 4);
+void p1_logv(P1Object *obj, P1LogLevel level, const char *fmt, va_list args) __printflike(3, 0);
 
 // Notification helper.
 void _p1_notify(P1Context *ctx, P1Notification notification);

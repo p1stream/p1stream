@@ -6,8 +6,8 @@
 static void p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);
 static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args);
-static GLuint p1_build_shader(P1Context *ctx, GLuint type, const char *source);
-static void p1_video_build_program(P1Context *ctx, GLuint program, const char *vertexShader, const char *fragmentShader);
+static GLuint p1_build_shader(P1Object *videoobj, GLuint type, const char *source);
+static void p1_video_build_program(P1Object *videoobj, GLuint program, const char *vertexShader, const char *fragmentShader);
 
 static const char *simple_vertex_shader =
     "#version 150\n"
@@ -106,7 +106,6 @@ void p1_video_start(P1VideoFull *videof)
     P1Object *videoobj = (P1Object *) videof;
     P1Video *video = (P1Video *) videof;
     P1VideoClock *vclock = video->clock;
-    P1Context *ctx = videoobj->ctx;
     x264_param_t *params = &videof->params;
     CGLError cgl_err;
     cl_int cl_err;
@@ -144,7 +143,7 @@ void p1_video_start(P1VideoFull *videof)
     assert(videof->clq != NULL);
 
     params->pf_log = p1_video_encoder_log_callback;
-    params->p_log_private = ctx;
+    params->p_log_private = videoobj;
     params->i_log_level = X264_LOG_DEBUG;
 
     mach_timebase_info_data_t timebase;
@@ -185,7 +184,7 @@ void p1_video_start(P1VideoFull *videof)
     glBindAttribLocation(videof->program, 0, "a_Position");
     glBindAttribLocation(videof->program, 1, "a_TexCoords");
     glBindFragDataLocation(videof->program, 0, "o_FragColor");
-    p1_video_build_program(ctx, videof->program, simple_vertex_shader, simple_fragment_shader);
+    p1_video_build_program(videoobj, videof->program, simple_vertex_shader, simple_fragment_shader);
     videof->tex_u = glGetUniformLocation(videof->program, "u_Texture");
 
     videof->rbo_mem = clCreateFromGLRenderbuffer(videof->cl, CL_MEM_READ_ONLY, videof->rbo, NULL);
@@ -275,8 +274,8 @@ static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *v
 
 static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args)
 {
-    P1Context *ctx = (P1Context *) data;
-    p1_logv(ctx, (P1LogLevel) level, fmt, args);
+    P1Object *videobj = (P1Object *) data;
+    p1_logv(videobj, (P1LogLevel) level, fmt, args);
 }
 
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
@@ -393,7 +392,7 @@ void p1_video_source_frame(P1VideoSource *vsrc, int width, int height, void *dat
                  GL_BGRA, GL_UNSIGNED_BYTE, data);
 }
 
-static GLuint p1_build_shader(P1Context *ctx, GLuint type, const char *source)
+static GLuint p1_build_shader(P1Object *videoobj, GLuint type, const char *source)
 {
     GLuint shader = glCreateShader(type);
     glShaderSource(shader, 1, &source, NULL);
@@ -405,7 +404,7 @@ static GLuint p1_build_shader(P1Context *ctx, GLuint type, const char *source)
         GLchar *log = malloc(log_size);
         if (log) {
             glGetShaderInfoLog(shader, log_size, NULL, log);
-            p1_log(ctx, P1_LOG_INFO, "Shader compiler log:\n%s", log);
+            p1_log(videoobj, P1_LOG_INFO, "Shader compiler log:\n%s", log);
             free(log);
         }
     }
@@ -418,10 +417,10 @@ static GLuint p1_build_shader(P1Context *ctx, GLuint type, const char *source)
     return shader;
 }
 
-static void p1_video_build_program(P1Context *ctx, GLuint program, const char *vertex_source, const char *fragment_source)
+static void p1_video_build_program(P1Object *videoobj, GLuint program, const char *vertex_source, const char *fragment_source)
 {
-    GLuint vertex_shader = p1_build_shader(ctx, GL_VERTEX_SHADER, vertex_source);
-    GLuint fragment_shader = p1_build_shader(ctx, GL_FRAGMENT_SHADER, fragment_source);
+    GLuint vertex_shader = p1_build_shader(videoobj, GL_VERTEX_SHADER, vertex_source);
+    GLuint fragment_shader = p1_build_shader(videoobj, GL_FRAGMENT_SHADER, fragment_source);
 
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
@@ -438,7 +437,7 @@ static void p1_video_build_program(P1Context *ctx, GLuint program, const char *v
         GLchar *log = malloc(log_size);
         if (log) {
             glGetProgramInfoLog(program, log_size, NULL, log);
-            p1_log(ctx, P1_LOG_INFO, "Shader linker log:\n%s", log);
+            p1_log(videoobj, P1_LOG_INFO, "Shader linker log:\n%s", log);
             free(log);
         }
     }

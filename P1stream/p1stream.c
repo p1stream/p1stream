@@ -5,12 +5,12 @@
 
 typedef enum _P1Action P1Action;
 
-static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args);
+static void p1_log_default(P1Object *obj, P1LogLevel level, const char *fmt, va_list args);
 static void *p1_ctrl_main(void *data);
 static bool p1_ctrl_progress(P1Context *ctx);
 static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1TargetState target);
 static void p1_ctrl_comm(P1ContextFull *ctxf);
-static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notification);
+static void p1_ctrl_log_notification(P1Notification *notification);
 
 // Based on state and target, one of these actions is taken.
 enum _P1Action {
@@ -172,22 +172,23 @@ void _p1_notify(P1Context *_ctx, P1Notification notification)
     assert(ret == size);
 }
 
-void p1_log(P1Context *ctx, P1LogLevel level, const char *fmt, ...)
+void p1_log(P1Object *obj, P1LogLevel level, const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    p1_logv(ctx, level, fmt, args);
+    p1_logv(obj, level, fmt, args);
     va_end(args);
 }
 
-void p1_logv(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args)
+void p1_logv(P1Object *obj, P1LogLevel level, const char *fmt, va_list args)
 {
+    P1Context *ctx = obj->ctx;
     if (level <= ctx->log_level)
-        ctx->log_fn(ctx, level, fmt, args);
+        ctx->log_fn(obj, level, fmt, args);
 }
 
 // Default log function.
-static void p1_log_default(P1Context *ctx, P1LogLevel level, const char *fmt, va_list args)
+static void p1_log_default(P1Object *obj, P1LogLevel level, const char *fmt, va_list args)
 {
     const char *pre;
     switch (level) {
@@ -249,7 +250,6 @@ static void *p1_ctrl_main(void *data)
 // Handle communication on pipes.
 static void p1_ctrl_comm(P1ContextFull *ctxf)
 {
-    P1Context *ctx = (P1Context *) ctxf;
     int i_ret;
     struct pollfd fd = {
         .fd = ctxf->ctrl_pipe[0],
@@ -272,7 +272,7 @@ static void p1_ctrl_comm(P1ContextFull *ctxf)
         assert(s_ret == size);
 
         // Log notification.
-        p1_ctrl_log_notification(ctx, &notification);
+        p1_ctrl_log_notification(&notification);
 
         // Pass it on to the user.
         s_ret = write(ctxf->user_pipe[1], &notification, size);
@@ -482,7 +482,7 @@ static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1Target
 }
 
 // Log a notification.
-static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notification)
+static void p1_ctrl_log_notification(P1Notification *notification)
 {
     P1Object *obj = notification->object;
 
@@ -519,5 +519,5 @@ static void p1_ctrl_log_notification(P1Context *ctx, P1Notification *notificatio
         case P1_OTYPE_AUDIO_SOURCE: obj_descr = "audio source"; break;
     }
 
-    p1_log(ctx, P1_LOG_INFO, "%s %p is %s\n", obj_descr, obj, action);
+    p1_log(obj, P1_LOG_INFO, "%s %p is %s\n", obj_descr, obj, action);
 }

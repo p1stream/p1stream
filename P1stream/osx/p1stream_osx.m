@@ -1,15 +1,15 @@
 #include "p1stream_priv.h"
 
 
-void p1_log_ns_string(P1Context *ctx, P1LogLevel level, NSString *str)
+void p1_log_ns_string(P1Object *obj, P1LogLevel level, NSString *str)
 {
-    p1_log(ctx, level, "%s", [str UTF8String]);
+    p1_log(obj, level, "%s", [str UTF8String]);
 }
 
-void p1_log_ns_error(P1Context *ctx, P1LogLevel level, NSError *err)
+void p1_log_ns_error(P1Object *obj, P1LogLevel level, NSError *err)
 {
     while (err != nil) {
-        p1_log_ns_string(ctx, level, [err localizedFailureReason]);
+        p1_log_ns_string(obj, level, [err localizedFailureReason]);
         err = [err.userInfo objectForKey:NSUnderlyingErrorKey];
     }
 }

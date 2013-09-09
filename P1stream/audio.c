@@ -128,7 +128,7 @@ void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t
     } while (out_size);
 
     if (samples)
-        p1_log(ctx, P1_LOG_WARNING, "Audio mix buffer full, dropped %zd samples!\n", samples);
+        p1_log(audioobj, P1_LOG_WARNING, "Audio mix buffer full, dropped %zd samples!\n", samples);
 
 end:
     p1_object_unlock(audioobj);

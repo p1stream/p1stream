@@ -126,7 +126,7 @@ static void p1_display_video_source_callback(
             p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
         }
         else {
-            p1_log(obj->ctx, P1_LOG_ERROR, "Display stream stopped.");
+            p1_log(obj, P1_LOG_ERROR, "Display stream stopped.");
             abort();
         }
     }
