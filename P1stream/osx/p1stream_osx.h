@@ -11,13 +11,12 @@
 #include <IOSurface/IOSurface.h>
 
 
-#ifdef __OBJC__
-
 // Convenience logging methods that build on p1_log.
+#ifdef __OBJC__
 void p1_log_ns_string(P1Object *obj, P1LogLevel level, NSString *str);
 void p1_log_ns_error(P1Object *obj, P1LogLevel level, NSError *err);
-
 #endif
+void p1_log_os_status(P1Object *obj, P1LogLevel level, OSStatus status);
 
 
 // Fast path for OS X video sources that can provide an IOSurface.

@@ -14,6 +14,16 @@ void p1_log_ns_error(P1Object *obj, P1LogLevel level, NSError *err)
     }
 }
 
+void p1_log_os_status(P1Object *obj, P1LogLevel level, OSStatus status)
+{
+    @autoreleasepool {
+        NSError *err = [NSError errorWithDomain:NSOSStatusErrorDomain
+                                           code:status
+                                       userInfo:nil];
+        p1_log_ns_error(obj, level, err);
+    }
+}
+
 
 void p1_video_source_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer)
 {
