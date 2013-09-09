@@ -61,7 +61,7 @@ static void p1_input_audio_source_start(P1Plugin *pel)
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
-    p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STARTING);
+    p1_object_set_state(obj, P1_STATE_STARTING);
 
     AudioStreamBasicDescription fmt;
     fmt.mFormatID = kAudioFormatLinearPCM;
@@ -114,7 +114,7 @@ halt:
     p1_log(obj, P1_LOG_ERROR, "Failed to setup audio queue\n");
     p1_log_os_status(obj, P1_LOG_ERROR, ret);
     p1_input_audio_source_kill_session(iasrc);
-    p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_HALTED);
+    p1_object_set_state(obj, P1_STATE_HALTED);
 }
 
 static void p1_input_audio_source_stop(P1Plugin *pel)
@@ -123,14 +123,14 @@ static void p1_input_audio_source_stop(P1Plugin *pel)
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
-    p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_STOPPING);
+    p1_object_set_state(obj, P1_STATE_STOPPING);
 
     ret = AudioQueueStop(iasrc->queue, FALSE);
     if (ret != noErr) {
         p1_log(obj, P1_LOG_ERROR, "Failed to stop audio queue\n");
         p1_log_os_status(obj, P1_LOG_ERROR, ret);
         p1_input_audio_source_kill_session(iasrc);
-        p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_HALTED);
+        p1_object_set_state(obj, P1_STATE_HALTED);
     }
 }
 
@@ -174,7 +174,7 @@ static void p1_input_audio_source_input_callback(
         p1_object_lock(obj);
 
         p1_input_audio_source_kill_session(iasrc);
-        p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_HALTED);
+        p1_object_set_state(obj, P1_STATE_HALTED);
 
         p1_object_unlock(obj);
     }
@@ -199,14 +199,14 @@ static void p1_input_audio_source_running_callback(
         p1_log(obj, P1_LOG_ERROR, "Failed to get audio queue status\n");
         p1_log_os_status(obj, P1_LOG_ERROR, ret);
         p1_input_audio_source_kill_session(iasrc);
-        p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_HALTED);
+        p1_object_set_state(obj, P1_STATE_HALTED);
         goto end;
     }
 
     if (running) {
         // Confirm start.
         if (obj->state == P1_STATE_STARTING)
-            p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_RUNNING);
+            p1_object_set_state(obj, P1_STATE_RUNNING);
     }
     else {
         // Clean up after stopping.
@@ -214,11 +214,11 @@ static void p1_input_audio_source_running_callback(
 
         // Check if this was a proper shutdown.
         if (obj->state == P1_STATE_STOPPING) {
-            p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_IDLE);
+            p1_object_set_state(obj, P1_STATE_IDLE);
         }
         else if (obj->state == P1_STATE_RUNNING) {
             p1_log(obj, P1_LOG_ERROR, "Audio queue stopped itself\n");
-            p1_object_set_state(obj, P1_OTYPE_AUDIO_SOURCE, P1_STATE_HALTED);
+            p1_object_set_state(obj, P1_STATE_HALTED);
         }
     }
 

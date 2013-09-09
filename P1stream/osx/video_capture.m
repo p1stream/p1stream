@@ -65,12 +65,12 @@ static void p1_capture_video_source_start(P1Plugin *pel)
     P1Object *obj = (P1Object *) pel;
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
 
-#define P1_CVSRC_HALT {                                                 \
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTED);   \
-    return;                                                             \
+#define P1_CVSRC_HALT {                         \
+    p1_object_set_state(obj, P1_STATE_HALTED);  \
+    return;                                     \
 }
 
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STARTING);
+    p1_object_set_state(obj, P1_STATE_STARTING);
 
     @autoreleasepool {
         P1VideoCaptureDelegate *delegate = [[P1VideoCaptureDelegate alloc] initWithSource:cvsrc];
@@ -126,7 +126,7 @@ static void p1_capture_video_source_start(P1Plugin *pel)
 
     // We may have gotten an error notification during startRunning.
     if (obj->state != P1_STATE_HALTED)
-        p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
+        p1_object_set_state(obj, P1_STATE_RUNNING);
 
 #undef P1_CVSRC_HALT
 }
@@ -136,14 +136,14 @@ static void p1_capture_video_source_stop(P1Plugin *pel)
     P1Object *obj = (P1Object *) pel;
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
 
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STOPPING);
+    p1_object_set_state(obj, P1_STATE_STOPPING);
 
     @autoreleasepool {
         p1_capture_video_source_kill_session(cvsrc);
     }
 
     if (obj->state != P1_STATE_HALTED)
-        p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
+        p1_object_set_state(obj, P1_STATE_IDLE);
 }
 
 static void p1_capture_video_source_frame(P1VideoSource *vsrc)
@@ -215,11 +215,11 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     CVPixelBufferRef frame = CMSampleBufferGetImageBuffer(sampleBuffer);
     if (frame == NULL) {
         p1_log(obj, P1_LOG_ERROR, "Failed to get image buffer for capture source frame\n");
-        p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTING);
+        p1_object_set_state(obj, P1_STATE_HALTING);
 
         p1_capture_video_source_kill_session(cvsrc);
 
-        p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTED);
+        p1_object_set_state(obj, P1_STATE_HALTED);
     }
     else {
         CFRetain(frame);
@@ -240,12 +240,12 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     p1_log_ns_error(obj, P1_LOG_ERROR, err);
 
     if (obj->state != P1_STATE_STOPPING) {
-        p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTING);
+        p1_object_set_state(obj, P1_STATE_HALTING);
 
         p1_capture_video_source_kill_session(cvsrc);
     }
 
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTED);
+    p1_object_set_state(obj, P1_STATE_HALTED);
 
     p1_object_unlock(obj);
 }

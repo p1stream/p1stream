@@ -116,11 +116,11 @@ void p1_start(P1Context *ctx)
 
     p1_object_lock(ctxobj);
 
-    p1_object_set_target(ctxobj, P1_OTYPE_CONTEXT, P1_TARGET_RUNNING);
+    p1_object_set_target(ctxobj, P1_TARGET_RUNNING);
 
     // Bootstrap.
     if (ctxobj->state == P1_STATE_IDLE) {
-        p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_STARTING);
+        p1_object_set_state(ctxobj, P1_STATE_STARTING);
 
         int ret = pthread_create(&ctxf->ctrl_thread, NULL, p1_ctrl_main, ctx);
         assert(ret == 0);
@@ -136,7 +136,7 @@ void p1_stop(P1Context *ctx, P1StopOptions options)
 
     p1_object_lock(ctxobj);
 
-    p1_object_set_target(ctxobj, P1_OTYPE_CONTEXT, P1_TARGET_IDLE);
+    p1_object_set_target(ctxobj, P1_TARGET_IDLE);
     bool is_running = ctxobj->state != P1_STATE_IDLE;
 
     p1_object_unlock(ctxobj);
@@ -213,7 +213,7 @@ static void *p1_ctrl_main(void *data)
 
     p1_object_lock(ctxobj);
 
-    p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_RUNNING);
+    p1_object_set_state(ctxobj, P1_STATE_RUNNING);
 
     while (true) {
         // Deal with the notification channels. Don't hold the lock during this.
@@ -223,7 +223,7 @@ static void *p1_ctrl_main(void *data)
 
         // Go into stopping state if that's our goal.
         if (ctxobj->target != P1_TARGET_RUNNING && ctxobj->state == P1_STATE_RUNNING)
-            p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_STOPPING);
+            p1_object_set_state(ctxobj, P1_STATE_STOPPING);
 
         // Progress state of our objects.
         bool wait = p1_ctrl_progress(ctx);
@@ -232,14 +232,14 @@ static void *p1_ctrl_main(void *data)
         if (!wait && ctxobj->state == P1_STATE_STOPPING) {
             // Restart if our target is no longer to idle.
             if (ctxobj->target == P1_TARGET_RUNNING)
-                p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_RUNNING);
+                p1_object_set_state(ctxobj, P1_STATE_RUNNING);
             // Otherwise, we're done.
             else
                 break;
         }
     };
 
-    p1_object_set_state(ctxobj, P1_OTYPE_CONTEXT, P1_STATE_IDLE);
+    p1_object_set_state(ctxobj, P1_STATE_IDLE);
 
     p1_object_unlock(ctxobj);
 

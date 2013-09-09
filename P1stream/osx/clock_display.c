@@ -53,7 +53,7 @@ static void p1_display_video_clock_start(P1Plugin *pel)
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
     CVReturn ret;
 
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_CLOCK, P1_STATE_STARTING);
+    p1_object_set_state(obj, P1_STATE_STARTING);
 
     dvclock->skip_counter = 0;
 
@@ -72,7 +72,7 @@ static void p1_display_video_clock_stop(P1Plugin *pel)
     P1Object *obj = (P1Object *) pel;
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
 
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_CLOCK, P1_STATE_STOPPING);
+    p1_object_set_state(obj, P1_STATE_STOPPING);
 
     // Stop the display link. This apparently blocks.
     p1_object_unlock(obj);
@@ -82,7 +82,7 @@ static void p1_display_video_clock_stop(P1Plugin *pel)
 
     CFRelease(dvclock->display_link);
 
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_CLOCK, P1_STATE_IDLE);
+    p1_object_set_state(obj, P1_STATE_IDLE);
 }
 
 static CVReturn p1_display_video_clock_callback(
@@ -110,7 +110,7 @@ static CVReturn p1_display_video_clock_callback(
         vclock->fps_den = dvclock->divisor;
 
         // Report running.
-        p1_object_set_state(obj, P1_OTYPE_VIDEO_CLOCK, P1_STATE_RUNNING);
+        p1_object_set_state(obj, P1_STATE_RUNNING);
     }
 
     if (obj->state == P1_STATE_RUNNING) {

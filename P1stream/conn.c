@@ -38,7 +38,7 @@ void p1_conn_start(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
 
-    p1_object_set_state(connobj, P1_OTYPE_CONNECTION, P1_STATE_STARTING);
+    p1_object_set_state(connobj, P1_STATE_STARTING);
 
     int res = pthread_create(&connf->thread, NULL, p1_conn_main, connf);
     assert(res == 0);
@@ -48,7 +48,7 @@ void p1_conn_stop(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
 
-    p1_object_set_state(connobj, P1_OTYPE_CONNECTION, P1_STATE_STOPPING);
+    p1_object_set_state(connobj, P1_STATE_STOPPING);
 
     int res = pthread_cond_signal(&connf->cond);
     assert(res == 0);
@@ -259,7 +259,7 @@ static void *p1_conn_main(void *data)
     p1_object_lock(connobj);
 
     connf->start = mach_absolute_time();
-    p1_object_set_state(connobj, P1_OTYPE_CONNECTION, P1_STATE_RUNNING);
+    p1_object_set_state(connobj, P1_STATE_RUNNING);
 
     do {
         p1_conn_flush(&r, connf);
@@ -270,7 +270,7 @@ static void *p1_conn_main(void *data)
 
     RTMP_Close(&r);
 
-    p1_object_set_state(connobj, P1_OTYPE_CONNECTION, P1_STATE_IDLE);
+    p1_object_set_state(connobj, P1_STATE_IDLE);
 
     p1_object_unlock(connobj);
 

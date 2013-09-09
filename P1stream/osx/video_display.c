@@ -55,7 +55,7 @@ static void p1_display_video_source_start(P1Plugin *pel)
     size_t width  = CGDisplayPixelsWide(dvsrc->display_id);
     size_t height = CGDisplayPixelsHigh(dvsrc->display_id);
 
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STARTING);
+    p1_object_set_state(obj, P1_STATE_STARTING);
 
     dvsrc->dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
     if (dvsrc->dispatch == NULL)
@@ -83,7 +83,7 @@ halt:
     p1_log(obj, P1_LOG_ERROR, "Failed to setup display stream\n");
     // FIXME: log error
     p1_display_video_source_kill_session(dvsrc);
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTED);
+    p1_object_set_state(obj, P1_STATE_HALTED);
 }
 
 static void p1_display_video_source_stop(P1Plugin *pel)
@@ -91,14 +91,14 @@ static void p1_display_video_source_stop(P1Plugin *pel)
     P1Object *obj = (P1Object *) pel;
     P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) pel;
 
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STOPPING);
+    p1_object_set_state(obj, P1_STATE_STOPPING);
 
     CGError ret = CGDisplayStreamStop(dvsrc->display_stream);
     if (ret != kCGErrorSuccess) {
         p1_log(obj, P1_LOG_ERROR, "Failed to stop display stream\n");
         // FIXME: log error
         p1_display_video_source_kill_session(dvsrc);
-        p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTED);
+        p1_object_set_state(obj, P1_STATE_HALTED);
     }
 }
 
@@ -148,16 +148,16 @@ static void p1_display_video_source_callback(
         p1_display_video_source_kill_session(dvsrc);
 
         if (obj->state == P1_STATE_STOPPING) {
-            p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
+            p1_object_set_state(obj, P1_STATE_IDLE);
         }
         else {
             p1_log(obj, P1_LOG_ERROR, "Display stream stopped itself\n");
-            p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTED);
+            p1_object_set_state(obj, P1_STATE_HALTED);
         }
     }
     else {
         if (obj->state == P1_STATE_STARTING)
-            p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_RUNNING);
+            p1_object_set_state(obj, P1_STATE_RUNNING);
     }
 
     p1_object_unlock(obj);

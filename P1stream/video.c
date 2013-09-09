@@ -220,7 +220,7 @@ void p1_video_start(P1VideoFull *videof)
     cl_err = clSetKernelArg(videof->yuv_kernel, 1, sizeof(cl_mem), &videof->out_mem);
     assert(cl_err == CL_SUCCESS);
 
-    p1_object_set_state(videoobj, P1_OTYPE_VIDEO, P1_STATE_RUNNING);
+    p1_object_set_state(videoobj, P1_STATE_RUNNING);
 }
 
 void p1_video_stop(P1VideoFull *videof)
@@ -234,7 +234,7 @@ void p1_video_stop(P1VideoFull *videof)
     clReleaseContext(videof->cl);
     CGLReleaseContext(videof->gl);
 
-    p1_object_set_state(videoobj, P1_OTYPE_VIDEO, P1_STATE_IDLE);
+    p1_object_set_state(videoobj, P1_STATE_IDLE);
 }
 
 static void p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)

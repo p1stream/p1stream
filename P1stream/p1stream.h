@@ -306,7 +306,7 @@ struct _P1Object {
 #define p1_object_unlock(_obj) assert(pthread_mutex_unlock(&(_obj)->lock) == 0)
 
 // This method should be used to change the state field.
-#define p1_object_set_state(_obj, _obj_type, _state) ({         \
+#define p1_object_set_state(_obj, _state) ({                    \
     P1Object *_p1_obj = (_obj);                                 \
     P1State _p1_state = (_state);                               \
     bool _p1_changed = (_p1_obj->state != _p1_state);           \
@@ -324,7 +324,7 @@ struct _P1Object {
 })
 
 // This method should be used to change the target field.
-#define p1_object_set_target(_obj, _obj_type, _target) ({       \
+#define p1_object_set_target(_obj, _target) ({                  \
     P1Object *_p1_obj = (_obj);                                 \
     P1TargetState _p1_target = (_target);                       \
     bool _p1_changed = (_p1_obj->target != _p1_target);         \
@@ -342,11 +342,11 @@ struct _P1Object {
 })
 
 // Clear a situation that has caused the object to go into a halt state.
-#define p1_object_clear_halt(_obj, _obj_type) ({                \
+#define p1_object_clear_halt(_obj) ({                           \
     P1Object *_p1_objx = (_obj);                                \
     bool _p1_is_halted = (_p1_objx->state == P1_STATE_HALTED);  \
     if (_p1_is_halted)                                          \
-        p1_object_set_state(_p1_objx, (_obj_type), P1_STATE_IDLE);  \
+        p1_object_set_state(_p1_objx, P1_STATE_IDLE);           \
     _p1_is_halted;                                              \
 })
 
