@@ -19,6 +19,7 @@ struct _P1DisplayVideoSource {
 
 static void p1_display_video_source_start(P1Plugin *pel);
 static void p1_display_video_source_stop(P1Plugin *pel);
+static void p1_display_video_source_kill_session(P1DisplayVideoSource *dvsrc);
 static void p1_display_video_source_frame(P1VideoSource *vsrc);
 static void p1_display_video_source_callback(
     P1DisplayVideoSource *dvsrc,
@@ -31,16 +32,17 @@ P1VideoSource *p1_display_video_source_create(P1Config *cfg, P1ConfigSection *se
     P1DisplayVideoSource *dvsrc = calloc(1, sizeof(P1DisplayVideoSource));
     P1VideoSource *vsrc = (P1VideoSource *) dvsrc;
     P1Plugin *pel = (P1Plugin *) dvsrc;
-    assert(dvsrc != NULL);
 
-    p1_video_source_init(vsrc, cfg, sect);
+    if (dvsrc != NULL) {
+        p1_video_source_init(vsrc, cfg, sect);
 
-    pel->start = p1_display_video_source_start;
-    pel->stop = p1_display_video_source_stop;
-    vsrc->frame = p1_display_video_source_frame;
+        pel->start = p1_display_video_source_start;
+        pel->stop = p1_display_video_source_stop;
+        vsrc->frame = p1_display_video_source_frame;
 
-    // FIXME: configurable
-    dvsrc->display_id = kCGDirectMainDisplay;
+        // FIXME: configurable
+        dvsrc->display_id = kCGDirectMainDisplay;
+    }
 
     return vsrc;
 }
@@ -49,14 +51,15 @@ static void p1_display_video_source_start(P1Plugin *pel)
 {
     P1Object *obj = (P1Object *) pel;
     P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) pel;
-
-    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STARTING);
-
+    CGError ret = kCGErrorSuccess;
     size_t width  = CGDisplayPixelsWide(dvsrc->display_id);
     size_t height = CGDisplayPixelsHigh(dvsrc->display_id);
 
+    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STARTING);
+
     dvsrc->dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
-    assert(dvsrc->dispatch != NULL);
+    if (dvsrc->dispatch == NULL)
+        goto halt;
 
     dvsrc->display_stream = CGDisplayStreamCreateWithDispatchQueue(
         dvsrc->display_id, width, height, 'BGRA', NULL, dvsrc->dispatch, ^(
@@ -67,10 +70,20 @@ static void p1_display_video_source_start(P1Plugin *pel)
         {
             p1_display_video_source_callback(dvsrc, status, frameSurface);
         });
-    assert(dvsrc->display_stream != NULL);
+    if (dvsrc->display_stream == NULL)
+        goto halt;
 
-    CGError cg_ret = CGDisplayStreamStart(dvsrc->display_stream);
-    assert(cg_ret == kCGErrorSuccess);
+    ret = CGDisplayStreamStart(dvsrc->display_stream);
+    if (ret != kCGErrorSuccess)
+        goto halt;
+
+    return;
+
+halt:
+    p1_log(obj, P1_LOG_ERROR, "Failed to setup display stream\n");
+    // FIXME: log error
+    p1_display_video_source_kill_session(dvsrc);
+    p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTED);
 }
 
 static void p1_display_video_source_stop(P1Plugin *pel)
@@ -80,8 +93,22 @@ static void p1_display_video_source_stop(P1Plugin *pel)
 
     p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_STOPPING);
 
-    CGError cg_ret = CGDisplayStreamStop(dvsrc->display_stream);
-    assert(cg_ret == kCGErrorSuccess);
+    CGError ret = CGDisplayStreamStop(dvsrc->display_stream);
+    if (ret != kCGErrorSuccess) {
+        p1_log(obj, P1_LOG_ERROR, "Failed to stop display stream\n");
+        // FIXME: log error
+        p1_display_video_source_kill_session(dvsrc);
+        p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTED);
+    }
+}
+
+static void p1_display_video_source_kill_session(P1DisplayVideoSource *dvsrc)
+{
+    CFRelease(dvsrc->display_stream);
+    dvsrc->display_stream = NULL;
+
+    dispatch_release(dvsrc->dispatch);
+    dvsrc->dispatch = NULL;
 }
 
 static void p1_display_video_source_frame(P1VideoSource *vsrc)
@@ -118,16 +145,14 @@ static void p1_display_video_source_callback(
 
     // State handling.
     if (status == kCGDisplayStreamFrameStatusStopped) {
+        p1_display_video_source_kill_session(dvsrc);
+
         if (obj->state == P1_STATE_STOPPING) {
-            CFRelease(dvsrc->display_stream);
-
-            dispatch_release(dvsrc->dispatch);
-
             p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_IDLE);
         }
         else {
-            p1_log(obj, P1_LOG_ERROR, "Display stream stopped.");
-            abort();
+            p1_log(obj, P1_LOG_ERROR, "Display stream stopped itself\n");
+            p1_object_set_state(obj, P1_OTYPE_VIDEO_SOURCE, P1_STATE_HALTED);
         }
     }
     else {
