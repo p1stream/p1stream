@@ -19,6 +19,7 @@ struct _P1DisplayVideoClock {
 
 static void p1_display_video_clock_start(P1Plugin *pel);
 static void p1_display_video_clock_stop(P1Plugin *pel);
+static void p1_display_video_clock_kill_session(P1DisplayVideoClock *dvclock);
 static CVReturn p1_display_video_clock_callback(
     CVDisplayLinkRef displayLink,
     const CVTimeStamp *inNow,
@@ -33,16 +34,17 @@ P1VideoClock *p1_display_video_clock_create(P1Config *cfg, P1ConfigSection *sect
     P1DisplayVideoClock *dvclock = calloc(1, sizeof(P1DisplayVideoClock));
     P1VideoClock *vclock = (P1VideoClock *) dvclock;
     P1Plugin *pel = (P1Plugin *) dvclock;
-    assert(vclock != NULL);
 
-    p1_video_clock_init(vclock, cfg, sect);
+    if (vclock) {
+        p1_video_clock_init(vclock, cfg, sect);
 
-    pel->start = p1_display_video_clock_start;
-    pel->stop = p1_display_video_clock_stop;
+        pel->start = p1_display_video_clock_start;
+        pel->stop = p1_display_video_clock_stop;
 
-    // FIXME: configurable
-    dvclock->display_id = kCGDirectMainDisplay;
-    dvclock->divisor = 2;
+        // FIXME: configurable
+        dvclock->display_id = kCGDirectMainDisplay;
+        dvclock->divisor = 2;
+    }
 
     return vclock;
 }
@@ -58,31 +60,57 @@ static void p1_display_video_clock_start(P1Plugin *pel)
     dvclock->skip_counter = 0;
 
     ret = CVDisplayLinkCreateWithCGDisplay(dvclock->display_id, &dvclock->display_link);
-    assert(ret == kCVReturnSuccess);
+    if (ret != kCVReturnSuccess)
+        goto halt;
 
     ret = CVDisplayLinkSetOutputCallback(dvclock->display_link, p1_display_video_clock_callback, dvclock);
-    assert(ret == kCVReturnSuccess);
+    if (ret != kCVReturnSuccess)
+        goto halt;
 
-    CVReturn cv_ret = CVDisplayLinkStart(dvclock->display_link);
-    assert(cv_ret == kCVReturnSuccess);
+    ret = CVDisplayLinkStart(dvclock->display_link);
+    if (ret != kCVReturnSuccess)
+        goto halt;
+
+    return;
+
+halt:
+    p1_log(obj, P1_LOG_ERROR, "Failed to setup display link\n");
+    // FIXME: log error
+    p1_display_video_clock_kill_session(dvclock);
+    p1_object_set_state(obj, P1_STATE_HALTED);
 }
 
 static void p1_display_video_clock_stop(P1Plugin *pel)
 {
     P1Object *obj = (P1Object *) pel;
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
+    CVReturn ret;
 
     p1_object_set_state(obj, P1_STATE_STOPPING);
 
     // Stop the display link. This apparently blocks.
     p1_object_unlock(obj);
-    CVReturn cv_ret = CVDisplayLinkStop(dvclock->display_link);
+    ret = CVDisplayLinkStop(dvclock->display_link);
     p1_object_lock(obj);
-    assert(cv_ret == kCVReturnSuccess);
 
-    CFRelease(dvclock->display_link);
+    p1_display_video_clock_kill_session(dvclock);
 
-    p1_object_set_state(obj, P1_STATE_IDLE);
+    if (ret != kCVReturnSuccess) {
+        p1_log(obj, P1_LOG_ERROR, "Failed to stop display link\n");
+        // FIXME: log error
+        p1_object_set_state(obj, P1_STATE_HALTED);
+    }
+    else {
+        p1_object_set_state(obj, P1_STATE_IDLE);
+    }
+}
+
+static void p1_display_video_clock_kill_session(P1DisplayVideoClock *dvclock)
+{
+    if (dvclock->display_link) {
+        CFRelease(dvclock->display_link);
+        dvclock->display_link = NULL;
+    }
 }
 
 static CVReturn p1_display_video_clock_callback(
