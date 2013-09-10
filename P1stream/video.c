@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
-static void p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
+static bool p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);
 static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args);
 static GLuint p1_build_shader(P1Object *videoobj, GLuint type, const char *source);
@@ -89,16 +89,26 @@ static const size_t yuv_work_size[] = {
 };
 
 
-void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
+bool p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Video *video = (P1Video *) videof;
     P1Object *videoobj = (P1Object *) videof;
 
-    p1_object_init(videoobj, P1_OTYPE_VIDEO);
+    if (!p1_object_init(videoobj, P1_OTYPE_VIDEO))
+        goto fail_object;
 
     p1_list_init(&video->sources);
 
-    p1_video_init_encoder_params(videof, cfg, sect);
+    if (!p1_video_init_encoder_params(videof, cfg, sect))
+        goto fail_params;
+
+    return true;
+
+fail_params:
+    p1_object_destroy(videoobj);
+
+fail_object:
+    return false;
 }
 
 void p1_video_start(P1VideoFull *videof)
@@ -237,39 +247,63 @@ void p1_video_stop(P1VideoFull *videof)
     p1_object_set_state(videoobj, P1_STATE_IDLE);
 }
 
-static void p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
+static bool p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
 {
     x264_param_t *params = &videof->params;
-    int i_err;
     char tmp[128];
+    int ret;
+
+    // x264 already logs errors, except for x264_param_parse.
 
     x264_param_default(params);
 
     if (cfg->get_string(cfg, sect, "encoder.preset", tmp, sizeof(tmp))) {
-        i_err = x264_param_default_preset(params, tmp, NULL);
-        assert(i_err == 0);
+        ret = x264_param_default_preset(params, tmp, NULL);
+        if (ret != 0)
+            return false;
     }
 
-    if (!cfg->each_string(cfg, sect, "encoder", p1_video_parse_encoder_param, params)) {
-        abort();
+    if (cfg->get_string(cfg, sect, "encoder.tune", tmp, sizeof(tmp))) {
+        ret = x264_param_default_preset(params, NULL, tmp);
+        if (ret != 0)
+            return false;
     }
+
+    if (!cfg->each_string(cfg, sect, "encoder", p1_video_parse_encoder_param, videof))
+        return false;
 
     x264_param_apply_fastfirstpass(params);
 
     if (cfg->get_string(cfg, sect, "encoder.profile", tmp, sizeof(tmp))) {
-        i_err = x264_param_apply_profile(params, tmp);
-        assert(i_err == 0);
+        ret = x264_param_apply_profile(params, tmp);
+        if (ret != 0)
+            return false;
     }
+
+    return true;
 }
 
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data)
 {
-    x264_param_t *params = (x264_param_t *) data;
+    P1Object *videoobj = (P1Object *) data;
+    P1VideoFull *videof = (P1VideoFull *) data;
+    int ret;
 
-    if (strcmp(key, "preset") == 0 || strcmp(key, "profile") == 0)
+    if (strcmp(key, "preset") == 0 ||
+        strcmp(key, "profile") == 0 ||
+        strcmp(key, "tune") == 0)
         return true;
 
-    return x264_param_parse(params, key, val) == 0;
+    ret = x264_param_parse(&videof->params, key, val);
+    if (ret != 0) {
+        if (ret == X264_PARAM_BAD_NAME)
+            p1_log(videoobj, P1_LOG_ERROR, "Invalid x264 parameter name '%s'\n", key);
+        else if (ret == X264_PARAM_BAD_VALUE)
+            p1_log(videoobj, P1_LOG_ERROR, "Invalid value for x264 parameter '%s'\n", key);
+        return false;
+    }
+
+    return true;
 }
 
 static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args)
@@ -360,30 +394,41 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     p1_object_unlock(videoobj);
 }
 
-void p1_video_clock_init(P1VideoClock *vclock, P1Config *cfg, P1ConfigSection *sect)
+bool p1_video_clock_init(P1VideoClock *vclock, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Object *obj = (P1Object *) vclock;
 
-    p1_object_init(obj, P1_OTYPE_VIDEO_CLOCK);
+    if (!p1_object_init(obj, P1_OTYPE_VIDEO_CLOCK))
+        return false;
+
+    return true;
 }
 
-void p1_video_source_init(P1VideoSource *vsrc, P1Config *cfg, P1ConfigSection *sect)
+bool p1_video_source_init(P1VideoSource *vsrc, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Object *obj = (P1Object *) vsrc;
-    bool res;
 
-    p1_object_init(obj, P1_OTYPE_VIDEO_SOURCE);
+    if (!p1_object_init(obj, P1_OTYPE_VIDEO_SOURCE))
+        return false;
 
-    res = cfg->get_float(cfg, sect, "x1", &vsrc->x1)
-       && cfg->get_float(cfg, sect, "y1", &vsrc->y1)
-       && cfg->get_float(cfg, sect, "x2", &vsrc->x2)
-       && cfg->get_float(cfg, sect, "y2", &vsrc->y2)
-       && cfg->get_float(cfg, sect, "u1", &vsrc->u1)
-       && cfg->get_float(cfg, sect, "v1", &vsrc->v1)
-       && cfg->get_float(cfg, sect, "u2", &vsrc->u2)
-       && cfg->get_float(cfg, sect, "v2", &vsrc->v2);
+    if (!cfg->get_float(cfg, sect, "x1", &vsrc->x1))
+        vsrc->x1 = -1;
+    if (!cfg->get_float(cfg, sect, "y1", &vsrc->y1))
+        vsrc->y1 = -1;
+    if (!cfg->get_float(cfg, sect, "x2", &vsrc->x2))
+        vsrc->x2 = +1;
+    if (!cfg->get_float(cfg, sect, "y2", &vsrc->y2))
+        vsrc->y2 = +1;
+    if (!cfg->get_float(cfg, sect, "u1", &vsrc->u1))
+        vsrc->u1 = 0;
+    if (!cfg->get_float(cfg, sect, "v1", &vsrc->v1))
+        vsrc->v1 = 0;
+    if (!cfg->get_float(cfg, sect, "u2", &vsrc->u2))
+        vsrc->u2 = 1;
+    if (!cfg->get_float(cfg, sect, "v2", &vsrc->v2))
+        vsrc->v2 = 1;
 
-    assert(res == true);
+    return true;
 }
 
 void p1_video_source_frame(P1VideoSource *vsrc, int width, int height, void *data)

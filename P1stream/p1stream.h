@@ -395,7 +395,7 @@ struct _P1VideoClock {
 };
 
 // Subclasses should call into this from the initializer.
-void p1_video_clock_init(P1VideoClock *vclock, P1Config *cfg, P1ConfigSection *sect);
+bool p1_video_clock_init(P1VideoClock *vclock, P1Config *cfg, P1ConfigSection *sect);
 
 // Callback for video clocks to emit ticks.
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time);
@@ -425,7 +425,7 @@ struct _P1VideoSource {
 };
 
 // Subclasses should call into this from the initializer.
-void p1_video_source_init(P1VideoSource *vsrc, P1Config *cfg, P1ConfigSection *sect);
+bool p1_video_source_init(P1VideoSource *vsrc, P1Config *cfg, P1ConfigSection *sect);
 
 // Callback for video sources to provide frame data.
 void p1_video_source_frame(P1VideoSource *vsrc, int width, int height, void *data);
@@ -448,7 +448,7 @@ struct _P1AudioSource {
 };
 
 // Subclasses should call into this from the initializer.
-void p1_audio_source_init(P1AudioSource *asrc, P1Config *cfg, P1ConfigSection *sect);
+bool p1_audio_source_init(P1AudioSource *asrc, P1Config *cfg, P1ConfigSection *sect);
 
 // Callback for audio sources to provide audio buffer data.
 void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples);

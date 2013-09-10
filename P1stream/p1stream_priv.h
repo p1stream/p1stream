@@ -17,7 +17,7 @@ typedef struct _P1ContextFull P1ContextFull;
 
 
 // Private P1Object methods.
-void p1_object_init(P1Object *obj, P1ObjectType type);
+bool p1_object_init(P1Object *obj, P1ObjectType type);
 void p1_object_destroy(P1Object *obj);
 
 
@@ -59,7 +59,7 @@ struct _P1VideoFull {
     bool sent_config;
 };
 
-void p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
+bool p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
 #define p1_video_destroy(_videof) p1_object_destroy((P1Object *) _videof)
 void p1_video_start(P1VideoFull *videof);
 void p1_video_stop(P1VideoFull *videof);
@@ -80,7 +80,7 @@ struct _P1AudioFull {
     bool sent_config;
 };
 
-void p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect);
+bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect);
 #define p1_audio_destroy(_audiof) p1_object_destroy((P1Object *) _audiof)
 void p1_audio_start(P1AudioFull *audiof);
 void p1_audio_stop(P1AudioFull *audiof);
@@ -101,7 +101,7 @@ struct _P1ConnectionFull {
     P1PacketQueue audio_queue;
 };
 
-void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect);
+bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect);
 void p1_conn_destroy(P1ConnectionFull *connf);
 void p1_conn_start(P1ConnectionFull *connf);
 void p1_conn_stop(P1ConnectionFull *connf);

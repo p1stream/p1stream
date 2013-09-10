@@ -17,6 +17,7 @@ struct _P1DisplayVideoSource {
     IOSurfaceRef frame;
 };
 
+static bool p1_display_video_source_init(P1DisplayVideoSource *dvsrc, P1Config *cfg, P1ConfigSection *sect);
 static void p1_display_video_source_start(P1Plugin *pel);
 static void p1_display_video_source_stop(P1Plugin *pel);
 static void p1_display_video_source_kill_session(P1DisplayVideoSource *dvsrc);
@@ -30,21 +31,33 @@ static void p1_display_video_source_callback(
 P1VideoSource *p1_display_video_source_create(P1Config *cfg, P1ConfigSection *sect)
 {
     P1DisplayVideoSource *dvsrc = calloc(1, sizeof(P1DisplayVideoSource));
+
+    if (dvsrc != NULL) {
+        if (!p1_display_video_source_init(dvsrc, cfg, sect)) {
+            free(dvsrc);
+            dvsrc = NULL;
+        }
+    }
+
+    return (P1VideoSource *) dvsrc;
+}
+
+static bool p1_display_video_source_init(P1DisplayVideoSource *dvsrc, P1Config *cfg, P1ConfigSection *sect)
+{
     P1VideoSource *vsrc = (P1VideoSource *) dvsrc;
     P1Plugin *pel = (P1Plugin *) dvsrc;
 
-    if (dvsrc != NULL) {
-        p1_video_source_init(vsrc, cfg, sect);
+    if (!p1_video_source_init(vsrc, cfg, sect))
+        return false;
 
-        pel->start = p1_display_video_source_start;
-        pel->stop = p1_display_video_source_stop;
-        vsrc->frame = p1_display_video_source_frame;
+    pel->start = p1_display_video_source_start;
+    pel->stop = p1_display_video_source_stop;
+    vsrc->frame = p1_display_video_source_frame;
 
-        // FIXME: configurable
-        dvsrc->display_id = kCGDirectMainDisplay;
-    }
+    // FIXME: configurable
+    dvsrc->display_id = kCGDirectMainDisplay;
 
-    return vsrc;
+    return true;
 }
 
 static void p1_display_video_source_start(P1Plugin *pel)

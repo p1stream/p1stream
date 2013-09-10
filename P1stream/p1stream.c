@@ -5,6 +5,8 @@
 
 typedef enum _P1Action P1Action;
 
+static bool p1_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect);
+static void p1_close_pipe(P1Object *ctxobj, int fd);
 static void p1_log_default(P1Object *obj, P1LogLevel level, const char *fmt, va_list args);
 static void *p1_ctrl_main(void *data);
 static bool p1_ctrl_progress(P1Context *ctx);
@@ -22,18 +24,24 @@ enum _P1Action {
 };
 
 
-void p1_object_init(P1Object *obj, P1ObjectType type)
+bool p1_object_init(P1Object *obj, P1ObjectType type)
 {
     obj->type = type;
 
     int res = pthread_mutex_init(&obj->lock, NULL);
-    assert(res == 0);
+    if (res != 0) {
+        p1_log(obj, P1_LOG_ERROR, "Failed to initialize mutex: %s\n", strerror(res));
+        return false;
+    }
+
+    return true;
 }
 
 void p1_object_destroy(P1Object *obj)
 {
     int res = pthread_mutex_destroy(&obj->lock);
-    assert(res == 0);
+    if (res != 0)
+        p1_log(obj, P1_LOG_ERROR, "Failed to destroy mutex: %s\n", strerror(res));
 }
 
 void p1_plugin_free(P1Plugin *pel)
@@ -50,50 +58,92 @@ void p1_plugin_free(P1Plugin *pel)
 
 P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
 {
-    P1ConfigSection *video_sect = cfg->get_section(cfg, sect, "video");
-    P1ConfigSection *audio_sect = cfg->get_section(cfg, sect, "audio");
-    P1ConfigSection *stream_sect = cfg->get_section(cfg, sect, "stream");
-
-    P1ContextFull *ctxf = calloc(1,
+    P1Context *ctx = calloc(1,
         sizeof(P1ContextFull) + sizeof(P1VideoFull) +
         sizeof(P1AudioFull) + sizeof(P1ConnectionFull));
-    P1VideoFull *videof = (P1VideoFull *) (ctxf + 1);
-    P1AudioFull *audiof = (P1AudioFull *) (videof + 1);
-    P1ConnectionFull *connf = (P1ConnectionFull *) (audiof + 1);
 
-    P1Context *ctx = (P1Context *) ctxf;
-    ctx->video = (P1Video *) videof;
-    ctx->audio = (P1Audio *) audiof;
-    ctx->conn = (P1Connection *) connf;
-
-    P1Object *ctxobj = (P1Object *) ctxf;
-    ctxobj->ctx = ctx;
-    ((P1Object *) videof)->ctx = ctx;
-    ((P1Object *) audiof)->ctx = ctx;
-    ((P1Object *) connf)->ctx = ctx;
-
-    ctx->log_level = P1_LOG_INFO;
-    ctx->log_fn = p1_log_default;
-
-    int ret;
-
-    ret = pipe(ctxf->ctrl_pipe);
-    assert(ret == 0);
-    ret = pipe(ctxf->user_pipe);
-    assert(ret == 0);
-
-    mach_timebase_info(&ctxf->timebase);
-
-    p1_object_init(ctxobj, P1_OTYPE_CONTEXT);
-    p1_video_init(videof, cfg, video_sect);
-    p1_audio_init(audiof, cfg, audio_sect);
-    p1_conn_init(connf, cfg, stream_sect);
+    if (ctx) {
+        if (!p1_init(ctx, cfg, sect)) {
+            free(ctx);
+            ctx = NULL;
+        }
+    }
 
     return ctx;
 }
 
+static bool p1_init(P1Context *ctx, P1Config *cfg, P1ConfigSection *sect)
+{
+    P1Object *ctxobj = (P1Object *) ctx;
+    P1ContextFull *ctxf = (P1ContextFull *) ctx;
+    P1VideoFull *videof = (P1VideoFull *) (ctxf + 1);
+    P1AudioFull *audiof = (P1AudioFull *) (videof + 1);
+    P1ConnectionFull *connf = (P1ConnectionFull *) (audiof + 1);
+    P1ConfigSection *video_sect = cfg->get_section(cfg, sect, "video");
+    P1ConfigSection *audio_sect = cfg->get_section(cfg, sect, "audio");
+    P1ConfigSection *stream_sect = cfg->get_section(cfg, sect, "stream");
+    int ret;
+
+    if (!p1_object_init(ctxobj, P1_OTYPE_CONTEXT))
+        goto fail_object;
+
+    ctxobj->ctx = ctx;
+    ctx->log_level = P1_LOG_INFO;
+    ctx->video = (P1Video *) videof;
+    ctx->audio = (P1Audio *) audiof;
+    ctx->conn = (P1Connection *) connf;
+
+    ((P1Object *) videof)->ctx = ctx;
+    ((P1Object *) audiof)->ctx = ctx;
+    ((P1Object *) connf)->ctx = ctx;
+
+    ret = pipe(ctxf->ctrl_pipe);
+    if (ret != 0) {
+        p1_log(ctxobj, P1_LOG_ERROR, "Failed to open pipe: %s\n", strerror(errno));
+        goto fail_ctrl;
+    }
+
+    ret = pipe(ctxf->user_pipe);
+    if (ret != 0) {
+        p1_log(ctxobj, P1_LOG_ERROR, "Failed to open pipe: %s\n", strerror(errno));
+        goto fail_user;
+    }
+
+    mach_timebase_info(&ctxf->timebase);
+
+    if (!p1_video_init(videof, cfg, video_sect))
+        goto fail_video;
+    if (!p1_audio_init(audiof, cfg, audio_sect))
+        goto fail_audio;
+    if (!p1_conn_init(connf, cfg, stream_sect))
+        goto fail_conn;
+
+    return true;
+
+fail_conn:
+    p1_audio_destroy(audiof);
+
+fail_audio:
+    p1_video_destroy(videof);
+
+fail_video:
+    p1_close_pipe(ctxobj, ctxf->user_pipe[0]);
+    p1_close_pipe(ctxobj, ctxf->user_pipe[1]);
+
+fail_user:
+    p1_close_pipe(ctxobj, ctxf->ctrl_pipe[0]);
+    p1_close_pipe(ctxobj, ctxf->ctrl_pipe[1]);
+
+fail_ctrl:
+    p1_object_destroy(ctxobj);
+
+fail_object:
+    return false;
+}
+
 void p1_free(P1Context *ctx, P1FreeOptions options)
 {
+    P1Object *ctxobj = (P1Object *) ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
 
     p1_object_destroy((P1Object *) ctx);
@@ -101,12 +151,19 @@ void p1_free(P1Context *ctx, P1FreeOptions options)
     p1_audio_destroy((P1AudioFull *) ctx->audio);
     p1_conn_destroy((P1ConnectionFull *) ctx->conn);
 
-    close(ctxf->ctrl_pipe[0]);
-    close(ctxf->ctrl_pipe[1]);
-    close(ctxf->user_pipe[0]);
-    close(ctxf->user_pipe[1]);
+    p1_close_pipe(ctxobj, ctxf->ctrl_pipe[0]);
+    p1_close_pipe(ctxobj, ctxf->ctrl_pipe[1]);
+    p1_close_pipe(ctxobj, ctxf->user_pipe[0]);
+    p1_close_pipe(ctxobj, ctxf->user_pipe[1]);
 
     free(ctxf);
+}
+
+static void p1_close_pipe(P1Object *ctxobj, int fd)
+{
+    int ret = close(fd);
+    if (ret != 0)
+        p1_log(ctxobj, P1_LOG_ERROR, "Failed to close pipe: %s\n", strerror(errno));
 }
 
 void p1_start(P1Context *ctx)
@@ -185,8 +242,16 @@ void p1_log(P1Object *obj, P1LogLevel level, const char *fmt, ...)
 void p1_logv(P1Object *obj, P1LogLevel level, const char *fmt, va_list args)
 {
     P1Context *ctx = obj->ctx;
-    if (level <= ctx->log_level)
-        ctx->log_fn(obj, level, fmt, args);
+    P1LogCallback fn = p1_log_default;
+
+    if (ctx) {
+        if (level > ctx->log_level)
+            return;
+        if (ctx->log_fn)
+            fn = ctx->log_fn;
+    }
+
+    fn(obj, level, fmt, args);
 }
 
 // Default log function.

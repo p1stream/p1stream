@@ -17,6 +17,7 @@ struct _P1DisplayVideoClock {
     uint8_t skip_counter;
 };
 
+static bool p1_display_video_clock_init(P1DisplayVideoClock *dvclock, P1Config *cfg, P1ConfigSection *sect);
 static void p1_display_video_clock_start(P1Plugin *pel);
 static void p1_display_video_clock_stop(P1Plugin *pel);
 static void p1_display_video_clock_kill_session(P1DisplayVideoClock *dvclock);
@@ -32,21 +33,33 @@ static CVReturn p1_display_video_clock_callback(
 P1VideoClock *p1_display_video_clock_create(P1Config *cfg, P1ConfigSection *sect)
 {
     P1DisplayVideoClock *dvclock = calloc(1, sizeof(P1DisplayVideoClock));
+
+    if (dvclock) {
+        if (!p1_display_video_clock_init(dvclock, cfg, sect)) {
+            free(dvclock);
+            dvclock = NULL;
+        }
+    }
+
+    return (P1VideoClock *) dvclock;
+}
+
+static bool p1_display_video_clock_init(P1DisplayVideoClock *dvclock, P1Config *cfg, P1ConfigSection *sect)
+{
     P1VideoClock *vclock = (P1VideoClock *) dvclock;
     P1Plugin *pel = (P1Plugin *) dvclock;
 
-    if (vclock) {
-        p1_video_clock_init(vclock, cfg, sect);
+    if (!p1_video_clock_init(vclock, cfg, sect))
+        return false;
 
-        pel->start = p1_display_video_clock_start;
-        pel->stop = p1_display_video_clock_stop;
+    pel->start = p1_display_video_clock_start;
+    pel->stop = p1_display_video_clock_stop;
 
-        // FIXME: configurable
-        dvclock->display_id = kCGDirectMainDisplay;
-        dvclock->divisor = 2;
-    }
+    // FIXME: configurable
+    dvclock->display_id = kCGDirectMainDisplay;
+    dvclock->divisor = 2;
 
-    return vclock;
+    return true;
 }
 
 static void p1_display_video_clock_start(P1Plugin *pel)

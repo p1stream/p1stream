@@ -11,17 +11,29 @@ static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
 static void *p1_conn_main(void *data);
 static void p1_conn_flush(RTMP *r, P1ConnectionFull *connf);
 
-void p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
+bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Object *connobj = (P1Object *) connf;
 
-    p1_object_init(connobj, P1_OTYPE_CONNECTION);
+    if (!p1_object_init(connobj, P1_OTYPE_CONNECTION))
+        goto fail_object;
 
     int res = pthread_cond_init(&connf->cond, NULL);
-    assert(res == 0);
+    if (res != 0) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to initialize condition variable: %s\n", strerror(res));
+        goto fail_cond;
+    }
 
     if (!cfg->get_string(cfg, sect, "url", connf->url, sizeof(connf->url)))
         strcpy(connf->url, default_url);
+
+    return true;
+
+fail_cond:
+    p1_object_destroy(connobj);
+
+fail_object:
+    return false;
 }
 
 void p1_conn_destroy(P1ConnectionFull *connf)
@@ -29,7 +41,8 @@ void p1_conn_destroy(P1ConnectionFull *connf)
     P1Object *connobj = (P1Object *) connf;
 
     int res = pthread_cond_destroy(&connf->cond);
-    assert(res == 0);
+    if (res != 0)
+        p1_log(connobj, P1_LOG_ERROR, "Failed to destroy condition variable: %s\n", strerror(res));
 
     p1_object_destroy(connobj);
 }

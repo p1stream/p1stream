@@ -23,14 +23,17 @@ static size_t p1_audio_read(P1AudioFull *ctx);
 static int64_t p1_audio_samples_to_mach_time(P1ContextFull *ctx, size_t samples);
 
 
-void p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect)
+bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Audio *audio = (P1Audio *) audiof;
     P1Object *audioobj = (P1Object *) audiof;
 
-    p1_object_init(audioobj, P1_OTYPE_AUDIO);
+    if (!p1_object_init(audioobj, P1_OTYPE_AUDIO))
+        return false;
 
     p1_list_init(&audio->sources);
+
+    return true;
 }
 
 void p1_audio_start(P1AudioFull *audiof)
@@ -77,17 +80,19 @@ void p1_audio_stop(P1AudioFull *audiof)
     p1_object_set_state(audioobj, P1_STATE_IDLE);
 }
 
-void p1_audio_source_init(P1AudioSource *asrc, P1Config *cfg, P1ConfigSection *sect)
+bool p1_audio_source_init(P1AudioSource *asrc, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Object *obj = (P1Object *) asrc;
-    bool res;
 
-    p1_object_init(obj, P1_OTYPE_AUDIO_SOURCE);
+    if (!p1_object_init(obj, P1_OTYPE_AUDIO_SOURCE))
+        return false;
 
-    res = cfg->get_float(cfg, sect, "volume", &asrc->volume)
-       && cfg->get_bool(cfg, sect, "master", &asrc->master);
+    if (!cfg->get_float(cfg, sect, "volume", &asrc->volume))
+        asrc->volume = 1.0;
+    if (!cfg->get_bool(cfg, sect, "master", &asrc->master))
+        asrc->master = false;
 
-    assert(res == true);
+    return true;
 }
 
 void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples)
