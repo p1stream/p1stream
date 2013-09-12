@@ -221,16 +221,20 @@ void p1_stop(P1Context *ctx, P1StopOptions options)
 {
     P1Object *ctxobj = (P1Object *) ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
-    bool is_running;
+    bool is_idle;
 
     p1_object_lock(ctxobj);
 
     p1_object_set_target(ctxobj, P1_TARGET_IDLE);
-    is_running = (ctxobj->state != P1_STATE_IDLE);
+    is_idle = (ctxobj->state == P1_STATE_IDLE);
+
+    // Set to stopping immediately, if possible.
+    if (ctxobj->state == P1_STATE_RUNNING)
+        p1_object_set_state(ctxobj, P1_STATE_STOPPING);
 
     p1_object_unlock(ctxobj);
 
-    if (is_running && (options & P1_STOP_SYNC)) {
+    if (!is_idle && (options & P1_STOP_SYNC)) {
         int ret = pthread_join(ctxf->ctrl_thread, NULL);
         if (ret != 0)
             p1_log(ctxobj, P1_LOG_ERROR, "Failed to stop control thread: %s\n", strerror(ret));
