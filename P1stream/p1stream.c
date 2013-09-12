@@ -457,13 +457,6 @@ static bool p1_ctrl_progress(P1Context *ctx)
         P1_CHECK_WAIT(_obj);                                \
         break;
 
-// Source remove action handling.
-#define P1_SOURCE_ACTIONS(_pel, _src)                       \
-    case P1_ACTION_REMOVE:                                  \
-        p1_list_remove(&(_src)->link);                      \
-        p1_plugin_free(_pel);                               \
-        break;
-
 // Short-hand for empty default case.
 #define P1_EMPTY_DEFAULT                                    \
     default:                                                \
@@ -499,12 +492,16 @@ static bool p1_ctrl_progress(P1Context *ctx)
         P1Object *obj = (P1Object *) src;
 
         p1_object_lock(obj);
-        switch (p1_ctrl_determine_action(ctx, obj->state, obj->target)) {
+        P1Action action = p1_ctrl_determine_action(ctx, obj->state, obj->target);
+        switch (action) {
             P1_PLUGIN_ACTIONS(obj, pel)
-            P1_SOURCE_ACTIONS(pel, src)
             P1_EMPTY_DEFAULT
         }
         p1_object_unlock(obj);
+        if (action == P1_ACTION_REMOVE) {
+            p1_list_remove(&src->link);
+            p1_plugin_free(pel);
+        }
     }
 
     // Progress video mixer. We need a running clock for this.
@@ -531,12 +528,16 @@ static bool p1_ctrl_progress(P1Context *ctx)
         P1Object *obj = (P1Object *) src;
 
         p1_object_lock(obj);
-        switch (p1_ctrl_determine_action(ctx, obj->state, obj->target)) {
+        P1Action action = p1_ctrl_determine_action(ctx, obj->state, obj->target);
+        switch (action) {
             P1_PLUGIN_ACTIONS(obj, pel)
-            P1_SOURCE_ACTIONS(pel, src)
             P1_EMPTY_DEFAULT
         }
         p1_object_unlock(obj);
+        if (action == P1_ACTION_REMOVE) {
+            p1_list_remove(&src->link);
+            p1_plugin_free(pel);
+        }
     }
 
     // Progress audio mixer.
