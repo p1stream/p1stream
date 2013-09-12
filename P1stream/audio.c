@@ -18,8 +18,9 @@ static const int out_min_size = 6144 / 8 * num_channels;
 // Complete output buffer size, also one full second.
 static const int out_size = out_min_size * 64;
 
+static void p1_audio_kill_session(P1AudioFull *audiof);
 static void p1_audio_write(P1AudioFull *ctx, P1AudioSource *asrc, float **in, size_t *samples);
-static size_t p1_audio_read(P1AudioFull *ctx);
+static ssize_t p1_audio_read(P1AudioFull *ctx);
 static int64_t p1_audio_samples_to_mach_time(P1ContextFull *ctx, size_t samples);
 
 
@@ -39,45 +40,79 @@ bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect)
 void p1_audio_start(P1AudioFull *audiof)
 {
     P1Object *audioobj = (P1Object *) audiof;
-    AACENC_ERROR err;
+    AACENC_ERROR err = AACENC_OK;
+
+    p1_object_set_state(audioobj, P1_STATE_STARTING);
 
     audiof->mix = calloc(mix_samples, sizeof(float));
+    if (audiof->mix == NULL) goto fail_mix_buf;
     audiof->enc_in = malloc(mix_samples * sizeof(INT_PCM));
+    if (audiof->enc_in == NULL) goto fail_enc_buf;
     audiof->out = malloc(out_size);
+    if (audiof->out == NULL) goto fail_out_buf;
 
     err = aacEncOpen(&audiof->aac, 0x01, 2);
-    assert(err == AACENC_OK);
+    if (err != AACENC_OK) goto fail_enc;
 
     err = aacEncoder_SetParam(audiof->aac, AACENC_AOT, AOT_AAC_LC);
-    assert(err == AACENC_OK);
+    if (err != AACENC_OK) goto fail_setup;
     err = aacEncoder_SetParam(audiof->aac, AACENC_SAMPLERATE, sample_rate);
-    assert(err == AACENC_OK);
+    if (err != AACENC_OK) goto fail_setup;
     err = aacEncoder_SetParam(audiof->aac, AACENC_CHANNELMODE, MODE_2);
-    assert(err == AACENC_OK);
+    if (err != AACENC_OK) goto fail_setup;
     err = aacEncoder_SetParam(audiof->aac, AACENC_BITRATE, bit_rate);
-    assert(err == AACENC_OK);
+    if (err != AACENC_OK) goto fail_setup;
     err = aacEncoder_SetParam(audiof->aac, AACENC_TRANSMUX, TT_MP4_RAW);
-    assert(err == AACENC_OK);
+    if (err != AACENC_OK) goto fail_setup;
 
     err = aacEncEncode(audiof->aac, NULL, NULL, NULL, NULL);
-    assert(err == AACENC_OK);
+    if (err != AACENC_OK) goto fail_setup;
 
     p1_object_set_state(audioobj, P1_STATE_RUNNING);
+
+    return;
+
+fail_setup:
+    aacEncClose(&audiof->aac);
+
+fail_enc:
+    free(audiof->out);
+
+fail_out_buf:
+    free(audiof->enc_in);
+
+fail_enc_buf:
+    free(audiof->mix);
+
+fail_mix_buf:
+    if (err != AACENC_OK)
+        p1_log(audioobj, P1_LOG_ERROR, "Failed to start audio mixer: FDK AAC error %d\n", err);
+    else
+        p1_log(audioobj, P1_LOG_ERROR, "Failed to start audio mixer: Buffer allocation failed\n");
+    p1_object_set_state(audioobj, P1_STATE_HALTED);
 }
 
 void p1_audio_stop(P1AudioFull *audiof)
 {
     P1Object *audioobj = (P1Object *) audiof;
+
+    p1_object_set_state(audioobj, P1_STATE_STOPPING);
+    p1_audio_kill_session(audiof);
+    p1_object_set_state(audioobj, P1_STATE_IDLE);
+}
+
+static void p1_audio_kill_session(P1AudioFull *audiof)
+{
+    P1Object *audioobj = (P1Object *) audiof;
     AACENC_ERROR err;
 
     err = aacEncClose(&audiof->aac);
-    assert(err == AACENC_OK);
+    if (err != AACENC_OK)
+        p1_log(audioobj, P1_LOG_ERROR, "Failed to stop audio mixer: FDK AAC error %d\n", err);
 
     free(audiof->mix);
     free(audiof->enc_in);
     free(audiof->out);
-
-    p1_object_set_state(audioobj, P1_STATE_IDLE);
 }
 
 bool p1_audio_source_init(P1AudioSource *asrc, P1Config *cfg, P1ConfigSection *sect)
@@ -128,9 +163,9 @@ void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t
         // Read, encode and stream from the mix buffer.
         time = audiof->time;
         out_size = p1_audio_read(audiof);
-        if (out_size)
+        if (out_size > 0)
             p1_conn_audio(connf, time, audiof->out, out_size);
-    } while (out_size);
+    } while (out_size > 0);
 
     if (samples)
         p1_log(audioobj, P1_LOG_WARNING, "Audio mix buffer full, dropped %zd samples!\n", samples);
@@ -162,7 +197,7 @@ static void p1_audio_write(P1AudioFull *audiof, P1AudioSource *asrc, float **in,
 }
 
 // Read as much as possible from the ring buffer.
-static size_t p1_audio_read(P1AudioFull *audiof)
+static ssize_t p1_audio_read(P1AudioFull *audiof)
 {
     P1Audio *audio = (P1Audio *) audiof;
     P1Object *audioobj = (P1Object *) audio;
@@ -234,7 +269,13 @@ static size_t p1_audio_read(P1AudioFull *audiof)
     AACENC_OutArgs out_args = { .numInSamples = 1 };
     while (in_args.numInSamples && out_args.numInSamples && out_desc.bufSizes[0] > out_min_size) {
         err = aacEncEncode(audiof->aac, &in_desc, &out_desc, &in_args, &out_args);
-        assert(err == AACENC_OK);
+        if (err != AACENC_OK) {
+            p1_log(audioobj, P1_LOG_ERROR, "Audio encode failure: FDK AAC error %d\n", err);
+            p1_object_set_state(audioobj, P1_STATE_HALTING);
+            p1_audio_kill_session(audiof);
+            p1_object_set_state(audioobj, P1_STATE_HALTED);
+            return -1;
+        }
 
         size_t in_processed = out_args.numInSamples * sizeof(INT_PCM);
         in_desc.bufs[0] += in_processed;
