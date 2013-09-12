@@ -21,6 +21,7 @@ static bool p1_display_video_source_init(P1DisplayVideoSource *dvsrc, P1Config *
 static void p1_display_video_source_start(P1Plugin *pel);
 static void p1_display_video_source_stop(P1Plugin *pel);
 static void p1_display_video_source_kill_session(P1DisplayVideoSource *dvsrc);
+static void p1_display_video_source_halt(P1DisplayVideoSource *dvsrc);
 static void p1_display_video_source_frame(P1VideoSource *vsrc);
 static void p1_display_video_source_callback(
     P1DisplayVideoSource *dvsrc,
@@ -95,8 +96,7 @@ static void p1_display_video_source_start(P1Plugin *pel)
 halt:
     p1_log(obj, P1_LOG_ERROR, "Failed to setup display stream\n");
     // FIXME: log error
-    p1_display_video_source_kill_session(dvsrc);
-    p1_object_set_state(obj, P1_STATE_HALTED);
+    p1_display_video_source_halt(dvsrc);
 }
 
 static void p1_display_video_source_stop(P1Plugin *pel)
@@ -110,8 +110,7 @@ static void p1_display_video_source_stop(P1Plugin *pel)
     if (ret != kCGErrorSuccess) {
         p1_log(obj, P1_LOG_ERROR, "Failed to stop display stream\n");
         // FIXME: log error
-        p1_display_video_source_kill_session(dvsrc);
-        p1_object_set_state(obj, P1_STATE_HALTED);
+        p1_display_video_source_halt(dvsrc);
     }
 }
 
@@ -122,6 +121,15 @@ static void p1_display_video_source_kill_session(P1DisplayVideoSource *dvsrc)
 
     dispatch_release(dvsrc->dispatch);
     dvsrc->dispatch = NULL;
+}
+
+static void p1_display_video_source_halt(P1DisplayVideoSource *dvsrc)
+{
+    P1Object *obj = (P1Object *) dvsrc;
+
+    p1_object_set_state(obj, P1_STATE_HALTING);
+    p1_display_video_source_kill_session(dvsrc);
+    p1_object_set_state(obj, P1_STATE_HALTED);
 }
 
 static void p1_display_video_source_frame(P1VideoSource *vsrc)
@@ -165,7 +173,7 @@ static void p1_display_video_source_callback(
         }
         else {
             p1_log(obj, P1_LOG_ERROR, "Display stream stopped itself\n");
-            p1_object_set_state(obj, P1_STATE_HALTED);
+            p1_display_video_source_halt(dvsrc);
         }
     }
     else {

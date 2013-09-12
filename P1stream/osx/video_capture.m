@@ -229,9 +229,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     if (frame == NULL) {
         p1_log(obj, P1_LOG_ERROR, "Failed to get image buffer for capture source frame\n");
         p1_object_set_state(obj, P1_STATE_HALTING);
-
         p1_capture_video_source_kill_session(cvsrc);
-
         p1_object_set_state(obj, P1_STATE_HALTED);
     }
     else {
@@ -254,7 +252,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
     if (obj->state != P1_STATE_STOPPING) {
         p1_object_set_state(obj, P1_STATE_HALTING);
-
         p1_capture_video_source_kill_session(cvsrc);
     }
 
