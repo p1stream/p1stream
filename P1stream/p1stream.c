@@ -30,9 +30,9 @@ bool p1_object_init(P1Object *obj, P1ObjectType type)
 {
     obj->type = type;
 
-    int res = pthread_mutex_init(&obj->lock, NULL);
-    if (res != 0) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to initialize mutex: %s\n", strerror(res));
+    int ret = pthread_mutex_init(&obj->lock, NULL);
+    if (ret != 0) {
+        p1_log(obj, P1_LOG_ERROR, "Failed to initialize mutex: %s\n", strerror(ret));
         return false;
     }
 
@@ -41,9 +41,9 @@ bool p1_object_init(P1Object *obj, P1ObjectType type)
 
 void p1_object_destroy(P1Object *obj)
 {
-    int res = pthread_mutex_destroy(&obj->lock);
-    if (res != 0)
-        p1_log(obj, P1_LOG_ERROR, "Failed to destroy mutex: %s\n", strerror(res));
+    int ret = pthread_mutex_destroy(&obj->lock);
+    if (ret != 0)
+        p1_log(obj, P1_LOG_ERROR, "Failed to destroy mutex: %s\n", strerror(ret));
 }
 
 void p1_plugin_free(P1Plugin *pel)
@@ -191,10 +191,11 @@ static void p1_close_pipe(P1Object *ctxobj, int fd)
         p1_log(ctxobj, P1_LOG_ERROR, "Failed to close pipe: %s\n", strerror(errno));
 }
 
-void p1_start(P1Context *ctx)
+bool p1_start(P1Context *ctx)
 {
     P1Object *ctxobj = (P1Object *) ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
+    bool result = true;
 
     p1_object_lock(ctxobj);
 
@@ -205,37 +206,50 @@ void p1_start(P1Context *ctx)
         p1_object_set_state(ctxobj, P1_STATE_STARTING);
 
         int ret = pthread_create(&ctxf->ctrl_thread, NULL, p1_ctrl_main, ctx);
-        assert(ret == 0);
+        if (ret != 0) {
+            p1_log(ctxobj, P1_LOG_ERROR, "Failed to start control thread: %s\n", strerror(ret));
+            result = false;
+        }
     }
 
     p1_object_unlock(ctxobj);
+
+    return result;
 }
 
 void p1_stop(P1Context *ctx, P1StopOptions options)
 {
     P1Object *ctxobj = (P1Object *) ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
+    bool is_running;
 
     p1_object_lock(ctxobj);
 
     p1_object_set_target(ctxobj, P1_TARGET_IDLE);
-    bool is_running = ctxobj->state != P1_STATE_IDLE;
+    is_running = (ctxobj->state != P1_STATE_IDLE);
 
     p1_object_unlock(ctxobj);
 
     if (is_running && (options & P1_STOP_SYNC)) {
         int ret = pthread_join(ctxf->ctrl_thread, NULL);
-        assert(ret == 0);
+        if (ret != 0)
+            p1_log(ctxobj, P1_LOG_ERROR, "Failed to stop control thread: %s\n", strerror(ret));
     }
 }
 
-void p1_read(P1Context *_ctx, P1Notification *out)
+void p1_read(P1Context *ctx, P1Notification *out)
 {
-    P1ContextFull *ctx = (P1ContextFull *) _ctx;
+    P1Object *ctxobj = (P1Object *) ctx;
+    P1ContextFull *ctxf = (P1ContextFull *) ctx;
 
     ssize_t size = sizeof(P1Notification);
-    ssize_t ret = read(ctx->user_pipe[0], out, size);
-    assert(ret == size);
+    ssize_t ret = read(ctxf->user_pipe[0], out, size);
+    if (ret != size) {
+        const char *reason = (ret < 0) ? strerror(errno) : "Invalid read";
+        p1_log(ctxobj, P1_LOG_ERROR, "Failed to read notification: %s\n", reason);
+
+        out->type = P1_NTYPE_NULL;
+    }
 }
 
 int p1_fd(P1Context *_ctx)
@@ -247,13 +261,17 @@ int p1_fd(P1Context *_ctx)
 
 void _p1_notify(P1Notification notification)
 {
-    P1ContextFull *ctx = (P1ContextFull *) notification.object->ctx;
+    P1Object *ctxobj = (P1Object *) notification.object->ctx;
+    P1ContextFull *ctxf = (P1ContextFull *) ctxobj;
 
     p1_ctrl_log_notification(&notification);
 
     ssize_t size = sizeof(P1Notification);
-    ssize_t ret = write(ctx->ctrl_pipe[1], &notification, size);
-    assert(ret == size);
+    ssize_t ret = write(ctxf->ctrl_pipe[1], &notification, size);
+    if (ret != size) {
+        const char *reason = (ret < 0) ? strerror(errno) : "Invalid write";
+        p1_log(ctxobj, P1_LOG_ERROR, "Failed to write notification: %s\n", reason);
+    }
 }
 
 void p1_log(P1Object *obj, P1LogLevel level, const char *fmt, ...)
@@ -300,6 +318,7 @@ static void *p1_ctrl_main(void *data)
     P1Context *ctx = (P1Context *) data;
     P1Object *ctxobj = (P1Object *) data;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
+    bool wait;
 
     p1_object_lock(ctxobj);
 
@@ -316,7 +335,7 @@ static void *p1_ctrl_main(void *data)
             p1_object_set_state(ctxobj, P1_STATE_STOPPING);
 
         // Progress state of our objects.
-        bool wait = p1_ctrl_progress(ctx);
+        wait = p1_ctrl_progress(ctx);
 
         // If there's nothing left to wait on, and we're stopping.
         if (!wait && ctxobj->state == P1_STATE_STOPPING) {
@@ -342,35 +361,49 @@ static void *p1_ctrl_main(void *data)
 // Handle communication on pipes.
 static void p1_ctrl_comm(P1ContextFull *ctxf)
 {
-    int i_ret;
+    P1Object *ctxobj = (P1Object *) ctxf;
     struct pollfd fd = {
         .fd = ctxf->ctrl_pipe[0],
         .events = POLLIN
     };
-
     P1Notification notification;
     ssize_t size = sizeof(P1Notification);
+    int i_ret;
     ssize_t s_ret;
 
     // Wait indefinitely for the next notification.
     do {
         i_ret = poll(&fd, 1, -1);
-        assert(i_ret != -1);
+        if (i_ret == 0)
+            p1_log(ctxobj, P1_LOG_WARNING, "Control thread poll interrupted\n");
+        else if (i_ret < 0)
+            p1_log(ctxobj, P1_LOG_ERROR, "Control thread failed to poll: %s\n", strerror(errno));
     } while (i_ret == 0);
 
     do {
         // Read the notification.
         s_ret = read(fd.fd, &notification, size);
-        assert(s_ret == size);
+        if (s_ret != size) {
+            const char *reason = (s_ret < 0) ? strerror(errno) : "Invalid read";
+            p1_log(ctxobj, P1_LOG_ERROR, "Control thread failed to read notification: %s\n", reason);
+            break;
+        }
 
         // Pass it on to the user.
         s_ret = write(ctxf->user_pipe[1], &notification, size);
-        assert(s_ret == size);
+        if (s_ret != size) {
+            const char *reason = (s_ret < 0) ? strerror(errno) : "Invalid write";
+            p1_log(ctxobj, P1_LOG_ERROR, "Control thread failed to write notification: %s\n", reason);
+            break;
+        }
 
         // Flush other notifications.
         i_ret = poll(&fd, 1, 0);
-        assert(i_ret != -1);
-    } while (i_ret == 1);
+        if (i_ret < 0) {
+            p1_log(ctxobj, P1_LOG_ERROR, "Control thread failed to poll: %s\n", strerror(errno));
+            break;
+        }
+    } while (i_ret != 0);
 }
 
 // Check all objects and try to progress state.

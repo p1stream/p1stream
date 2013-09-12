@@ -133,6 +133,7 @@ enum _P1TargetState {
 // Notification types.
 
 enum _P1NotificationType {
+    P1_NTYPE_NULL           = 0,
     P1_NTYPE_STATE_CHANGE   = 1,
     P1_NTYPE_TARGET_CHANGE  = 2
 };
@@ -302,8 +303,19 @@ struct _P1Object {
 };
 
 // Convenience methods for acquiring the object lock.
-#define p1_object_lock(_obj) assert(pthread_mutex_lock(&(_obj)->lock) == 0)
-#define p1_object_unlock(_obj) assert(pthread_mutex_unlock(&(_obj)->lock) == 0)
+#define p1_object_lock(_obj) ({                                 \
+    P1Object *_p1_obj = (_obj);                                 \
+    int _p1_ret = pthread_mutex_lock(&_p1_obj->lock);           \
+    if (_p1_ret != 0)                                           \
+        p1_log(_p1_obj, P1_LOG_ERROR, "Failed to acquire lock: %s\n", strerror(_p1_ret));   \
+})
+
+#define p1_object_unlock(_obj) ({                               \
+    P1Object *_p1_obj = (_obj);                                 \
+    int _p1_ret = pthread_mutex_unlock(&_p1_obj->lock);         \
+    if (_p1_ret != 0)                                           \
+        p1_log(_p1_obj, P1_LOG_ERROR, "Failed to release lock: %s\n", strerror(_p1_ret));   \
+})
 
 // This method should be used to change the state field.
 #define p1_object_set_state(_obj, _state) ({                    \
@@ -510,7 +522,7 @@ P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect);
 void p1_free(P1Context *ctx, P1FreeOptions options);
 
 // Start running with the current configuration.
-void p1_start(P1Context *ctx);
+bool p1_start(P1Context *ctx);
 // Stop all processing and all sources.
 void p1_stop(P1Context *ctx, P1StopOptions options);
 
