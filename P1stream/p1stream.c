@@ -289,7 +289,7 @@ void p1_log(P1Object *obj, P1LogLevel level, const char *fmt, ...)
 
 void p1_logv(P1Object *obj, P1LogLevel level, const char *fmt, va_list args)
 {
-    P1Context *ctx = obj->ctx;
+    P1Context *ctx = (obj != NULL) ? obj->ctx : NULL;
     P1LogCallback fn = p1_log_default;
 
     if (ctx) {

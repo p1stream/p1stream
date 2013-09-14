@@ -24,7 +24,10 @@ static bool p1_plist_config_each_string(P1Config *_cfg, P1ConfigSection *sect, c
 P1Config *p1_plist_config_create(CFDictionaryRef root)
 {
     P1PlistConfig *cfg = calloc(1, sizeof(P1PlistConfig));
-    assert(cfg != NULL);
+    if (cfg == NULL) {
+        p1_log(NULL, P1_LOG_ERROR, "Failed to allocate property list config object");
+        return NULL;
+    }
 
     cfg->root = CFRetain(root);
 
@@ -42,21 +45,42 @@ P1Config *p1_plist_config_create(CFDictionaryRef root)
 P1Config *p1_plist_config_create_from_file(const char *file)
 {
     CFURLRef file_url = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8 *)file, strlen(file), FALSE);
-    assert(file_url != NULL);
+    if (file_url == NULL) {
+        p1_log(NULL, P1_LOG_ERROR, "Failed to create CFURL");
+        return NULL;
+    }
 
     CFDataRef file_data;
-    Boolean res = CFURLCreateDataAndPropertiesFromResource(NULL, file_url, &file_data, NULL, NULL, NULL);
+    SInt32 si_err;
+    Boolean res = CFURLCreateDataAndPropertiesFromResource(NULL, file_url, &file_data, NULL, NULL, &si_err);
     CFRelease(file_url);
-    assert(res == TRUE);
+    if (!res) {
+        p1_log(NULL, P1_LOG_ERROR, "Failed to create CFData: error %d", si_err);
+        return NULL;
+    }
 
-    CFDictionaryRef root = CFPropertyListCreateWithData(NULL, file_data, kCFPropertyListImmutable, NULL, NULL);
+    CFErrorRef cf_err;
+    CFDictionaryRef root = CFPropertyListCreateWithData(NULL, file_data, kCFPropertyListImmutable, NULL, &cf_err);
     CFRelease(file_data);
-    assert(root != NULL);
-    assert(CFGetTypeID(root) == CFDictionaryGetTypeID());
+    if (cf_err != NULL) {
+        p1_log(NULL, P1_LOG_ERROR, "Failed to parse property list");
+        p1_log_cf_error(NULL, P1_LOG_ERROR, cf_err);
+        CFRelease(cf_err);
+        return NULL;
+    }
 
-    P1Config *_cfg = p1_plist_config_create(root);
+    if (CFGetTypeID(root) != CFDictionaryGetTypeID()) {
+        p1_log(NULL, P1_LOG_ERROR, "Property list root is not a dictionary");
+        CFRelease(root);
+        return NULL;
+    }
+
+    P1Config *cfg = p1_plist_config_create(root);
     CFRelease(root);
-    return _cfg;
+    if (cfg == NULL)
+        return NULL;
+
+    return cfg;
 }
 
 static void p1_plist_config_free(P1Config *_cfg)
@@ -149,10 +173,10 @@ static bool p1_plist_config_each_section(P1Config *_cfg, P1ConfigSection *sect, 
     CFArrayGetValues(arr, CFRangeMake(0, count), values);
     for (CFIndex i = 0; i < count; i++) {
         CFDictionaryRef dict = values[i];
-        assert(CFGetTypeID(dict) == CFDictionaryGetTypeID());
-
-        if (iter(_cfg, (P1ConfigSection *) dict, data) == false)
-            return false;
+        if (CFGetTypeID(dict) == CFDictionaryGetTypeID()) {
+            if (!iter(_cfg, (P1ConfigSection *) dict, data))
+                return false;
+        }
     }
 
     return true;
@@ -170,10 +194,12 @@ static bool p1_plist_config_each_string(P1Config *_cfg, P1ConfigSection *sect, c
     CFDictionaryGetKeysAndValues(dict, keys, values);
     for (CFIndex i = 0; i < count; i++) {
         CFStringRef str_key = keys[i];
-        assert(CFGetTypeID(str_key) == CFStringGetTypeID());
+        if (CFGetTypeID(str_key) != CFStringGetTypeID())
+            continue;
 
         CFStringRef str_val = values[i];
-        assert(CFGetTypeID(str_val) == CFStringGetTypeID());
+        if (CFGetTypeID(str_val) != CFStringGetTypeID())
+            continue;
 
         Boolean b_res;
         CFIndex size;

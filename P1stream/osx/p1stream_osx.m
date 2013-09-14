@@ -14,6 +14,11 @@ void p1_log_ns_error(P1Object *obj, P1LogLevel level, NSError *err)
     }
 }
 
+void p1_log_cf_error(P1Object *obj, P1LogLevel level, CFErrorRef err)
+{
+    p1_log_ns_error(obj, level, (__bridge NSError *) err);
+}
+
 void p1_log_os_status(P1Object *obj, P1LogLevel level, OSStatus status)
 {
     @autoreleasepool {

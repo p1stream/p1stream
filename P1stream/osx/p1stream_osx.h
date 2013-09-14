@@ -16,6 +16,7 @@
 void p1_log_ns_string(P1Object *obj, P1LogLevel level, NSString *str);
 void p1_log_ns_error(P1Object *obj, P1LogLevel level, NSError *err);
 #endif
+void p1_log_cf_error(P1Object *obj, P1LogLevel level, CFErrorRef err);
 void p1_log_os_status(P1Object *obj, P1LogLevel level, OSStatus status);
 
 
