@@ -20,7 +20,7 @@ void p1_log_os_status(P1Object *obj, P1LogLevel level, OSStatus status);
 
 
 // Fast path for OS X video sources that can provide an IOSurface.
-void p1_video_source_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer);
+bool p1_video_source_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer);
 
 
 // Configuration backed by a property list. Uses Core Foundation.

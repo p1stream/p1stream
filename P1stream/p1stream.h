@@ -433,7 +433,7 @@ struct _P1VideoSource {
 
     // Produce the latest frame using p1_video_frame.
     // This is called from the clock thread.
-    void (*frame)(P1VideoSource *source);
+    bool (*frame)(P1VideoSource *source);
 };
 
 // Subclasses should call into this from the initializer.

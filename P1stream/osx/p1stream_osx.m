@@ -25,10 +25,10 @@ void p1_log_os_status(P1Object *obj, P1LogLevel level, OSStatus status)
 }
 
 
-void p1_video_source_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer)
+bool p1_video_source_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer)
 {
-    P1Object *el = (P1Object *) vsrc;
-    P1Video *video = el->ctx->video;
+    P1Object *obj = (P1Object *) vsrc;
+    P1Video *video = obj->ctx->video;
     P1VideoFull *videof = (P1VideoFull *) video;
 
     GLsizei width = (GLsizei) IOSurfaceGetWidth(buffer);
@@ -37,5 +37,10 @@ void p1_video_source_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer)
         videof->gl, GL_TEXTURE_RECTANGLE,
         GL_RGBA8, width, height,
         GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, buffer, 0);
-    assert(err == kCGLNoError);
+    if (err != kCGLNoError) {
+        p1_log(obj, P1_LOG_ERROR, "Failed to upload IOSurface: Core Graphics error %d", err);
+        return false;
+    }
+
+    return true;
 }

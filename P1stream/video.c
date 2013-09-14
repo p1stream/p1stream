@@ -463,6 +463,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     GLenum gl_err;
     cl_int cl_err;
     int i_ret;
+    bool b_ret;
     x264_nal_t *nals;
     int len;
 
@@ -481,6 +482,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
         P1Source *src = p1_list_get_container(node, P1Source, link);
         P1Object *el = (P1Object *) src;
         P1VideoSource *vsrc = (P1VideoSource *) src;
+        b_ret = true;
 
         p1_object_lock(el);
         if (el->state == P1_STATE_RUNNING) {
@@ -488,17 +490,22 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
                 glGenTextures(1, &vsrc->texture);
 
             glBindTexture(GL_TEXTURE_RECTANGLE, vsrc->texture);
-            vsrc->frame(vsrc);
+            b_ret = vsrc->frame(vsrc);
 
-            glBufferData(GL_ARRAY_BUFFER, vbo_size, (GLfloat []) {
-                vsrc->x1, vsrc->y1, vsrc->u1, vsrc->v1,
-                vsrc->x1, vsrc->y2, vsrc->u1, vsrc->v2,
-                vsrc->x2, vsrc->y1, vsrc->u2, vsrc->v1,
-                vsrc->x2, vsrc->y2, vsrc->u2, vsrc->v2
-            }, GL_DYNAMIC_DRAW);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+            if (b_ret) {
+                glBufferData(GL_ARRAY_BUFFER, vbo_size, (GLfloat []) {
+                    vsrc->x1, vsrc->y1, vsrc->u1, vsrc->v1,
+                    vsrc->x1, vsrc->y2, vsrc->u1, vsrc->v2,
+                    vsrc->x2, vsrc->y1, vsrc->u2, vsrc->v1,
+                    vsrc->x2, vsrc->y2, vsrc->u2, vsrc->v2
+                }, GL_DYNAMIC_DRAW);
+                glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+            }
         }
         p1_object_unlock(el);
+
+        if (!b_ret)
+            goto fail;
     }
 
     glFinish();

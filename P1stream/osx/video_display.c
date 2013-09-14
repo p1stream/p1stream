@@ -22,7 +22,7 @@ static void p1_display_video_source_start(P1Plugin *pel);
 static void p1_display_video_source_stop(P1Plugin *pel);
 static void p1_display_video_source_kill_session(P1DisplayVideoSource *dvsrc);
 static void p1_display_video_source_halt(P1DisplayVideoSource *dvsrc);
-static void p1_display_video_source_frame(P1VideoSource *vsrc);
+static bool p1_display_video_source_frame(P1VideoSource *vsrc);
 static void p1_display_video_source_callback(
     P1DisplayVideoSource *dvsrc,
     CGDisplayStreamFrameStatus status,
@@ -132,12 +132,14 @@ static void p1_display_video_source_halt(P1DisplayVideoSource *dvsrc)
     p1_object_set_state(obj, P1_STATE_HALTED);
 }
 
-static void p1_display_video_source_frame(P1VideoSource *vsrc)
+static bool p1_display_video_source_frame(P1VideoSource *vsrc)
 {
     P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) vsrc;
 
     if (dvsrc->frame)
-        p1_video_source_frame_iosurface(vsrc, dvsrc->frame);
+        return p1_video_source_frame_iosurface(vsrc, dvsrc->frame);
+    else
+        return true;
 }
 
 static void p1_display_video_source_callback(

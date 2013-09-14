@@ -22,7 +22,7 @@ struct _P1CaptureVideoSource {
 static bool p1_capture_video_source_init(P1CaptureVideoSource *cvsrc, P1Config *cfg, P1ConfigSection *sect);
 static void p1_capture_video_source_start(P1Plugin *pel);
 static void p1_capture_video_source_stop(P1Plugin *pel);
-static void p1_capture_video_source_frame(P1VideoSource *vsrc);
+static bool p1_capture_video_source_frame(P1VideoSource *vsrc);
 static void p1_capture_video_source_kill_session(P1CaptureVideoSource *cvsrc);
 
 
@@ -159,7 +159,7 @@ static void p1_capture_video_source_stop(P1Plugin *pel)
         p1_object_set_state(obj, P1_STATE_IDLE);
 }
 
-static void p1_capture_video_source_frame(P1VideoSource *vsrc)
+static bool p1_capture_video_source_frame(P1VideoSource *vsrc)
 {
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) vsrc;
     CVPixelBufferRef frame;
@@ -168,7 +168,7 @@ static void p1_capture_video_source_frame(P1VideoSource *vsrc)
     if (frame) {
         IOSurfaceRef surface = CVPixelBufferGetIOSurface(frame);
         if (surface != NULL) {
-            p1_video_source_frame_iosurface(vsrc, surface);
+            return p1_video_source_frame_iosurface(vsrc, surface);
         }
         else {
             CVPixelBufferLockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
@@ -179,6 +179,8 @@ static void p1_capture_video_source_frame(P1VideoSource *vsrc)
             CVPixelBufferUnlockBaseAddress(frame, kCVPixelBufferLock_ReadOnly);
         }
     }
+
+    return true;
 }
 
 static void p1_capture_video_source_kill_session(P1CaptureVideoSource *cvsrc)
