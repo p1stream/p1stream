@@ -19,7 +19,7 @@ bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 
     int ret = pthread_cond_init(&connf->cond, NULL);
     if (ret != 0) {
-        p1_log(connobj, P1_LOG_ERROR, "Failed to initialize condition variable: %s\n", strerror(ret));
+        p1_log(connobj, P1_LOG_ERROR, "Failed to initialize condition variable: %s", strerror(ret));
         goto fail_cond;
     }
 
@@ -41,7 +41,7 @@ void p1_conn_destroy(P1ConnectionFull *connf)
 
     int ret = pthread_cond_destroy(&connf->cond);
     if (ret != 0)
-        p1_log(connobj, P1_LOG_ERROR, "Failed to destroy condition variable: %s\n", strerror(ret));
+        p1_log(connobj, P1_LOG_ERROR, "Failed to destroy condition variable: %s", strerror(ret));
 
     p1_object_destroy(connobj);
 }
@@ -54,7 +54,7 @@ void p1_conn_start(P1ConnectionFull *connf)
 
     int ret = pthread_create(&connf->thread, NULL, p1_conn_main, connf);
     if (ret != 0) {
-        p1_log(connobj, P1_LOG_ERROR, "Failed to start connection thread: %s\n", strerror(ret));
+        p1_log(connobj, P1_LOG_ERROR, "Failed to start connection thread: %s", strerror(ret));
         p1_object_set_state(connobj, P1_STATE_HALTED);
     }
 }
@@ -67,7 +67,7 @@ void p1_conn_stop(P1ConnectionFull *connf)
 
     int ret = pthread_cond_signal(&connf->cond);
     if (ret != 0)
-        p1_log(connobj, P1_LOG_ERROR, "Failed to signal connection thread: %s\n", strerror(ret));
+        p1_log(connobj, P1_LOG_ERROR, "Failed to signal connection thread: %s", strerror(ret));
 }
 
 // Send video configuration.
@@ -91,7 +91,7 @@ void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
         }
     }
     if (nal_sps == NULL || nal_pps == NULL) {
-        p1_log(connobj, P1_LOG_ERROR, "Failed to build video config packet\n");
+        p1_log(connobj, P1_LOG_ERROR, "Failed to build video config packet");
         return;
     }
 
@@ -196,7 +196,7 @@ static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, uin
     // Allocate packet memory.
     RTMPPacket *pkt = calloc(1, prelude_size + body_size);
     if (pkt == NULL) {
-        p1_log(connobj, P1_LOG_ERROR, "Packet allocation failed, dropping packet!\n");
+        p1_log(connobj, P1_LOG_ERROR, "Packet allocation failed, dropping packet!");
         return NULL;
     }
 
@@ -233,7 +233,7 @@ static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     }
     if (q->length == UINT8_MAX) {
         free(pkt);
-        p1_log(connobj, P1_LOG_WARNING, "Packet queue full, dropping packet!\n");
+        p1_log(connobj, P1_LOG_WARNING, "Packet queue full, dropping packet!");
         goto end;
     }
 
@@ -258,7 +258,7 @@ static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     q->length++;
     ret = pthread_cond_signal(&connf->cond);
     if (ret != 0)
-        p1_log(connobj, P1_LOG_ERROR, "Failed to signal connection thread: %s\n", strerror(ret));
+        p1_log(connobj, P1_LOG_ERROR, "Failed to signal connection thread: %s", strerror(ret));
 
 end:
     p1_object_unlock(connobj);
@@ -276,7 +276,7 @@ static void *p1_conn_main(void *data)
 
     ret = RTMP_SetupURL(&r, connf->url);
     if (!ret) {
-        p1_log(connobj, P1_LOG_ERROR, "Failed to parse URL.\n");
+        p1_log(connobj, P1_LOG_ERROR, "Failed to parse URL.");
         goto fail;
     }
 
@@ -284,13 +284,13 @@ static void *p1_conn_main(void *data)
 
     ret = RTMP_Connect(&r, NULL);
     if (!ret) {
-        p1_log(connobj, P1_LOG_ERROR, "Connection failed.\n");
+        p1_log(connobj, P1_LOG_ERROR, "Connection failed.");
         goto fail;
     }
 
     ret = RTMP_ConnectStream(&r, 0);
     if (!ret) {
-        p1_log(connobj, P1_LOG_ERROR, "Failed to connect to stream.\n");
+        p1_log(connobj, P1_LOG_ERROR, "Failed to connect to stream.");
         goto fail;
     }
 
@@ -388,7 +388,7 @@ static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
             ret = RTMP_SendPacket(r, pkt, FALSE);
             free(pkt);
             if (!ret) {
-                p1_log(connobj, P1_LOG_ERROR, "Failed to send packet.\n");
+                p1_log(connobj, P1_LOG_ERROR, "Failed to send packet.");
                 result = false;
                 break;
             }

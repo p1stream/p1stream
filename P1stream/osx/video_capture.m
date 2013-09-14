@@ -99,7 +99,7 @@ static void p1_capture_video_source_start(P1Plugin *pel)
                            object:session];
 
         if (!delegate || !session || !notif_center) {
-            p1_log(obj, P1_LOG_ERROR, "Failed to setup capture session\n");
+            p1_log(obj, P1_LOG_ERROR, "Failed to setup capture session");
             P1_CVSRC_HALT;
         }
 
@@ -108,7 +108,7 @@ static void p1_capture_video_source_start(P1Plugin *pel)
         AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
         AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:device error:&error];
         if (!input || ![session canAddInput:input]) {
-            p1_log(obj, P1_LOG_ERROR, "Failed to open capture device\n");
+            p1_log(obj, P1_LOG_ERROR, "Failed to open capture device");
             p1_log_ns_error(obj, P1_LOG_ERROR, error);
             P1_CVSRC_HALT;
         }
@@ -122,7 +122,7 @@ static void p1_capture_video_source_start(P1Plugin *pel)
             (NSString *) kCVPixelBufferPixelFormatTypeKey: [NSNumber numberWithInt:kCVPixelFormatType_32BGRA]
         };
         if (!output || ![session canAddOutput:output]) {
-            p1_log(obj, P1_LOG_ERROR, "Failed to setup capture output\n");
+            p1_log(obj, P1_LOG_ERROR, "Failed to setup capture output");
             P1_CVSRC_HALT;
         }
         [session addOutput:output];
@@ -227,7 +227,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
     CVPixelBufferRef frame = CMSampleBufferGetImageBuffer(sampleBuffer);
     if (frame == NULL) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to get image buffer for capture source frame\n");
+        p1_log(obj, P1_LOG_ERROR, "Failed to get image buffer for capture source frame");
         p1_object_set_state(obj, P1_STATE_HALTING);
         p1_capture_video_source_kill_session(cvsrc);
         p1_object_set_state(obj, P1_STATE_HALTED);
@@ -246,7 +246,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
     p1_object_lock(obj);
 
-    p1_log(obj, P1_LOG_ERROR, "Error in capture session\n");
+    p1_log(obj, P1_LOG_ERROR, "Error in capture session");
     NSError *err = [n.userInfo objectForKey:AVCaptureSessionErrorKey];
     p1_log_ns_error(obj, P1_LOG_ERROR, err);
 

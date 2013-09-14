@@ -88,7 +88,7 @@ static void p1_display_video_clock_start(P1Plugin *pel)
     return;
 
 halt:
-    p1_log(obj, P1_LOG_ERROR, "Failed to start display link: Core Video error %d\n", ret);
+    p1_log(obj, P1_LOG_ERROR, "Failed to start display link: Core Video error %d", ret);
     p1_object_set_state(obj, P1_STATE_HALTING);
     p1_display_video_clock_kill_session(dvclock);
     p1_object_set_state(obj, P1_STATE_HALTED);
@@ -108,7 +108,7 @@ static void p1_display_video_clock_stop(P1Plugin *pel)
     p1_object_lock(obj);
 
     if (ret != kCVReturnSuccess) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to stop display link: Core Video error %d\n", ret);
+        p1_log(obj, P1_LOG_ERROR, "Failed to stop display link: Core Video error %d", ret);
         p1_object_set_state(obj, P1_STATE_HALTING);
     }
 

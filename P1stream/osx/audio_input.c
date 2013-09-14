@@ -126,7 +126,7 @@ static void p1_input_audio_source_start(P1Plugin *pel)
     return;
 
 fail:
-    p1_log(obj, P1_LOG_ERROR, "Failed to setup audio queue\n");
+    p1_log(obj, P1_LOG_ERROR, "Failed to setup audio queue");
     p1_log_os_status(obj, P1_LOG_ERROR, ret);
     p1_input_audio_source_halt(iasrc);
 }
@@ -142,7 +142,7 @@ static void p1_input_audio_source_stop(P1Plugin *pel)
     // Async, waits until running callback.
     ret = AudioQueueStop(iasrc->queue, FALSE);
     if (ret != noErr) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to stop audio queue\n");
+        p1_log(obj, P1_LOG_ERROR, "Failed to stop audio queue");
         p1_log_os_status(obj, P1_LOG_ERROR, ret);
 
     }
@@ -157,7 +157,7 @@ static void p1_input_audio_source_kill_session(P1InputAudioSource *iasrc)
         ret = AudioQueueDispose(iasrc->queue, TRUE);
         iasrc->queue = NULL;
         if (ret != noErr) {
-            p1_log(obj, P1_LOG_ERROR, "Failed to dispose of audio queue\n");
+            p1_log(obj, P1_LOG_ERROR, "Failed to dispose of audio queue");
             p1_log_os_status(obj, P1_LOG_ERROR, ret);
             p1_input_audio_source_halt(iasrc);
         }
@@ -192,7 +192,7 @@ static void p1_input_audio_source_input_callback(
 
     OSStatus ret = AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
     if (ret != noErr) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to return buffer to audio queue\n");
+        p1_log(obj, P1_LOG_ERROR, "Failed to return buffer to audio queue");
         p1_log_os_status(obj, P1_LOG_ERROR, ret);
 
         p1_object_lock(obj);
@@ -217,7 +217,7 @@ static void p1_input_audio_source_running_callback(
     size = sizeof(running);
     ret = AudioQueueGetProperty(inAQ, kAudioQueueProperty_IsRunning, &running, &size);
     if (ret != noErr) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to get audio queue status\n");
+        p1_log(obj, P1_LOG_ERROR, "Failed to get audio queue status");
         p1_log_os_status(obj, P1_LOG_ERROR, ret);
         p1_input_audio_source_halt(iasrc);
         goto end;
@@ -237,7 +237,7 @@ static void p1_input_audio_source_running_callback(
             p1_object_set_state(obj, P1_STATE_IDLE);
         }
         else if (obj->state == P1_STATE_RUNNING) {
-            p1_log(obj, P1_LOG_ERROR, "Audio queue stopped itself\n");
+            p1_log(obj, P1_LOG_ERROR, "Audio queue stopped itself");
             p1_input_audio_source_halt(iasrc);
         }
     }

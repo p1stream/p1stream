@@ -32,7 +32,7 @@ bool p1_object_init(P1Object *obj, P1ObjectType type)
 
     int ret = pthread_mutex_init(&obj->lock, NULL);
     if (ret != 0) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to initialize mutex: %s\n", strerror(ret));
+        p1_log(obj, P1_LOG_ERROR, "Failed to initialize mutex: %s", strerror(ret));
         return false;
     }
 
@@ -43,7 +43,7 @@ void p1_object_destroy(P1Object *obj)
 {
     int ret = pthread_mutex_destroy(&obj->lock);
     if (ret != 0)
-        p1_log(obj, P1_LOG_ERROR, "Failed to destroy mutex: %s\n", strerror(ret));
+        p1_log(obj, P1_LOG_ERROR, "Failed to destroy mutex: %s", strerror(ret));
 }
 
 void p1_plugin_free(P1Plugin *pel)
@@ -123,19 +123,19 @@ static bool p1_init(P1ContextFull *ctxf, P1Config *cfg, P1ConfigSection *sect)
 
     ret = pipe(ctxf->ctrl_pipe);
     if (ret != 0) {
-        p1_log(ctxobj, P1_LOG_ERROR, "Failed to open pipe: %s\n", strerror(errno));
+        p1_log(ctxobj, P1_LOG_ERROR, "Failed to open pipe: %s", strerror(errno));
         goto fail_ctrl;
     }
 
     ret = pipe(ctxf->user_pipe);
     if (ret != 0) {
-        p1_log(ctxobj, P1_LOG_ERROR, "Failed to open pipe: %s\n", strerror(errno));
+        p1_log(ctxobj, P1_LOG_ERROR, "Failed to open pipe: %s", strerror(errno));
         goto fail_user;
     }
 
     ret = mach_timebase_info(&ctxf->timebase);
     if (ret != 0) {
-        p1_log(ctxobj, P1_LOG_ERROR, "Failed to get timebase: %s\n", mach_error_string(errno));
+        p1_log(ctxobj, P1_LOG_ERROR, "Failed to get timebase: %s", mach_error_string(errno));
         goto fail_timebase;
     }
 
@@ -188,7 +188,7 @@ static void p1_close_pipe(P1Object *ctxobj, int fd)
 {
     int ret = close(fd);
     if (ret != 0)
-        p1_log(ctxobj, P1_LOG_ERROR, "Failed to close pipe: %s\n", strerror(errno));
+        p1_log(ctxobj, P1_LOG_ERROR, "Failed to close pipe: %s", strerror(errno));
 }
 
 bool p1_start(P1Context *ctx)
@@ -207,7 +207,7 @@ bool p1_start(P1Context *ctx)
 
         int ret = pthread_create(&ctxf->ctrl_thread, NULL, p1_ctrl_main, ctx);
         if (ret != 0) {
-            p1_log(ctxobj, P1_LOG_ERROR, "Failed to start control thread: %s\n", strerror(ret));
+            p1_log(ctxobj, P1_LOG_ERROR, "Failed to start control thread: %s", strerror(ret));
             p1_object_set_state(ctxobj, P1_STATE_IDLE);
             result = false;
         }
@@ -238,7 +238,7 @@ void p1_stop(P1Context *ctx, P1StopOptions options)
     if (!is_idle && (options & P1_STOP_SYNC)) {
         int ret = pthread_join(ctxf->ctrl_thread, NULL);
         if (ret != 0)
-            p1_log(ctxobj, P1_LOG_ERROR, "Failed to stop control thread: %s\n", strerror(ret));
+            p1_log(ctxobj, P1_LOG_ERROR, "Failed to stop control thread: %s", strerror(ret));
     }
 }
 
@@ -251,7 +251,7 @@ void p1_read(P1Context *ctx, P1Notification *out)
     ssize_t ret = read(ctxf->user_pipe[0], out, size);
     if (ret != size) {
         const char *reason = (ret < 0) ? strerror(errno) : "Invalid read";
-        p1_log(ctxobj, P1_LOG_ERROR, "Failed to read notification: %s\n", reason);
+        p1_log(ctxobj, P1_LOG_ERROR, "Failed to read notification: %s", reason);
 
         out->type = P1_NTYPE_NULL;
     }
@@ -275,7 +275,7 @@ void _p1_notify(P1Notification notification)
     ssize_t ret = write(ctxf->ctrl_pipe[1], &notification, size);
     if (ret != size) {
         const char *reason = (ret < 0) ? strerror(errno) : "Invalid write";
-        p1_log(ctxobj, P1_LOG_ERROR, "Failed to write notification: %s\n", reason);
+        p1_log(ctxobj, P1_LOG_ERROR, "Failed to write notification: %s", reason);
     }
 }
 
@@ -305,16 +305,26 @@ void p1_logv(P1Object *obj, P1LogLevel level, const char *fmt, va_list args)
 // Default log function.
 static void p1_log_default(P1Object *obj, P1LogLevel level, const char *fmt, va_list args)
 {
-    const char *pre;
+    char out[2048] = "X: ";
     switch (level) {
-        case P1_LOG_ERROR:      pre = "error";      break;
-        case P1_LOG_WARNING:    pre = "warning";    break;
-        case P1_LOG_INFO:       pre = "info";       break;
-        case P1_LOG_DEBUG:      pre = "debug";      break;
-        default: pre = "error"; break;
+        case P1_LOG_ERROR:      out[0] = 'E';   break;
+        case P1_LOG_WARNING:    out[0] = 'W';   break;
+        case P1_LOG_INFO:       out[0] = 'I';   break;
+        case P1_LOG_DEBUG:      out[0] = 'D';   break;
+        default: break;
     }
-    fprintf(stderr, "[%s] ", pre);
-    vfprintf(stderr, fmt, args);
+
+    int ret = vsnprintf(out + 3, sizeof(out) - 4, fmt, args);
+    if (ret < 0)
+        return;
+    ret += 3;
+
+    const size_t max_length = sizeof(out) - 2;
+    if (ret > max_length)
+        ret = max_length;
+    out[ret++] = '\n';
+
+    fwrite(out, ret, 1, stderr);
 }
 
 // The control thread main loop.
@@ -380,9 +390,9 @@ static void p1_ctrl_comm(P1ContextFull *ctxf)
     do {
         i_ret = poll(&fd, 1, -1);
         if (i_ret == 0)
-            p1_log(ctxobj, P1_LOG_WARNING, "Control thread poll interrupted\n");
+            p1_log(ctxobj, P1_LOG_WARNING, "Control thread poll interrupted");
         else if (i_ret < 0)
-            p1_log(ctxobj, P1_LOG_ERROR, "Control thread failed to poll: %s\n", strerror(errno));
+            p1_log(ctxobj, P1_LOG_ERROR, "Control thread failed to poll: %s", strerror(errno));
     } while (i_ret == 0);
 
     do {
@@ -390,7 +400,7 @@ static void p1_ctrl_comm(P1ContextFull *ctxf)
         s_ret = read(fd.fd, &notification, size);
         if (s_ret != size) {
             const char *reason = (s_ret < 0) ? strerror(errno) : "Invalid read";
-            p1_log(ctxobj, P1_LOG_ERROR, "Control thread failed to read notification: %s\n", reason);
+            p1_log(ctxobj, P1_LOG_ERROR, "Control thread failed to read notification: %s", reason);
             break;
         }
 
@@ -398,14 +408,14 @@ static void p1_ctrl_comm(P1ContextFull *ctxf)
         s_ret = write(ctxf->user_pipe[1], &notification, size);
         if (s_ret != size) {
             const char *reason = (s_ret < 0) ? strerror(errno) : "Invalid write";
-            p1_log(ctxobj, P1_LOG_ERROR, "Control thread failed to write notification: %s\n", reason);
+            p1_log(ctxobj, P1_LOG_ERROR, "Control thread failed to write notification: %s", reason);
             break;
         }
 
         // Flush other notifications.
         i_ret = poll(&fd, 1, 0);
         if (i_ret < 0) {
-            p1_log(ctxobj, P1_LOG_ERROR, "Control thread failed to poll: %s\n", strerror(errno));
+            p1_log(ctxobj, P1_LOG_ERROR, "Control thread failed to poll: %s", strerror(errno));
             break;
         }
     } while (i_ret != 0);
@@ -647,5 +657,5 @@ static void p1_ctrl_log_notification(P1Notification *notification)
         case P1_OTYPE_AUDIO_SOURCE: obj_descr = "audio source"; break;
     }
 
-    p1_log(obj, P1_LOG_INFO, "%s %p is %s\n", obj_descr, obj, action);
+    p1_log(obj, P1_LOG_INFO, "%s %p is %s", obj_descr, obj, action);
 }

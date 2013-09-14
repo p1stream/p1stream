@@ -73,7 +73,7 @@ static void p1_display_video_source_start(P1Plugin *pel)
 
     dvsrc->dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
     if (dvsrc->dispatch == NULL) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to create dispatch queue\n");
+        p1_log(obj, P1_LOG_ERROR, "Failed to create dispatch queue");
         p1_display_video_source_halt(dvsrc);
     }
 
@@ -87,13 +87,13 @@ static void p1_display_video_source_start(P1Plugin *pel)
             p1_display_video_source_callback(dvsrc, status, frameSurface);
         });
     if (dvsrc->display_stream == NULL) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to create display stream\n");
+        p1_log(obj, P1_LOG_ERROR, "Failed to create display stream");
         p1_display_video_source_halt(dvsrc);
     }
 
     ret = CGDisplayStreamStart(dvsrc->display_stream);
     if (ret != kCGErrorSuccess) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to start display stream: Core Graphics error %d\n", ret);
+        p1_log(obj, P1_LOG_ERROR, "Failed to start display stream: Core Graphics error %d", ret);
         p1_display_video_source_halt(dvsrc);
     }
 
@@ -109,7 +109,7 @@ static void p1_display_video_source_stop(P1Plugin *pel)
 
     CGError ret = CGDisplayStreamStop(dvsrc->display_stream);
     if (ret != kCGErrorSuccess) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to stop display stream: Core Graphics error %d\n", ret);
+        p1_log(obj, P1_LOG_ERROR, "Failed to stop display stream: Core Graphics error %d", ret);
         p1_display_video_source_halt(dvsrc);
     }
 }
@@ -172,7 +172,7 @@ static void p1_display_video_source_callback(
             p1_object_set_state(obj, P1_STATE_IDLE);
         }
         else {
-            p1_log(obj, P1_LOG_ERROR, "Display stream stopped itself\n");
+            p1_log(obj, P1_LOG_ERROR, "Display stream stopped itself");
             p1_display_video_source_halt(dvsrc);
         }
     }

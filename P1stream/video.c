@@ -297,9 +297,9 @@ static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *v
     ret = x264_param_parse(&videof->params, key, val);
     if (ret != 0) {
         if (ret == X264_PARAM_BAD_NAME)
-            p1_log(videoobj, P1_LOG_ERROR, "Invalid x264 parameter name '%s'\n", key);
+            p1_log(videoobj, P1_LOG_ERROR, "Invalid x264 parameter name '%s'", key);
         else if (ret == X264_PARAM_BAD_VALUE)
-            p1_log(videoobj, P1_LOG_ERROR, "Invalid value for x264 parameter '%s'\n", key);
+            p1_log(videoobj, P1_LOG_ERROR, "Invalid value for x264 parameter '%s'", key);
         return false;
     }
 
@@ -309,6 +309,16 @@ static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *v
 static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args)
 {
     P1Object *videobj = (P1Object *) data;
+
+    // Strip the newline.
+    size_t i = strlen(fmt) - 1;
+    char fmt2[i + 1];
+    if (fmt[i] == '\n') {
+        memcpy(fmt2, fmt, i);
+        fmt2[i] = '\0';
+        fmt = fmt2;
+    }
+
     p1_logv(videobj, (P1LogLevel) level, fmt, args);
 }
 

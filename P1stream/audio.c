@@ -86,9 +86,9 @@ fail_enc_buf:
 
 fail_mix_buf:
     if (err != AACENC_OK)
-        p1_log(audioobj, P1_LOG_ERROR, "Failed to start audio mixer: FDK AAC error %d\n", err);
+        p1_log(audioobj, P1_LOG_ERROR, "Failed to start audio mixer: FDK AAC error %d", err);
     else
-        p1_log(audioobj, P1_LOG_ERROR, "Failed to start audio mixer: Buffer allocation failed\n");
+        p1_log(audioobj, P1_LOG_ERROR, "Failed to start audio mixer: Buffer allocation failed");
     p1_object_set_state(audioobj, P1_STATE_HALTED);
 }
 
@@ -108,7 +108,7 @@ static void p1_audio_kill_session(P1AudioFull *audiof)
 
     err = aacEncClose(&audiof->aac);
     if (err != AACENC_OK)
-        p1_log(audioobj, P1_LOG_ERROR, "Failed to stop audio mixer: FDK AAC error %d\n", err);
+        p1_log(audioobj, P1_LOG_ERROR, "Failed to stop audio mixer: FDK AAC error %d", err);
 
     free(audiof->mix);
     free(audiof->enc_in);
@@ -168,7 +168,7 @@ void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t
     } while (out_size > 0);
 
     if (samples)
-        p1_log(audioobj, P1_LOG_WARNING, "Audio mix buffer full, dropped %zd samples!\n", samples);
+        p1_log(audioobj, P1_LOG_WARNING, "Audio mix buffer full, dropped %zd samples!", samples);
 
 end:
     p1_object_unlock(audioobj);
@@ -270,7 +270,7 @@ static ssize_t p1_audio_read(P1AudioFull *audiof)
     while (in_args.numInSamples && out_args.numInSamples && out_desc.bufSizes[0] > out_min_size) {
         err = aacEncEncode(audiof->aac, &in_desc, &out_desc, &in_args, &out_args);
         if (err != AACENC_OK) {
-            p1_log(audioobj, P1_LOG_ERROR, "Audio encode failure: FDK AAC error %d\n", err);
+            p1_log(audioobj, P1_LOG_ERROR, "Audio encode failure: FDK AAC error %d", err);
             p1_object_set_state(audioobj, P1_STATE_HALTING);
             p1_audio_kill_session(audiof);
             p1_object_set_state(audioobj, P1_STATE_HALTED);
