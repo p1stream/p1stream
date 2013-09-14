@@ -30,7 +30,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F644CB9417B6291D007934C3"
                BuildableName = "P1stream"
-               BlueprintName = "P1stream"
+               BlueprintName = "P1stream-cli"
                ReferencedContainer = "container:P1stream.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -48,7 +48,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F644CB9417B6291D007934C3"
             BuildableName = "P1stream"
-            BlueprintName = "P1stream"
+            BlueprintName = "P1stream-cli"
             ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -67,7 +67,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F644CB9417B6291D007934C3"
             BuildableName = "P1stream"
-            BlueprintName = "P1stream"
+            BlueprintName = "P1stream-cli"
             ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -91,7 +91,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F644CB9417B6291D007934C3"
             BuildableName = "P1stream"
-            BlueprintName = "P1stream"
+            BlueprintName = "P1stream-cli"
             ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
