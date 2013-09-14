@@ -208,6 +208,7 @@ bool p1_start(P1Context *ctx)
         int ret = pthread_create(&ctxf->ctrl_thread, NULL, p1_ctrl_main, ctx);
         if (ret != 0) {
             p1_log(ctxobj, P1_LOG_ERROR, "Failed to start control thread: %s\n", strerror(ret));
+            p1_object_set_state(ctxobj, P1_STATE_IDLE);
             result = false;
         }
     }
