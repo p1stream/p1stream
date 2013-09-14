@@ -9,7 +9,7 @@ static const char *default_url = "rtmp://localhost/app/test";
 static P1Object *current_conn = NULL;
 
 static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, uint32_t body_size);
-static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time);
+static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time);
 static void *p1_conn_main(void *data);
 static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf);
 static void p1_conn_log_callback(int level, const char *fmt, va_list);
@@ -76,7 +76,7 @@ void p1_conn_stop(P1ConnectionFull *connf)
 }
 
 // Send video configuration.
-void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
+bool p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
 {
     P1Object *connobj = (P1Object *) connf;
     int i;
@@ -97,7 +97,7 @@ void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
     }
     if (nal_sps == NULL || nal_pps == NULL) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to build video config packet");
-        return;
+        return false;
     }
 
     int sps_size = nal_sps->i_payload-4;
@@ -105,7 +105,7 @@ void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
     uint32_t tag_size = 16 + sps_size + pps_size;
 
     RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_VIDEO, tag_size);
-    if (pkt == NULL) return;
+    if (pkt == NULL) return false;
     char * const body = pkt->m_body;
 
     body[0] = 0x10 | 0x07; // keyframe, AVC
@@ -131,7 +131,7 @@ void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
     *(uint16_t *) (body+i) = htons(pps_size);
     memcpy(body+i+2, nal_pps->p_payload+4, pps_size);
 
-    p1_conn_submit_packet(connf, pkt, 0);
+    return p1_conn_submit_packet(connf, pkt, 0);
 }
 
 // Send video data.
@@ -215,17 +215,19 @@ static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, uin
 }
 
 // Submit a packet to the queue.
-static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time)
+static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time)
 {
     P1Object *connobj = (P1Object *) connf;
     P1Context *ctx = connobj->ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
+    bool result = true;
     int ret;
 
     p1_object_lock(connobj);
 
     if (connobj->state != P1_STATE_RUNNING) {
         free(pkt);
+        result = false;
         goto end;
     }
 
@@ -239,6 +241,7 @@ static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     if (q->length == UINT8_MAX) {
         free(pkt);
         p1_log(connobj, P1_LOG_WARNING, "Packet queue full, dropping packet!");
+        result = false;
         goto end;
     }
 
@@ -267,6 +270,8 @@ static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
 
 end:
     p1_object_unlock(connobj);
+
+    return result;
 }
 
 // The main loop of the streaming thread.

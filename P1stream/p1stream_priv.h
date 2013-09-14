@@ -106,7 +106,7 @@ bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 void p1_conn_destroy(P1ConnectionFull *connf);
 void p1_conn_start(P1ConnectionFull *connf);
 void p1_conn_stop(P1ConnectionFull *connf);
-void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len);
+bool p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len);
 void p1_conn_video(P1ConnectionFull *connf, x264_nal_t *nals, int len, x264_picture_t *pic);
 void p1_conn_audio_config(P1ConnectionFull *connf);
 void p1_conn_audio(P1ConnectionFull *connf, int64_t time, void *buf, size_t len);

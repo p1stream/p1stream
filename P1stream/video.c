@@ -1,13 +1,14 @@
 #include "p1stream_priv.h"
 
 #include <string.h>
-#include <assert.h>
 
+static void p1_video_kill_session(P1VideoFull *videof);
 static bool p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);
 static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args);
 static GLuint p1_build_shader(P1Object *videoobj, GLuint type, const char *source);
-static void p1_video_build_program(P1Object *videoobj, GLuint program, const char *vertexShader, const char *fragmentShader);
+static bool p1_video_build_program(P1Object *videoobj, GLuint program, const char *vertexShader, const char *fragmentShader);
+static void p1_video_cl_notify_callback(const char *errstr, const void *private_info, size_t cb, void *user_data);
 
 static const char *simple_vertex_shader =
     "#version 150\n"
@@ -119,7 +120,9 @@ void p1_video_start(P1VideoFull *videof)
     x264_param_t *params = &videof->params;
     CGLError cgl_err;
     cl_int cl_err;
-    int i_err;
+    GLenum gl_err;
+    int i_ret;
+    bool b_ret;
     size_t size;
 
     CGLPixelFormatObj pixel_format;
@@ -129,28 +132,47 @@ void p1_video_start(P1VideoFull *videof)
     };
     GLint npix;
     cgl_err = CGLChoosePixelFormat(attribs, &pixel_format, &npix);
-    assert(cgl_err == kCGLNoError);
+    if (cgl_err != kCGLNoError) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to choose GL pixel format: Core Graphics error %d", cgl_err);
+        goto fail;
+    }
 
     cgl_err = CGLCreateContext(pixel_format, NULL, &videof->gl);
     CGLReleasePixelFormat(pixel_format);
-    assert(cgl_err == kCGLNoError);
+    if (cgl_err != kCGLNoError) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create GL context: Core Graphics error %d", cgl_err);
+        goto fail;
+    }
 
-    CGLSetCurrentContext(videof->gl);
+    cgl_err = CGLSetCurrentContext(videof->gl);
+    if (cgl_err != kCGLNoError) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to activate GL context: Core Graphics error %d", cgl_err);
+        goto fail_gl;
+    }
 
     CGLShareGroupObj share_group = CGLGetShareGroup(videof->gl);
     cl_context_properties props[] = {
         CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE, (cl_context_properties) share_group,
         0
     };
-    videof->cl = clCreateContext(props, 0, NULL, clLogMessagesToStdoutAPPLE, NULL, NULL);
-    assert(videof->cl != NULL);
+    videof->cl = clCreateContext(props, 0, NULL, p1_video_cl_notify_callback, videoobj, &cl_err);
+    if (cl_err != CL_SUCCESS) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL context: OpenCL error %d", cl_err);
+        goto fail_gl;
+    }
 
     cl_device_id device_id;
     cl_err = clGetContextInfo(videof->cl, CL_CONTEXT_DEVICES, sizeof(cl_device_id), &device_id, &size);
-    assert(cl_err == CL_SUCCESS);
-    assert(size != 0);
-    videof->clq = clCreateCommandQueue(videof->cl, device_id, 0, NULL);
-    assert(videof->clq != NULL);
+    if (cl_err != CL_SUCCESS || size == 0) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to get CL device info: OpenCL error %d", cl_err);
+        goto fail_cl;
+    }
+
+    videof->clq = clCreateCommandQueue(videof->cl, device_id, 0, &cl_err);
+    if (cl_err != CL_SUCCESS) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL command queue: OpenCL error %d", cl_err);
+        goto fail_cl;
+    }
 
     params->pf_log = p1_video_encoder_log_callback;
     params->p_log_private = videoobj;
@@ -171,45 +193,78 @@ void p1_video_start(P1VideoFull *videof)
     params->i_fps_den = vclock->fps_den;
 
     videof->enc = x264_encoder_open(params);
-    assert(videof->enc != NULL);
+    if (videof->enc == NULL) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to open x264 encoder");
+        goto fail_clq;
+    }
 
-    i_err = x264_picture_alloc(&videof->enc_pic, X264_CSP_I420, output_width, output_height);
-    assert(i_err == 0);
+    i_ret = x264_picture_alloc(&videof->enc_pic, X264_CSP_I420, output_width, output_height);
+    if (i_ret < 0) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to alloc x264 picture buffer");
+        goto fail_enc;
+    }
 
     glGenVertexArrays(1, &videof->vao);
     glGenBuffers(1, &videof->vbo);
     glGenRenderbuffers(1, &videof->rbo);
     glGenFramebuffers(1, &videof->fbo);
-    assert(glGetError() == GL_NO_ERROR);
+    videof->program = glCreateProgram();
+    if ((gl_err = glGetError()) != GL_NO_ERROR) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create GL objects: OpenGL error %d", gl_err);
+        goto fail_enc_pic;
+    }
 
     glBindRenderbuffer(GL_RENDERBUFFER, videof->fbo);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, output_width, output_height);
-    assert(glGetError() == GL_NO_ERROR);
+    if ((gl_err = glGetError()) != GL_NO_ERROR) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create GL render buffer: OpenGL error %d", gl_err);
+        goto fail_enc_pic;
+    }
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, videof->fbo);
     glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, videof->rbo);
-    assert(glGetError() == GL_NO_ERROR);
+    if ((gl_err = glGetError()) != GL_NO_ERROR) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create GL frame buffer: OpenGL error %d", gl_err);
+        goto fail_enc_pic;
+    }
 
-    videof->program = glCreateProgram();
     glBindAttribLocation(videof->program, 0, "a_Position");
     glBindAttribLocation(videof->program, 1, "a_TexCoords");
     glBindFragDataLocation(videof->program, 0, "o_FragColor");
-    p1_video_build_program(videoobj, videof->program, simple_vertex_shader, simple_fragment_shader);
+    b_ret = p1_video_build_program(videoobj, videof->program, simple_vertex_shader, simple_fragment_shader);
+    if (!b_ret)
+        goto fail_enc_pic;
     videof->tex_u = glGetUniformLocation(videof->program, "u_Texture");
 
-    videof->rbo_mem = clCreateFromGLRenderbuffer(videof->cl, CL_MEM_READ_ONLY, videof->rbo, NULL);
-    assert(videof->rbo_mem != NULL);
+    videof->rbo_mem = clCreateFromGLRenderbuffer(videof->cl, CL_MEM_READ_ONLY, videof->rbo, &cl_err);
+    if (cl_err != CL_SUCCESS) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL input buffer: OpenCL error %d", cl_err);
+        goto fail_enc_pic;
+    }
 
-    videof->out_mem = clCreateBuffer(videof->cl, CL_MEM_WRITE_ONLY, output_yuv_size, NULL, NULL);
-    assert(videof->out_mem != NULL);
+    videof->out_mem = clCreateBuffer(videof->cl, CL_MEM_WRITE_ONLY, output_yuv_size, NULL, &cl_err);
+    if (cl_err != CL_SUCCESS) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL output buffer: OpenCL error %d", cl_err);
+        goto fail_rbo_mem;
+    }
 
-    cl_program yuv_program = clCreateProgramWithSource(videof->cl, 1, &yuv_kernel_source, NULL, NULL);
-    assert(yuv_program != NULL);
+    cl_program yuv_program = clCreateProgramWithSource(videof->cl, 1, &yuv_kernel_source, NULL, &cl_err);
+    if (cl_err != CL_SUCCESS) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL program: OpenCL error %d", cl_err);
+        goto fail_out_mem;
+    }
     cl_err = clBuildProgram(yuv_program, 0, NULL, NULL, NULL, NULL);
-    assert(cl_err == CL_SUCCESS);
-    videof->yuv_kernel = clCreateKernel(yuv_program, "yuv", NULL);
-    assert(videof->yuv_kernel != NULL);
+    if (cl_err != CL_SUCCESS) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to build CL program: OpenCL error %d", cl_err);
+        clReleaseProgram(yuv_program);
+        goto fail_out_mem;
+    }
+    videof->yuv_kernel = clCreateKernel(yuv_program, "yuv", &cl_err);
     clReleaseProgram(yuv_program);
+    if (cl_err != CL_SUCCESS) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL kernel: OpenCL error %d", cl_err);
+        goto fail_out_mem;
+    }
 
     /* State init. This is only up here because we can. */
     glViewport(0, 0, output_width, output_height);
@@ -223,28 +278,101 @@ void p1_video_start(P1VideoFull *videof)
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, vbo_stride, vbo_tex_coord_offset);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
-    assert(glGetError() == GL_NO_ERROR);
+    if ((gl_err = glGetError()) != GL_NO_ERROR) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to initialize GL state: OpenGL error %d", gl_err);
+        goto fail_yuv_kernel;
+    }
 
     cl_err = clSetKernelArg(videof->yuv_kernel, 0, sizeof(cl_mem), &videof->rbo_mem);
-    assert(cl_err == CL_SUCCESS);
+    if (cl_err != CL_SUCCESS)
+        goto fail_kernel_arg;
     cl_err = clSetKernelArg(videof->yuv_kernel, 1, sizeof(cl_mem), &videof->out_mem);
-    assert(cl_err == CL_SUCCESS);
+    if (cl_err != CL_SUCCESS)
+        goto fail_kernel_arg;
 
     p1_object_set_state(videoobj, P1_STATE_RUNNING);
+
+    return;
+
+fail_kernel_arg:
+    p1_log(videoobj, P1_LOG_ERROR, "Failed to set CL kernel arg: OpenCL error %d", cl_err);
+
+fail_yuv_kernel:
+    cl_err = clReleaseKernel(videof->yuv_kernel);
+    if (cl_err != CL_SUCCESS)
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL kernel: OpenCL error %d", cl_err);
+
+fail_out_mem:
+    cl_err = clReleaseMemObject(videof->out_mem);
+    if (cl_err != CL_SUCCESS)
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL output buffer: OpenCL error %d", cl_err);
+
+fail_rbo_mem:
+    cl_err = clReleaseMemObject(videof->rbo_mem);
+    if (cl_err != CL_SUCCESS)
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL input buffer: OpenCL error %d", cl_err);
+
+fail_enc_pic:
+    x264_picture_clean(&videof->enc_pic);
+
+fail_enc:
+    x264_encoder_close(videof->enc);
+
+fail_clq:
+    cl_err = clReleaseCommandQueue(videof->clq);
+    if (cl_err != CL_SUCCESS)
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL command queue: OpenCL error %d", cl_err);
+
+fail_cl:
+    cl_err = clReleaseContext(videof->cl);
+    if (cl_err != CL_SUCCESS)
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL context: OpenCL error %d", cl_err);
+
+fail_gl:
+    CGLReleaseContext(videof->gl);
+
+fail:
+    p1_object_set_state(videoobj, P1_STATE_HALTED);
 }
 
 void p1_video_stop(P1VideoFull *videof)
 {
     P1Object *videoobj = (P1Object *) videof;
 
-    clReleaseKernel(videof->yuv_kernel);
-    clReleaseMemObject(videof->out_mem);
-    clReleaseMemObject(videof->rbo_mem);
-    clReleaseCommandQueue(videof->clq);
-    clReleaseContext(videof->cl);
-    CGLReleaseContext(videof->gl);
-
+    p1_object_set_state(videoobj, P1_STATE_STOPPING);
+    p1_video_kill_session(videof);
     p1_object_set_state(videoobj, P1_STATE_IDLE);
+}
+
+static void p1_video_kill_session(P1VideoFull *videof)
+{
+    P1Object *videoobj = (P1Object *) videof;
+    cl_int cl_err;
+
+    cl_err = clReleaseKernel(videof->yuv_kernel);
+    if (cl_err != CL_SUCCESS)
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL kernel: OpenCL error %d", cl_err);
+
+    cl_err = clReleaseMemObject(videof->out_mem);
+    if (cl_err != CL_SUCCESS)
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL output buffer: OpenCL error %d", cl_err);
+
+    cl_err = clReleaseMemObject(videof->rbo_mem);
+    if (cl_err != CL_SUCCESS)
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL input buffer: OpenCL error %d", cl_err);
+
+    x264_picture_clean(&videof->enc_pic);
+    x264_encoder_close(videof->enc);
+
+    cl_err = clReleaseCommandQueue(videof->clq);
+    if (cl_err != CL_SUCCESS)
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL command queue: OpenCL error %d", cl_err);
+
+    cl_err = clReleaseContext(videof->cl);
+    if (cl_err != CL_SUCCESS)
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL context: OpenCL error %d", cl_err);
+
+    CGLReleaseContext(videof->gl);
 }
 
 static bool p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
@@ -332,10 +460,11 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     P1ConnectionFull *connf = (P1ConnectionFull *) ctx->conn;
     P1ListNode *head;
     P1ListNode *node;
+    GLenum gl_err;
     cl_int cl_err;
+    int i_ret;
     x264_nal_t *nals;
     int len;
-    int ret;
 
     p1_object_lock(videoobj);
 
@@ -373,33 +502,55 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     }
 
     glFinish();
-    assert(glGetError() == GL_NO_ERROR);
+    if ((gl_err = glGetError()) != GL_NO_ERROR) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to render frame: OpenGL error %d", gl_err);
+        goto fail;
+    }
 
     cl_err = clEnqueueAcquireGLObjects(videof->clq, 1, &videof->rbo_mem, 0, NULL, NULL);
-    assert(cl_err == CL_SUCCESS);
+    if (cl_err != CL_SUCCESS) goto fail_cl;
     cl_err = clEnqueueNDRangeKernel(videof->clq, videof->yuv_kernel, 2, NULL, yuv_work_size, NULL, 0, NULL, NULL);
-    assert(cl_err == CL_SUCCESS);
+    if (cl_err != CL_SUCCESS) goto fail_cl;
     cl_err = clEnqueueReleaseGLObjects(videof->clq, 1, &videof->rbo_mem, 0, NULL, NULL);
-    assert(cl_err == CL_SUCCESS);
+    if (cl_err != CL_SUCCESS) goto fail_cl;
     cl_err = clEnqueueReadBuffer(videof->clq, videof->out_mem, CL_FALSE, 0, output_yuv_size, videof->enc_pic.img.plane[0], 0, NULL, NULL);
-    assert(cl_err == CL_SUCCESS);
+    if (cl_err != CL_SUCCESS) goto fail_cl;
     cl_err = clFinish(videof->clq);
-    assert(cl_err == CL_SUCCESS);
+    if (cl_err != CL_SUCCESS) goto fail_cl;
 
     if (!videof->sent_config) {
         videof->sent_config = true;
-        ret = x264_encoder_headers(videof->enc, &nals, &len);
-        assert(ret >= 0);
-        p1_conn_video_config(connf, nals, len);
+        i_ret = x264_encoder_headers(videof->enc, &nals, &len);
+        if (i_ret < 0) {
+            p1_log(videoobj, P1_LOG_ERROR, "Failed to get H.264 headers");
+            goto fail;
+        }
+        if (!p1_conn_video_config(connf, nals, len))
+            goto fail;
     }
 
     x264_picture_t out_pic;
     videof->enc_pic.i_dts = time;
     videof->enc_pic.i_pts = time;
-    ret = x264_encoder_encode(videof->enc, &nals, &len, &videof->enc_pic, &out_pic);
-    assert(ret >= 0);
+    i_ret = x264_encoder_encode(videof->enc, &nals, &len, &videof->enc_pic, &out_pic);
+    if (i_ret < 0) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to H.264 encode frame");
+        goto fail;
+    }
     if (len)
         p1_conn_video(connf, nals, len, &out_pic);
+
+    p1_object_unlock(videoobj);
+
+    return;
+
+fail_cl:
+    p1_log(videoobj, P1_LOG_ERROR, "Failure during colorspace conversion: OpenCL error %d", cl_err);
+
+fail:
+    p1_object_set_state(videoobj, P1_STATE_HALTING);
+    p1_video_kill_session(videof);
+    p1_object_set_state(videoobj, P1_STATE_HALTED);
 
     p1_object_unlock(videoobj);
 }
@@ -466,16 +617,29 @@ static GLuint p1_build_shader(P1Object *videoobj, GLuint type, const char *sourc
 
     GLint success = GL_FALSE;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    assert(success == GL_TRUE);
-    assert(glGetError() == GL_NO_ERROR);
+
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to build shader: OpenGL error %d", err);
+        return 0;
+    }
+    if (success != GL_TRUE) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to build shader");
+        return 0;
+    }
 
     return shader;
 }
 
-static void p1_video_build_program(P1Object *videoobj, GLuint program, const char *vertex_source, const char *fragment_source)
+static bool p1_video_build_program(P1Object *videoobj, GLuint program, const char *vertex_source, const char *fragment_source)
 {
     GLuint vertex_shader = p1_build_shader(videoobj, GL_VERTEX_SHADER, vertex_source);
+    if (vertex_shader == 0)
+        return false;
+
     GLuint fragment_shader = p1_build_shader(videoobj, GL_FRAGMENT_SHADER, fragment_source);
+    if (fragment_shader == 0)
+        return false;
 
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
@@ -499,6 +663,22 @@ static void p1_video_build_program(P1Object *videoobj, GLuint program, const cha
 
     GLint success = GL_FALSE;
     glGetProgramiv(program, GL_LINK_STATUS, &success);
-    assert(success == GL_TRUE);
-    assert(glGetError() == GL_NO_ERROR);
+
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to link shaders: OpenGL error %d", err);
+        return false;
+    }
+    if (success != GL_TRUE) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to link shaders");
+        return false;
+    }
+
+    return true;
+}
+
+static void p1_video_cl_notify_callback(const char *errstr, const void *private_info, size_t cb, void *user_data)
+{
+    P1Object *videoobj = (P1Object *) user_data;
+    p1_log(videoobj, P1_LOG_INFO, "%s", errstr);
 }
