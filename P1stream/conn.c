@@ -5,10 +5,15 @@
 
 static const char *default_url = "rtmp://localhost/app/test";
 
+// This is used for RTMP logging.
+static P1Object *current_conn = NULL;
+
 static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, uint32_t body_size);
 static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time);
 static void *p1_conn_main(void *data);
 static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf);
+static void p1_conn_log_callback(int level, const char *fmt, va_list);
+
 
 bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 {
@@ -272,6 +277,15 @@ static void *p1_conn_main(void *data)
     RTMP r;
     int ret;
 
+    if (current_conn == NULL) {
+        current_conn = connobj;
+        RTMP_LogSetLevel(RTMP_LOGINFO);
+        RTMP_LogSetCallback(p1_conn_log_callback);
+    }
+    else {
+        p1_log(connobj, P1_LOG_WARNING, "Cannot log for multiple connections");
+    }
+
     RTMP_Init(&r);
 
     ret = RTMP_SetupURL(&r, connf->url);
@@ -305,12 +319,14 @@ static void *p1_conn_main(void *data)
 
         ret = pthread_cond_wait(&connf->cond, &connobj->lock);
         if (ret != 0) {
-            p1_log(connobj, P1_LOG_ERROR, "Failed to wait on condition: %s\n", strerror(ret));
+            p1_log(connobj, P1_LOG_ERROR, "Failed to wait on condition: %s", strerror(ret));
             goto fail_locked;
         }
     } while (connobj->state == P1_STATE_RUNNING);
 
     RTMP_Close(&r);
+    if (current_conn == connobj)
+        current_conn = NULL;
 
     p1_object_set_state(connobj, P1_STATE_IDLE);
 
@@ -324,6 +340,8 @@ fail:
 fail_locked:
     p1_object_set_state(connobj, P1_STATE_HALTING);
     RTMP_Close(&r);
+    if (current_conn == connobj)
+        current_conn = NULL;
     p1_object_set_state(connobj, P1_STATE_HALTED);
 
     p1_object_unlock(connobj);
@@ -398,4 +416,18 @@ static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
     }
 
     return result;
+}
+
+static void p1_conn_log_callback(int level, const char *fmt, va_list args)
+{
+    P1LogLevel p1_level;
+    switch (level) {
+        case RTMP_LOGCRIT:      p1_level = P1_LOG_ERROR;    break;
+        case RTMP_LOGERROR:     p1_level = P1_LOG_ERROR;    break;
+        case RTMP_LOGWARNING:   p1_level = P1_LOG_WARNING;  break;
+        case RTMP_LOGINFO:      p1_level = P1_LOG_INFO;     break;
+        default:                p1_level = P1_LOG_DEBUG;    break;
+    }
+
+    p1_logv(current_conn, p1_level, fmt, args);
 }

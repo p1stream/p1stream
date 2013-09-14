@@ -257,7 +257,7 @@
 					../x264/x264,
 					../aac/aac/libSYS/include,
 					../aac/aac/libAACenc/include,
-					../rtmpdump/rtmpdump/librtmp,
+					../rtmpdump/rtmpdump,
 				);
 			};
 			name = Debug;
@@ -280,7 +280,7 @@
 					../x264/x264,
 					../aac/aac/libSYS/include,
 					../aac/aac/libAACenc/include,
-					../rtmpdump/rtmpdump/librtmp,
+					../rtmpdump/rtmpdump,
 				);
 			};
 			name = Release;

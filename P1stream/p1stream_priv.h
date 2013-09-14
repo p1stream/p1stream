@@ -7,7 +7,8 @@
 #include <OpenCL/opencl.h>
 #include <aacenc_lib.h>
 #include <x264.h>
-#include <rtmp.h>
+#include <librtmp/rtmp.h>
+#include <librtmp/log.h>
 
 typedef struct _P1PacketQueue P1PacketQueue;
 typedef struct _P1VideoFull P1VideoFull;
