@@ -2,14 +2,13 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 static const char *default_url = "rtmp://localhost/app/test";
 
-static RTMPPacket *p1_conn_new_packet(uint8_t type, uint32_t body_size);
+static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, uint32_t body_size);
 static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time);
 static void *p1_conn_main(void *data);
-static void p1_conn_flush(RTMP *r, P1ConnectionFull *connf);
+static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf);
 
 bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 {
@@ -18,9 +17,9 @@ bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
     if (!p1_object_init(connobj, P1_OTYPE_CONNECTION))
         goto fail_object;
 
-    int res = pthread_cond_init(&connf->cond, NULL);
-    if (res != 0) {
-        p1_log(connobj, P1_LOG_ERROR, "Failed to initialize condition variable: %s\n", strerror(res));
+    int ret = pthread_cond_init(&connf->cond, NULL);
+    if (ret != 0) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to initialize condition variable: %s\n", strerror(ret));
         goto fail_cond;
     }
 
@@ -40,9 +39,9 @@ void p1_conn_destroy(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
 
-    int res = pthread_cond_destroy(&connf->cond);
-    if (res != 0)
-        p1_log(connobj, P1_LOG_ERROR, "Failed to destroy condition variable: %s\n", strerror(res));
+    int ret = pthread_cond_destroy(&connf->cond);
+    if (ret != 0)
+        p1_log(connobj, P1_LOG_ERROR, "Failed to destroy condition variable: %s\n", strerror(ret));
 
     p1_object_destroy(connobj);
 }
@@ -53,8 +52,11 @@ void p1_conn_start(P1ConnectionFull *connf)
 
     p1_object_set_state(connobj, P1_STATE_STARTING);
 
-    int res = pthread_create(&connf->thread, NULL, p1_conn_main, connf);
-    assert(res == 0);
+    int ret = pthread_create(&connf->thread, NULL, p1_conn_main, connf);
+    if (ret != 0) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to start connection thread: %s\n", strerror(ret));
+        p1_object_set_state(connobj, P1_STATE_HALTED);
+    }
 }
 
 void p1_conn_stop(P1ConnectionFull *connf)
@@ -63,13 +65,15 @@ void p1_conn_stop(P1ConnectionFull *connf)
 
     p1_object_set_state(connobj, P1_STATE_STOPPING);
 
-    int res = pthread_cond_signal(&connf->cond);
-    assert(res == 0);
+    int ret = pthread_cond_signal(&connf->cond);
+    if (ret != 0)
+        p1_log(connobj, P1_LOG_ERROR, "Failed to signal connection thread: %s\n", strerror(ret));
 }
 
 // Send video configuration.
 void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
 {
+    P1Object *connobj = (P1Object *) connf;
     int i;
 
     x264_nal_t *nal_sps = NULL, *nal_pps = NULL;
@@ -86,13 +90,17 @@ void p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
                 break;
         }
     }
-    assert(nal_sps != NULL && nal_pps != NULL);
+    if (nal_sps == NULL || nal_pps == NULL) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to build video config packet\n");
+        return;
+    }
 
     int sps_size = nal_sps->i_payload-4;
     int pps_size = nal_pps->i_payload-4;
     uint32_t tag_size = 16 + sps_size + pps_size;
 
-    RTMPPacket *pkt = p1_conn_new_packet(RTMP_PACKET_TYPE_VIDEO, tag_size);
+    RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_VIDEO, tag_size);
+    if (pkt == NULL) return;
     char * const body = pkt->m_body;
 
     body[0] = 0x10 | 0x07; // keyframe, AVC
@@ -129,7 +137,8 @@ void p1_conn_video(P1ConnectionFull *connf, x264_nal_t *nals, int len, x264_pict
         size += nals[i].i_payload;
     const uint32_t tag_size = size + 5;
 
-    RTMPPacket *pkt = p1_conn_new_packet(RTMP_PACKET_TYPE_VIDEO, tag_size);
+    RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_VIDEO, tag_size);
+    if (pkt == NULL) return;
     char * const body = pkt->m_body;
 
     body[0] = (pic->b_keyframe ? 0x10 : 0x20) | 0x07; // keyframe/IDR, AVC
@@ -146,7 +155,8 @@ void p1_conn_audio_config(P1ConnectionFull *connf)
 {
     const uint32_t tag_size = 2 + 2;
 
-    RTMPPacket *pkt = p1_conn_new_packet(RTMP_PACKET_TYPE_AUDIO, tag_size);
+    RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_AUDIO, tag_size);
+    if (pkt == NULL) return;
     char * const body = pkt->m_body;
 
     body[0] = 0xa0 | 0x0c | 0x02 | 0x01; // AAC, 44.1kHz, 16-bit, Stereo
@@ -164,7 +174,8 @@ void p1_conn_audio(P1ConnectionFull *connf, int64_t mtime, void *buf, size_t len
 {
     const uint32_t tag_size = (uint32_t) (2 + len);
 
-    RTMPPacket *pkt = p1_conn_new_packet(RTMP_PACKET_TYPE_AUDIO, tag_size);
+    RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_AUDIO, tag_size);
+    if (pkt == NULL) return;
     char * const body = pkt->m_body;
 
     body[0] = 0xa0 | 0x0c | 0x02 | 0x01; // AAC, 44.1kHz, 16-bit, Stereo
@@ -177,13 +188,17 @@ void p1_conn_audio(P1ConnectionFull *connf, int64_t mtime, void *buf, size_t len
 }
 
 // Allocate a new packet and set header fields.
-static RTMPPacket *p1_conn_new_packet(uint8_t type, uint32_t body_size)
+static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, uint32_t body_size)
 {
+    P1Object *connobj = (P1Object *) connf;
     const size_t prelude_size = sizeof(RTMPPacket) + RTMP_MAX_HEADER_SIZE;
 
     // Allocate packet memory.
     RTMPPacket *pkt = calloc(1, prelude_size + body_size);
-    assert(pkt != NULL);
+    if (pkt == NULL) {
+        p1_log(connobj, P1_LOG_ERROR, "Packet allocation failed, dropping packet!\n");
+        return NULL;
+    }
 
     // Fill basic fields.
     pkt->m_packetType = type;
@@ -200,7 +215,7 @@ static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     P1Object *connobj = (P1Object *) connf;
     P1Context *ctx = connobj->ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
-    int res;
+    int ret;
 
     p1_object_lock(connobj);
 
@@ -241,8 +256,9 @@ static void p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     // Queue the packet.
     q->head[q->write++] = pkt;  // Deliberate overflow of q->write.
     q->length++;
-    res = pthread_cond_signal(&connf->cond);
-    assert(res == 0);
+    ret = pthread_cond_signal(&connf->cond);
+    if (ret != 0)
+        p1_log(connobj, P1_LOG_ERROR, "Failed to signal connection thread: %s\n", strerror(ret));
 
 end:
     p1_object_unlock(connobj);
@@ -254,20 +270,29 @@ static void *p1_conn_main(void *data)
     P1ConnectionFull *connf = (P1ConnectionFull *) data;
     P1Object *connobj = (P1Object *) data;
     RTMP r;
-    int res;
+    int ret;
 
     RTMP_Init(&r);
 
-    res = RTMP_SetupURL(&r, connf->url);
-    assert(res == TRUE);
+    ret = RTMP_SetupURL(&r, connf->url);
+    if (!ret) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to parse URL.\n");
+        goto fail;
+    }
 
     RTMP_EnableWrite(&r);
 
-    res = RTMP_Connect(&r, NULL);
-    assert(res == TRUE);
+    ret = RTMP_Connect(&r, NULL);
+    if (!ret) {
+        p1_log(connobj, P1_LOG_ERROR, "Connection failed.\n");
+        goto fail;
+    }
 
-    res = RTMP_ConnectStream(&r, 0);
-    assert(res == TRUE);
+    ret = RTMP_ConnectStream(&r, 0);
+    if (!ret) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to connect to stream.\n");
+        goto fail;
+    }
 
     p1_object_lock(connobj);
 
@@ -275,10 +300,14 @@ static void *p1_conn_main(void *data)
     p1_object_set_state(connobj, P1_STATE_RUNNING);
 
     do {
-        p1_conn_flush(&r, connf);
+        if (!p1_conn_flush(&r, connf))
+            goto fail_locked;
 
-        res = pthread_cond_wait(&connf->cond, &connobj->lock);
-        assert(res == 0);
+        ret = pthread_cond_wait(&connf->cond, &connobj->lock);
+        if (ret != 0) {
+            p1_log(connobj, P1_LOG_ERROR, "Failed to wait on condition: %s\n", strerror(ret));
+            goto fail_locked;
+        }
     } while (connobj->state == P1_STATE_RUNNING);
 
     RTMP_Close(&r);
@@ -288,16 +317,29 @@ static void *p1_conn_main(void *data)
     p1_object_unlock(connobj);
 
     return NULL;
+
+fail:
+    p1_object_lock(connobj);
+
+fail_locked:
+    p1_object_set_state(connobj, P1_STATE_HALTING);
+    RTMP_Close(&r);
+    p1_object_set_state(connobj, P1_STATE_HALTED);
+
+    p1_object_unlock(connobj);
+
+    return NULL;
 }
 
 // Flush as many queued packets as we can to the connection.
 // This is called with the stream lock held.
-static void p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
+static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
     P1PacketQueue *aq = &connf->audio_queue;
     P1PacketQueue *vq = &connf->video_queue;
-    int res;
+    int ret;
+    bool result = true;
 
     // We release the lock while writing, but that means another thread may
     // have signalled in the meantime. Thus we loop until exhausted.
@@ -333,7 +375,7 @@ static void p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
         // other threads queuing new packets.
 
         if (i == list)
-            return;
+            break;
 
         p1_object_unlock(connobj);
 
@@ -343,11 +385,17 @@ static void p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
 
             pkt->m_nInfoField2 = r->m_stream_id;
 
-            res = RTMP_SendPacket(r, pkt, FALSE);
+            ret = RTMP_SendPacket(r, pkt, FALSE);
             free(pkt);
-            assert(res == TRUE);
+            if (!ret) {
+                p1_log(connobj, P1_LOG_ERROR, "Failed to send packet.\n");
+                result = false;
+                break;
+            }
         }
 
         p1_object_lock(connobj);
     }
+
+    return result;
 }
