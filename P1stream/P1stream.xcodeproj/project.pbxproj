@@ -35,6 +35,15 @@
 		F682AC1117E4A79A007DC0CF /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F653422C17BFAF6600769680 /* AVFoundation.framework */; };
 		F682AC1217E4A79A007DC0CF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */; };
 		F682AC1817E4A87E007DC0CF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F682AC1617E4A875007DC0CF /* Foundation.framework */; };
+		F682AC2017E4C91C007DC0CF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F682AC1F17E4C91C007DC0CF /* Cocoa.framework */; };
+		F682AC2A17E4C91C007DC0CF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F682AC2817E4C91C007DC0CF /* InfoPlist.strings */; };
+		F682AC2C17E4C91C007DC0CF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F682AC2B17E4C91C007DC0CF /* main.m */; };
+		F682AC3017E4C91C007DC0CF /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = F682AC2E17E4C91C007DC0CF /* Credits.rtf */; };
+		F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */; };
+		F682AC3617E4C91C007DC0CF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F682AC3417E4C91C007DC0CF /* MainMenu.xib */; };
+		F682AC3B17E4C942007DC0CF /* libp1stream.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */; };
+		F682AC3C17E4C94C007DC0CF /* P1stream-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = F644CB9517B6291D007934C3 /* P1stream-cli */; };
+		F682AC3D17E4C960007DC0CF /* libp1stream.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */; };
 		F6F6077717B64C34009E6155 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077617B64C34009E6155 /* CoreFoundation.framework */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +56,20 @@
 			remoteInfo = p1stream;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F682AC3A17E4C936007DC0CF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				F682AC3C17E4C94C007DC0CF /* P1stream-cli in CopyFiles */,
+				F682AC3B17E4C942007DC0CF /* libp1stream.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		F607452517B637E8004EA730 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -63,7 +86,7 @@
 		F62DBA4717C53360004DDFD6 /* sample_config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sample_config.plist; sourceTree = "<group>"; };
 		F62DBA4817C53360004DDFD6 /* video_capture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = video_capture.m; sourceTree = "<group>"; };
 		F62DBA4917C53360004DDFD6 /* video_display.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video_display.c; sourceTree = "<group>"; };
-		F644CB9517B6291D007934C3 /* P1stream */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = P1stream; path = "P1stream-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F644CB9517B6291D007934C3 /* P1stream-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "P1stream-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F644CBA217B62C03007934C3 /* common-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
 		F644CBA317B62C03007934C3 /* common-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
 		F644CBA417B62C03007934C3 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
@@ -75,6 +98,19 @@
 		F682AC0117E4A6DA007DC0CF /* librtmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librtmp.a; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/librtmp.a"; sourceTree = "<group>"; };
 		F682AC0217E4A6DA007DC0CF /* libx264.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libx264.a; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/libx264.a"; sourceTree = "<group>"; };
 		F682AC1617E4A875007DC0CF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		F682AC1E17E4C91C007DC0CF /* P1stream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = P1stream.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F682AC1F17E4C91C007DC0CF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		F682AC2217E4C91C007DC0CF /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		F682AC2317E4C91C007DC0CF /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		F682AC2417E4C91C007DC0CF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		F682AC2717E4C91C007DC0CF /* P1stream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "P1stream-Info.plist"; sourceTree = "<group>"; };
+		F682AC2917E4C91C007DC0CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F682AC2B17E4C91C007DC0CF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F682AC2D17E4C91C007DC0CF /* P1stream-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "P1stream-Prefix.pch"; sourceTree = "<group>"; };
+		F682AC2F17E4C91C007DC0CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		F682AC3117E4C91C007DC0CF /* P1AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = P1AppDelegate.h; sourceTree = "<group>"; };
+		F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = P1AppDelegate.m; sourceTree = "<group>"; };
+		F682AC3517E4C91C007DC0CF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		F69E0C7817C423A3000EA1CD /* p1stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream.h; sourceTree = "<group>"; };
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
@@ -120,6 +156,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F682AC1B17E4C91C007DC0CF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F682AC3D17E4C960007DC0CF /* libp1stream.dylib in Frameworks */,
+				F682AC2017E4C91C007DC0CF /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -142,6 +187,8 @@
 				F653422A17BFAF6200769680 /* CoreVideo.framework */,
 				F653422C17BFAF6600769680 /* AVFoundation.framework */,
 				F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */,
+				F682AC1F17E4C91C007DC0CF /* Cocoa.framework */,
+				F682AC2117E4C91C007DC0CF /* Other Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -166,6 +213,7 @@
 			children = (
 				F682ABE217E4A426007DC0CF /* libp1stream */,
 				F682ABE517E4A610007DC0CF /* cli */,
+				F682AC2517E4C91C007DC0CF /* osx */,
 				F607450E17B6303F004EA730 /* Frameworks */,
 				F644CB9617B6291D007934C3 /* Products */,
 				F644CBA117B62BE6007934C3 /* xcconfig */,
@@ -175,8 +223,9 @@
 		F644CB9617B6291D007934C3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F644CB9517B6291D007934C3 /* P1stream */,
+				F644CB9517B6291D007934C3 /* P1stream-cli */,
 				F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */,
+				F682AC1E17E4C91C007DC0CF /* P1stream.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -213,6 +262,39 @@
 			path = cli;
 			sourceTree = "<group>";
 		};
+		F682AC2117E4C91C007DC0CF /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F682AC2217E4C91C007DC0CF /* AppKit.framework */,
+				F682AC2317E4C91C007DC0CF /* CoreData.framework */,
+				F682AC2417E4C91C007DC0CF /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		F682AC2517E4C91C007DC0CF /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				F682AC3117E4C91C007DC0CF /* P1AppDelegate.h */,
+				F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */,
+				F682AC3417E4C91C007DC0CF /* MainMenu.xib */,
+				F682AC2617E4C91C007DC0CF /* Supporting Files */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
+		F682AC2617E4C91C007DC0CF /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F682AC2717E4C91C007DC0CF /* P1stream-Info.plist */,
+				F682AC2817E4C91C007DC0CF /* InfoPlist.strings */,
+				F682AC2B17E4C91C007DC0CF /* main.m */,
+				F682AC2D17E4C91C007DC0CF /* P1stream-Prefix.pch */,
+				F682AC2E17E4C91C007DC0CF /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -230,7 +312,7 @@
 			);
 			name = "P1stream-cli";
 			productName = P1stream;
-			productReference = F644CB9517B6291D007934C3 /* P1stream */;
+			productReference = F644CB9517B6291D007934C3 /* P1stream-cli */;
 			productType = "com.apple.product-type.tool";
 		};
 		F682ABEB17E4A65F007DC0CF /* p1stream */ = {
@@ -248,6 +330,24 @@
 			productName = p1stream;
 			productReference = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
+		};
+		F682AC1D17E4C91C007DC0CF /* P1stream */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F682AC3717E4C91C007DC0CF /* Build configuration list for PBXNativeTarget "P1stream" */;
+			buildPhases = (
+				F682AC1A17E4C91C007DC0CF /* Sources */,
+				F682AC1B17E4C91C007DC0CF /* Frameworks */,
+				F682AC1C17E4C91C007DC0CF /* Resources */,
+				F682AC3A17E4C936007DC0CF /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = P1stream;
+			productName = P1stream;
+			productReference = F682AC1E17E4C91C007DC0CF /* P1stream.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -272,9 +372,23 @@
 			targets = (
 				F682ABEB17E4A65F007DC0CF /* p1stream */,
 				F644CB9417B6291D007934C3 /* P1stream-cli */,
+				F682AC1D17E4C91C007DC0CF /* P1stream */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F682AC1C17E4C91C007DC0CF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F682AC2A17E4C91C007DC0CF /* InfoPlist.strings in Resources */,
+				F682AC3017E4C91C007DC0CF /* Credits.rtf in Resources */,
+				F682AC3617E4C91C007DC0CF /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F644CB9117B6291D007934C3 /* Sources */ = {
@@ -302,6 +416,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F682AC1A17E4C91C007DC0CF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F682AC2C17E4C91C007DC0CF /* main.m in Sources */,
+				F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -311,6 +434,33 @@
 			targetProxy = F682ABFD17E4A6AC007DC0CF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		F682AC2817E4C91C007DC0CF /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F682AC2917E4C91C007DC0CF /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		F682AC2E17E4C91C007DC0CF /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F682AC2F17E4C91C007DC0CF /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		F682AC3417E4C91C007DC0CF /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F682AC3517E4C91C007DC0CF /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		F644CB9C17B6291D007934C3 /* Debug */ = {
@@ -391,6 +541,57 @@
 			};
 			name = Release;
 		};
+		F682AC3817E4C91C007DC0CF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "osx/P1stream-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "osx/P1stream-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		F682AC3917E4C91C007DC0CF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "osx/P1stream-Prefix.pch";
+				INFOPLIST_FILE = "osx/P1stream-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -420,6 +621,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		F682AC3717E4C91C007DC0CF /* Build configuration list for PBXNativeTarget "P1stream" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F682AC3817E4C91C007DC0CF /* Debug */,
+				F682AC3917E4C91C007DC0CF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

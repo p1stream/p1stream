@@ -28,9 +28,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F682AC1D17E4C91C007DC0CF"
-               BuildableName = "P1stream.app"
-               BlueprintName = "P1stream"
+               BlueprintIdentifier = "F644CB9417B6291D007934C3"
+               BuildableName = "P1stream-cli"
+               BlueprintName = "P1stream-cli"
                ReferencedContainer = "container:P1stream.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,9 +46,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F682AC1D17E4C91C007DC0CF"
-            BuildableName = "P1stream.app"
-            BlueprintName = "P1stream"
+            BlueprintIdentifier = "F644CB9417B6291D007934C3"
+            BuildableName = "P1stream-cli"
+            BlueprintName = "P1stream-cli"
             ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,12 +65,18 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F682AC1D17E4C91C007DC0CF"
-            BuildableName = "P1stream.app"
-            BlueprintName = "P1stream"
+            BlueprintIdentifier = "F644CB9417B6291D007934C3"
+            BuildableName = "P1stream-cli"
+            BlueprintName = "P1stream-cli"
             ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "$(PROJECT_DIR)/../config.plist"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -83,9 +89,9 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F682AC1D17E4C91C007DC0CF"
-            BuildableName = "P1stream.app"
-            BlueprintName = "P1stream"
+            BlueprintIdentifier = "F644CB9417B6291D007934C3"
+            BuildableName = "P1stream-cli"
+            BlueprintName = "P1stream-cli"
             ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

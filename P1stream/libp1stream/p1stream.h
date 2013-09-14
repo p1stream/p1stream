@@ -1,6 +1,10 @@
 #ifndef p1stream_h
 #define p1stream_h
 
+#ifndef GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
+#define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
+#endif
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdarg.h>
