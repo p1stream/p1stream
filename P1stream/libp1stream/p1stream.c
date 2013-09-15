@@ -175,6 +175,27 @@ static void p1_destroy(P1ContextFull *ctxf)
 void p1_free(P1Context *ctx, P1FreeOptions options)
 {
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
+    P1ListNode *head;
+    P1ListNode *node;
+
+    if ((options & P1_FREE_VIDEO_CLOCK) && ctx->video->clock != NULL)
+        p1_plugin_free((P1Plugin *) ctx->video->clock);
+
+    if (options & P1_FREE_VIDEO_SOURCES) {
+        head = &ctx->video->sources;
+        p1_list_iterate(head, node) {
+            P1Source *src = p1_list_get_container(node, P1Source, link);
+            p1_plugin_free((P1Plugin *) src);
+        }
+    }
+
+    if (options & P1_FREE_AUDIO_SOURCES) {
+        head = &ctx->audio->sources;
+        p1_list_iterate(head, node) {
+            P1Source *src = p1_list_get_container(node, P1Source, link);
+            p1_plugin_free((P1Plugin *) src);
+        }
+    }
 
     p1_conn_destroy((P1ConnectionFull *) ctx->conn);
     p1_audio_destroy((P1AudioFull *) ctx->audio);
