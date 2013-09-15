@@ -1,8 +1,9 @@
-#import <Cocoa/Cocoa.h>
-
-
 @interface P1AppDelegate : NSObject <NSApplicationDelegate>
+{
+    bool terminating;
 
-@property (assign) IBOutlet NSWindow *window;
+    P1Context *context;
+    NSFileHandle *contextFileHandle;
+}
 
 @end

@@ -100,9 +100,6 @@
 		F682AC1617E4A875007DC0CF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F682AC1E17E4C91C007DC0CF /* P1stream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = P1stream.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F682AC1F17E4C91C007DC0CF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		F682AC2217E4C91C007DC0CF /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		F682AC2317E4C91C007DC0CF /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		F682AC2417E4C91C007DC0CF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F682AC2717E4C91C007DC0CF /* P1stream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "P1stream-Info.plist"; sourceTree = "<group>"; };
 		F682AC2917E4C91C007DC0CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F682AC2B17E4C91C007DC0CF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -188,7 +185,6 @@
 				F653422C17BFAF6600769680 /* AVFoundation.framework */,
 				F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */,
 				F682AC1F17E4C91C007DC0CF /* Cocoa.framework */,
-				F682AC2117E4C91C007DC0CF /* Other Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -262,22 +258,12 @@
 			path = cli;
 			sourceTree = "<group>";
 		};
-		F682AC2117E4C91C007DC0CF /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				F682AC2217E4C91C007DC0CF /* AppKit.framework */,
-				F682AC2317E4C91C007DC0CF /* CoreData.framework */,
-				F682AC2417E4C91C007DC0CF /* Foundation.framework */,
-			);
-			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
 		F682AC2517E4C91C007DC0CF /* osx */ = {
 			isa = PBXGroup;
 			children = (
+				F682AC3417E4C91C007DC0CF /* MainMenu.xib */,
 				F682AC3117E4C91C007DC0CF /* P1AppDelegate.h */,
 				F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */,
-				F682AC3417E4C91C007DC0CF /* MainMenu.xib */,
 				F682AC2617E4C91C007DC0CF /* Supporting Files */,
 			);
 			path = osx;
