@@ -68,6 +68,7 @@ typedef void P1ConfigSection; // abstract
 typedef bool (*P1ConfigIterSection)(P1Config *cfg, P1ConfigSection *sect, void *data);
 typedef bool (*P1ConfigIterString)(P1Config *cfg, const char *key, char *val, void *data);
 typedef void (*P1LogCallback)(P1Object *obj, P1LogLevel level, const char *fmt, va_list args);
+typedef void (*P1VideoPreviewCallback)(P1Video *video, size_t width, size_t height, uint8_t *data);
 
 // These types are for convenience. Sources usually want to have a function
 // following one of these signatures to instantiate them.
@@ -492,6 +493,10 @@ struct _P1Video {
     // The source list. Can be modified while running, as long as the lock is
     // held. Use the p1_list_* functions for convenience.
     P1ListNode sources;
+
+    // Function that will be called for each frame with raw RGBA data.
+    // Note that this function is called on the clock thread.
+    P1VideoPreviewCallback preview_fn;
 };
 
 

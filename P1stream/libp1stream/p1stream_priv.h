@@ -44,12 +44,13 @@ struct _P1VideoFull {
 
     GLuint vao;
     GLuint vbo;
-    GLuint rbo;
+    GLuint tex;
     GLuint fbo;
     GLuint program;
     GLuint tex_u;
+    IOSurfaceRef surface;
 
-    cl_mem rbo_mem;
+    cl_mem tex_mem;
     cl_mem out_mem;
     cl_kernel yuv_kernel;
 

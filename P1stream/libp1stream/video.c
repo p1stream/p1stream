@@ -125,6 +125,8 @@ void p1_video_start(P1VideoFull *videof)
     bool b_ret;
     size_t size;
 
+    // FIXME: separate OSX specific stuff
+
     CGLPixelFormatObj pixel_format;
     const CGLPixelFormatAttribute attribs[] = {
         kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute) kCGLOGLPVersion_3_2_Core,
@@ -206,7 +208,7 @@ void p1_video_start(P1VideoFull *videof)
 
     glGenVertexArrays(1, &videof->vao);
     glGenBuffers(1, &videof->vbo);
-    glGenRenderbuffers(1, &videof->rbo);
+    glGenTextures(1, &videof->tex);
     glGenFramebuffers(1, &videof->fbo);
     videof->program = glCreateProgram();
     if ((gl_err = glGetError()) != GL_NO_ERROR) {
@@ -214,18 +216,45 @@ void p1_video_start(P1VideoFull *videof)
         goto fail_enc_pic;
     }
 
-    glBindRenderbuffer(GL_RENDERBUFFER, videof->fbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, output_width, output_height);
-    if ((gl_err = glGetError()) != GL_NO_ERROR) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to create GL render buffer: OpenGL error %d", gl_err);
+    const void *surfaceKeys[3];
+    const void *surfaceValues[3];
+    surfaceKeys[0] = kIOSurfaceWidth;
+    surfaceValues[0] = CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &output_width);
+    surfaceKeys[1] = kIOSurfaceHeight;
+    surfaceValues[1] = CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &output_height);
+    int bpp = 4;
+    surfaceKeys[2] = kIOSurfaceBytesPerElement;
+    surfaceValues[2] = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &bpp);
+    CFDictionaryRef surfaceProps = CFDictionaryCreate(kCFAllocatorDefault, surfaceKeys, surfaceValues, 3,
+                                                      &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    CFRelease(surfaceValues[0]);
+    CFRelease(surfaceValues[1]);
+    CFRelease(surfaceValues[2]);
+    if (surfaceProps == NULL) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create IOSurface parameters");
         goto fail_enc_pic;
     }
 
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, videof->fbo);
-    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, videof->rbo);
+    videof->surface = IOSurfaceCreate(surfaceProps);
+    CFRelease(surfaceProps);
+    if (videof->surface == NULL) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create IOSurface");
+        goto fail_enc_pic;
+    }
+
+    glBindTexture(GL_TEXTURE_RECTANGLE, videof->tex);
+    cgl_err = CGLTexImageIOSurface2D(videof->gl, GL_TEXTURE_RECTANGLE, GL_RGBA8, output_width, output_height,
+                                     GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, videof->surface, 0);
+    if (cgl_err != kCGLNoError) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to bind IOSurface: Core Graphics error %d", cgl_err);
+        goto fail_iosurface;
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, videof->fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, videof->tex, 0);
     if ((gl_err = glGetError()) != GL_NO_ERROR) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to create GL frame buffer: OpenGL error %d", gl_err);
-        goto fail_enc_pic;
+        goto fail_iosurface;
     }
 
     glBindAttribLocation(videof->program, 0, "a_Position");
@@ -233,19 +262,19 @@ void p1_video_start(P1VideoFull *videof)
     glBindFragDataLocation(videof->program, 0, "o_FragColor");
     b_ret = p1_video_build_program(videoobj, videof->program, simple_vertex_shader, simple_fragment_shader);
     if (!b_ret)
-        goto fail_enc_pic;
+        goto fail_iosurface;
     videof->tex_u = glGetUniformLocation(videof->program, "u_Texture");
 
-    videof->rbo_mem = clCreateFromGLRenderbuffer(videof->cl, CL_MEM_READ_ONLY, videof->rbo, &cl_err);
+    videof->tex_mem = clCreateFromGLTexture(videof->cl, CL_MEM_READ_ONLY, GL_TEXTURE_RECTANGLE, 0, videof->tex, &cl_err);
     if (cl_err != CL_SUCCESS) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL input buffer: OpenCL error %d", cl_err);
-        goto fail_enc_pic;
+        goto fail_iosurface;
     }
 
     videof->out_mem = clCreateBuffer(videof->cl, CL_MEM_WRITE_ONLY, output_yuv_size, NULL, &cl_err);
     if (cl_err != CL_SUCCESS) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL output buffer: OpenCL error %d", cl_err);
-        goto fail_rbo_mem;
+        goto fail_tex_mem;
     }
 
     cl_program yuv_program = clCreateProgramWithSource(videof->cl, 1, &yuv_kernel_source, NULL, &cl_err);
@@ -283,7 +312,7 @@ void p1_video_start(P1VideoFull *videof)
         goto fail_yuv_kernel;
     }
 
-    cl_err = clSetKernelArg(videof->yuv_kernel, 0, sizeof(cl_mem), &videof->rbo_mem);
+    cl_err = clSetKernelArg(videof->yuv_kernel, 0, sizeof(cl_mem), &videof->tex_mem);
     if (cl_err != CL_SUCCESS)
         goto fail_kernel_arg;
     cl_err = clSetKernelArg(videof->yuv_kernel, 1, sizeof(cl_mem), &videof->out_mem);
@@ -307,10 +336,13 @@ fail_out_mem:
     if (cl_err != CL_SUCCESS)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL output buffer: OpenCL error %d", cl_err);
 
-fail_rbo_mem:
-    cl_err = clReleaseMemObject(videof->rbo_mem);
+fail_tex_mem:
+    cl_err = clReleaseMemObject(videof->tex_mem);
     if (cl_err != CL_SUCCESS)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL input buffer: OpenCL error %d", cl_err);
+
+fail_iosurface:
+    CFRelease(videof->surface);
 
 fail_enc_pic:
     x264_picture_clean(&videof->enc_pic);
@@ -357,9 +389,11 @@ static void p1_video_kill_session(P1VideoFull *videof)
     if (cl_err != CL_SUCCESS)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL output buffer: OpenCL error %d", cl_err);
 
-    cl_err = clReleaseMemObject(videof->rbo_mem);
+    cl_err = clReleaseMemObject(videof->tex_mem);
     if (cl_err != CL_SUCCESS)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL input buffer: OpenCL error %d", cl_err);
+
+    CFRelease(videof->surface);
 
     x264_picture_clean(&videof->enc_pic);
     x264_encoder_close(videof->enc);
@@ -474,6 +508,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
         return;
     }
 
+    // Rendering
     CGLSetCurrentContext(videof->gl);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -514,17 +549,28 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
         goto fail;
     }
 
-    cl_err = clEnqueueAcquireGLObjects(videof->clq, 1, &videof->rbo_mem, 0, NULL, NULL);
+    // Preview download
+    if (video->preview_fn) {
+        uint32_t seed;
+        IOSurfaceLock(videof->surface, kIOSurfaceLockReadOnly, &seed);
+        uint8_t *data = IOSurfaceGetBaseAddress(videof->surface);
+        video->preview_fn(video, output_width, output_height, data);
+        IOSurfaceUnlock(videof->surface, kIOSurfaceLockReadOnly, &seed);
+    }
+
+    // Colorspace conversion
+    cl_err = clEnqueueAcquireGLObjects(videof->clq, 1, &videof->tex_mem, 0, NULL, NULL);
     if (cl_err != CL_SUCCESS) goto fail_cl;
     cl_err = clEnqueueNDRangeKernel(videof->clq, videof->yuv_kernel, 2, NULL, yuv_work_size, NULL, 0, NULL, NULL);
     if (cl_err != CL_SUCCESS) goto fail_cl;
-    cl_err = clEnqueueReleaseGLObjects(videof->clq, 1, &videof->rbo_mem, 0, NULL, NULL);
+    cl_err = clEnqueueReleaseGLObjects(videof->clq, 1, &videof->tex_mem, 0, NULL, NULL);
     if (cl_err != CL_SUCCESS) goto fail_cl;
     cl_err = clEnqueueReadBuffer(videof->clq, videof->out_mem, CL_FALSE, 0, output_yuv_size, videof->enc_pic.img.plane[0], 0, NULL, NULL);
     if (cl_err != CL_SUCCESS) goto fail_cl;
     cl_err = clFinish(videof->clq);
     if (cl_err != CL_SUCCESS) goto fail_cl;
 
+    // Encoding and streaming
     if (!videof->sent_config) {
         videof->sent_config = true;
         i_ret = x264_encoder_headers(videof->enc, &nals, &len);
@@ -602,7 +648,7 @@ bool p1_video_source_init(P1VideoSource *vsrc, P1Config *cfg, P1ConfigSection *s
 void p1_video_source_frame(P1VideoSource *vsrc, int width, int height, void *data)
 {
     glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, width, height, 0,
-                 GL_BGRA, GL_UNSIGNED_BYTE, data);
+                 GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data);
 }
 
 static GLuint p1_build_shader(P1Object *videoobj, GLuint type, const char *source)
