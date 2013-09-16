@@ -416,7 +416,9 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     }
 
     // Rendering
-    p1_video_activate_gl(videof);
+    if (!p1_video_activate_gl(videof))
+        goto fail;
+
     glClear(GL_COLOR_BUFFER_BIT);
 
     head = &video->sources;

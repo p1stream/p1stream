@@ -77,12 +77,6 @@ bool p1_video_init_platform(P1VideoFull *videof)
         goto fail;
     }
 
-    cgl_err = CGLSetCurrentContext(videof->gl.cglContext);
-    if (cgl_err != kCGLNoError) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to activate GL context: Core Graphics error %d", cgl_err);
-        goto fail_gl;
-    }
-
     CGLShareGroupObj share_group = CGLGetShareGroup(videof->gl.cglContext);
     cl_context_properties props[] = {
         CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE, (cl_context_properties) share_group,
@@ -105,6 +99,9 @@ bool p1_video_init_platform(P1VideoFull *videof)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to create IOSurface");
         goto fail_cl;
     }
+
+    if (!p1_video_activate_gl(videof))
+        goto fail_iosurface;
 
     glGenTextures(1, &videof->tex);
     glGenFramebuffers(1, &videof->fbo);

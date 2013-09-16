@@ -25,8 +25,13 @@ bool p1_video_init_platform(P1VideoFull *videof);
 void p1_video_destroy_platform(P1VideoFull *videof);
 
 #define p1_video_activate_gl(_videof) ({                                    \
-    CGLError _p1_err = CGLSetCurrentContext((_videof)->gl.cglContext);      \
-    _p1_err == kCGLNoError;                                                 \
+    P1VideoFull *_p1_videof = (P1VideoFull *) (_videof);                    \
+    P1Object *_p1_videoobj = (P1Object *) _p1_videof;                       \
+    CGLError _p1_ret = CGLSetCurrentContext(_p1_videof->gl.cglContext);     \
+    bool _p1_ok = (_p1_ret == kCGLNoError);                                 \
+    if (!_p1_ok)                                                            \
+        p1_log(_p1_videoobj, P1_LOG_ERROR, "Failed to activate GL context: Core Graphics error %d", _p1_ret);   \
+    _p1_ok;                                                                 \
 })
 
 bool p1_video_preview(P1VideoFull *videof);
