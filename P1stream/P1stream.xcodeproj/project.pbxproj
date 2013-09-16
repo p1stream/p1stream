@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F643655917E5A08800314053 /* P1MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F643655817E5A08800314053 /* P1MainWindowController.m */; };
+		F643655C17E5ADB900314053 /* P1PreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = F643655B17E5ADB900314053 /* P1PreviewView.m */; };
+		F6768A1B17E65CD20088D1F9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6768A1917E65CC20088D1F9 /* QuartzCore.framework */; };
 		F682ABE717E4A616007DC0CF /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F682ABE617E4A610007DC0CF /* main.c */; };
 		F682ABF217E4A68A007DC0CF /* p1stream.c in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA3B17C52DC1004DDFD6 /* p1stream.c */; };
 		F682ABF317E4A68A007DC0CF /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD417B6FE31002FE99E /* audio.c */; };
@@ -44,6 +47,7 @@
 		F682AC3B17E4C942007DC0CF /* libp1stream.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */; };
 		F682AC3C17E4C94C007DC0CF /* P1stream-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = F644CB9517B6291D007934C3 /* P1stream-cli */; };
 		F682AC3D17E4C960007DC0CF /* libp1stream.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */; };
+		F68E3E0717E5E6DB00EAA38E /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */; };
 		F6F6077717B64C34009E6155 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077617B64C34009E6155 /* CoreFoundation.framework */; };
 /* End PBXBuildFile section */
 
@@ -86,6 +90,10 @@
 		F62DBA4717C53360004DDFD6 /* sample_config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sample_config.plist; sourceTree = "<group>"; };
 		F62DBA4817C53360004DDFD6 /* video_capture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = video_capture.m; sourceTree = "<group>"; };
 		F62DBA4917C53360004DDFD6 /* video_display.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video_display.c; sourceTree = "<group>"; };
+		F643655717E5A08800314053 /* P1MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1MainWindowController.h; sourceTree = "<group>"; };
+		F643655817E5A08800314053 /* P1MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1MainWindowController.m; sourceTree = "<group>"; };
+		F643655A17E5ADB900314053 /* P1PreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1PreviewView.h; sourceTree = "<group>"; };
+		F643655B17E5ADB900314053 /* P1PreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1PreviewView.m; sourceTree = "<group>"; };
 		F644CB9517B6291D007934C3 /* P1stream-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "P1stream-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F644CBA217B62C03007934C3 /* common-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
 		F644CBA317B62C03007934C3 /* common-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
@@ -93,6 +101,7 @@
 		F653422817BFAF5C00769680 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		F653422A17BFAF6200769680 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		F653422C17BFAF6600769680 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		F6768A1917E65CC20088D1F9 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		F682ABE617E4A610007DC0CF /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libp1stream.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F682AC0117E4A6DA007DC0CF /* librtmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librtmp.a; path = "../../../Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/librtmp.a"; sourceTree = "<group>"; };
@@ -108,6 +117,7 @@
 		F682AC3117E4C91C007DC0CF /* P1AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = P1AppDelegate.h; sourceTree = "<group>"; };
 		F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = P1AppDelegate.m; sourceTree = "<group>"; };
 		F682AC3517E4C91C007DC0CF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		F69E0C7817C423A3000EA1CD /* p1stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream.h; sourceTree = "<group>"; };
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
@@ -159,6 +169,7 @@
 			files = (
 				F682AC3D17E4C960007DC0CF /* libp1stream.dylib in Frameworks */,
 				F682AC2017E4C91C007DC0CF /* Cocoa.framework in Frameworks */,
+				F6768A1B17E65CD20088D1F9 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,6 +196,7 @@
 				F653422C17BFAF6600769680 /* AVFoundation.framework */,
 				F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */,
 				F682AC1F17E4C91C007DC0CF /* Cocoa.framework */,
+				F6768A1917E65CC20088D1F9 /* QuartzCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -262,8 +274,13 @@
 			isa = PBXGroup;
 			children = (
 				F682AC3417E4C91C007DC0CF /* MainMenu.xib */,
+				F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */,
 				F682AC3117E4C91C007DC0CF /* P1AppDelegate.h */,
 				F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */,
+				F643655717E5A08800314053 /* P1MainWindowController.h */,
+				F643655817E5A08800314053 /* P1MainWindowController.m */,
+				F643655A17E5ADB900314053 /* P1PreviewView.h */,
+				F643655B17E5ADB900314053 /* P1PreviewView.m */,
 				F682AC2617E4C91C007DC0CF /* Supporting Files */,
 			);
 			path = osx;
@@ -371,6 +388,7 @@
 				F682AC2A17E4C91C007DC0CF /* InfoPlist.strings in Resources */,
 				F682AC3017E4C91C007DC0CF /* Credits.rtf in Resources */,
 				F682AC3617E4C91C007DC0CF /* MainMenu.xib in Resources */,
+				F68E3E0717E5E6DB00EAA38E /* MainWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +426,8 @@
 			files = (
 				F682AC2C17E4C91C007DC0CF /* main.m in Sources */,
 				F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */,
+				F643655917E5A08800314053 /* P1MainWindowController.m in Sources */,
+				F643655C17E5ADB900314053 /* P1PreviewView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -530,27 +550,15 @@
 		F682AC3817E4C91C007DC0CF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "osx/P1stream-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
-					"$(inherited)",
+					"FOO=2",
 				);
 				INFOPLIST_FILE = "osx/P1stream-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -558,22 +566,11 @@
 		F682AC3917E4C91C007DC0CF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "osx/P1stream-Prefix.pch";
 				INFOPLIST_FILE = "osx/P1stream-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -615,6 +612,7 @@
 				F682AC3917E4C91C007DC0CF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

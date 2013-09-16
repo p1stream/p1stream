@@ -6,7 +6,7 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    terminating = false;
+    _terminating = false;
 
     // Register config defaults
     [defaults registerDefaults:@{
@@ -38,9 +38,9 @@
 
     P1Config *p1Config = p1_plist_config_create((__bridge CFDictionaryRef) config);
     assert(p1Config != NULL);
-    context = p1_create(p1Config, NULL);
+    _context = p1_create(p1Config, NULL);
     p1_config_free(p1Config);
-    assert(context != NULL);
+    assert(_context != NULL);
 
     [self createVideoClock:config];
     [self createVideoSources:config];
@@ -48,35 +48,18 @@
 
     // Monitor notifications
     __weak P1AppDelegate *weakSelf = self;
-    contextFileHandle = [[NSFileHandle alloc] initWithFileDescriptor:p1_fd(context)];
-    contextFileHandle.readabilityHandler = ^(NSFileHandle *f) {
+    _contextFileHandle = [[NSFileHandle alloc] initWithFileDescriptor:p1_fd(_context)];
+    _contextFileHandle.readabilityHandler = ^(NSFileHandle *f) {
         [weakSelf handleContextNotification];
     };
 
-    // Keep context running at all times, so we can see a preview.
-    bool ret = p1_start(context);
+    // Keep context running at all times, so we can see a preview
+    bool ret = p1_start(_context);
     assert(ret);
-}
 
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
-{
-    terminating = true;
-    if (((P1Object *) context)->state == P1_STATE_IDLE) {
-        return NSTerminateNow;
-    }
-    else {
-        p1_stop(context, P1_STOP_ASYNC);
-        return NSTerminateLater;
-    }
-}
-
-- (void)applicationWillTerminate:(NSNotification *)notification
-{
-    contextFileHandle.readabilityHandler = nil;
-    contextFileHandle = nil;
-
-    p1_free(context, P1_FREE_EVERYTHING);
-    context = NULL;
+    // Show the main window
+    _mainWindowController.context = _context;
+    [_mainWindowController showWindow];
 }
 
 - (void)createVideoClock:(NSDictionary *)config
@@ -95,7 +78,7 @@
     p1_config_free(p1Config);
     assert(clock != NULL);
 
-    context->video->clock = clock;
+    _context->video->clock = clock;
 }
 
 - (void)createVideoSources:(NSDictionary *)config
@@ -118,7 +101,7 @@
         assert(videoSource != NULL);
 
         P1Source *source = (P1Source *) videoSource;
-        p1_list_before(&context->video->sources, &source->link);
+        p1_list_before(&_context->video->sources, &source->link);
     }
 }
 
@@ -140,20 +123,52 @@
         assert(audioSource != NULL);
 
         P1Source *source = (P1Source *) audioSource;
-        p1_list_before(&context->audio->sources, &source->link);
+        p1_list_before(&_context->audio->sources, &source->link);
+    }
+}
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+{
+    _terminating = true;
+
+    // Immediate response, but also prevents the preview from showing garbage.
+    [_mainWindowController closeWindow];
+
+    // Wait for p1_stop.
+    if (((P1Object *) _context)->state == P1_STATE_IDLE) {
+        return NSTerminateNow;
+    }
+    else {
+        p1_stop(_context, P1_STOP_ASYNC);
+        return NSTerminateLater;
     }
 }
 
 - (void)handleContextNotification
 {
-    P1Object *ctxobj = (P1Object *) context;
+    P1Object *ctxobj = (P1Object *) _context;
 
     P1Notification n;
-    p1_read(context, &n);
+    p1_read(_context, &n);
 
-    if (terminating && n.type == P1_NTYPE_STATE_CHANGE &&
+    // Handle p1_stop result.
+    if (_terminating && n.type == P1_NTYPE_STATE_CHANGE &&
         n.object == ctxobj && n.state_change.state == P1_STATE_IDLE)
         [NSApp replyToApplicationShouldTerminate:TRUE];
+}
+
+- (void)applicationWillTerminate:(NSNotification *)notification
+{
+    _contextFileHandle.readabilityHandler = NULL;
+    _contextFileHandle = nil;
+
+    p1_free(_context, P1_FREE_EVERYTHING);
+    _context = NULL;
+}
+
+- (P1Context *)context
+{
+    return _context;
 }
 
 @end
