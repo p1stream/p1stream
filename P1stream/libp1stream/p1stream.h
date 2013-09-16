@@ -9,8 +9,6 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <pthread.h>
-#include <OpenGL/OpenGL.h>
-#include <OpenGL/gl3.h>
 
 
 // The P1stream interface consist of a context that models a simple media
@@ -427,7 +425,7 @@ struct _P1VideoSource {
     // FIXME: separate compositor, and its data.
 
     // Texture name. The source need not touch this.
-    GLuint texture;
+    uint32_t texture;
 
     // Top left and bottom right coordinates of where to place frames in the
     // output image. These are in the range [-1, +1].
@@ -556,7 +554,11 @@ void _p1_notify(P1Notification notification);
 #   include <TargetConditionals.h>
 #   if TARGET_OS_MAC
 #       include "osx/p1stream_osx.h"
+#   else
+#       error Unsupported platform
 #   endif
+#else
+#   error Unsupported platform
 #endif
 
 #endif

@@ -1,8 +1,6 @@
 #ifndef p1stream_osx_h
 #define p1stream_osx_h
 
-#include "p1stream.h"
-
 #ifdef __OBJC__
 #   include <Foundation/Foundation.h>
 #endif

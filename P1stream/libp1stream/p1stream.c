@@ -2,7 +2,6 @@
 
 #include <unistd.h>
 #include <sys/poll.h>
-#include <mach/mach_error.h>
 
 typedef enum _P1Action P1Action;
 
@@ -121,6 +120,9 @@ static bool p1_init(P1ContextFull *ctxf, P1Config *cfg, P1ConfigSection *sect)
     if (!p1_object_init(ctxobj, P1_OTYPE_CONTEXT))
         goto fail_object;
 
+    if (!p1_init_platform(ctxf))
+        goto fail_platform;
+
     ret = pipe(ctxf->ctrl_pipe);
     if (ret != 0) {
         p1_log(ctxobj, P1_LOG_ERROR, "Failed to open pipe: %s", strerror(errno));
@@ -131,12 +133,6 @@ static bool p1_init(P1ContextFull *ctxf, P1Config *cfg, P1ConfigSection *sect)
     if (ret != 0) {
         p1_log(ctxobj, P1_LOG_ERROR, "Failed to open pipe: %s", strerror(errno));
         goto fail_user;
-    }
-
-    ret = mach_timebase_info(&ctxf->timebase);
-    if (ret != 0) {
-        p1_log(ctxobj, P1_LOG_ERROR, "Failed to get timebase: %s", mach_error_string(errno));
-        goto fail_timebase;
     }
 
     ctxobj->ctx = ctx;
@@ -153,6 +149,9 @@ fail_user:
     p1_close_pipe(ctxobj, ctxf->ctrl_pipe[1]);
 
 fail_ctrl:
+    p1_destroy_platform(ctxf);
+
+fail_platform:
     p1_object_destroy(ctxobj);
 
 fail_object:
@@ -168,6 +167,8 @@ static void p1_destroy(P1ContextFull *ctxf)
 
     p1_close_pipe(ctxobj, ctxf->user_pipe[0]);
     p1_close_pipe(ctxobj, ctxf->user_pipe[1]);
+
+    p1_destroy_platform(ctxf);
 
     p1_object_destroy(ctxobj);
 }

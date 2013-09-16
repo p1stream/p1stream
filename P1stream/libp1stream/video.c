@@ -8,7 +8,6 @@ static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *v
 static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args);
 static GLuint p1_build_shader(P1Object *videoobj, GLuint type, const char *source);
 static bool p1_video_build_program(P1Object *videoobj, GLuint program, const char *vertexShader, const char *fragmentShader);
-static void p1_video_cl_notify_callback(const char *errstr, const void *private_info, size_t cb, void *user_data);
 
 static const char *simple_vertex_shader =
     "#version 150\n"
@@ -116,74 +115,39 @@ void p1_video_start(P1VideoFull *videof)
 {
     P1Object *videoobj = (P1Object *) videof;
     P1Video *video = (P1Video *) videof;
+    P1ContextFull *ctxf = (P1ContextFull *) videoobj->ctx;
     P1VideoClock *vclock = video->clock;
     x264_param_t *params = &videof->params;
-    CGLError cgl_err;
     cl_int cl_err;
     GLenum gl_err;
     int i_ret;
     bool b_ret;
     size_t size;
 
-    // FIXME: separate OSX specific stuff
-
-    CGLPixelFormatObj pixel_format;
-    const CGLPixelFormatAttribute attribs[] = {
-        kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute) kCGLOGLPVersion_3_2_Core,
-        0
-    };
-    GLint npix;
-    cgl_err = CGLChoosePixelFormat(attribs, &pixel_format, &npix);
-    if (cgl_err != kCGLNoError) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to choose GL pixel format: Core Graphics error %d", cgl_err);
+    b_ret = p1_video_init_platform(videof);
+    if (!b_ret) {
         goto fail;
-    }
-
-    cgl_err = CGLCreateContext(pixel_format, NULL, &videof->gl);
-    CGLReleasePixelFormat(pixel_format);
-    if (cgl_err != kCGLNoError) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to create GL context: Core Graphics error %d", cgl_err);
-        goto fail;
-    }
-
-    cgl_err = CGLSetCurrentContext(videof->gl);
-    if (cgl_err != kCGLNoError) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to activate GL context: Core Graphics error %d", cgl_err);
-        goto fail_gl;
-    }
-
-    CGLShareGroupObj share_group = CGLGetShareGroup(videof->gl);
-    cl_context_properties props[] = {
-        CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE, (cl_context_properties) share_group,
-        0
-    };
-    videof->cl = clCreateContext(props, 0, NULL, p1_video_cl_notify_callback, videoobj, &cl_err);
-    if (cl_err != CL_SUCCESS) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL context: OpenCL error %d", cl_err);
-        goto fail_gl;
     }
 
     cl_device_id device_id;
     cl_err = clGetContextInfo(videof->cl, CL_CONTEXT_DEVICES, sizeof(cl_device_id), &device_id, &size);
     if (cl_err != CL_SUCCESS || size == 0) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to get CL device info: OpenCL error %d", cl_err);
-        goto fail_cl;
+        goto fail_platform;
     }
 
     videof->clq = clCreateCommandQueue(videof->cl, device_id, 0, &cl_err);
     if (cl_err != CL_SUCCESS) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL command queue: OpenCL error %d", cl_err);
-        goto fail_cl;
+        goto fail_platform;
     }
 
     params->pf_log = p1_video_encoder_log_callback;
     params->p_log_private = videoobj;
     params->i_log_level = X264_LOG_DEBUG;
 
-    mach_timebase_info_data_t timebase;
-    mach_timebase_info(&timebase);
-    params->i_timebase_num = timebase.numer;
-    params->i_timebase_den = timebase.denom * 1000000000;
+    params->i_timebase_num = ctxf->timebase_num;
+    params->i_timebase_den = ctxf->timebase_den * 1000000000;
 
     params->b_aud = 1;
     params->b_annexb = 0;
@@ -208,53 +172,10 @@ void p1_video_start(P1VideoFull *videof)
 
     glGenVertexArrays(1, &videof->vao);
     glGenBuffers(1, &videof->vbo);
-    glGenTextures(1, &videof->tex);
-    glGenFramebuffers(1, &videof->fbo);
     videof->program = glCreateProgram();
     if ((gl_err = glGetError()) != GL_NO_ERROR) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to create GL objects: OpenGL error %d", gl_err);
         goto fail_enc_pic;
-    }
-
-    const void *surfaceKeys[3];
-    const void *surfaceValues[3];
-    surfaceKeys[0] = kIOSurfaceWidth;
-    surfaceValues[0] = CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &output_width);
-    surfaceKeys[1] = kIOSurfaceHeight;
-    surfaceValues[1] = CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &output_height);
-    int bpp = 4;
-    surfaceKeys[2] = kIOSurfaceBytesPerElement;
-    surfaceValues[2] = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &bpp);
-    CFDictionaryRef surfaceProps = CFDictionaryCreate(kCFAllocatorDefault, surfaceKeys, surfaceValues, 3,
-                                                      &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CFRelease(surfaceValues[0]);
-    CFRelease(surfaceValues[1]);
-    CFRelease(surfaceValues[2]);
-    if (surfaceProps == NULL) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to create IOSurface parameters");
-        goto fail_enc_pic;
-    }
-
-    videof->surface = IOSurfaceCreate(surfaceProps);
-    CFRelease(surfaceProps);
-    if (videof->surface == NULL) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to create IOSurface");
-        goto fail_enc_pic;
-    }
-
-    glBindTexture(GL_TEXTURE_RECTANGLE, videof->tex);
-    cgl_err = CGLTexImageIOSurface2D(videof->gl, GL_TEXTURE_RECTANGLE, GL_RGBA8, output_width, output_height,
-                                     GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, videof->surface, 0);
-    if (cgl_err != kCGLNoError) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to bind IOSurface: Core Graphics error %d", cgl_err);
-        goto fail_iosurface;
-    }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, videof->fbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, videof->tex, 0);
-    if ((gl_err = glGetError()) != GL_NO_ERROR) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to create GL frame buffer: OpenGL error %d", gl_err);
-        goto fail_iosurface;
     }
 
     glBindAttribLocation(videof->program, 0, "a_Position");
@@ -262,13 +183,13 @@ void p1_video_start(P1VideoFull *videof)
     glBindFragDataLocation(videof->program, 0, "o_FragColor");
     b_ret = p1_video_build_program(videoobj, videof->program, simple_vertex_shader, simple_fragment_shader);
     if (!b_ret)
-        goto fail_iosurface;
+        goto fail_enc_pic;
     videof->tex_u = glGetUniformLocation(videof->program, "u_Texture");
 
     videof->tex_mem = clCreateFromGLTexture(videof->cl, CL_MEM_READ_ONLY, GL_TEXTURE_RECTANGLE, 0, videof->tex, &cl_err);
     if (cl_err != CL_SUCCESS) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL input buffer: OpenCL error %d", cl_err);
-        goto fail_iosurface;
+        goto fail_enc_pic;
     }
 
     videof->out_mem = clCreateBuffer(videof->cl, CL_MEM_WRITE_ONLY, output_yuv_size, NULL, &cl_err);
@@ -341,9 +262,6 @@ fail_tex_mem:
     if (cl_err != CL_SUCCESS)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL input buffer: OpenCL error %d", cl_err);
 
-fail_iosurface:
-    CFRelease(videof->surface);
-
 fail_enc_pic:
     x264_picture_clean(&videof->enc_pic);
 
@@ -355,13 +273,8 @@ fail_clq:
     if (cl_err != CL_SUCCESS)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL command queue: OpenCL error %d", cl_err);
 
-fail_cl:
-    cl_err = clReleaseContext(videof->cl);
-    if (cl_err != CL_SUCCESS)
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL context: OpenCL error %d", cl_err);
-
-fail_gl:
-    CGLReleaseContext(videof->gl);
+fail_platform:
+    p1_video_destroy_platform(videof);
 
 fail:
     p1_object_set_state(videoobj, P1_STATE_HALTED);
@@ -393,8 +306,6 @@ static void p1_video_kill_session(P1VideoFull *videof)
     if (cl_err != CL_SUCCESS)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL input buffer: OpenCL error %d", cl_err);
 
-    CFRelease(videof->surface);
-
     x264_picture_clean(&videof->enc_pic);
     x264_encoder_close(videof->enc);
 
@@ -402,11 +313,7 @@ static void p1_video_kill_session(P1VideoFull *videof)
     if (cl_err != CL_SUCCESS)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL command queue: OpenCL error %d", cl_err);
 
-    cl_err = clReleaseContext(videof->cl);
-    if (cl_err != CL_SUCCESS)
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL context: OpenCL error %d", cl_err);
-
-    CGLReleaseContext(videof->gl);
+    p1_video_destroy_platform(videof);
 }
 
 static bool p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
@@ -509,7 +416,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     }
 
     // Rendering
-    CGLSetCurrentContext(videof->gl);
+    p1_video_activate_gl(videof);
     glClear(GL_COLOR_BUFFER_BIT);
 
     head = &video->sources;
@@ -549,13 +456,11 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
         goto fail;
     }
 
-    // Preview download
+    // Preview hook, in platform specific code
     if (video->preview_fn) {
-        uint32_t seed;
-        IOSurfaceLock(videof->surface, kIOSurfaceLockReadOnly, &seed);
-        uint8_t *data = IOSurfaceGetBaseAddress(videof->surface);
-        video->preview_fn(video, output_width, output_height, data);
-        IOSurfaceUnlock(videof->surface, kIOSurfaceLockReadOnly, &seed);
+        b_ret = p1_video_preview(videof);
+        if (!b_ret)
+            goto fail;
     }
 
     // Colorspace conversion
@@ -730,7 +635,7 @@ static bool p1_video_build_program(P1Object *videoobj, GLuint program, const cha
     return true;
 }
 
-static void p1_video_cl_notify_callback(const char *errstr, const void *private_info, size_t cb, void *user_data)
+void p1_video_cl_notify_callback(const char *errstr, const void *private_info, size_t cb, void *user_data)
 {
     P1Object *videoobj = (P1Object *) user_data;
     p1_log(videoobj, P1_LOG_INFO, "%s", errstr);

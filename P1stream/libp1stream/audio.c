@@ -21,7 +21,7 @@ static const int out_size = out_min_size * 64;
 static void p1_audio_kill_session(P1AudioFull *audiof);
 static void p1_audio_write(P1AudioFull *ctx, P1AudioSource *asrc, float **in, size_t *samples);
 static ssize_t p1_audio_read(P1AudioFull *ctx);
-static int64_t p1_audio_samples_to_mach_time(P1ContextFull *ctx, size_t samples);
+static int64_t p1_audio_samples_to_time(P1ContextFull *ctx, size_t samples);
 
 
 bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect)
@@ -153,7 +153,7 @@ void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t
 
     // Recalculate time for the start of the mix buffer.
     if (asrc->master)
-        audiof->time = time - p1_audio_samples_to_mach_time(ctxf, asrc->mix_pos);
+        audiof->time = time - p1_audio_samples_to_time(ctxf, asrc->mix_pos);
 
     size_t out_size;
     do {
@@ -304,14 +304,14 @@ static ssize_t p1_audio_read(P1AudioFull *audiof)
         }
 
         // Recalculate mix buffer start time.
-        audiof->time += p1_audio_samples_to_mach_time(ctxf, mix_read);
+        audiof->time += p1_audio_samples_to_time(ctxf, mix_read);
     }
 
     return out_desc.bufs[0] - audiof->out;
 }
 
-static int64_t p1_audio_samples_to_mach_time(P1ContextFull *ctxf, size_t samples)
+static int64_t p1_audio_samples_to_time(P1ContextFull *ctxf, size_t samples)
 {
     int64_t nanosec = samples / num_channels * 1000000000 / sample_rate;
-    return nanosec * ctxf->timebase.denom / ctxf->timebase.numer;
+    return nanosec * ctxf->timebase_den / ctxf->timebase_num;
 }

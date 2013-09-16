@@ -3,8 +3,6 @@
 
 #include "p1stream.h"
 
-#include <mach/mach_time.h>
-#include <OpenCL/opencl.h>
 #include <aacenc_lib.h>
 #include <x264.h>
 #include <librtmp/rtmp.h>
@@ -15,6 +13,20 @@ typedef struct _P1VideoFull P1VideoFull;
 typedef struct _P1AudioFull P1AudioFull;
 typedef struct _P1ConnectionFull P1ConnectionFull;
 typedef struct _P1ContextFull P1ContextFull;
+
+
+// Platform-specific support.
+
+#if __APPLE__
+#   include <TargetConditionals.h>
+#   if TARGET_OS_MAC
+#       include "osx/p1stream_osx_priv.h"
+#   else
+#       error Unsupported platform
+#   endif
+#else
+#   error Unsupported platform
+#endif
 
 
 // Private P1Object methods.
@@ -37,34 +49,40 @@ struct _P1PacketQueue {
 struct _P1VideoFull {
     P1Video super;
 
-    CGLContextObj gl;
-
+    // These are initialized by platform support
+    P1GLContext gl;
     cl_context cl;
-    cl_command_queue clq;
-
-    GLuint vao;
-    GLuint vbo;
     GLuint tex;
     GLuint fbo;
+
+    // GL objects
+    GLuint vao;
+    GLuint vbo;
     GLuint program;
     GLuint tex_u;
-    IOSurfaceRef surface;
 
+    // CL objects
+    cl_command_queue clq;
     cl_mem tex_mem;
     cl_mem out_mem;
     cl_kernel yuv_kernel;
 
+    // x264 objects
     x264_t *enc;
     x264_param_t params;
     x264_picture_t enc_pic;
 
+    // Misc. state
     bool sent_config;
 };
 
 bool p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
 #define p1_video_destroy(_videof) p1_object_destroy((P1Object *) _videof)
+
 void p1_video_start(P1VideoFull *videof);
 void p1_video_stop(P1VideoFull *videof);
+
+void p1_video_cl_notify_callback(const char *errstr, const void *private_info, size_t cb, void *user_data);
 
 
 // Private part of P1Audio.
@@ -84,6 +102,7 @@ struct _P1AudioFull {
 
 bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect);
 #define p1_audio_destroy(_audiof) p1_object_destroy((P1Object *) _audiof)
+
 void p1_audio_start(P1AudioFull *audiof);
 void p1_audio_stop(P1AudioFull *audiof);
 
@@ -105,10 +124,13 @@ struct _P1ConnectionFull {
 
 bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect);
 void p1_conn_destroy(P1ConnectionFull *connf);
+
 void p1_conn_start(P1ConnectionFull *connf);
 void p1_conn_stop(P1ConnectionFull *connf);
+
 bool p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len);
 void p1_conn_video(P1ConnectionFull *connf, x264_nal_t *nals, int len, x264_picture_t *pic);
+
 void p1_conn_audio_config(P1ConnectionFull *connf);
 void p1_conn_audio(P1ConnectionFull *connf, int64_t time, void *buf, size_t len);
 
@@ -122,7 +144,10 @@ struct _P1ContextFull {
     int ctrl_pipe[2];
     int user_pipe[2];
 
-    mach_timebase_info_data_t timebase;
+    // The time base of OS timestamps, which are used throughout interface, as
+    // a fraction of nanoseconds. The reference date is not important to us.
+    uint32_t timebase_num;
+    uint32_t timebase_den;
 };
 
 #endif

@@ -250,7 +250,7 @@ static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
         // Relative time.
         time -= connf->start;
         // Convert to milliseconds.
-        time = time * ctxf->timebase.numer / ctxf->timebase.denom / 1000000;
+        time = time * ctxf->timebase_num / ctxf->timebase_den / 1000000;
         // x264 may have a couple of frames with negative time.
         if (time < 0) time = 0;
         // Wrap when we exceed 32-bits.
@@ -315,7 +315,7 @@ static void *p1_conn_main(void *data)
 
     p1_object_lock(connobj);
 
-    connf->start = mach_absolute_time();
+    connf->start = p1_get_time();
     p1_object_set_state(connobj, P1_STATE_RUNNING);
 
     do {

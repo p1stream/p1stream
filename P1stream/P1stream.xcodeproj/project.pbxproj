@@ -118,6 +118,7 @@
 		F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = P1AppDelegate.m; sourceTree = "<group>"; };
 		F682AC3517E4C91C007DC0CF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
+		F6931F6817E6F75000B6B113 /* p1stream_osx_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream_osx_priv.h; sourceTree = "<group>"; };
 		F69E0C7817C423A3000EA1CD /* p1stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream.h; sourceTree = "<group>"; };
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
@@ -205,6 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				F62DBA4617C53360004DDFD6 /* p1stream_osx.h */,
+				F6931F6817E6F75000B6B113 /* p1stream_osx_priv.h */,
 				F62DBA4517C53360004DDFD6 /* p1stream_osx.m */,
 				F62DBA4417C53360004DDFD6 /* conf_plist.c */,
 				F62DBA4217C53360004DDFD6 /* audio_input.c */,
