@@ -1,6 +1,10 @@
 #ifndef p1stream_osx_priv_h
 #define p1stream_osx_priv_h
 
+#ifndef GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
+#define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
+#endif
+
 #include <mach/mach_time.h>
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/gl3.h>
