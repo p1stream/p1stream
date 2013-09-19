@@ -184,16 +184,18 @@ void p1_free(P1Context *ctx, P1FreeOptions options)
 
     if (options & P1_FREE_VIDEO_SOURCES) {
         head = &ctx->video->sources;
-        p1_list_iterate(head, node) {
+        while ((node = head->next) != head) {
             P1Source *src = p1_list_get_container(node, P1Source, link);
+            p1_list_remove(node);
             p1_plugin_free((P1Plugin *) src);
         }
     }
 
     if (options & P1_FREE_AUDIO_SOURCES) {
         head = &ctx->audio->sources;
-        p1_list_iterate(head, node) {
+        while ((node = head->next) != head) {
             P1Source *src = p1_list_get_container(node, P1Source, link);
+            p1_list_remove(node);
             p1_plugin_free((P1Plugin *) src);
         }
     }
@@ -536,6 +538,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
         }
         p1_object_unlock(obj);
         if (action == P1_ACTION_REMOVE) {
+            node = node->prev;
             p1_list_remove(&src->link);
             p1_plugin_free(pel);
         }
@@ -572,6 +575,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
         }
         p1_object_unlock(obj);
         if (action == P1_ACTION_REMOVE) {
+            node = node->prev;
             p1_list_remove(&src->link);
             p1_plugin_free(pel);
         }
