@@ -8,32 +8,89 @@ static const char *default_url = "rtmp://localhost/app/test";
 // This is used for RTMP logging.
 static P1Object *current_conn = NULL;
 
+// Hardcoded audio parameters.
+static const int audio_sample_rate = 44100;
+static const int audio_num_channels = 2;
+// Hardcoded bitrate.
+static const int audio_bit_rate = 128 * 1024;
+// Minimum output buffer size per FDK AAC requirements.
+static const int audio_out_min_size = 6144 / 8 * audio_num_channels;
+// Complete output buffer size, also one full second.
+static const int audio_out_size = audio_out_min_size * 64;
+
+static bool p1_conn_stream_video_config(P1ConnectionFull *connf);
+static bool p1_conn_stream_audio_config(P1ConnectionFull *connf);
+
 static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, uint32_t body_size);
 static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time);
+
 static void *p1_conn_main(void *data);
 static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf);
-static void p1_conn_log_callback(int level, const char *fmt, va_list);
+
+static bool p1_conn_init_x264_params(P1ConnectionFull *videof, P1Config *cfg, P1ConfigSection *sect);
+static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, char *val, void *data);
+static void p1_conn_x264_log_callback(void *data, int level, const char *fmt, va_list args);
+
+static void p1_conn_rtmp_log_callback(int level, const char *fmt, va_list);
 
 
 bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Object *connobj = (P1Object *) connf;
+    int ret;
 
     if (!p1_object_init(connobj, P1_OTYPE_CONNECTION))
         goto fail_object;
 
-    int ret = pthread_cond_init(&connf->cond, NULL);
+    connf->audio_out = malloc(audio_out_size);
+    if (connf->audio_out == NULL)
+        goto fail_audio_out;
+
+    ret = pthread_cond_init(&connf->cond, NULL);
     if (ret != 0) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to initialize condition variable: %s", strerror(ret));
         goto fail_cond;
     }
+
+    ret = pthread_mutex_init(&connf->audio_lock, NULL);
+    if (ret != 0) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to initialize mutex: %s", strerror(ret));
+        goto fail_audio_lock;
+    }
+
+    ret = pthread_mutex_init(&connf->video_lock, NULL);
+    if (ret != 0) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to initialize mutex: %s", strerror(ret));
+        goto fail_video_lock;
+    }
+
+    if (!p1_conn_init_x264_params(connf, cfg, sect))
+        goto fail_params;
 
     if (!cfg->get_string(cfg, sect, "url", connf->url, sizeof(connf->url)))
         strcpy(connf->url, default_url);
 
     return true;
 
+fail_params:
+    ret = pthread_mutex_destroy(&connf->video_lock);
+    if (ret != 0)
+        p1_log(connobj, P1_LOG_ERROR, "Failed to destroy mutex: %s", strerror(ret));
+
+fail_video_lock:
+    ret = pthread_mutex_destroy(&connf->audio_lock);
+    if (ret != 0)
+        p1_log(connobj, P1_LOG_ERROR, "Failed to destroy mutex: %s", strerror(ret));
+
+fail_audio_lock:
+    ret = pthread_cond_destroy(&connf->cond);
+    if (ret != 0)
+        p1_log(connobj, P1_LOG_ERROR, "Failed to destroy condition variable: %s", strerror(ret));
+
 fail_cond:
+    free(connf->audio_out);
+
+fail_audio_out:
     p1_object_destroy(connobj);
 
 fail_object:
@@ -43,8 +100,17 @@ fail_object:
 void p1_conn_destroy(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
+    int ret;
 
-    int ret = pthread_cond_destroy(&connf->cond);
+    ret = pthread_mutex_destroy(&connf->audio_lock);
+    if (ret != 0)
+        p1_log(connobj, P1_LOG_ERROR, "Failed to destroy mutex: %s", strerror(ret));
+
+    ret = pthread_mutex_destroy(&connf->video_lock);
+    if (ret != 0)
+        p1_log(connobj, P1_LOG_ERROR, "Failed to destroy mutex: %s", strerror(ret));
+
+    ret = pthread_cond_destroy(&connf->cond);
     if (ret != 0)
         p1_log(connobj, P1_LOG_ERROR, "Failed to destroy condition variable: %s", strerror(ret));
 
@@ -57,6 +123,7 @@ void p1_conn_start(P1ConnectionFull *connf)
 
     p1_object_set_state(connobj, P1_STATE_STARTING);
 
+    // Thread will continue start, and set state to running
     int ret = pthread_create(&connf->thread, NULL, p1_conn_main, connf);
     if (ret != 0) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to start connection thread: %s", strerror(ret));
@@ -67,19 +134,31 @@ void p1_conn_start(P1ConnectionFull *connf)
 void p1_conn_stop(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
+    int ret;
 
     p1_object_set_state(connobj, P1_STATE_STOPPING);
 
-    int ret = pthread_cond_signal(&connf->cond);
+    ret = pthread_cond_signal(&connf->cond);
     if (ret != 0)
         p1_log(connobj, P1_LOG_ERROR, "Failed to signal connection thread: %s", strerror(ret));
 }
 
-// Send video configuration.
-bool p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
+
+// Send video configuration. This happens during the starting state, so we
+// don't have to worry about locking.
+static bool p1_conn_stream_video_config(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
+    x264_nal_t *nals;
+    int len;
+    int ret;
     int i;
+
+    ret = x264_encoder_headers(connf->video_enc, &nals, &len);
+    if (ret < 0) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to get H.264 headers");
+        return false;
+    }
 
     x264_nal_t *nal_sps = NULL, *nal_pps = NULL;
     for (i = 0; i < len; i++) {
@@ -105,7 +184,8 @@ bool p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
     uint32_t tag_size = 16 + sps_size + pps_size;
 
     RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_VIDEO, tag_size);
-    if (pkt == NULL) return false;
+    if (pkt == NULL)
+        return false;
     char * const body = pkt->m_body;
 
     body[0] = 0x10 | 0x07; // keyframe, AVC
@@ -131,37 +211,83 @@ bool p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len)
     *(uint16_t *) (body+i) = htons(pps_size);
     memcpy(body+i+2, nal_pps->p_payload+4, pps_size);
 
+    // It's crucial this packet gets queued.
     return p1_conn_submit_packet(connf, pkt, 0);
 }
 
-// Send video data.
-void p1_conn_video(P1ConnectionFull *connf, x264_nal_t *nals, int len, x264_picture_t *pic)
+// Encode and send video data
+void p1_conn_stream_video(P1ConnectionFull *connf, int64_t time, x264_picture_t *pic)
 {
+    P1Object *connobj = (P1Object *) connf;
+
+    // Encode and build packet using fine-grained lock.
+    p1_lock(connobj, &connf->video_lock);
+
+    pic->i_dts = time;
+    pic->i_pts = time;
+
+    x264_nal_t *nals;
+    int len;
+    x264_picture_t out_pic;
+    int ret = x264_encoder_encode(connf->video_enc, &nals, &len, pic, &out_pic);
+    if (ret < 0) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to H.264 encode frame");
+        goto fail;
+    }
+
+    time = out_pic.i_dts;
+
     uint32_t size = 0;
     for (int i = 0; i < len; i++)
         size += nals[i].i_payload;
-    const uint32_t tag_size = size + 5;
+    if (size == 0) {
+        p1_unlock(connobj, &connf->video_lock);
+        return;
+    }
 
+    const uint32_t tag_size = size + 5;
     RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_VIDEO, tag_size);
-    if (pkt == NULL) return;
+    if (pkt == NULL)
+        goto fail;
     char * const body = pkt->m_body;
 
-    body[0] = (pic->b_keyframe ? 0x10 : 0x20) | 0x07; // keyframe/IDR, AVC
+    body[0] = (out_pic.b_keyframe ? 0x10 : 0x20) | 0x07; // keyframe/IDR, AVC
     body[1] = 1; // AVC NALU
     // skip composition time
 
     memcpy(body + 5, nals[0].p_payload, size);
 
-    p1_conn_submit_packet(connf, pkt, pic->i_dts);
+    p1_unlock(connobj, &connf->video_lock);
+
+    // Stream using full lock.
+    p1_object_lock(connobj);
+
+    if (connobj->state == P1_STATE_RUNNING)
+        p1_conn_submit_packet(connf, pkt, time);
+    else
+        free(pkt);
+
+    p1_object_unlock(connobj);
+
+    return;
+
+fail:
+    p1_unlock(connobj, &connf->video_lock);
+
+    // FIXME: halt
 }
 
-// Send audio configuration.
-void p1_conn_audio_config(P1ConnectionFull *connf)
+
+
+// Send audio configuration. This happens during the starting state, so we
+// don't have to worry about locking.
+static bool p1_conn_stream_audio_config(P1ConnectionFull *connf)
 {
     const uint32_t tag_size = 2 + 2;
 
     RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_AUDIO, tag_size);
-    if (pkt == NULL) return;
+    if (pkt == NULL)
+        return false;
     char * const body = pkt->m_body;
 
     body[0] = 0xa0 | 0x0c | 0x02 | 0x01; // AAC, 44.1kHz, 16-bit, Stereo
@@ -171,26 +297,118 @@ void p1_conn_audio_config(P1ConnectionFull *connf)
     body[2] = 0x10 | 0x02;
     body[3] = 0x10;
 
-    p1_conn_submit_packet(connf, pkt, 0);
+    // It's crucial this packet gets queued.
+    return p1_conn_submit_packet(connf, pkt, 0);
 }
 
-// Send audio data.
-void p1_conn_audio(P1ConnectionFull *connf, int64_t mtime, void *buf, size_t len)
+// Encode and send audio data
+size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf, size_t samples)
 {
-    const uint32_t tag_size = (uint32_t) (2 + len);
+    P1Object *connobj = (P1Object *) connf;
 
+    // Encode and build packet using fine-grained lock.
+    p1_lock(connobj, &connf->audio_lock);
+
+    INT el_sizes[] = { sizeof(int16_t) };
+
+    void *in_bufs[] = { buf };
+    INT in_identifiers[] = { IN_AUDIO_DATA };
+    INT in_sizes[] = { (INT) (samples * sizeof(int16_t)) };
+    AACENC_BufDesc in_desc = {
+        .numBufs = 1,
+        .bufs = in_bufs,
+        .bufferIdentifiers = in_identifiers,
+        .bufSizes = in_sizes,
+        .bufElSizes = el_sizes
+    };
+
+    void *out_bufs[] = { connf->audio_out };
+    INT out_identifiers[] = { OUT_BITSTREAM_DATA };
+    INT out_sizes[] = { audio_out_size };
+    AACENC_BufDesc out_desc = {
+        .numBufs = 1,
+        .bufs = out_bufs,
+        .bufferIdentifiers = out_identifiers,
+        .bufSizes = out_sizes,
+        .bufElSizes = el_sizes
+    };
+
+    AACENC_InArgs in_args = {
+        .numInSamples = (INT) samples,
+        .numAncBytes = 0
+    };
+
+    // Encode as much as we can; FDK AAC gives us small batches.
+    size_t size = 0;
+    size_t samples_read = 0;
+    AACENC_ERROR err;
+    AACENC_OutArgs out_args = { .numInSamples = 1 };
+    while (in_args.numInSamples && out_args.numInSamples && out_desc.bufSizes[0] > audio_out_min_size) {
+        err = aacEncEncode(connf->audio_enc, &in_desc, &out_desc, &in_args, &out_args);
+        if (err != AACENC_OK) {
+            p1_log(connobj, P1_LOG_ERROR, "Failed to AAC encode audio: FDK AAC error %d", err);
+            goto fail;
+        }
+
+        size_t in_processed = out_args.numInSamples * sizeof(int16_t);
+        in_desc.bufs[0] += in_processed;
+        in_desc.bufSizes[0] -= in_processed;
+
+        size_t out_bytes = out_args.numOutBytes;
+        out_desc.bufs[0] += out_bytes;
+        out_desc.bufSizes[0] -= out_bytes;
+
+        in_args.numInSamples -= out_args.numInSamples;
+
+        size += out_args.numOutBytes;
+        samples_read += out_args.numInSamples;
+    }
+
+    if (size == 0) {
+        p1_unlock(connobj, &connf->video_lock);
+        return samples_read;
+    }
+
+    const uint32_t tag_size = (uint32_t) (2 + size);
     RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_AUDIO, tag_size);
-    if (pkt == NULL) return;
+    if (pkt == NULL)
+        goto fail;
     char * const body = pkt->m_body;
 
     body[0] = 0xa0 | 0x0c | 0x02 | 0x01; // AAC, 44.1kHz, 16-bit, Stereo
     body[1] = 1; // AAC raw
 
     // FIXME: Do the extra work to avoid this copy.
-    memcpy(body + 2, buf, len);
+    memcpy(body + 2, buf, size);
 
-    p1_conn_submit_packet(connf, pkt, mtime);
+    p1_unlock(connobj, &connf->audio_lock);
+
+    // Stream using full lock.
+    p1_object_lock(connobj);
+
+    if (connobj->state == P1_STATE_RUNNING) {
+        p1_conn_submit_packet(connf , pkt, time);
+    }
+    else {
+        free(pkt);
+
+        // Consume all.
+        samples_read = samples;
+    }
+
+    p1_object_unlock(connobj);
+
+    return samples_read;
+
+fail:
+    p1_unlock(connobj, &connf->audio_lock);
+
+    // FIXME: halt
+
+    // Consume all.
+    return samples;
 }
+
 
 // Allocate a new packet and set header fields.
 static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, uint32_t body_size)
@@ -214,22 +432,13 @@ static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, uin
     return pkt;
 }
 
-// Submit a packet to the queue.
+// Submit a packet to the queue. Caller must ensure proper locking.
 static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time)
 {
     P1Object *connobj = (P1Object *) connf;
     P1Context *ctx = connobj->ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
-    bool result = true;
     int ret;
-
-    p1_object_lock(connobj);
-
-    if (connobj->state != P1_STATE_RUNNING) {
-        free(pkt);
-        result = false;
-        goto end;
-    }
 
     // Determine which queue to use.
     P1PacketQueue *q;
@@ -241,8 +450,7 @@ static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     if (q->length == UINT8_MAX) {
         free(pkt);
         p1_log(connobj, P1_LOG_WARNING, "Packet queue full, dropping packet!");
-        result = false;
-        goto end;
+        return false;
     }
 
     // Set timestamp, if one was given.
@@ -268,24 +476,73 @@ static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     if (ret != 0)
         p1_log(connobj, P1_LOG_ERROR, "Failed to signal connection thread: %s", strerror(ret));
 
-end:
-    p1_object_unlock(connobj);
-
-    return result;
+    return true;
 }
+
 
 // The main loop of the streaming thread.
 static void *p1_conn_main(void *data)
 {
     P1ConnectionFull *connf = (P1ConnectionFull *) data;
     P1Object *connobj = (P1Object *) data;
+    P1Context *ctx = connobj->ctx;
+    P1ContextFull *ctxf = (P1ContextFull *) ctx;
+    P1Video *video = ctx->video;
+    P1VideoClock *vclock = video->clock;
+    AACENC_ERROR err;
+    HANDLE_AACENCODER *ae = &connf->audio_enc;
+    x264_param_t *vp = &connf->video_params;
     RTMP r;
     int ret;
 
+    p1_object_lock(connobj);
+
+    // Audio encoder setup
+    err = aacEncOpen(ae, 0x01, 2);
+    if (err != AACENC_OK) goto fail_audio;
+
+    err = aacEncoder_SetParam(*ae, AACENC_AOT, AOT_AAC_LC);
+    if (err != AACENC_OK) goto fail_audio_setup;
+    err = aacEncoder_SetParam(*ae, AACENC_SAMPLERATE, audio_sample_rate);
+    if (err != AACENC_OK) goto fail_audio_setup;
+    err = aacEncoder_SetParam(*ae, AACENC_CHANNELMODE, MODE_2);
+    if (err != AACENC_OK) goto fail_audio_setup;
+    err = aacEncoder_SetParam(*ae, AACENC_BITRATE, audio_bit_rate);
+    if (err != AACENC_OK) goto fail_audio_setup;
+    err = aacEncoder_SetParam(*ae, AACENC_TRANSMUX, TT_MP4_RAW);
+    if (err != AACENC_OK) goto fail_audio_setup;
+
+    err = aacEncEncode(*ae, NULL, NULL, NULL, NULL);
+    if (err != AACENC_OK) goto fail_audio_setup;
+
+    // Video encoder setup
+    vp->pf_log = p1_conn_x264_log_callback;
+    vp->p_log_private = connobj;
+    vp->i_log_level = X264_LOG_DEBUG;
+
+    vp->i_timebase_num = ctxf->timebase_num;
+    vp->i_timebase_den = ctxf->timebase_den * 1000000000;
+
+    vp->b_aud = 1;
+    vp->b_annexb = 0;
+
+    vp->i_width = 1280;
+    vp->i_height = 720;
+
+    vp->i_fps_num = vclock->fps_num;
+    vp->i_fps_den = vclock->fps_den;
+
+    connf->video_enc = x264_encoder_open(vp);
+    if (connf->video_enc == NULL) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to open x264 encoder");
+        goto fail_locked;
+    }
+
+    // Connection setup
     if (current_conn == NULL) {
         current_conn = connobj;
         RTMP_LogSetLevel(RTMP_LOGINFO);
-        RTMP_LogSetCallback(p1_conn_log_callback);
+        RTMP_LogSetCallback(p1_conn_rtmp_log_callback);
     }
     else {
         p1_log(connobj, P1_LOG_WARNING, "Cannot log for multiple connections");
@@ -296,25 +553,35 @@ static void *p1_conn_main(void *data)
     ret = RTMP_SetupURL(&r, connf->url);
     if (!ret) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to parse URL.");
-        goto fail;
+        goto fail_locked;
     }
 
     RTMP_EnableWrite(&r);
 
+    // Make the connection
+    p1_object_unlock(connobj);
+
     ret = RTMP_Connect(&r, NULL);
     if (!ret) {
         p1_log(connobj, P1_LOG_ERROR, "Connection failed.");
-        goto fail;
+        goto fail_unlocked;
     }
 
     ret = RTMP_ConnectStream(&r, 0);
     if (!ret) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to connect to stream.");
-        goto fail;
+        goto fail_unlocked;
     }
+
+    // Queue configuration packets
+    if (!p1_conn_stream_audio_config(connf))
+        goto fail_unlocked;
+    if (!p1_conn_stream_video_config(connf))
+        goto fail_unlocked;
 
     p1_object_lock(connobj);
 
+    // Connection event loop
     connf->start = p1_get_time();
     p1_object_set_state(connobj, P1_STATE_RUNNING);
 
@@ -329,29 +596,53 @@ static void *p1_conn_main(void *data)
         }
     } while (connobj->state == P1_STATE_RUNNING);
 
+cleanup:
+    // Clean up
     RTMP_Close(&r);
+
     if (current_conn == connobj)
         current_conn = NULL;
 
-    p1_object_set_state(connobj, P1_STATE_IDLE);
+    if (connf->video_enc != NULL) {
+        p1_lock(connobj, &connf->video_lock);
+
+        x264_encoder_close(connf->video_enc);
+        connf->video_enc = NULL;
+
+        p1_unlock(connobj, &connf->video_lock);
+    }
+
+    if (*ae != NULL) {
+        err = aacEncClose(ae);
+        if (err != AACENC_OK)
+            p1_log(connobj, P1_LOG_ERROR, "Failed to close audio encoder: FDK AAC error %d", err);
+        *ae = NULL;
+    }
+
+    if (connobj->state == P1_STATE_STOPPING)
+        p1_object_set_state(connobj, P1_STATE_IDLE);
+    else
+        p1_object_set_state(connobj, P1_STATE_HALTED);
 
     p1_object_unlock(connobj);
 
     return NULL;
 
-fail:
+fail_unlocked:
     p1_object_lock(connobj);
+    // fall through
 
 fail_locked:
     p1_object_set_state(connobj, P1_STATE_HALTING);
-    RTMP_Close(&r);
-    if (current_conn == connobj)
-        current_conn = NULL;
-    p1_object_set_state(connobj, P1_STATE_HALTED);
+    goto cleanup;
 
-    p1_object_unlock(connobj);
+fail_audio_setup:
+    aacEncClose(ae);
+    // fall through
 
-    return NULL;
+fail_audio:
+    p1_log(connobj, P1_LOG_ERROR, "Failed to open audio encoder: FDK AAC error %d", err);
+    goto fail_locked;
 }
 
 // Flush as many queued packets as we can to the connection.
@@ -423,7 +714,84 @@ static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
     return result;
 }
 
-static void p1_conn_log_callback(int level, const char *fmt, va_list args)
+
+static bool p1_conn_init_x264_params(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
+{
+    x264_param_t *params = &connf->video_params;
+    char tmp[128];
+    int ret;
+
+    // x264 already logs errors, except for x264_param_parse.
+
+    x264_param_default(params);
+
+    if (cfg->get_string(cfg, sect, "encoder.preset", tmp, sizeof(tmp))) {
+        ret = x264_param_default_preset(params, tmp, NULL);
+        if (ret != 0)
+            return false;
+    }
+
+    if (cfg->get_string(cfg, sect, "encoder.tune", tmp, sizeof(tmp))) {
+        ret = x264_param_default_preset(params, NULL, tmp);
+        if (ret != 0)
+            return false;
+    }
+
+    if (!cfg->each_string(cfg, sect, "encoder", p1_conn_parse_x264_param, connf))
+        return false;
+
+    x264_param_apply_fastfirstpass(params);
+
+    if (cfg->get_string(cfg, sect, "encoder.profile", tmp, sizeof(tmp))) {
+        ret = x264_param_apply_profile(params, tmp);
+        if (ret != 0)
+            return false;
+    }
+
+    return true;
+}
+
+static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, char *val, void *data)
+{
+    P1Object *connobj = (P1Object *) data;
+    P1ConnectionFull *connf = (P1ConnectionFull *) data;
+    int ret;
+
+    if (strcmp(key, "preset") == 0 ||
+        strcmp(key, "profile") == 0 ||
+        strcmp(key, "tune") == 0)
+        return true;
+
+    ret = x264_param_parse(&connf->video_params, key, val);
+    if (ret != 0) {
+        if (ret == X264_PARAM_BAD_NAME)
+            p1_log(connobj, P1_LOG_ERROR, "Invalid x264 parameter name '%s'", key);
+        else if (ret == X264_PARAM_BAD_VALUE)
+            p1_log(connobj, P1_LOG_ERROR, "Invalid value for x264 parameter '%s'", key);
+        return false;
+    }
+
+    return true;
+}
+
+static void p1_conn_x264_log_callback(void *data, int level, const char *fmt, va_list args)
+{
+    P1Object *videobj = (P1Object *) data;
+
+    // Strip the newline.
+    size_t i = strlen(fmt) - 1;
+    char fmt2[i + 1];
+    if (fmt[i] == '\n') {
+        memcpy(fmt2, fmt, i);
+        fmt2[i] = '\0';
+        fmt = fmt2;
+    }
+
+    p1_logv(videobj, (P1LogLevel) level, fmt, args);
+}
+
+
+static void p1_conn_rtmp_log_callback(int level, const char *fmt, va_list args)
 {
     P1LogLevel p1_level;
     switch (level) {

@@ -67,13 +67,8 @@ struct _P1VideoFull {
     cl_mem out_mem;
     cl_kernel yuv_kernel;
 
-    // x264 objects
-    x264_t *enc;
-    x264_param_t params;
-    x264_picture_t enc_pic;
-
-    // Misc. state
-    bool sent_config;
+    // Output
+    x264_picture_t out_pic;
 };
 
 bool p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
@@ -90,14 +85,14 @@ void p1_video_cl_notify_callback(const char *errstr, const void *private_info, s
 struct _P1AudioFull {
     P1Audio super;
 
-    HANDLE_AACENCODER aac;
+    // Mix buffer
     float *mix;
-    INT_PCM *enc_in;
-    void *out;
+    int64_t mix_time;
 
-    int64_t time;
-
-    bool sent_config;
+    // Output buffer
+    int16_t *out;
+    size_t out_pos;
+    int64_t out_time;
 };
 
 bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect);
@@ -112,14 +107,29 @@ void p1_audio_stop(P1AudioFull *audiof);
 struct _P1ConnectionFull {
     P1Connection super;
 
+    // RTMP URL
     char url[2048];
 
+    // Start time, used as the zero point for RTMP timestamps
     uint64_t start;
 
+    // Connection thread
     pthread_t thread;
     pthread_cond_t cond;
+
+    // Packet queue
     P1PacketQueue video_queue;
     P1PacketQueue audio_queue;
+
+    // Video encoding
+    pthread_mutex_t video_lock;
+    x264_param_t video_params;
+    x264_t *video_enc;
+
+    // Audio encoding
+    pthread_mutex_t audio_lock;
+    HANDLE_AACENCODER audio_enc;
+    void *audio_out;
 };
 
 bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect);
@@ -128,11 +138,8 @@ void p1_conn_destroy(P1ConnectionFull *connf);
 void p1_conn_start(P1ConnectionFull *connf);
 void p1_conn_stop(P1ConnectionFull *connf);
 
-bool p1_conn_video_config(P1ConnectionFull *connf, x264_nal_t *nals, int len);
-void p1_conn_video(P1ConnectionFull *connf, x264_nal_t *nals, int len, x264_picture_t *pic);
-
-void p1_conn_audio_config(P1ConnectionFull *connf);
-void p1_conn_audio(P1ConnectionFull *connf, int64_t time, void *buf, size_t len);
+void p1_conn_stream_video(P1ConnectionFull *connf, int64_t time, x264_picture_t *pic);
+size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf, size_t samples);
 
 
 // Private part of P1Context.

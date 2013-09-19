@@ -3,9 +3,6 @@
 #include <string.h>
 
 static void p1_video_kill_session(P1VideoFull *videof);
-static bool p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
-static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data);
-static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args);
 static GLuint p1_build_shader(P1Object *videoobj, GLuint type, const char *source);
 static bool p1_video_build_program(P1Object *videoobj, GLuint program, const char *vertexShader, const char *fragmentShader);
 
@@ -99,9 +96,6 @@ bool p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
 
     p1_list_init(&video->sources);
 
-    if (!p1_video_init_encoder_params(videof, cfg, sect))
-        goto fail_params;
-
     return true;
 
 fail_params:
@@ -114,10 +108,6 @@ fail_object:
 void p1_video_start(P1VideoFull *videof)
 {
     P1Object *videoobj = (P1Object *) videof;
-    P1Video *video = (P1Video *) videof;
-    P1ContextFull *ctxf = (P1ContextFull *) videoobj->ctx;
-    P1VideoClock *vclock = video->clock;
-    x264_param_t *params = &videof->params;
     cl_int cl_err;
     GLenum gl_err;
     int i_ret;
@@ -142,32 +132,10 @@ void p1_video_start(P1VideoFull *videof)
         goto fail_platform;
     }
 
-    params->pf_log = p1_video_encoder_log_callback;
-    params->p_log_private = videoobj;
-    params->i_log_level = X264_LOG_DEBUG;
-
-    params->i_timebase_num = ctxf->timebase_num;
-    params->i_timebase_den = ctxf->timebase_den * 1000000000;
-
-    params->b_aud = 1;
-    params->b_annexb = 0;
-
-    params->i_width = output_width;
-    params->i_height = output_height;
-
-    params->i_fps_num = vclock->fps_num;
-    params->i_fps_den = vclock->fps_den;
-
-    videof->enc = x264_encoder_open(params);
-    if (videof->enc == NULL) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to open x264 encoder");
-        goto fail_clq;
-    }
-
-    i_ret = x264_picture_alloc(&videof->enc_pic, X264_CSP_I420, output_width, output_height);
+    i_ret = x264_picture_alloc(&videof->out_pic, X264_CSP_I420, output_width, output_height);
     if (i_ret < 0) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to alloc x264 picture buffer");
-        goto fail_enc;
+        goto fail_clq;
     }
 
     glGenVertexArrays(1, &videof->vao);
@@ -175,7 +143,7 @@ void p1_video_start(P1VideoFull *videof)
     videof->program = glCreateProgram();
     if ((gl_err = glGetError()) != GL_NO_ERROR) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to create GL objects: OpenGL error %d", gl_err);
-        goto fail_enc_pic;
+        goto fail_out_pic;
     }
 
     glBindAttribLocation(videof->program, 0, "a_Position");
@@ -183,13 +151,13 @@ void p1_video_start(P1VideoFull *videof)
     glBindFragDataLocation(videof->program, 0, "o_FragColor");
     b_ret = p1_video_build_program(videoobj, videof->program, simple_vertex_shader, simple_fragment_shader);
     if (!b_ret)
-        goto fail_enc_pic;
+        goto fail_out_pic;
     videof->tex_u = glGetUniformLocation(videof->program, "u_Texture");
 
     videof->tex_mem = clCreateFromGLTexture(videof->cl, CL_MEM_READ_ONLY, GL_TEXTURE_RECTANGLE, 0, videof->tex, &cl_err);
     if (cl_err != CL_SUCCESS) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL input buffer: OpenCL error %d", cl_err);
-        goto fail_enc_pic;
+        goto fail_out_pic;
     }
 
     videof->out_mem = clCreateBuffer(videof->cl, CL_MEM_WRITE_ONLY, output_yuv_size, NULL, &cl_err);
@@ -262,11 +230,8 @@ fail_tex_mem:
     if (cl_err != CL_SUCCESS)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL input buffer: OpenCL error %d", cl_err);
 
-fail_enc_pic:
-    x264_picture_clean(&videof->enc_pic);
-
-fail_enc:
-    x264_encoder_close(videof->enc);
+fail_out_pic:
+    x264_picture_clean(&videof->out_pic);
 
 fail_clq:
     cl_err = clReleaseCommandQueue(videof->clq);
@@ -306,89 +271,13 @@ static void p1_video_kill_session(P1VideoFull *videof)
     if (cl_err != CL_SUCCESS)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL input buffer: OpenCL error %d", cl_err);
 
-    x264_picture_clean(&videof->enc_pic);
-    x264_encoder_close(videof->enc);
+    x264_picture_clean(&videof->out_pic);
 
     cl_err = clReleaseCommandQueue(videof->clq);
     if (cl_err != CL_SUCCESS)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL command queue: OpenCL error %d", cl_err);
 
     p1_video_destroy_platform(videof);
-}
-
-static bool p1_video_init_encoder_params(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
-{
-    x264_param_t *params = &videof->params;
-    char tmp[128];
-    int ret;
-
-    // x264 already logs errors, except for x264_param_parse.
-
-    x264_param_default(params);
-
-    if (cfg->get_string(cfg, sect, "encoder.preset", tmp, sizeof(tmp))) {
-        ret = x264_param_default_preset(params, tmp, NULL);
-        if (ret != 0)
-            return false;
-    }
-
-    if (cfg->get_string(cfg, sect, "encoder.tune", tmp, sizeof(tmp))) {
-        ret = x264_param_default_preset(params, NULL, tmp);
-        if (ret != 0)
-            return false;
-    }
-
-    if (!cfg->each_string(cfg, sect, "encoder", p1_video_parse_encoder_param, videof))
-        return false;
-
-    x264_param_apply_fastfirstpass(params);
-
-    if (cfg->get_string(cfg, sect, "encoder.profile", tmp, sizeof(tmp))) {
-        ret = x264_param_apply_profile(params, tmp);
-        if (ret != 0)
-            return false;
-    }
-
-    return true;
-}
-
-static bool p1_video_parse_encoder_param(P1Config *cfg, const char *key, char *val, void *data)
-{
-    P1Object *videoobj = (P1Object *) data;
-    P1VideoFull *videof = (P1VideoFull *) data;
-    int ret;
-
-    if (strcmp(key, "preset") == 0 ||
-        strcmp(key, "profile") == 0 ||
-        strcmp(key, "tune") == 0)
-        return true;
-
-    ret = x264_param_parse(&videof->params, key, val);
-    if (ret != 0) {
-        if (ret == X264_PARAM_BAD_NAME)
-            p1_log(videoobj, P1_LOG_ERROR, "Invalid x264 parameter name '%s'", key);
-        else if (ret == X264_PARAM_BAD_VALUE)
-            p1_log(videoobj, P1_LOG_ERROR, "Invalid value for x264 parameter '%s'", key);
-        return false;
-    }
-
-    return true;
-}
-
-static void p1_video_encoder_log_callback(void *data, int level, const char *fmt, va_list args)
-{
-    P1Object *videobj = (P1Object *) data;
-
-    // Strip the newline.
-    size_t i = strlen(fmt) - 1;
-    char fmt2[i + 1];
-    if (fmt[i] == '\n') {
-        memcpy(fmt2, fmt, i);
-        fmt2[i] = '\0';
-        fmt = fmt2;
-    }
-
-    p1_logv(videobj, (P1LogLevel) level, fmt, args);
 }
 
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
@@ -398,15 +287,14 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     P1Video *video = ctx->video;
     P1VideoFull *videof = (P1VideoFull *) video;
     P1Object *videoobj = (P1Object *) video;
-    P1ConnectionFull *connf = (P1ConnectionFull *) ctx->conn;
+    P1Connection *conn = ctx->conn;
+    P1Object *connobj = (P1Object *) conn;
+    P1ConnectionFull *connf = (P1ConnectionFull *) conn;
     P1ListNode *head;
     P1ListNode *node;
     GLenum gl_err;
     cl_int cl_err;
-    int i_ret;
     bool b_ret;
-    x264_nal_t *nals;
-    int len;
 
     p1_object_lock(videoobj);
 
@@ -465,40 +353,25 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
             goto fail;
     }
 
-    // Colorspace conversion
-    cl_err = clEnqueueAcquireGLObjects(videof->clq, 1, &videof->tex_mem, 0, NULL, NULL);
-    if (cl_err != CL_SUCCESS) goto fail_cl;
-    cl_err = clEnqueueNDRangeKernel(videof->clq, videof->yuv_kernel, 2, NULL, yuv_work_size, NULL, 0, NULL, NULL);
-    if (cl_err != CL_SUCCESS) goto fail_cl;
-    cl_err = clEnqueueReleaseGLObjects(videof->clq, 1, &videof->tex_mem, 0, NULL, NULL);
-    if (cl_err != CL_SUCCESS) goto fail_cl;
-    cl_err = clEnqueueReadBuffer(videof->clq, videof->out_mem, CL_FALSE, 0, output_yuv_size, videof->enc_pic.img.plane[0], 0, NULL, NULL);
-    if (cl_err != CL_SUCCESS) goto fail_cl;
-    cl_err = clFinish(videof->clq);
-    if (cl_err != CL_SUCCESS) goto fail_cl;
+    // Streaming. The state test is a preliminary check. The state may change,
+    // and the connection code does a final check itself, but checking here as
+    // well saves us a bunch of processing.
+    if (connobj->state == P1_STATE_RUNNING) {
+        // Colorspace conversion
+        cl_err = clEnqueueAcquireGLObjects(videof->clq, 1, &videof->tex_mem, 0, NULL, NULL);
+        if (cl_err != CL_SUCCESS) goto fail_cl;
+        cl_err = clEnqueueNDRangeKernel(videof->clq, videof->yuv_kernel, 2, NULL, yuv_work_size, NULL, 0, NULL, NULL);
+        if (cl_err != CL_SUCCESS) goto fail_cl;
+        cl_err = clEnqueueReleaseGLObjects(videof->clq, 1, &videof->tex_mem, 0, NULL, NULL);
+        if (cl_err != CL_SUCCESS) goto fail_cl;
+        cl_err = clEnqueueReadBuffer(videof->clq, videof->out_mem, CL_FALSE, 0, output_yuv_size, videof->out_pic.img.plane[0], 0, NULL, NULL);
+        if (cl_err != CL_SUCCESS) goto fail_cl;
+        cl_err = clFinish(videof->clq);
+        if (cl_err != CL_SUCCESS) goto fail_cl;
 
-    // Encoding and streaming
-    if (!videof->sent_config) {
-        videof->sent_config = true;
-        i_ret = x264_encoder_headers(videof->enc, &nals, &len);
-        if (i_ret < 0) {
-            p1_log(videoobj, P1_LOG_ERROR, "Failed to get H.264 headers");
-            goto fail;
-        }
-        if (!p1_conn_video_config(connf, nals, len))
-            goto fail;
+        // Hand off to connection
+        p1_conn_stream_video(connf, time, &videof->out_pic);
     }
-
-    x264_picture_t out_pic;
-    videof->enc_pic.i_dts = time;
-    videof->enc_pic.i_pts = time;
-    i_ret = x264_encoder_encode(videof->enc, &nals, &len, &videof->enc_pic, &out_pic);
-    if (i_ret < 0) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to H.264 encode frame");
-        goto fail;
-    }
-    if (len)
-        p1_conn_video(connf, nals, len, &out_pic);
 
     p1_object_unlock(videoobj);
 

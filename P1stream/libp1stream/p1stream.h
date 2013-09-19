@@ -151,6 +151,21 @@ enum _P1ObjectType {
 };
 
 
+// Lock utility functions
+
+#define p1_lock(_obj, _mutex) ({                                \
+    int _p1_ret = pthread_mutex_lock(_mutex);                   \
+    if (_p1_ret != 0)                                           \
+        p1_log((_obj), P1_LOG_ERROR, "Failed to acquire lock: %s", strerror(_p1_ret));  \
+})
+
+#define p1_unlock(_obj, _mutex) ({                              \
+    int _p1_ret = pthread_mutex_unlock(_mutex);                 \
+    if (_p1_ret != 0)                                           \
+        p1_log((_obj), P1_LOG_ERROR, "Failed to release lock: %s", strerror(_p1_ret));  \
+})
+
+
 // The interface below defines the set of operations used to read configuration.
 // This should be simple enough to allow backing by a variety of stores like a
 // JSON file, property list file, or registry.
@@ -304,16 +319,12 @@ struct _P1Object {
 // Convenience methods for acquiring the object lock.
 #define p1_object_lock(_obj) ({                                 \
     P1Object *_p1_obj = (_obj);                                 \
-    int _p1_ret = pthread_mutex_lock(&_p1_obj->lock);           \
-    if (_p1_ret != 0)                                           \
-        p1_log(_p1_obj, P1_LOG_ERROR, "Failed to acquire lock: %s\n", strerror(_p1_ret));   \
+    p1_lock(_p1_obj, &_p1_obj->lock);                           \
 })
 
 #define p1_object_unlock(_obj) ({                               \
     P1Object *_p1_obj = (_obj);                                 \
-    int _p1_ret = pthread_mutex_unlock(&_p1_obj->lock);         \
-    if (_p1_ret != 0)                                           \
-        p1_log(_p1_obj, P1_LOG_ERROR, "Failed to release lock: %s\n", strerror(_p1_ret));   \
+    p1_unlock(_p1_obj, &_p1_obj->lock);                         \
 })
 
 // This method should be used to change the state field.
