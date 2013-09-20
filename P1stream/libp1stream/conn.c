@@ -27,6 +27,12 @@ static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
 static void *p1_conn_main(void *data);
 static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf);
 
+static bool p1_conn_start_audio(P1ConnectionFull *connf);
+static void p1_conn_stop_audio(P1ConnectionFull *connf);
+
+static bool p1_conn_start_video(P1ConnectionFull *connf);
+static void p1_conn_stop_video(P1ConnectionFull *connf);
+
 static bool p1_conn_init_x264_params(P1ConnectionFull *videof, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, char *val, void *data);
 static void p1_conn_x264_log_callback(void *data, int level, const char *fmt, va_list args);
@@ -481,64 +487,16 @@ static void *p1_conn_main(void *data)
 {
     P1ConnectionFull *connf = (P1ConnectionFull *) data;
     P1Object *connobj = (P1Object *) data;
-    P1Context *ctx = connobj->ctx;
-    P1ContextFull *ctxf = (P1ContextFull *) ctx;
-    P1Video *video = ctx->video;
-    P1VideoClock *vclock = video->clock;
-    AACENC_ERROR err;
-    HANDLE_AACENCODER *ae = &connf->audio_enc;
-    x264_param_t *vp = &connf->video_params;
     RTMP r;
     int ret;
 
-    // FIXME: split this up
-
     p1_object_lock(connobj);
 
-    // Audio encoder setup
-    connf->audio_out = malloc(audio_out_size);
-    if (connf->audio_out == NULL)
-        goto fail_locked;
+    if (!p1_conn_start_audio(connf))
+        goto fail_audio;
 
-    err = aacEncOpen(ae, 0x01, 2);
-    if (err != AACENC_OK) goto fail_audio;
-
-    err = aacEncoder_SetParam(*ae, AACENC_AOT, AOT_AAC_LC);
-    if (err != AACENC_OK) goto fail_audio;
-    err = aacEncoder_SetParam(*ae, AACENC_SAMPLERATE, audio_sample_rate);
-    if (err != AACENC_OK) goto fail_audio;
-    err = aacEncoder_SetParam(*ae, AACENC_CHANNELMODE, MODE_2);
-    if (err != AACENC_OK) goto fail_audio;
-    err = aacEncoder_SetParam(*ae, AACENC_BITRATE, audio_bit_rate);
-    if (err != AACENC_OK) goto fail_audio;
-    err = aacEncoder_SetParam(*ae, AACENC_TRANSMUX, TT_MP4_RAW);
-    if (err != AACENC_OK) goto fail_audio;
-
-    err = aacEncEncode(*ae, NULL, NULL, NULL, NULL);
-    if (err != AACENC_OK) goto fail_audio;
-
-    // Video encoder setup
-    vp->pf_log = p1_conn_x264_log_callback;
-    vp->p_log_private = connobj;
-    vp->i_log_level = X264_LOG_DEBUG;
-
-    vp->i_timebase_num = ctxf->timebase_num;
-    vp->i_timebase_den = ctxf->timebase_den * 1000000000;
-
-    vp->b_aud = 1;
-    vp->b_annexb = 0;
-
-    vp->i_width = 1280;
-    vp->i_height = 720;
-
-    vp->i_fps_num = vclock->fps_num;
-    vp->i_fps_den = vclock->fps_den;
-
-    connf->video_enc = x264_encoder_open(vp);
-    if (connf->video_enc == NULL) {
-        p1_log(connobj, P1_LOG_ERROR, "Failed to open x264 encoder");
-        goto fail_locked;
-    }
+    if (!p1_conn_start_video(connf))
+        goto fail_video;
 
     // Connection setup
     if (current_conn == NULL) {
@@ -598,38 +556,14 @@ static void *p1_conn_main(void *data)
         }
     } while (connobj->state == P1_STATE_RUNNING);
 
-cleanup:
-    // Clean up
     RTMP_Close(&r);
-
     if (current_conn == connobj)
         current_conn = NULL;
 
-    if (connf->video_enc != NULL) {
-        p1_lock(connobj, &connf->video_lock);
+    p1_conn_stop_video(connf);
+    p1_conn_stop_audio(connf);
 
-        x264_encoder_close(connf->video_enc);
-        connf->video_enc = NULL;
-
-        p1_unlock(connobj, &connf->video_lock);
-    }
-
-    if (*ae != NULL) {
-        err = aacEncClose(ae);
-        if (err != AACENC_OK)
-            p1_log(connobj, P1_LOG_ERROR, "Failed to close audio encoder: FDK AAC error %d", err);
-        *ae = NULL;
-    }
-
-    if (connf->audio_out != NULL) {
-        free(connf->audio_out);
-        connf->audio_out = NULL;
-    }
-
-    if (connobj->state == P1_STATE_STOPPING)
-        p1_object_set_state(connobj, P1_STATE_IDLE);
-    else
-        p1_object_set_state(connobj, P1_STATE_HALTED);
+    p1_object_set_state(connobj, P1_STATE_IDLE);
 
     p1_object_unlock(connobj);
 
@@ -637,15 +571,27 @@ cleanup:
 
 fail_unlocked:
     p1_object_lock(connobj);
-    // fall through
 
 fail_locked:
     p1_object_set_state(connobj, P1_STATE_HALTING);
-    goto cleanup;
+
+    RTMP_Close(&r);
+    if (current_conn == connobj)
+        current_conn = NULL;
+
+    p1_conn_stop_video(connf);
+
+fail_video:
+    p1_object_set_state(connobj, P1_STATE_HALTING);
+
+    p1_conn_stop_audio(connf);
 
 fail_audio:
-    p1_log(connobj, P1_LOG_ERROR, "Failed to open audio encoder: FDK AAC error %d", err);
-    goto fail_locked;
+    p1_object_set_state(connobj, P1_STATE_HALTED);
+
+    p1_object_unlock(connobj);
+
+    return NULL;
 }
 
 // Flush as many queued packets as we can to the connection.
@@ -715,6 +661,114 @@ static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
     }
 
     return result;
+}
+
+
+// Audio encoder setup
+static bool p1_conn_start_audio(P1ConnectionFull *connf)
+{
+    P1Object *connobj = (P1Object *) connf;
+    AACENC_ERROR err;
+    HANDLE_AACENCODER *ae = &connf->audio_enc;
+
+    connf->audio_out = malloc(audio_out_size);
+    if (connf->audio_out == NULL)
+        goto fail_alloc;
+
+    err = aacEncOpen(ae, 0x01, 2);
+    if (err != AACENC_OK) goto fail_open;
+
+    err = aacEncoder_SetParam(*ae, AACENC_AOT, AOT_AAC_LC);
+    if (err != AACENC_OK) goto fail_params;
+    err = aacEncoder_SetParam(*ae, AACENC_SAMPLERATE, audio_sample_rate);
+    if (err != AACENC_OK) goto fail_params;
+    err = aacEncoder_SetParam(*ae, AACENC_CHANNELMODE, MODE_2);
+    if (err != AACENC_OK) goto fail_params;
+    err = aacEncoder_SetParam(*ae, AACENC_BITRATE, audio_bit_rate);
+    if (err != AACENC_OK) goto fail_params;
+    err = aacEncoder_SetParam(*ae, AACENC_TRANSMUX, TT_MP4_RAW);
+    if (err != AACENC_OK) goto fail_params;
+
+    err = aacEncEncode(*ae, NULL, NULL, NULL, NULL);
+    if (err != AACENC_OK) goto fail_params;
+
+    return true;
+
+fail_params:
+    p1_log(connobj, P1_LOG_ERROR, "Failed to setup audio encoder: FDK AAC error %d", err);
+
+    err = aacEncClose(&connf->audio_enc);
+    if (err != AACENC_OK)
+        p1_log(connobj, P1_LOG_ERROR, "Failed to close audio encoder: FDK AAC error %d", err);
+
+    goto fail_enc;
+
+fail_open:
+    p1_log(connobj, P1_LOG_ERROR, "Failed to open audio encoder: FDK AAC error %d", err);
+
+fail_enc:
+    free(connf->audio_out);
+
+fail_alloc:
+    return false;
+}
+
+static void p1_conn_stop_audio(P1ConnectionFull *connf)
+{
+    P1Object *connobj = (P1Object *) connf;
+    AACENC_ERROR err;
+
+    err = aacEncClose(&connf->audio_enc);
+    if (err != AACENC_OK)
+        p1_log(connobj, P1_LOG_ERROR, "Failed to close audio encoder: FDK AAC error %d", err);
+
+    free(connf->audio_out);
+}
+
+
+// Video encoder setup
+static bool p1_conn_start_video(P1ConnectionFull *connf)
+{
+    P1Object *connobj = (P1Object *) connf;
+    P1Context *ctx = connobj->ctx;
+    P1ContextFull *ctxf = (P1ContextFull *) ctx;
+    P1VideoClock *vclock = ctx->video->clock;
+    x264_param_t *vp = &connf->video_params;
+
+    vp->pf_log = p1_conn_x264_log_callback;
+    vp->p_log_private = connobj;
+    vp->i_log_level = X264_LOG_DEBUG;
+
+    vp->i_timebase_num = ctxf->timebase_num;
+    vp->i_timebase_den = ctxf->timebase_den * 1000000000;
+
+    vp->b_aud = 1;
+    vp->b_annexb = 0;
+
+    vp->i_width = 1280;
+    vp->i_height = 720;
+
+    vp->i_fps_num = vclock->fps_num;
+    vp->i_fps_den = vclock->fps_den;
+
+    connf->video_enc = x264_encoder_open(vp);
+    if (connf->video_enc == NULL) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to open x264 encoder");
+        return false;
+    }
+
+    return true;
+}
+
+static void p1_conn_stop_video(P1ConnectionFull *connf)
+{
+    P1Object *connobj = (P1Object *) connf;
+
+    p1_lock(connobj, &connf->video_lock);
+
+    x264_encoder_close(connf->video_enc);
+
+    p1_unlock(connobj, &connf->video_lock);
 }
 
 
