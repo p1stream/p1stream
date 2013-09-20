@@ -42,10 +42,6 @@ bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
     if (!p1_object_init(connobj, P1_OTYPE_CONNECTION))
         goto fail_object;
 
-    connf->audio_out = malloc(audio_out_size);
-    if (connf->audio_out == NULL)
-        goto fail_audio_out;
-
     ret = pthread_cond_init(&connf->cond, NULL);
     if (ret != 0) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to initialize condition variable: %s", strerror(ret));
@@ -387,7 +383,7 @@ size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf,
     p1_object_lock(connobj);
 
     if (connobj->state == P1_STATE_RUNNING) {
-        p1_conn_submit_packet(connf , pkt, time);
+        p1_conn_submit_packet(connf, pkt, time);
     }
     else {
         free(pkt);
@@ -495,25 +491,31 @@ static void *p1_conn_main(void *data)
     RTMP r;
     int ret;
 
+    // FIXME: split this up
+
     p1_object_lock(connobj);
 
     // Audio encoder setup
+    connf->audio_out = malloc(audio_out_size);
+    if (connf->audio_out == NULL)
+        goto fail_locked;
+
     err = aacEncOpen(ae, 0x01, 2);
     if (err != AACENC_OK) goto fail_audio;
 
     err = aacEncoder_SetParam(*ae, AACENC_AOT, AOT_AAC_LC);
-    if (err != AACENC_OK) goto fail_audio_setup;
+    if (err != AACENC_OK) goto fail_audio;
     err = aacEncoder_SetParam(*ae, AACENC_SAMPLERATE, audio_sample_rate);
-    if (err != AACENC_OK) goto fail_audio_setup;
+    if (err != AACENC_OK) goto fail_audio;
     err = aacEncoder_SetParam(*ae, AACENC_CHANNELMODE, MODE_2);
-    if (err != AACENC_OK) goto fail_audio_setup;
+    if (err != AACENC_OK) goto fail_audio;
     err = aacEncoder_SetParam(*ae, AACENC_BITRATE, audio_bit_rate);
-    if (err != AACENC_OK) goto fail_audio_setup;
+    if (err != AACENC_OK) goto fail_audio;
     err = aacEncoder_SetParam(*ae, AACENC_TRANSMUX, TT_MP4_RAW);
-    if (err != AACENC_OK) goto fail_audio_setup;
+    if (err != AACENC_OK) goto fail_audio;
 
     err = aacEncEncode(*ae, NULL, NULL, NULL, NULL);
-    if (err != AACENC_OK) goto fail_audio_setup;
+    if (err != AACENC_OK) goto fail_audio;
 
     // Video encoder setup
     vp->pf_log = p1_conn_x264_log_callback;
@@ -619,6 +621,11 @@ cleanup:
         *ae = NULL;
     }
 
+    if (connf->audio_out != NULL) {
+        free(connf->audio_out);
+        connf->audio_out = NULL;
+    }
+
     if (connobj->state == P1_STATE_STOPPING)
         p1_object_set_state(connobj, P1_STATE_IDLE);
     else
@@ -635,10 +642,6 @@ fail_unlocked:
 fail_locked:
     p1_object_set_state(connobj, P1_STATE_HALTING);
     goto cleanup;
-
-fail_audio_setup:
-    aacEncClose(ae);
-    // fall through
 
 fail_audio:
     p1_log(connobj, P1_LOG_ERROR, "Failed to open audio encoder: FDK AAC error %d", err);
