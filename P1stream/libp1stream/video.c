@@ -115,9 +115,8 @@ void p1_video_start(P1VideoFull *videof)
     size_t size;
 
     b_ret = p1_video_init_platform(videof);
-    if (!b_ret) {
+    if (!b_ret)
         goto fail;
-    }
 
     cl_device_id device_id;
     cl_err = clGetContextInfo(videof->cl, CL_CONTEXT_DEVICES, sizeof(cl_device_id), &device_id, &size);

@@ -499,7 +499,6 @@ static void *p1_conn_main(void *data)
 
     if (!p1_conn_start_audio(connf))
         goto fail_audio;
-
     if (!p1_conn_start_video(connf))
         goto fail_video;
 
