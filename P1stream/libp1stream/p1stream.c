@@ -467,23 +467,9 @@ static bool p1_ctrl_progress(P1Context *ctx)
         (_obj)->state == P1_STATE_HALTING)                  \
         wait = true;
 
-// Common action handling for plugin elements.
-#define P1_PLUGIN_ACTIONS(_obj, _pel)                       \
-    case P1_ACTION_WAIT:                                    \
-        wait = true;                                        \
-        break;                                              \
-    case P1_ACTION_START:                                   \
-        (_obj)->ctx = ctx;                                  \
-        (_pel)->start(_pel);                                \
-        P1_CHECK_WAIT(_obj);                                \
-        break;                                              \
-    case P1_ACTION_STOP:                                    \
-        (_pel)->stop(_pel);                                 \
-        P1_CHECK_WAIT(_obj);                                \
-        break;
-
 // Common action handling for fixed elements.
-#define P1_FIXED_ACTIONS(_obj, _full, _start, _stop)        \
+#define P1_RUN_ACTION(_action, _obj, _full, _start, _stop)  \
+    switch (action) {                                       \
     case P1_ACTION_WAIT:                                    \
         wait = true;                                        \
         break;                                              \
@@ -494,64 +480,87 @@ static bool p1_ctrl_progress(P1Context *ctx)
     case P1_ACTION_STOP:                                    \
         (_stop)(_full);                                     \
         P1_CHECK_WAIT(_obj);                                \
-        break;
-
-// Short-hand for empty default case.
-#define P1_EMPTY_DEFAULT                                    \
+        break;                                              \
     default:                                                \
-        break;
+        break;                                              \
+    }
 
     fixed = (P1Object *) video;
     p1_object_lock(fixed);
 
-    // Progress clock. Clock target state is tied to the context.
+    // Progress clock.
     P1State vclock_state;
     {
         P1VideoClock *vclock = ctx->video->clock;
         P1Plugin *pel = (P1Plugin *) vclock;
         P1Object *obj = (P1Object *) vclock;
 
+        p1_object_lock(obj);
+
+        // Clock target state is tied to the context.
         obj->target = (ctxobj->state == P1_STATE_STOPPING)
                     ? P1_TARGET_IDLE : P1_TARGET_RUNNING;
 
-        p1_object_lock(obj);
-        switch (p1_ctrl_determine_action(ctx, obj->state, obj->target)) {
-            P1_PLUGIN_ACTIONS(obj, pel)
-            P1_EMPTY_DEFAULT
-        }
+        P1Action action = p1_ctrl_determine_action(ctx, obj->state, obj->target);
+
+        if (action == P1_ACTION_START)
+            obj->ctx = ctx;
+
+        P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
+
         vclock_state = obj->state;
+
         p1_object_unlock(obj);
+    }
+
+    // Progress video mixer.
+    P1State video_state;
+    {
+        // We need a running clock for this.
+        P1TargetState target = (vclock_state != P1_STATE_RUNNING)
+                             ? P1_TARGET_IDLE : fixed->target;
+
+        P1Action action = p1_ctrl_determine_action(ctx, fixed->state, target);
+        P1_RUN_ACTION(action, fixed, videof, p1_video_start, p1_video_stop);
+
+        video_state = fixed->state;
     }
 
     // Progress video sources.
     head = &video->sources;
     p1_list_iterate(head, node) {
         P1Source *src = p1_list_get_container(node, P1Source, link);
+        P1VideoSource *vsrc = (P1VideoSource *) src;
         P1Plugin *pel = (P1Plugin *) src;
         P1Object *obj = (P1Object *) src;
 
         p1_object_lock(obj);
-        P1Action action = p1_ctrl_determine_action(ctx, obj->state, obj->target);
-        switch (action) {
-            P1_PLUGIN_ACTIONS(obj, pel)
-            P1_EMPTY_DEFAULT
+
+        // We need a running video mixer for this.
+        P1TargetState target = (video_state != P1_STATE_RUNNING)
+                             ? P1_TARGET_IDLE : fixed->target;
+
+        P1Action action = p1_ctrl_determine_action(ctx, obj->state, target);
+
+        if (action == P1_ACTION_START) {
+            obj->ctx = ctx;
+            if (!p1_video_start_source(vsrc)) {
+                obj->state = P1_STATE_HALTED;
+                action = P1_ACTION_NONE;
+            }
         }
+
+        P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
+
+        if (action == P1_ACTION_STOP)
+            p1_video_stop_source(vsrc);
+
         p1_object_unlock(obj);
+
         if (action == P1_ACTION_REMOVE) {
             node = node->prev;
             p1_list_remove(&src->link);
             p1_plugin_free(pel);
-        }
-    }
-
-    // Progress video mixer. We need a running clock for this.
-    {
-        P1TargetState target = (vclock_state != P1_STATE_RUNNING)
-                             ? P1_TARGET_IDLE : fixed->target;
-
-        switch (p1_ctrl_determine_action(ctx, fixed->state, target)) {
-            P1_FIXED_ACTIONS(fixed, videof, p1_video_start, p1_video_stop)
-            P1_EMPTY_DEFAULT
         }
     }
 
@@ -560,20 +569,36 @@ static bool p1_ctrl_progress(P1Context *ctx)
     fixed = (P1Object *) audio;
     p1_object_lock(fixed);
 
+    // Progress audio mixer.
+    {
+        P1Action action = p1_ctrl_determine_action(ctx, fixed->state, fixed->target);
+        P1_RUN_ACTION(action, fixed, audiof, p1_audio_start, p1_audio_stop);
+    }
+
     // Progress audio sources.
     head = &audio->sources;
     p1_list_iterate(head, node) {
         P1Source *src = p1_list_get_container(node, P1Source, link);
+        P1AudioSource *asrc = (P1AudioSource *) src;
         P1Plugin *pel = (P1Plugin *) src;
         P1Object *obj = (P1Object *) src;
 
         p1_object_lock(obj);
+
         P1Action action = p1_ctrl_determine_action(ctx, obj->state, obj->target);
-        switch (action) {
-            P1_PLUGIN_ACTIONS(obj, pel)
-            P1_EMPTY_DEFAULT
+
+        if (action == P1_ACTION_START) {
+            obj->ctx = ctx;
+            p1_audio_start_source(asrc);
         }
+
+        P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
+
+        if (action == P1_ACTION_STOP)
+            p1_audio_stop_source(asrc);
+
         p1_object_unlock(obj);
+
         if (action == P1_ACTION_REMOVE) {
             node = node->prev;
             p1_list_remove(&src->link);
@@ -581,36 +606,27 @@ static bool p1_ctrl_progress(P1Context *ctx)
         }
     }
 
-    // Progress audio mixer.
+    p1_object_unlock(fixed);
+
+    fixed = (P1Object *) conn;
+    p1_object_lock(fixed);
+
+    // Progress stream connnection.
     {
-        switch (p1_ctrl_determine_action(ctx, fixed->state, fixed->target)) {
-            P1_FIXED_ACTIONS(fixed, audiof, p1_audio_start, p1_audio_stop)
-            P1_EMPTY_DEFAULT
-        }
+        // Delay start until everything else is running.
+        P1TargetState target = (fixed->target == P1_TARGET_RUNNING && !wait)
+                             ? P1_TARGET_RUNNING : P1_TARGET_IDLE;
+
+        P1Action action = p1_ctrl_determine_action(ctx, fixed->state, target);
+        P1_RUN_ACTION(action, fixed, connf, p1_conn_start, p1_conn_stop);
     }
 
     p1_object_unlock(fixed);
 
-    // Progress stream connnection. Delay until everything else is running.
-    if (!wait) {
-        fixed = (P1Object *) conn;
-        p1_object_lock(fixed);
-
-        switch (p1_ctrl_determine_action(ctx, fixed->state, fixed->target)) {
-            P1_FIXED_ACTIONS(fixed, connf, p1_conn_start, p1_conn_stop)
-            P1_EMPTY_DEFAULT
-        }
-
-        p1_object_unlock(fixed);
-    }
-
     return wait;
 
 #undef P1_CHECK_WAIT
-#undef P1_PLUGIN_ACTIONS
-#undef P1_FIXED_ACTIONS
-#undef P1_SOURCE_ACTIONS
-#undef P1_EMPTY_DEFAULT
+#undef P1_RUN_ACTION
 }
 
 // Determine action to take on an object.

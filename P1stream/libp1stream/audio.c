@@ -16,7 +16,7 @@ static void p1_audio_kill_session(P1AudioFull *audiof);
 
 static void p1_audio_write(P1AudioFull *ctx, P1AudioSource *asrc, float **in, size_t *samples);
 static void p1_audio_resample(P1AudioFull *audiof);
-static bool p1_audio_flush(P1AudioFull *audiof);
+static bool p1_audio_flush_out_buffer(P1AudioFull *audiof);
 
 static size_t p1_audio_get_ready_mix_samples(P1AudioFull *audiof);
 static void p1_audio_shift_mix_buffer(P1AudioFull *audiof, size_t samples);
@@ -133,12 +133,15 @@ void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t
             p1_audio_resample(audiof);
 
             // Flush the output buffer.
-            ret = p1_audio_flush(audiof);
+            ret = p1_audio_flush_out_buffer(audiof);
         }
         else {
             // Ditch mixed samples.
             size_t samples = p1_audio_get_ready_mix_samples(audiof);
             p1_audio_shift_mix_buffer(audiof, samples);
+
+            // Clear output buffer.
+            audiof->out_pos = 0;
 
             // Continue if we can mix.
             ret = (samples > 0 && asrc->mix_pos < buf_samples);
@@ -205,7 +208,7 @@ static void p1_audio_resample(P1AudioFull *audiof)
 }
 
 // Flush samples from the output buffer to the connection.
-static bool p1_audio_flush(P1AudioFull *audiof)
+static bool p1_audio_flush_out_buffer(P1AudioFull *audiof)
 {
     P1Audio *audio = (P1Audio *) audiof;
     P1Object *audioobj = (P1Object *) audio;

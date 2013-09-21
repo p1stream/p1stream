@@ -77,6 +77,9 @@ bool p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
 void p1_video_start(P1VideoFull *videof);
 void p1_video_stop(P1VideoFull *videof);
 
+bool p1_video_start_source(P1VideoSource *vsrc);
+void p1_video_stop_source(P1VideoSource *vsrc);
+
 void p1_video_cl_notify_callback(const char *errstr, const void *private_info, size_t cb, void *user_data);
 
 
@@ -100,6 +103,9 @@ bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect);
 
 void p1_audio_start(P1AudioFull *audiof);
 void p1_audio_stop(P1AudioFull *audiof);
+
+#define p1_audio_start_source(_asrc) ((_asrc)->mix_pos = 0)
+#define p1_audio_stop_source(_asrc)
 
 
 // Private part of P1StreamConnection.

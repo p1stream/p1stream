@@ -429,8 +429,6 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time);
 struct _P1VideoSource {
     P1Source super;
 
-    // FIXME: separate compositor, and its data.
-
     // Texture name. The source need not touch this.
     uint32_t texture;
 

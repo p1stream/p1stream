@@ -280,6 +280,44 @@ static void p1_video_kill_session(P1VideoFull *videof)
     p1_video_destroy_platform(videof);
 }
 
+
+bool p1_video_start_source(P1VideoSource *vsrc)
+{
+    P1Object *obj = (P1Object *) vsrc;
+    P1VideoFull *videof = (P1VideoFull *) obj->ctx->video;
+    P1Object *videoobj = (P1Object *) videof;
+    GLenum err;
+
+    if (!p1_video_activate_gl(videof))
+        return false;
+
+    glGenTextures(1, &vsrc->texture);
+    err = glGetError();
+    if (err != GL_NO_ERROR) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create texture: OpenGL error %d", err);
+        return false;
+    }
+
+    return true;
+}
+
+void p1_video_stop_source(P1VideoSource *vsrc)
+{
+    P1Object *obj = (P1Object *) vsrc;
+    P1Object *videoobj = (P1Object *) obj->ctx->video;
+    GLenum err;
+
+    // No use if the context is getting destroyed any way.
+    if (videoobj->state != P1_STATE_RUNNING)
+        return;
+
+    glDeleteTextures(1, &vsrc->texture);
+    err = glGetError();
+    if (err != GL_NO_ERROR)
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to delete texture: OpenGL error %d", err);
+}
+
+
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
 {
     P1Object *obj = (P1Object *) vclock;
@@ -318,9 +356,6 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
 
         p1_object_lock(el);
         if (el->state == P1_STATE_RUNNING) {
-            if (vsrc->texture == 0)
-                glGenTextures(1, &vsrc->texture);
-
             glBindTexture(GL_TEXTURE_RECTANGLE, vsrc->texture);
             b_ret = vsrc->frame(vsrc);
 
