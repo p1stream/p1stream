@@ -33,6 +33,8 @@ static void p1_conn_stop_audio(P1ConnectionFull *connf);
 static bool p1_conn_start_video(P1ConnectionFull *connf);
 static void p1_conn_stop_video(P1ConnectionFull *connf);
 
+static void p1_conn_signal(P1ConnectionFull *connf);
+
 static bool p1_conn_init_x264_params(P1ConnectionFull *videof, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, char *val, void *data);
 static void p1_conn_x264_log_callback(void *data, int level, const char *fmt, va_list args);
@@ -136,13 +138,9 @@ void p1_conn_start(P1ConnectionFull *connf)
 void p1_conn_stop(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
-    int ret;
 
     p1_object_set_state(connobj, P1_STATE_STOPPING);
-
-    ret = pthread_cond_signal(&connf->cond);
-    if (ret != 0)
-        p1_log(connobj, P1_LOG_ERROR, "Failed to signal connection thread: %s", strerror(ret));
+    p1_conn_signal(connf);
 }
 
 
@@ -276,7 +274,12 @@ void p1_conn_stream_video(P1ConnectionFull *connf, int64_t time, x264_picture_t 
 fail:
     p1_unlock(connobj, &connf->video_lock);
 
-    // FIXME: halt
+    p1_object_lock(connobj);
+    if (connobj->state == P1_STATE_RUNNING) {
+        p1_object_set_state(connobj, P1_STATE_HALTING);
+        p1_conn_signal(connf);
+    }
+    p1_object_unlock(connobj);
 }
 
 
@@ -405,7 +408,12 @@ size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf,
 fail:
     p1_unlock(connobj, &connf->audio_lock);
 
-    // FIXME: halt
+    p1_object_lock(connobj);
+    if (connobj->state == P1_STATE_RUNNING) {
+        p1_object_set_state(connobj, P1_STATE_HALTING);
+        p1_conn_signal(connf);
+    }
+    p1_object_unlock(connobj);
 
     // Consume all.
     return samples;
@@ -440,7 +448,6 @@ static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     P1Object *connobj = (P1Object *) connf;
     P1Context *ctx = connobj->ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
-    int ret;
 
     // Determine which queue to use.
     P1PacketQueue *q;
@@ -474,9 +481,7 @@ static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     // Queue the packet.
     q->head[q->write++] = pkt;  // Deliberate overflow of q->write.
     q->length++;
-    ret = pthread_cond_signal(&connf->cond);
-    if (ret != 0)
-        p1_log(connobj, P1_LOG_ERROR, "Failed to signal connection thread: %s", strerror(ret));
+    p1_conn_signal(connf);
 
     return true;
 }
@@ -546,24 +551,35 @@ static void *p1_conn_main(void *data)
     p1_object_set_state(connobj, P1_STATE_RUNNING);
 
     do {
-        if (!p1_conn_flush(&r, connf))
-            goto fail_locked;
-
         ret = pthread_cond_wait(&connf->cond, &connobj->lock);
         if (ret != 0) {
             p1_log(connobj, P1_LOG_ERROR, "Failed to wait on condition: %s", strerror(ret));
             goto fail_locked;
         }
+
+        if (connobj->state != P1_STATE_RUNNING)
+            break;
+
+        if (!p1_conn_flush(&r, connf))
+            goto fail_locked;
+
     } while (connobj->state == P1_STATE_RUNNING);
 
+cleanup_video:
+    p1_conn_stop_video(connf);
+
+cleanup_audio:
+    p1_conn_stop_audio(connf);
+
+cleanup:
     RTMP_Close(&r);
     if (current_conn == connobj)
         current_conn = NULL;
 
-    p1_conn_stop_video(connf);
-    p1_conn_stop_audio(connf);
-
-    p1_object_set_state(connobj, P1_STATE_IDLE);
+    if (connobj->state == P1_STATE_STOPPING)
+        p1_object_set_state(connobj, P1_STATE_IDLE);
+    else
+        p1_object_set_state(connobj, P1_STATE_HALTED);
 
     p1_object_unlock(connobj);
 
@@ -574,24 +590,15 @@ fail_unlocked:
 
 fail_locked:
     p1_object_set_state(connobj, P1_STATE_HALTING);
-
-    RTMP_Close(&r);
-    if (current_conn == connobj)
-        current_conn = NULL;
-
-    p1_conn_stop_video(connf);
+    goto cleanup_video;
 
 fail_video:
     p1_object_set_state(connobj, P1_STATE_HALTING);
-
-    p1_conn_stop_audio(connf);
+    goto cleanup_audio;
 
 fail_audio:
-    p1_object_set_state(connobj, P1_STATE_HALTED);
-
-    p1_object_unlock(connobj);
-
-    return NULL;
+    p1_object_set_state(connobj, P1_STATE_HALTING);
+    goto cleanup;
 }
 
 // Flush as many queued packets as we can to the connection.
@@ -606,9 +613,7 @@ static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
 
     // We release the lock while writing, but that means another thread may
     // have signalled in the meantime. Thus we loop until exhausted.
-
-    while (true) {
-
+    do {
         // Gather a list of packets to send.
 
         // We need to chronologically order packets, but they arrive separately.
@@ -658,7 +663,7 @@ static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
         }
 
         p1_object_lock(connobj);
-    }
+    } while (connobj->state == P1_STATE_RUNNING);
 
     return result;
 }
@@ -769,6 +774,17 @@ static void p1_conn_stop_video(P1ConnectionFull *connf)
     x264_encoder_close(connf->video_enc);
 
     p1_unlock(connobj, &connf->video_lock);
+}
+
+
+static void p1_conn_signal(P1ConnectionFull *connf)
+{
+    P1Object *connobj = (P1Object *) connf;
+    int ret;
+
+    ret = pthread_cond_signal(&connf->cond);
+    if (ret != 0)
+        p1_log(connobj, P1_LOG_ERROR, "Failed to signal connection thread: %s", strerror(ret));
 }
 
 
