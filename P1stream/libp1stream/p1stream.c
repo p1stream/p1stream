@@ -516,11 +516,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
     // Progress video mixer.
     P1State video_state;
     {
-        // We need a running clock for this.
-        P1TargetState target = (vclock_state != P1_STATE_RUNNING)
-                             ? P1_TARGET_IDLE : fixed->target;
-
-        P1Action action = p1_ctrl_determine_action(ctx, fixed->state, target);
+        P1Action action = p1_ctrl_determine_action(ctx, fixed->state, fixed->target);
         P1_RUN_ACTION(action, fixed, videof, p1_video_start, p1_video_stop);
 
         video_state = fixed->state;
@@ -536,9 +532,10 @@ static bool p1_ctrl_progress(P1Context *ctx)
 
         p1_object_lock(obj);
 
+        P1TargetState target = fixed->target;
         // We need a running video mixer for this.
-        P1TargetState target = (video_state != P1_STATE_RUNNING)
-                             ? P1_TARGET_IDLE : fixed->target;
+        if (video_state != P1_STATE_RUNNING)
+            target = P1_TARGET_IDLE;
 
         P1Action action = p1_ctrl_determine_action(ctx, obj->state, target);
 
@@ -613,9 +610,13 @@ static bool p1_ctrl_progress(P1Context *ctx)
 
     // Progress stream connnection.
     {
+        P1TargetState target = fixed->target;
         // Delay start until everything else is running.
-        P1TargetState target = (fixed->target == P1_TARGET_RUNNING && !wait)
-                             ? P1_TARGET_RUNNING : P1_TARGET_IDLE;
+        if (wait)
+            target = P1_TARGET_IDLE;
+        // We need a running clock for this.
+        if (vclock_state != P1_STATE_RUNNING)
+            target = P1_TARGET_IDLE;
 
         P1Action action = p1_ctrl_determine_action(ctx, fixed->state, target);
         P1_RUN_ACTION(action, fixed, connf, p1_conn_start, p1_conn_stop);
