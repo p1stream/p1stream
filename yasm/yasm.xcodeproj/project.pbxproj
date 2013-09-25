@@ -540,7 +540,7 @@
 		F65C5AA017594D1200903D49 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = F65C5AA317594D1200903D49 /* Build configuration list for PBXProject "yasm" */;
 			compatibilityVersion = "Xcode 3.2";

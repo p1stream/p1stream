@@ -1302,7 +1302,7 @@
 		F6271E7E17BC2EAD00A889B4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Stéphan Kochen";
 			};
 			buildConfigurationList = F6271E8117BC2EAD00A889B4 /* Build configuration list for PBXProject "aac" */;

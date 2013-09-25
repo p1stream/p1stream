@@ -344,7 +344,7 @@
 		F65C59E117593DF700903D49 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = F65C59E417593DF700903D49 /* Build configuration list for PBXProject "x264" */;
 			compatibilityVersion = "Xcode 3.2";

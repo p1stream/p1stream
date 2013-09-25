@@ -118,7 +118,7 @@
 		F6B39206175A367000AC15E5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = F6B39209175A367000AC15E5 /* Build configuration list for PBXProject "rtmpdump" */;
 			compatibilityVersion = "Xcode 3.2";
