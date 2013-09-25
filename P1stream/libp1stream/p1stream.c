@@ -532,26 +532,26 @@ static bool p1_ctrl_progress(P1Context *ctx)
 
         p1_object_lock(obj);
 
-        P1TargetState target = fixed->target;
-
-        // We need a running video mixer for this.
-        if (video_state != P1_STATE_RUNNING)
-            target = P1_TARGET_IDLE;
-
-        P1Action action = p1_ctrl_determine_action(ctx, obj->state, target);
+        P1Action action = p1_ctrl_determine_action(ctx, obj->state, obj->target);
 
         if (action == P1_ACTION_START) {
             obj->ctx = ctx;
-            if (!p1_video_start_source(vsrc)) {
-                obj->state = P1_STATE_HALTED;
-                action = P1_ACTION_NONE;
+
+            if (video_state == P1_STATE_RUNNING) {
+                if (!p1_video_link_source(vsrc)) {
+                    // FIXME: Probably should halt the video mixer instead.
+                    obj->state = P1_STATE_HALTED;
+                    action = P1_ACTION_NONE;
+                }
             }
         }
 
         P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
 
-        if (action == P1_ACTION_STOP)
-            p1_video_stop_source(vsrc);
+        if (action == P1_ACTION_STOP) {
+            if (video_state == P1_STATE_RUNNING)
+                p1_video_unlink_source(vsrc);
+        }
 
         p1_object_unlock(obj);
 
@@ -568,9 +568,12 @@ static bool p1_ctrl_progress(P1Context *ctx)
     p1_object_lock(fixed);
 
     // Progress audio mixer.
+    P1State audio_state;
     {
         P1Action action = p1_ctrl_determine_action(ctx, fixed->state, fixed->target);
         P1_RUN_ACTION(action, fixed, audiof, p1_audio_start, p1_audio_stop);
+
+        audio_state = fixed->state;
     }
 
     // Progress audio sources.
@@ -587,13 +590,17 @@ static bool p1_ctrl_progress(P1Context *ctx)
 
         if (action == P1_ACTION_START) {
             obj->ctx = ctx;
-            p1_audio_start_source(asrc);
+
+            if (audio_state == P1_STATE_RUNNING)
+                p1_audio_link_source(asrc);
         }
 
         P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
 
-        if (action == P1_ACTION_STOP)
-            p1_audio_stop_source(asrc);
+        if (action == P1_ACTION_STOP) {
+            if (audio_state == P1_STATE_RUNNING)
+                p1_audio_unlink_source(asrc);
+        }
 
         p1_object_unlock(obj);
 

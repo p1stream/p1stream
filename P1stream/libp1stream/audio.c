@@ -38,7 +38,10 @@ bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect)
 
 void p1_audio_start(P1AudioFull *audiof)
 {
+    P1Audio *audio = (P1Audio *) audiof;
     P1Object *audioobj = (P1Object *) audiof;
+    P1ListNode *head;
+    P1ListNode *node;
 
     p1_object_set_state(audioobj, P1_STATE_STARTING);
 
@@ -52,6 +55,16 @@ void p1_audio_start(P1AudioFull *audiof)
     if (audiof->out == NULL) {
         p1_log(audioobj, P1_LOG_ERROR, "Failed to allocate audio output buffer");
         goto fail_out;
+    }
+
+    head = &audio->sources;
+    p1_list_iterate(head, node) {
+        P1Source *src = p1_list_get_container(node, P1Source, link);
+        P1Object *obj = (P1Object *) src;
+        P1AudioSource *asrc = (P1AudioSource *) src;
+
+        if (obj->state == P1_STATE_STARTING || obj->state == P1_STATE_RUNNING)
+            p1_audio_link_source(asrc);
     }
 
     p1_object_set_state(audioobj, P1_STATE_RUNNING);
@@ -76,6 +89,8 @@ void p1_audio_stop(P1AudioFull *audiof)
 
 static void p1_audio_kill_session(P1AudioFull *audiof)
 {
+    // Note: We don't call unlink, because it's a no-op, currently.
+
     free(audiof->out);
     free(audiof->mix);
 }

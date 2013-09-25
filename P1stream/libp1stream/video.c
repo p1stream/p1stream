@@ -107,7 +107,10 @@ fail_object:
 
 void p1_video_start(P1VideoFull *videof)
 {
+    P1Video *video = (P1Video *) videof;
     P1Object *videoobj = (P1Object *) videof;
+    P1ListNode *head;
+    P1ListNode *node;
     cl_int cl_err;
     GLenum gl_err;
     int i_ret;
@@ -201,18 +204,32 @@ void p1_video_start(P1VideoFull *videof)
     }
 
     cl_err = clSetKernelArg(videof->yuv_kernel, 0, sizeof(cl_mem), &videof->tex_mem);
-    if (cl_err != CL_SUCCESS)
-        goto fail_kernel_arg;
+    if (cl_err != CL_SUCCESS) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to set CL kernel arg: OpenCL error %d", cl_err);
+        goto fail_yuv_kernel;
+    }
     cl_err = clSetKernelArg(videof->yuv_kernel, 1, sizeof(cl_mem), &videof->out_mem);
-    if (cl_err != CL_SUCCESS)
-        goto fail_kernel_arg;
+    if (cl_err != CL_SUCCESS) {
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to set CL kernel arg: OpenCL error %d", cl_err);
+        goto fail_yuv_kernel;
+    }
+
+    head = &video->sources;
+    p1_list_iterate(head, node) {
+        P1Source *src = p1_list_get_container(node, P1Source, link);
+        P1Object *obj = (P1Object *) src;
+        P1VideoSource *vsrc = (P1VideoSource *) src;
+
+        if (obj->state == P1_STATE_STARTING || obj->state == P1_STATE_RUNNING) {
+            // FIXME: We leak textures if the source stops itself.
+            if (!p1_video_link_source(vsrc))
+                goto fail_yuv_kernel;
+        }
+    }
 
     p1_object_set_state(videoobj, P1_STATE_RUNNING);
 
     return;
-
-fail_kernel_arg:
-    p1_log(videoobj, P1_LOG_ERROR, "Failed to set CL kernel arg: OpenCL error %d", cl_err);
 
 fail_yuv_kernel:
     cl_err = clReleaseKernel(videof->yuv_kernel);
@@ -258,6 +275,9 @@ static void p1_video_kill_session(P1VideoFull *videof)
     P1Object *videoobj = (P1Object *) videof;
     cl_int cl_err;
 
+    // Note: Don't need to call unlink, because it only deletes textures.
+    // But we're destroying the context any way.
+
     cl_err = clReleaseKernel(videof->yuv_kernel);
     if (cl_err != CL_SUCCESS)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to release CL kernel: OpenCL error %d", cl_err);
@@ -280,7 +300,7 @@ static void p1_video_kill_session(P1VideoFull *videof)
 }
 
 
-bool p1_video_start_source(P1VideoSource *vsrc)
+bool p1_video_link_source(P1VideoSource *vsrc)
 {
     P1Object *obj = (P1Object *) vsrc;
     P1VideoFull *videof = (P1VideoFull *) obj->ctx->video;
@@ -300,7 +320,7 @@ bool p1_video_start_source(P1VideoSource *vsrc)
     return true;
 }
 
-void p1_video_stop_source(P1VideoSource *vsrc)
+void p1_video_unlink_source(P1VideoSource *vsrc)
 {
     P1Object *obj = (P1Object *) vsrc;
     P1Object *videoobj = (P1Object *) obj->ctx->video;
