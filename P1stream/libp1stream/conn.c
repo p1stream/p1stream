@@ -34,6 +34,7 @@ static bool p1_conn_start_video(P1ConnectionFull *connf);
 static void p1_conn_stop_video(P1ConnectionFull *connf);
 
 static void p1_conn_signal(P1ConnectionFull *connf);
+static void p1_conn_clear(P1PacketQueue *q);
 
 static bool p1_conn_init_x264_params(P1ConnectionFull *videof, P1Config *cfg, P1ConfigSection *sect);
 static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, char *val, void *data);
@@ -575,6 +576,9 @@ cleanup:
     if (current_conn == connobj)
         current_conn = NULL;
 
+    p1_conn_clear(&connf->video_queue);
+    p1_conn_clear(&connf->audio_queue);
+
     if (connobj->state == P1_STATE_STOPPING)
         p1_object_set_state(connobj, P1_STATE_IDLE);
     else
@@ -776,6 +780,7 @@ static void p1_conn_stop_video(P1ConnectionFull *connf)
 }
 
 
+// Condition helper with logging.
 static void p1_conn_signal(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
@@ -784,6 +789,16 @@ static void p1_conn_signal(P1ConnectionFull *connf)
     ret = pthread_cond_signal(&connf->cond);
     if (ret != 0)
         p1_log(connobj, P1_LOG_ERROR, "Failed to signal connection thread: %s", strerror(ret));
+}
+
+// Clear a packet queue.
+static void p1_conn_clear(P1PacketQueue *q)
+{
+    while (q->length--) {
+        RTMPPacket *pkt = q->head[q->read++];
+        free(pkt);
+    }
+    q->read = q->write = q->length = 0;
 }
 
 
