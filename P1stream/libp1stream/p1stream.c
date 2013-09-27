@@ -8,7 +8,7 @@ typedef enum _P1Action P1Action;
 static bool p1_init(P1ContextFull *ctxf, P1Config *cfg, P1ConfigSection *sect);
 static void p1_destroy(P1ContextFull *ctxf);
 static void p1_close_pipe(P1Object *ctxobj, int fd);
-static void p1_log_default(P1Object *obj, P1LogLevel level, const char *fmt, va_list args);
+static void p1_log_default(P1Object *obj, P1LogLevel level, const char *fmt, va_list args, void *user_data);
 static void *p1_ctrl_main(void *data);
 static bool p1_ctrl_progress(P1Context *ctx);
 static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1TargetState target);
@@ -315,19 +315,22 @@ void p1_logv(P1Object *obj, P1LogLevel level, const char *fmt, va_list args)
 {
     P1Context *ctx = (obj != NULL) ? obj->ctx : NULL;
     P1LogCallback fn = p1_log_default;
+    void *user_data = NULL;
 
     if (ctx) {
         if (level > ctx->log_level)
             return;
-        if (ctx->log_fn)
+        if (ctx->log_fn) {
             fn = ctx->log_fn;
+            user_data = ctx->log_user_data;
+        }
     }
 
-    fn(obj, level, fmt, args);
+    fn(obj, level, fmt, args, user_data);
 }
 
 // Default log function.
-static void p1_log_default(P1Object *obj, P1LogLevel level, const char *fmt, va_list args)
+static void p1_log_default(P1Object *obj, P1LogLevel level, const char *fmt, va_list args, void *user_data)
 {
     char out[2048] = "X: ";
     switch (level) {

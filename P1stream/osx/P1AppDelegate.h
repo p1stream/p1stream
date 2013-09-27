@@ -1,15 +1,13 @@
 #import "P1MainWindowController.h"
+#import "P1ContextModel.h"
 
 
 @interface P1AppDelegate : NSObject <NSApplicationDelegate>
 {
     bool _terminating;
-
-    P1Context *_context;
-    NSFileHandle *_contextFileHandle;
 }
 
-- (P1Context *)context;
+@property (retain) P1ContextModel *contextModel;
 
 @property (weak) IBOutlet P1MainWindowController *mainWindowController;
 

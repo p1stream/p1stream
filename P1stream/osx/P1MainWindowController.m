@@ -11,7 +11,7 @@
                                        topLevelObjects:NULL];
         assert(ret == TRUE);
 
-        _preview.context = _context;
+        _preview.context = _contextModel.context;
     }
 
     [_window makeKeyAndOrderFront:self];

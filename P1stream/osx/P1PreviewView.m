@@ -54,28 +54,28 @@
     self.layer.contents = nil;
 
     if (_context)
-        setVideoPreviewCallback(_context->video, videoPreviewCallback, (__bridge void *) self);
+        setVideoPreviewCallback(_context->video, videoPreviewCallback, (__bridge void *)self);
 }
 
-static void setVideoPreviewCallback(P1Video *video, P1VideoPreviewCallback fn, void *data)
+static void setVideoPreviewCallback(P1Video *video, P1VideoPreviewCallback fn, void *user_data)
 {
-    P1Object *videoobj = (P1Object *) video;
+    P1Object *videoobj = (P1Object *)video;
 
     p1_object_lock(videoobj);
 
     video->preview_fn = fn;
-    videoobj->user_data = data;
+    video->preview_user_data = user_data;
 
     p1_object_unlock(videoobj);
 }
 
-static void videoPreviewCallback(P1Video *video, size_t width, size_t height, uint8_t *data)
+static void videoPreviewCallback(size_t width, size_t height, uint8_t *data, void *user_data)
 {
-    P1Object *videoobj = (P1Object *) video;
-    P1PreviewView *self = (__bridge P1PreviewView *) videoobj->user_data;
-
     @autoreleasepool {
-        self.aspect = (float) width / (float) height;
+        P1PreviewView *self = (__bridge P1PreviewView *)user_data;
+
+        self.aspect = (float)width / (float)height;
+
         [self updatePreviewWithData:data width:width height:height];
     }
 }

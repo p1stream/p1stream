@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		F643655917E5A08800314053 /* P1MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F643655817E5A08800314053 /* P1MainWindowController.m */; };
 		F643655C17E5ADB900314053 /* P1PreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = F643655B17E5ADB900314053 /* P1PreviewView.m */; };
+		F65CD73317F4BEE100CD3FBC /* P1ContextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F65CD73217F4BEE100CD3FBC /* P1ContextModel.m */; };
+		F65CD73717F4C84D00CD3FBC /* P1ObjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F65CD73617F4C84D00CD3FBC /* P1ObjectModel.m */; };
 		F6768A1B17E65CD20088D1F9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6768A1917E65CC20088D1F9 /* QuartzCore.framework */; };
 		F682ABE717E4A616007DC0CF /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F682ABE617E4A610007DC0CF /* main.c */; };
 		F682ABF217E4A68A007DC0CF /* p1stream.c in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA3B17C52DC1004DDFD6 /* p1stream.c */; };
@@ -101,6 +103,10 @@
 		F653422817BFAF5C00769680 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		F653422A17BFAF6200769680 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		F653422C17BFAF6600769680 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		F65CD73117F4BEE100CD3FBC /* P1ContextModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1ContextModel.h; sourceTree = "<group>"; };
+		F65CD73217F4BEE100CD3FBC /* P1ContextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1ContextModel.m; sourceTree = "<group>"; };
+		F65CD73517F4C84D00CD3FBC /* P1ObjectModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1ObjectModel.h; sourceTree = "<group>"; };
+		F65CD73617F4C84D00CD3FBC /* P1ObjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1ObjectModel.m; sourceTree = "<group>"; };
 		F6768A1917E65CC20088D1F9 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		F682ABE617E4A610007DC0CF /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libp1stream.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -250,6 +256,17 @@
 			name = xcconfig;
 			sourceTree = "<group>";
 		};
+		F65CD73417F4C7AD00CD3FBC /* models */ = {
+			isa = PBXGroup;
+			children = (
+				F65CD73517F4C84D00CD3FBC /* P1ObjectModel.h */,
+				F65CD73617F4C84D00CD3FBC /* P1ObjectModel.m */,
+				F65CD73117F4BEE100CD3FBC /* P1ContextModel.h */,
+				F65CD73217F4BEE100CD3FBC /* P1ContextModel.m */,
+			);
+			path = models;
+			sourceTree = "<group>";
+		};
 		F682ABE217E4A426007DC0CF /* libp1stream */ = {
 			isa = PBXGroup;
 			children = (
@@ -275,6 +292,7 @@
 		F682AC2517E4C91C007DC0CF /* osx */ = {
 			isa = PBXGroup;
 			children = (
+				F65CD73417F4C7AD00CD3FBC /* models */,
 				F682AC3417E4C91C007DC0CF /* MainMenu.xib */,
 				F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */,
 				F682AC3117E4C91C007DC0CF /* P1AppDelegate.h */,
@@ -429,7 +447,9 @@
 				F682AC2C17E4C91C007DC0CF /* main.m in Sources */,
 				F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */,
 				F643655917E5A08800314053 /* P1MainWindowController.m in Sources */,
+				F65CD73317F4BEE100CD3FBC /* P1ContextModel.m in Sources */,
 				F643655C17E5ADB900314053 /* P1PreviewView.m in Sources */,
+				F65CD73717F4C84D00CD3FBC /* P1ObjectModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

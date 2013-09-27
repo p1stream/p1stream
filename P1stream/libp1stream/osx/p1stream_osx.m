@@ -171,7 +171,7 @@ bool p1_video_preview(P1VideoFull *videof)
     }
 
     uint8_t *data = IOSurfaceGetBaseAddress(videof->gl.surface);
-    video->preview_fn(video, 1280, 720, data);
+    video->preview_fn(1280, 720, data, video->preview_user_data);
 
     ret = IOSurfaceUnlock(videof->gl.surface, kIOSurfaceLockReadOnly, &seed);
     if (ret != kIOReturnSuccess)
