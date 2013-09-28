@@ -26,7 +26,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
                 @"sources": @[
                     @{
                         @"type": @"input",
-                        @"master": @TRUE
+                        @"master": [NSNumber numberWithBool:TRUE]
                     }
                 ]
             },
