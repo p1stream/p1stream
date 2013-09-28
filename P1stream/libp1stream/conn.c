@@ -93,9 +93,6 @@ fail_audio_lock:
         p1_log(connobj, P1_LOG_ERROR, "Failed to destroy condition variable: %s", strerror(ret));
 
 fail_cond:
-    free(connf->audio_out);
-
-fail_audio_out:
     p1_object_destroy(connobj);
 
 fail_object:
