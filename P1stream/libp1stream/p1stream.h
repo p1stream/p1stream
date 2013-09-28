@@ -456,11 +456,6 @@ void p1_video_source_frame(P1VideoSource *vsrc, int width, int height, void *dat
 struct _P1AudioSource {
     P1Source super;
 
-    // Mix buffer position. The source need not touch this.
-    size_t mix_pos;
-    // Whether this audio source is clock master. Read only.
-    bool master;
-
     // In the range [0, 1].
     float volume;
 };

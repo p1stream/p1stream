@@ -25,8 +25,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
             @"audio": @{
                 @"sources": @[
                     @{
-                        @"type": @"input",
-                        @"master": [NSNumber numberWithBool:TRUE]
+                        @"type": @"input"
                     }
                 ]
             },

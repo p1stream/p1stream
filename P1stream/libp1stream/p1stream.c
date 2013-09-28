@@ -610,7 +610,6 @@ static bool p1_ctrl_progress(P1Context *ctx)
     head = &audio->sources;
     p1_list_iterate(head, node) {
         P1Source *src = p1_list_get_container(node, P1Source, link);
-        P1AudioSource *asrc = (P1AudioSource *) src;
         P1Plugin *pel = (P1Plugin *) src;
         P1Object *obj = (P1Object *) src;
 
@@ -620,17 +619,9 @@ static bool p1_ctrl_progress(P1Context *ctx)
 
         if (action == P1_ACTION_START) {
             obj->ctx = ctx;
-
-            if (audio_state == P1_STATE_RUNNING)
-                p1_audio_link_source(asrc);
         }
 
         P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
-
-        if (action == P1_ACTION_STOP) {
-            if (audio_state == P1_STATE_RUNNING)
-                p1_audio_unlink_source(asrc);
-        }
 
         p1_object_unlock(obj);
 

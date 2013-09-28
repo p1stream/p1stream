@@ -104,9 +104,6 @@ bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect);
 void p1_audio_start(P1AudioFull *audiof);
 void p1_audio_stop(P1AudioFull *audiof);
 
-#define p1_audio_link_source(_asrc) ((_asrc)->mix_pos = 0)
-#define p1_audio_unlink_source(_asrc)
-
 
 // Private part of P1StreamConnection.
 
