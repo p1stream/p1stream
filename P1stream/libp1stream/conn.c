@@ -620,7 +620,6 @@ static bool p1_conn_flush(P1ConnectionFull *connf)
     P1PacketQueue *aq = &connf->audio_queue;
     P1PacketQueue *vq = &connf->video_queue;
     int ret;
-    bool result = true;
 
     // We release the lock while writing, but that means another thread may
     // have signalled in the meantime. Thus we loop until exhausted.
@@ -669,15 +668,15 @@ static bool p1_conn_flush(P1ConnectionFull *connf)
             free(pkt);
             if (!ret) {
                 p1_log(connobj, P1_LOG_ERROR, "Failed to send packet.");
-                result = false;
-                break;
+                p1_object_lock(connobj);
+                return false;
             }
         }
 
         p1_object_lock(connobj);
     } while (connobj->state == P1_STATE_RUNNING);
 
-    return result;
+    return true;
 }
 
 
