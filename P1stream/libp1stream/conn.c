@@ -333,7 +333,8 @@ size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf,
         .bufElSizes = el_sizes
     };
 
-    void *out_bufs[] = { connf->audio_out };
+    void *audio_out = connf->audio_out;
+    void *out_bufs[] = { audio_out };
     INT out_identifiers[] = { OUT_BITSTREAM_DATA };
     INT out_sizes[] = { audio_out_size };
     AACENC_BufDesc out_desc = {
@@ -376,7 +377,7 @@ size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf,
     }
 
     if (size == 0) {
-        p1_unlock(connobj, &connf->video_lock);
+        p1_unlock(connobj, &connf->audio_lock);
         return samples_read;
     }
 
@@ -390,7 +391,7 @@ size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf,
     body[1] = 1; // AAC raw
 
     // FIXME: Do the extra work to avoid this copy.
-    memcpy(body + 2, buf, size);
+    memcpy(body + 2, audio_out, size);
 
     p1_unlock(connobj, &connf->audio_lock);
 
