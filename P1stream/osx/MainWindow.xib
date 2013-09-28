@@ -16,28 +16,49 @@
         <window title="P1stream" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="3">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="335" y="390" width="612" height="417"/>
+            <rect key="contentRect" x="335" y="390" width="640" height="419"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
             <value key="minSize" type="size" width="480" height="320"/>
             <view key="contentView" id="4">
-                <rect key="frame" x="0.0" y="0.0" width="612" height="417"/>
+                <rect key="frame" x="0.0" y="0.0" width="640" height="419"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="5" customClass="P1PreviewView">
-                        <rect key="frame" x="0.0" y="59" width="613" height="358"/>
+                        <rect key="frame" x="0.0" y="59" width="640" height="360"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </customView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IHs-CD-Z4m">
+                        <rect key="frame" x="306" y="16" width="28" height="27"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="25" id="9Hq-xV-31H"/>
+                        </constraints>
+                        <buttonCell key="cell" type="smallSquare" title="Rec" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" id="F8Y-8N-pRg">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <binding destination="-2" name="value" keyPath="contextModel.connectionModel.target" id="Qn6-cr-bZ2">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">P1IsRunningTarget</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="5" firstAttribute="leading" secondItem="4" secondAttribute="leading" id="6"/>
-                    <constraint firstItem="5" firstAttribute="centerX" secondItem="4" secondAttribute="centerX" id="7"/>
                     <constraint firstItem="5" firstAttribute="top" secondItem="4" secondAttribute="top" id="8"/>
                     <constraint firstAttribute="bottom" secondItem="5" secondAttribute="bottom" constant="59" id="9"/>
+                    <constraint firstAttribute="bottom" secondItem="IHs-CD-Z4m" secondAttribute="bottom" constant="17" id="6V4-Qh-lkY"/>
+                    <constraint firstAttribute="trailing" secondItem="5" secondAttribute="trailing" id="F1k-iy-iSo"/>
+                    <constraint firstAttribute="centerX" secondItem="IHs-CD-Z4m" secondAttribute="centerX" id="nRw-nj-fJM"/>
                 </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="11"/>
             </connections>
         </window>
+        <userDefaultsController representsSharedInstance="YES" id="c1g-zn-ble"/>
     </objects>
 </document>

@@ -46,11 +46,13 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
     self = [super initWithObject:(P1Object *) context];
     if (self) {
-        P1ObjectModel *audioModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->audio];
-        P1ObjectModel *videoModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->video];
-        P1ObjectModel *connModel  = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->conn];
-        _objects = [[NSMutableArray alloc] initWithObjects:audioModel, videoModel, connModel, nil];
-        if (!audioModel || !videoModel || !connModel || !_objects) return nil;
+        _audioModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->audio];
+        _videoModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->video];
+        _connectionModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->conn];
+
+        _objects = [[NSMutableArray alloc] init];
+
+        if (!_audioModel || !_videoModel || !_connectionModel || !_objects) return nil;
 
         if (![self createVideoClock:config]) return nil;
         if (![self createVideoSources:config]) return nil;

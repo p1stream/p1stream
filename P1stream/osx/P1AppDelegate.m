@@ -5,8 +5,9 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // Create and start context.
+    // Create and start context. Start disconnected.
     self.contextModel = [[P1ContextModel alloc] init];
+    _contextModel.connectionModel.target = P1_TARGET_IDLE;
     [_contextModel start];
 
     // Monitor context state for clean exit.

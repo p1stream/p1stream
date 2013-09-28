@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F62471ED17F6B42B003428F6 /* P1IsRunningTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */; };
 		F643655917E5A08800314053 /* P1MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F643655817E5A08800314053 /* P1MainWindowController.m */; };
 		F643655C17E5ADB900314053 /* P1PreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = F643655B17E5ADB900314053 /* P1PreviewView.m */; };
 		F65CD73317F4BEE100CD3FBC /* P1ContextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F65CD73217F4BEE100CD3FBC /* P1ContextModel.m */; };
@@ -81,6 +82,8 @@
 		F607452517B637E8004EA730 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		F607452717B637EE004EA730 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		F607452917B637F2004EA730 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
+		F62471EB17F6B42B003428F6 /* P1IsRunningTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1IsRunningTarget.h; sourceTree = "<group>"; };
+		F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1IsRunningTarget.m; sourceTree = "<group>"; };
 		F627211617BC330700A889B4 /* libFraunhoferAAC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFraunhoferAAC.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F62DBA2D17C52833004DDFD6 /* p1stream_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream_priv.h; sourceTree = "<group>"; };
 		F62DBA3B17C52DC1004DDFD6 /* p1stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p1stream.c; sourceTree = "<group>"; };
@@ -208,6 +211,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F62471E717F6B0E7003428F6 /* transformers */ = {
+			isa = PBXGroup;
+			children = (
+				F62471EB17F6B42B003428F6 /* P1IsRunningTarget.h */,
+				F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */,
+			);
+			path = transformers;
+			sourceTree = "<group>";
+		};
 		F62DBA4117C53360004DDFD6 /* osx */ = {
 			isa = PBXGroup;
 			children = (
@@ -292,6 +304,7 @@
 		F682AC2517E4C91C007DC0CF /* osx */ = {
 			isa = PBXGroup;
 			children = (
+				F62471E717F6B0E7003428F6 /* transformers */,
 				F65CD73417F4C7AD00CD3FBC /* models */,
 				F682AC3417E4C91C007DC0CF /* MainMenu.xib */,
 				F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */,
@@ -449,6 +462,7 @@
 				F643655917E5A08800314053 /* P1MainWindowController.m in Sources */,
 				F65CD73317F4BEE100CD3FBC /* P1ContextModel.m in Sources */,
 				F643655C17E5ADB900314053 /* P1PreviewView.m in Sources */,
+				F62471ED17F6B42B003428F6 /* P1IsRunningTarget.m in Sources */,
 				F65CD73717F4C84D00CD3FBC /* P1ObjectModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
