@@ -13,13 +13,11 @@
 //
 // There are three fixed elements in each context:
 //
-//  - An instance of P1Video that assembles the video frames, does colorspace
-//    conversion and encoding to H.264.
+//  - An instance of P1Video that mixes video frames into a single output image.
 //
-//  - An instance of P1Audio that mixes audio buffers, and encodes to AAC.
+//  - An instance of P1Audio that mixes audio buffers.
 //
-//  - An instance of P1Connection that manages the RTMP streaming connection,
-//    muxing of the streams and buffering.
+//  - An instance of P1Connection encoding and RTMP streaming.
 //
 // The remaining elements are plugins provided by the user:
 //
