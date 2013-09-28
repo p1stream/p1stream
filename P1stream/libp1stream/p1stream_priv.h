@@ -113,8 +113,9 @@ void p1_audio_stop(P1AudioFull *audiof);
 struct _P1ConnectionFull {
     P1Connection super;
 
-    // RTMP URL
+    // RTMP state
     char url[2048];
+    RTMP rtmp;
 
     // Start time, used as the zero point for RTMP timestamps
     uint64_t start;

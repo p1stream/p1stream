@@ -25,7 +25,7 @@ static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, uin
 static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time);
 
 static void *p1_conn_main(void *data);
-static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf);
+static bool p1_conn_flush(P1ConnectionFull *connf);
 
 static bool p1_conn_start_audio(P1ConnectionFull *connf);
 static void p1_conn_stop_audio(P1ConnectionFull *connf);
@@ -139,6 +139,11 @@ void p1_conn_start(P1ConnectionFull *connf)
 void p1_conn_stop(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
+
+    // If we acquired the lock during the starting state, that means we're in
+    // the middle of a connection attempt. Abort it.
+    if (connobj->state == P1_STATE_STARTING)
+        RTMP_Close(&connf->rtmp);
 
     p1_object_set_state(connobj, P1_STATE_STOPPING);
     p1_conn_signal(connf);
@@ -493,10 +498,11 @@ static void *p1_conn_main(void *data)
 {
     P1ConnectionFull *connf = (P1ConnectionFull *) data;
     P1Object *connobj = (P1Object *) data;
-    RTMP r;
+    RTMP *r;
     int ret;
 
     p1_object_lock(connobj);
+    r = &connf->rtmp;
 
     if (!p1_conn_start_audio(connf))
         goto fail_audio;
@@ -510,41 +516,45 @@ static void *p1_conn_main(void *data)
         RTMP_LogSetCallback(p1_conn_rtmp_log_callback);
     }
     else {
-        p1_log(connobj, P1_LOG_WARNING, "Cannot log for multiple connections");
+        p1_log(connobj, P1_LOG_WARNING, "Cannot log for multiple connections.");
     }
 
-    RTMP_Init(&r);
+    RTMP_Init(r);
 
-    ret = RTMP_SetupURL(&r, connf->url);
+    ret = RTMP_SetupURL(r, connf->url);
     if (!ret) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to parse URL.");
-        goto fail_locked;
+        goto fail_rtmp;
     }
 
-    RTMP_EnableWrite(&r);
+    RTMP_EnableWrite(r);
 
-    // Make the connection
+    // Make the connection. Release the lock while we do.
+    p1_log(connobj, P1_LOG_INFO, "Connecting to '%.*s:%d' ...",
+           r->Link.hostname.av_len, r->Link.hostname.av_val, r->Link.port);
     p1_object_unlock(connobj);
+    ret = RTMP_Connect(r, NULL);
+    if (ret)
+        ret = RTMP_ConnectStream(r, 0);
+    p1_object_lock(connobj);
 
-    ret = RTMP_Connect(&r, NULL);
+    // State can change to stopping from p1_conn_stop. In that case, disregard
+    // connection errors and simply clean up.
+    if (connobj->state == P1_STATE_STOPPING) {
+        p1_log(connobj, P1_LOG_INFO, "Connection interrupted.");
+        goto cleanup_video;
+    }
     if (!ret) {
         p1_log(connobj, P1_LOG_ERROR, "Connection failed.");
-        goto fail_unlocked;
+        goto fail_rtmp;
     }
-
-    ret = RTMP_ConnectStream(&r, 0);
-    if (!ret) {
-        p1_log(connobj, P1_LOG_ERROR, "Failed to connect to stream.");
-        goto fail_unlocked;
-    }
+    p1_log(connobj, P1_LOG_INFO, "Connected.");
 
     // Queue configuration packets
     if (!p1_conn_stream_audio_config(connf))
-        goto fail_unlocked;
+        goto fail_rtmp;
     if (!p1_conn_stream_video_config(connf))
-        goto fail_unlocked;
-
-    p1_object_lock(connobj);
+        goto fail_rtmp;
 
     // Connection event loop
     connf->start = p1_get_time();
@@ -554,16 +564,17 @@ static void *p1_conn_main(void *data)
         ret = pthread_cond_wait(&connf->cond, &connobj->lock);
         if (ret != 0) {
             p1_log(connobj, P1_LOG_ERROR, "Failed to wait on condition: %s", strerror(ret));
-            goto fail_locked;
+            goto fail_rtmp;
         }
 
         if (connobj->state != P1_STATE_RUNNING)
             break;
 
-        if (!p1_conn_flush(&r, connf))
-            goto fail_locked;
+        if (!p1_conn_flush(connf))
+            goto fail_rtmp;
 
     } while (connobj->state == P1_STATE_RUNNING);
+    p1_log(connobj, P1_LOG_INFO, "Disconnected.");
 
 cleanup_video:
     p1_conn_stop_video(connf);
@@ -572,7 +583,7 @@ cleanup_audio:
     p1_conn_stop_audio(connf);
 
 cleanup:
-    RTMP_Close(&r);
+    RTMP_Close(r);
     if (current_conn == connobj)
         current_conn = NULL;
 
@@ -588,10 +599,7 @@ cleanup:
 
     return NULL;
 
-fail_unlocked:
-    p1_object_lock(connobj);
-
-fail_locked:
+fail_rtmp:
     p1_object_set_state(connobj, P1_STATE_HALTING);
     goto cleanup_video;
 
@@ -606,7 +614,7 @@ fail_audio:
 
 // Flush as many queued packets as we can to the connection.
 // This is called with the stream lock held.
-static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
+static bool p1_conn_flush(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
     P1PacketQueue *aq = &connf->audio_queue;
@@ -650,6 +658,7 @@ static bool p1_conn_flush(RTMP *r, P1ConnectionFull *connf)
 
         p1_object_unlock(connobj);
 
+        RTMP *r = &connf->rtmp;
         RTMPPacket **end = i;
         for (i = list; i != end; i++) {
             RTMPPacket *pkt = *i;
