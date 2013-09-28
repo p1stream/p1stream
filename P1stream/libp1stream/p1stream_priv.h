@@ -96,10 +96,14 @@ struct _P1AudioFull {
     int16_t *out;
     size_t out_pos;
     int64_t out_time;
+
+    // Mix thread
+    pthread_t thread;
+    pthread_cond_t cond;
 };
 
 bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect);
-#define p1_audio_destroy(_audiof) p1_object_destroy((P1Object *) _audiof)
+void p1_audio_destroy(P1AudioFull *audiof);
 
 void p1_audio_start(P1AudioFull *audiof);
 void p1_audio_stop(P1AudioFull *audiof);

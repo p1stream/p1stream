@@ -3,17 +3,20 @@
 #include <math.h>
 #include <stdlib.h>
 #include <memory.h>
+#include <sys/time.h>
 
 // Hardcoded internal mixing buffer parameters.
 static const int sample_rate = 44100;
 static const int num_channels = 2;
-// Buffers of one full second.
-static const int buf_samples = num_channels * sample_rate;
+// Buffers of two seconds.
+static const int buf_samples = num_channels * sample_rate * 2;
+static const int buf_center = buf_samples / 2;
 // Minimum number of samples to gather before encoding.
 static const int out_min_samples = buf_samples / 2;
+// Interval in usec at which we process mixed samples.
+static const int mix_interval = 300000;
 
-static void p1_audio_kill_session(P1AudioFull *audiof);
-
+static void *p1_audio_main(void *data);
 static void p1_audio_resample(P1AudioFull *audiof, size_t samples);
 static void p1_audio_shift_mix_buffer(P1AudioFull *audiof, size_t samples);
 static void p1_audio_flush_out_buffer(P1AudioFull *audiof);
@@ -26,69 +29,64 @@ bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect)
 {
     P1Audio *audio = (P1Audio *) audiof;
     P1Object *audioobj = (P1Object *) audiof;
+    int ret;
 
     if (!p1_object_init(audioobj, P1_OTYPE_AUDIO))
-        return false;
+        goto fail_object;
+
+    ret = pthread_cond_init(&audiof->cond, NULL);
+    if (ret != 0) {
+        p1_log(audioobj, P1_LOG_ERROR, "Failed to initialize condition variable: %s", strerror(ret));
+        goto fail_cond;
+    }
 
     p1_list_init(&audio->sources);
 
     return true;
+
+fail_cond:
+    p1_object_destroy(audioobj);
+
+fail_object:
+    return false;
+}
+
+void p1_audio_destroy(P1AudioFull *audiof)
+{
+    P1Object *audioobj = (P1Object *) audiof;
+    int ret;
+
+    ret = pthread_cond_destroy(&audiof->cond);
+    if (ret != 0)
+        p1_log(audioobj, P1_LOG_ERROR, "Failed to destroy condition variable: %s", strerror(ret));
+
+    p1_object_destroy(audioobj);
 }
 
 void p1_audio_start(P1AudioFull *audiof)
 {
-    P1Audio *audio = (P1Audio *) audiof;
     P1Object *audioobj = (P1Object *) audiof;
-    P1ListNode *head;
 
     p1_object_set_state(audioobj, P1_STATE_STARTING);
 
-    audiof->mix = calloc(buf_samples, sizeof(float));
-    if (audiof->mix == NULL) {
-        p1_log(audioobj, P1_LOG_ERROR, "Failed to allocate audio mix buffer");
-        goto fail_mix;
+    // Thread will continue start, and set state to running
+    int ret = pthread_create(&audiof->thread, NULL, p1_audio_main, audiof);
+    if (ret != 0) {
+        p1_log(audioobj, P1_LOG_ERROR, "Failed to start audio mixer thread: %s", strerror(ret));
+        p1_object_set_state(audioobj, P1_STATE_HALTED);
     }
-
-    audiof->out = malloc(buf_samples * sizeof(int16_t));
-    if (audiof->out == NULL) {
-        p1_log(audioobj, P1_LOG_ERROR, "Failed to allocate audio output buffer");
-        goto fail_out;
-    }
-
-    head = &audio->sources;
-    if (head->next == head) {
-        // FIXME: support this
-        p1_log(audioobj, P1_LOG_ERROR, "No audio sources configured");
-        goto fail_link;
-    }
-
-    p1_object_set_state(audioobj, P1_STATE_RUNNING);
-
-    return;
-
-fail_link:
-    free(audiof->out);
-
-fail_out:
-    free(audiof->mix);
-
-fail_mix:
-    p1_object_set_state(audioobj, P1_STATE_HALTED);
 }
 
 void p1_audio_stop(P1AudioFull *audiof)
 {
     P1Object *audioobj = (P1Object *) audiof;
+    int ret;
 
     p1_object_set_state(audioobj, P1_STATE_STOPPING);
-    p1_audio_kill_session(audiof);
-    p1_object_set_state(audioobj, P1_STATE_IDLE);
-}
 
-static void p1_audio_kill_session(P1AudioFull *audiof)
-{
-    free(audiof->out);
-    free(audiof->mix);
+    ret = pthread_cond_signal(&audiof->cond);
+    if (ret != 0)
+        p1_log(audioobj, P1_LOG_ERROR, "Failed to signal audio mixer thread: %s", strerror(ret));
 }
 
 
@@ -113,47 +111,13 @@ void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t
     P1Audio *audio = ctx->audio;
     P1AudioFull *audiof = (P1AudioFull *) audio;
     P1Object *audioobj = (P1Object *) audio;
-    P1Connection *conn = ctx->conn;
-    P1Object *connobj = (P1Object *) conn;
 
     p1_object_lock(audioobj);
 
     if (audioobj->state != P1_STATE_RUNNING)
         goto end;
 
-    // Process mixed samples up to this point.
-    int64_t mix_time = p1_get_time() - p1_audio_samples_to_time(ctxf, buf_samples);
-    if (audiof->mix_time) {
-        size_t to_shift = p1_audio_time_to_samples(ctxf, mix_time - audiof->mix_time);
-        if (to_shift > buf_samples) {
-            p1_log(audioobj, P1_LOG_WARNING, "Audio mixer is skipping!");
-            to_shift = buf_samples;
-        }
-
-        // FIXME: preview
-
-        // Streaming. The state test is a preliminary check. The state may change,
-        // and the connection code does a final check itself, but checking here as
-        // well saves us a bunch of processing.
-        if (connobj->state == P1_STATE_RUNNING) {
-            // Resample into the output buffer.
-            p1_audio_resample(audiof, to_shift);
-
-            // Flush the output buffer.
-            p1_audio_flush_out_buffer(audiof);
-        }
-        else {
-            // Clear output buffer.
-            audiof->out_pos = 0;
-        }
-
-        // Remove the old samples.
-        p1_audio_shift_mix_buffer(audiof, to_shift);
-    }
-
-    // Adjust buffer start times.
-    audiof->mix_time = mix_time;
-    audiof->out_time = mix_time - p1_audio_samples_to_time(ctxf, audiof->out_pos);
+    size_t mix_time = audiof->mix_time;
 
     // Check the lower bound of the mix buffer, and determine the position
     // we're going to write these new samples at.
@@ -176,7 +140,7 @@ void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t
     // Check the upper bound of the mix buffer.
     size_t mix_end = mix_pos + samples;
     if (mix_end > buf_samples) {
-        p1_log(audioobj, P1_LOG_WARNING, "Audio source %p is producing samples in the future!", asrc);
+        p1_log(audioobj, P1_LOG_WARNING, "Audio mixer is lagging!");
         size_t to_drop = mix_end - buf_samples;
         if (to_drop >= samples)
             goto end;
@@ -194,6 +158,131 @@ end:
     p1_object_unlock(audioobj);
 }
 
+
+// The main loop of the streaming thread.
+static void *p1_audio_main(void *data)
+{
+    P1AudioFull *audiof = (P1AudioFull *) data;
+    P1Object *audioobj = (P1Object *) data;
+    P1Context *ctx = audioobj->ctx;
+    P1ContextFull *ctxf = (P1ContextFull *) ctx;
+    P1Connection *conn = ctx->conn;
+    P1Object *connobj = (P1Object *) conn;
+    int ret;
+
+    p1_object_lock(audioobj);
+
+    audiof->mix = calloc(buf_samples, sizeof(float));
+    if (audiof->mix == NULL) {
+        p1_log(audioobj, P1_LOG_ERROR, "Failed to allocate audio mix buffer");
+        goto fail_mix;
+    }
+
+    audiof->out = malloc(buf_samples * sizeof(int16_t));
+    if (audiof->out == NULL) {
+        p1_log(audioobj, P1_LOG_ERROR, "Failed to allocate audio output buffer");
+        p1_object_set_state(audioobj, P1_STATE_HALTING);
+        goto fail_out;
+    }
+
+    audiof->mix_time = p1_get_time() - p1_audio_samples_to_time(ctxf, buf_center);
+    audiof->out_pos = 0;
+    audiof->out_time = audiof->mix_time;
+
+    p1_object_set_state(audioobj, P1_STATE_RUNNING);
+
+    do {
+        // Get the current time.
+        struct timeval delay_end;
+        ret = gettimeofday(&delay_end, NULL);
+        if (ret != 0) {
+            p1_log(audioobj, P1_LOG_ERROR, "Failed to get time: %s", strerror(errno));
+            goto fail_loop;
+        }
+
+        // Set the delay end time.
+        delay_end.tv_usec += mix_interval;
+        while (delay_end.tv_usec >= 1000000) {
+            delay_end.tv_usec -= 1000000;
+            delay_end.tv_sec++;
+        }
+
+        // Need to get a timespec of that.
+        struct timespec delay_end_spec;
+        delay_end_spec.tv_sec = delay_end.tv_sec;
+        delay_end_spec.tv_nsec = delay_end.tv_usec * 1000;
+
+        // Wait. If the condition is triggered, we're stopping.
+        ret = pthread_cond_timedwait(&audiof->cond, &audioobj->lock, &delay_end_spec);
+        if (ret == 0) {
+            break;
+        }
+        else if (ret != ETIMEDOUT) {
+            p1_log(audioobj, P1_LOG_ERROR, "Failed to wait on condition: %s", strerror(ret));
+            goto fail_loop;
+        }
+
+        // Process mixed samples up to this point.
+        int64_t mix_time = p1_get_time() - p1_audio_samples_to_time(ctxf, buf_center);
+        size_t samples = p1_audio_time_to_samples(ctxf, mix_time - audiof->mix_time);
+        if (samples > buf_samples) {
+            p1_log(audioobj, P1_LOG_WARNING, "Audio mixer is skipping!");
+            samples = buf_samples;
+        }
+
+        // FIXME: preview
+
+        // Streaming. The state test is a preliminary check. The state may change,
+        // and the connection code does a final check itself, but checking here as
+        // well saves us a bunch of processing.
+        if (connobj->state == P1_STATE_RUNNING) {
+            // Resample into the output buffer.
+            p1_audio_resample(audiof, samples);
+
+            // Flush the output buffer.
+            p1_audio_flush_out_buffer(audiof);
+        }
+        else {
+            // Clear output buffer.
+            audiof->out_pos = 0;
+        }
+
+        // Remove the old samples.
+        p1_audio_shift_mix_buffer(audiof, samples);
+
+        // Adjust buffer start times.
+        audiof->mix_time = mix_time;
+        audiof->out_time = mix_time - p1_audio_samples_to_time(ctxf, audiof->out_pos);
+    } while (true);
+
+cleanup_out:
+    free(audiof->out);
+
+cleanup_mix:
+    free(audiof->mix);
+
+cleanup:
+    if (audioobj->state == P1_STATE_STOPPING)
+        p1_object_set_state(audioobj, P1_STATE_IDLE);
+    else
+        p1_object_set_state(audioobj, P1_STATE_HALTED);
+
+    p1_object_unlock(audioobj);
+
+    return NULL;
+
+fail_loop:
+    p1_object_set_state(audioobj, P1_STATE_HALTING);
+    goto cleanup_out;
+
+fail_out:
+    p1_object_set_state(audioobj, P1_STATE_HALTING);
+    goto cleanup_mix;
+
+fail_mix:
+    p1_object_set_state(audioobj, P1_STATE_HALTING);
+    goto cleanup;
+}
 
 // Resample to the output buffer.
 static void p1_audio_resample(P1AudioFull *audiof, size_t samples)

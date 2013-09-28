@@ -15,8 +15,8 @@ static const int audio_num_channels = 2;
 static const int audio_bit_rate = 128 * 1024;
 // Minimum output buffer size per FDK AAC requirements.
 static const int audio_out_min_size = 6144 / 8 * audio_num_channels;
-// Complete output buffer size, also one full second.
-static const int audio_out_size = audio_out_min_size * 64;
+// Complete output buffer size, roughly two seconds.
+static const int audio_out_size = audio_out_min_size * 128;
 
 static bool p1_conn_stream_video_config(P1ConnectionFull *connf);
 static bool p1_conn_stream_audio_config(P1ConnectionFull *connf);
