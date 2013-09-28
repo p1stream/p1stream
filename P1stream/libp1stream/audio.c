@@ -58,18 +58,41 @@ void p1_audio_start(P1AudioFull *audiof)
     }
 
     head = &audio->sources;
+    if (head->next == head) {
+        p1_log(audioobj, P1_LOG_ERROR, "No audio sources configured");
+        goto fail_link;
+    }
+
+    bool found_master = false;
     p1_list_iterate(head, node) {
         P1Source *src = p1_list_get_container(node, P1Source, link);
         P1Object *obj = (P1Object *) src;
         P1AudioSource *asrc = (P1AudioSource *) src;
 
+        if (asrc->master) {
+            if (found_master) {
+                p1_log(audioobj, P1_LOG_ERROR, "Multiple audio clock masters configured");
+                goto fail_link;
+            }
+            found_master = true;
+        }
+
         if (obj->state == P1_STATE_STARTING || obj->state == P1_STATE_RUNNING)
             p1_audio_link_source(asrc);
+    }
+    if (!found_master) {
+        p1_log(audioobj, P1_LOG_WARNING, "No audio clock master, promoting first source");
+        P1Source *src = p1_list_get_container(head->next, P1Source, link);
+        P1AudioSource *asrc = (P1AudioSource *) src;
+        asrc->master = true;
     }
 
     p1_object_set_state(audioobj, P1_STATE_RUNNING);
 
     return;
+
+fail_link:
+    free(audiof->out);
 
 fail_out:
     free(audiof->mix);

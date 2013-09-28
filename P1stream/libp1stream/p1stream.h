@@ -460,9 +460,9 @@ struct _P1AudioSource {
 
     // Mix buffer position. The source need not touch this.
     size_t mix_pos;
-
-    // Whether this audio source is clock master.
+    // Whether this audio source is clock master. Read only.
     bool master;
+
     // In the range [0, 1].
     float volume;
 };
