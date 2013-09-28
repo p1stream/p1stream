@@ -53,7 +53,17 @@
 
 - (void)setTarget:(P1TargetState)target
 {
+    [self lock];
     p1_object_set_target(_object, target);
+    [self unlock];
+}
+
+
+- (void)clearHalt
+{
+    [self lock];
+    p1_object_clear_halt(_object);
+    [self unlock];
 }
 
 @end

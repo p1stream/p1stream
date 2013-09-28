@@ -5,18 +5,23 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // Create and start context. Start disconnected.
+    // Create context.
     self.contextModel = [[P1ContextModel alloc] init];
-    _contextModel.connectionModel.target = P1_TARGET_IDLE;
-    [_contextModel start];
+
+    // Show the main window.
+    _mainWindowController.contextModel = _contextModel;
+    [_mainWindowController showWindow];
 
     // Monitor context state for clean exit.
     _terminating = false;
     [_contextModel addObserver:self forKeyPath:@"state" options:0 context:nil];
 
-    // Show the main window.
-    _mainWindowController.contextModel = _contextModel;
-    [_mainWindowController showWindow];
+    // Monitor connection state.
+    [_contextModel.connectionModel addObserver:self forKeyPath:@"state" options:0 context:nil];
+
+    // Start disconnected.
+    _contextModel.connectionModel.target = P1_TARGET_IDLE;
+    [_contextModel start];
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
@@ -45,6 +50,17 @@
     if (object == _contextModel && [keyPath isEqualToString:@"state"]) {
         if (_terminating && _contextModel.state == P1_STATE_IDLE)
             [NSApp replyToApplicationShouldTerminate:TRUE];
+    }
+
+    // If our connection breaks, reset to idle state.
+    P1ObjectModel *connectionModel = _contextModel.connectionModel;
+    if (object == connectionModel && [keyPath isEqualToString:@"state"]) {
+        if (connectionModel.state == P1_STATE_HALTED) {
+            [connectionModel lock];
+            connectionModel.target = P1_TARGET_IDLE;
+            [connectionModel clearHalt];
+            [connectionModel unlock];
+        }
     }
 }
 

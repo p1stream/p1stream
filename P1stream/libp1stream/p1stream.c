@@ -27,15 +27,42 @@ enum _P1Action {
 
 bool p1_object_init(P1Object *obj, P1ObjectType type)
 {
+    pthread_mutexattr_t attr;
+    int ret;
+
     obj->type = type;
 
-    int ret = pthread_mutex_init(&obj->lock, NULL);
+    ret = pthread_mutexattr_init(&attr);
     if (ret != 0) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to initialize mutex: %s", strerror(ret));
-        return false;
+        p1_log(obj, P1_LOG_ERROR, "Failed to initialize mutex attributes: %s", strerror(ret));
+        goto fail;
     }
 
+    ret = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    if (ret != 0) {
+        p1_log(obj, P1_LOG_ERROR, "Failed to set mutex attributes: %s", strerror(ret));
+        goto fail_attr;
+    }
+
+    ret = pthread_mutex_init(&obj->lock, &attr);
+    if (ret != 0) {
+        p1_log(obj, P1_LOG_ERROR, "Failed to initialize mutex: %s", strerror(ret));
+        goto fail_attr;
+    }
+
+    ret = pthread_mutexattr_destroy(&attr);
+    if (ret != 0)
+        p1_log(obj, P1_LOG_ERROR, "Failed to destroy mutex attributes: %s", strerror(ret));
+
     return true;
+
+fail_attr:
+    ret = pthread_mutexattr_destroy(&attr);
+    if (ret != 0)
+        p1_log(obj, P1_LOG_ERROR, "Failed to destroy mutex attributes: %s", strerror(ret));
+
+fail:
+    return false;
 }
 
 void p1_object_destroy(P1Object *obj)
