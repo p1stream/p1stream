@@ -335,22 +335,31 @@ static void p1_audio_flush_out_buffer(P1AudioFull *audiof)
     P1ConnectionFull *connf = (P1ConnectionFull *) conn;
 
     // Send as many frames as we can.
-    int16_t *out = audiof->out;
     size_t out_available = audiof->out_pos;
+    if (out_available == 0)
+        return;
+
+    int16_t *out = audiof->out;
     size_t out_time = audiof->out_time;
+
     size_t total_samples = 0;
-    size_t samples = 1;
+    size_t samples;
     do {
         samples = p1_conn_stream_audio(connf, audiof->out_time, out, out_available);
+        if (samples == 0)
+            break;
 
         out += samples;
         out_available -= samples;
         out_time += p1_audio_samples_to_time(ctxf, samples);
 
         total_samples += samples;
-    } while(out_available && samples);
+    } while(out_available);
 
     // Move remaining data up in the out buffer.
+    if (total_samples == 0)
+        return;
+
     size_t out_remaining = audiof->out_pos - total_samples;
     if (out_remaining)
         memmove(out, out + total_samples, out_remaining * sizeof(int16_t));
