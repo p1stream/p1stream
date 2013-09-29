@@ -11,8 +11,6 @@ static const int num_channels = 2;
 // Buffers of two seconds.
 static const int buf_samples = num_channels * sample_rate * 2;
 static const int buf_center = buf_samples / 2;
-// Minimum number of samples to gather before encoding.
-static const int out_min_samples = buf_samples / 2;
 // Interval in usec at which we process mixed samples.
 static const int mix_interval = 300000;
 
@@ -336,21 +334,29 @@ static void p1_audio_flush_out_buffer(P1AudioFull *audiof)
     P1Connection *conn = ctx->conn;
     P1ConnectionFull *connf = (P1ConnectionFull *) conn;
 
-    size_t out_available = audiof->out_pos;
-    if (out_available == 0)
-        return;
-
+    // Send as many frames as we can.
     int16_t *out = audiof->out;
-    size_t samples = p1_conn_stream_audio(connf, audiof->out_time, audiof->out, out_available);
+    size_t out_available = audiof->out_pos;
+    size_t out_time = audiof->out_time;
+    size_t total_samples = 0;
+    size_t samples = 1;
+    do {
+        samples = p1_conn_stream_audio(connf, audiof->out_time, out, out_available);
 
-    // Move remaining data up in the mix buffer.
-    size_t out_remaining = out_available - samples;
+        out += samples;
+        out_available -= samples;
+        out_time += p1_audio_samples_to_time(ctxf, samples);
+
+        total_samples += samples;
+    } while(out_available && samples);
+
+    // Move remaining data up in the out buffer.
+    size_t out_remaining = audiof->out_pos - total_samples;
     if (out_remaining)
-        memmove(out, out + samples, out_remaining * sizeof(float));
-    audiof->out_pos = out_remaining;
+        memmove(out, out + total_samples, out_remaining * sizeof(int16_t));
 
-    // Recalculate out buffer start time.
-    audiof->out_time += p1_audio_samples_to_time(ctxf, samples);
+    audiof->out_pos = out_remaining;
+    audiof->out_time = out_time;
 }
 
 

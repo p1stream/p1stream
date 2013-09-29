@@ -317,68 +317,40 @@ size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf,
     // Encode and build packet using fine-grained lock.
     p1_lock(connobj, &connf->audio_lock);
 
-    INT el_sizes[] = { sizeof(int16_t) };
-
-    void *in_bufs[] = { buf };
-    INT in_identifiers[] = { IN_AUDIO_DATA };
-    INT in_sizes[] = { (INT) (samples * sizeof(int16_t)) };
     AACENC_BufDesc in_desc = {
-        .numBufs = 1,
-        .bufs = in_bufs,
-        .bufferIdentifiers = in_identifiers,
-        .bufSizes = in_sizes,
-        .bufElSizes = el_sizes
+        .numBufs           = 1,
+        .bufs              = (void *[]) { buf },
+        .bufferIdentifiers = (INT []) { IN_AUDIO_DATA },
+        .bufSizes          = (INT []) { (INT) (samples * sizeof(int16_t)) },
+        .bufElSizes        = (INT []) { sizeof(int16_t) }
     };
-
-    void *audio_out = connf->audio_out;
-    void *out_bufs[] = { audio_out };
-    INT out_identifiers[] = { OUT_BITSTREAM_DATA };
-    INT out_sizes[] = { audio_out_size };
     AACENC_BufDesc out_desc = {
-        .numBufs = 1,
-        .bufs = out_bufs,
-        .bufferIdentifiers = out_identifiers,
-        .bufSizes = out_sizes,
-        .bufElSizes = el_sizes
+        .numBufs           = 1,
+        .bufs              = (void *[]) { connf->audio_out },
+        .bufferIdentifiers = (INT []) { OUT_BITSTREAM_DATA },
+        .bufSizes          = (INT []) { audio_out_size },
+        .bufElSizes        = (INT []) { sizeof(UCHAR) }
     };
-
     AACENC_InArgs in_args = {
         .numInSamples = (INT) samples,
-        .numAncBytes = 0
+        .numAncBytes  = 0
     };
-
-    // Encode as much as we can; FDK AAC gives us small batches.
-    size_t size = 0;
-    size_t samples_read = 0;
+    AACENC_OutArgs out_args;
     AACENC_ERROR err;
-    AACENC_OutArgs out_args = { .numInSamples = 1 };
-    while (in_args.numInSamples && out_args.numInSamples && out_desc.bufSizes[0] > audio_out_min_size) {
-        err = aacEncEncode(connf->audio_enc, &in_desc, &out_desc, &in_args, &out_args);
-        if (err != AACENC_OK) {
-            p1_log(connobj, P1_LOG_ERROR, "Failed to AAC encode audio: FDK AAC error %d", err);
-            goto fail;
-        }
 
-        size_t in_processed = out_args.numInSamples * sizeof(int16_t);
-        in_desc.bufs[0] += in_processed;
-        in_desc.bufSizes[0] -= in_processed;
-
-        size_t out_bytes = out_args.numOutBytes;
-        out_desc.bufs[0] += out_bytes;
-        out_desc.bufSizes[0] -= out_bytes;
-
-        in_args.numInSamples -= out_args.numInSamples;
-
-        size += out_args.numOutBytes;
-        samples_read += out_args.numInSamples;
+    // Encode a frame if we can.
+    err = aacEncEncode(connf->audio_enc, &in_desc, &out_desc, &in_args, &out_args);
+    if (err != AACENC_OK) {
+        p1_log(connobj, P1_LOG_ERROR, "Failed to AAC encode audio: FDK AAC error %d", err);
+        goto fail;
     }
-
-    if (size == 0) {
+    if (out_args.numOutBytes == 0) {
         p1_unlock(connobj, &connf->audio_lock);
-        return samples_read;
+        return out_args.numInSamples;
     }
 
-    const uint32_t tag_size = (uint32_t) (2 + size);
+    // Build the packet.
+    const uint32_t tag_size = (uint32_t) (2 + out_args.numOutBytes);
     RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_AUDIO, tag_size);
     if (pkt == NULL)
         goto fail;
@@ -388,7 +360,7 @@ size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf,
     body[1] = 1; // AAC raw
 
     // FIXME: Do the extra work to avoid this copy.
-    memcpy(body + 2, audio_out, size);
+    memcpy(body + 2, out_desc.bufs[0], out_args.numOutBytes);
 
     p1_unlock(connobj, &connf->audio_lock);
 
@@ -402,12 +374,12 @@ size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf,
         free(pkt);
 
         // Consume all.
-        samples_read = samples;
+        out_args.numInSamples = (INT) samples;
     }
 
     p1_object_unlock(connobj);
 
-    return samples_read;
+    return out_args.numInSamples;
 
 fail:
     p1_unlock(connobj, &connf->audio_lock);
