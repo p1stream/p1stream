@@ -359,26 +359,65 @@ void p1_logv(P1Object *obj, P1LogLevel level, const char *fmt, va_list args)
 // Default log function.
 static void p1_log_default(P1Object *obj, P1LogLevel level, const char *fmt, va_list args, void *user_data)
 {
-    char out[2048] = "X: ";
+    char prefix;
     switch (level) {
-        case P1_LOG_ERROR:      out[0] = 'E';   break;
-        case P1_LOG_WARNING:    out[0] = 'W';   break;
-        case P1_LOG_INFO:       out[0] = 'I';   break;
-        case P1_LOG_DEBUG:      out[0] = 'D';   break;
-        default: break;
+        case P1_LOG_ERROR:   prefix = 'E'; break;
+        case P1_LOG_WARNING: prefix = 'W'; break;
+        case P1_LOG_INFO:    prefix = 'I'; break;
+        case P1_LOG_DEBUG:   prefix = 'D'; break;
+        default:             prefix = 'X'; break;
     }
 
-    int ret = vsnprintf(out + 3, sizeof(out) - 4, fmt, args);
+    char *name, name_buf[32];
+    switch (obj->type) {
+        case P1_OTYPE_CONTEXT:
+            name = "context";
+            break;
+        case P1_OTYPE_VIDEO:
+            name = "video";
+            break;
+        case P1_OTYPE_AUDIO:
+            name = "audio";
+            break;
+        case P1_OTYPE_CONNECTION:
+            name = "conn";
+            break;
+        case P1_OTYPE_VIDEO_CLOCK:
+            name = "vclock";
+            break;
+        case P1_OTYPE_VIDEO_SOURCE:
+            name = name_buf;
+            snprintf(name_buf, sizeof(name_buf), "vsrc %p", obj);
+            break;
+        case P1_OTYPE_AUDIO_SOURCE:
+            name = name_buf;
+            snprintf(name_buf, sizeof(name_buf), "asrc %p", obj);
+            break;
+    }
+
+    char out[2048];
+    int ret;
+
+    char *p_out = out;
+    size_t buf_size = sizeof(out);
+    size_t length;
+
+    ret = snprintf(p_out, buf_size, "%c [%s]: ", prefix, name);
     if (ret < 0)
         return;
-    ret += 3;
 
-    const size_t max_length = sizeof(out) - 2;
-    if (ret > max_length)
-        ret = max_length;
-    out[ret++] = '\n';
+    p_out += ret;
+    length = ret;
 
-    fwrite(out, ret, 1, stderr);
+    ret = vsnprintf(p_out, buf_size - ret, fmt, args);
+    if (ret < 0)
+        return;
+
+    p_out += ret;
+    length += ret;
+
+    *p_out = '\n';
+    fwrite(out, length + 1, 1, stderr);
 }
 
 // The control thread main loop.
@@ -709,38 +748,32 @@ static void p1_ctrl_log_notification(P1Notification *notification)
 {
     P1Object *obj = notification->object;
 
-    const char *action;
+    const char *type;
+    const char *value;
     switch (notification->type) {
         case P1_NTYPE_STATE_CHANGE:
+            type = "state";
             switch (notification->state_change.state) {
-                case P1_STATE_IDLE:     action = "idle";     break;
-                case P1_STATE_STARTING: action = "starting"; break;
-                case P1_STATE_RUNNING:  action = "running";  break;
-                case P1_STATE_STOPPING: action = "stopping"; break;
-                case P1_STATE_HALTING:  action = "halting";  break;
-                case P1_STATE_HALTED:   action = "halted";   break;
+                case P1_STATE_IDLE:     value = "idle";     break;
+                case P1_STATE_STARTING: value = "starting"; break;
+                case P1_STATE_RUNNING:  value = "running";  break;
+                case P1_STATE_STOPPING: value = "stopping"; break;
+                case P1_STATE_HALTING:  value = "halting";  break;
+                case P1_STATE_HALTED:   value = "halted";   break;
+                default: return;
             }
             break;
         case P1_NTYPE_TARGET_CHANGE:
+            type = "target";
             switch (notification->target_change.target) {
-                case P1_TARGET_RUNNING: action = "target running";  break;
-                case P1_TARGET_IDLE:    action = "target idle";     break;
-                case P1_TARGET_REMOVE:  action = "target remove";   break;
+                case P1_TARGET_RUNNING: value = "running"; break;
+                case P1_TARGET_IDLE:    value = "idle";    break;
+                case P1_TARGET_REMOVE:  value = "remove";  break;
+                default: return;
             }
             break;
         default: return;
     }
 
-    const char *obj_descr;
-    switch (obj->type) {
-        case P1_OTYPE_CONTEXT:      obj_descr = "context";      break;
-        case P1_OTYPE_VIDEO:        obj_descr = "video mixer";  break;
-        case P1_OTYPE_AUDIO:        obj_descr = "audio mixer";  break;
-        case P1_OTYPE_CONNECTION:   obj_descr = "connection";   break;
-        case P1_OTYPE_VIDEO_CLOCK:  obj_descr = "video clock";  break;
-        case P1_OTYPE_VIDEO_SOURCE: obj_descr = "video source"; break;
-        case P1_OTYPE_AUDIO_SOURCE: obj_descr = "audio source"; break;
-    }
-
-    p1_log(obj, P1_LOG_INFO, "%s %p is %s", obj_descr, obj, action);
+    p1_log(obj, P1_LOG_INFO, "%s -> %s", type, value);
 }
