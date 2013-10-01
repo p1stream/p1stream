@@ -8,14 +8,15 @@
     return [super initWithWindowNibName:@"MainWindow"];
 }
 
-- (void)windowDidLoad
+- (void)showWindow:(id)sender
 {
+    [super showWindow:sender];
     _preview.context = _contextModel.context;
 }
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    self.window = nil;
+    _preview.context = nil;
 }
 
 @end

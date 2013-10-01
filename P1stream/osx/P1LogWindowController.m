@@ -8,9 +8,4 @@
     return [super initWithWindowNibName:@"LogWindow"];
 }
 
-- (void)windowWillClose:(NSNotification *)notification
-{
-    self.window = nil;
-}
-
 @end
