@@ -3,28 +3,19 @@
 
 @implementation P1MainWindowController
 
-- (void)showWindow
+- (id)init
 {
-    if (_window == nil) {
-        BOOL ret = [[NSBundle mainBundle] loadNibNamed:@"MainWindow"
-                                                 owner:self
-                                       topLevelObjects:NULL];
-        assert(ret == TRUE);
-
-        _preview.context = _contextModel.context;
-    }
-
-    [_window makeKeyAndOrderFront:self];
+    return [super initWithWindowNibName:@"MainWindow"];
 }
 
-- (void)closeWindow
+- (void)windowDidLoad
 {
-    [_window close];
+    _preview.context = _contextModel.context;
 }
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    _window = nil;
+    self.window = nil;
 }
 
 @end

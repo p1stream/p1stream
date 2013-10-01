@@ -8,12 +8,12 @@
         <customObject id="-2" userLabel="File's Owner" customClass="P1MainWindowController">
             <connections>
                 <outlet property="preview" destination="5" id="13"/>
-                <outlet property="window" destination="3" id="12"/>
+                <outlet property="window" destination="3" id="4n3-cm-jDV"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application"/>
-        <window title="P1stream" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="3">
+        <window title="P1stream" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" visibleAtLaunch="NO" animationBehavior="default" id="3">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="640" height="419"/>
@@ -56,7 +56,7 @@
                 </constraints>
             </view>
             <connections>
-                <outlet property="delegate" destination="-2" id="11"/>
+                <outlet property="delegate" destination="-2" id="k8v-e6-iiz"/>
             </connections>
         </window>
     </objects>

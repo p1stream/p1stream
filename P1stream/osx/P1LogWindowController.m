@@ -3,26 +3,14 @@
 
 @implementation P1LogWindowController
 
-- (void)showWindow
+- (id)init
 {
-    if (_window == nil) {
-        BOOL ret = [[NSBundle mainBundle] loadNibNamed:@"LogWindow"
-                                                 owner:self
-                                       topLevelObjects:NULL];
-        assert(ret == TRUE);
-    }
-
-    [_window makeKeyAndOrderFront:self];
-}
-
-- (void)closeWindow
-{
-    [_window close];
+    return [super initWithWindowNibName:@"LogWindow"];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    _window = nil;
+    self.window = nil;
 }
 
 @end

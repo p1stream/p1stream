@@ -10,11 +10,11 @@
     _mainWindowController.contextModel = _contextModel;
     _logWindowController.contextModel = _contextModel;
 
-    // Show the main window.
-    [_mainWindowController showWindow];
-
     // Show the log window.
-    [_logWindowController showWindow];
+    [_logWindowController showWindow:nil];
+
+    // Show the main window.
+    [_mainWindowController showWindow:nil];
 
     // Monitor context state for clean exit.
     _terminating = false;
@@ -33,7 +33,7 @@
     _terminating = true;
 
     // Immediate response, but also prevents the preview from showing garbage.
-    [_mainWindowController closeWindow];
+    [_mainWindowController close];
 
     // Wait for p1_stop.
     if (_contextModel.state == P1_STATE_IDLE) {

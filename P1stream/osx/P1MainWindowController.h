@@ -2,14 +2,10 @@
 #import "P1PreviewView.h"
 
 
-@interface P1MainWindowController : NSObject <NSWindowDelegate>
+@interface P1MainWindowController : NSWindowController <NSWindowDelegate>
 
 @property (assign) P1ContextModel *contextModel;
 
-@property (retain) IBOutlet NSWindow *window;
 @property (weak) IBOutlet P1PreviewView *preview;
-
-- (void)showWindow;
-- (void)closeWindow;
 
 @end
