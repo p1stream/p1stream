@@ -45,13 +45,17 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
     self = [super initWithObject:(P1Object *) context];
     if (self) {
+        _logMessages = [NSMutableArray new];
+        context->log_fn = logCallback;
+        context->log_user_data = (__bridge void *)self;
+
         _audioModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->audio];
         _videoModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->video];
         _connectionModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->conn];
 
         _objects = [[NSMutableArray alloc] init];
 
-        if (!_audioModel || !_videoModel || !_connectionModel || !_objects) return nil;
+        if (!_logMessages || !_audioModel || !_videoModel || !_connectionModel || !_objects) return nil;
 
         if (![self createVideoClock:config]) return nil;
         if (![self createVideoSources:config]) return nil;
@@ -215,6 +219,48 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
     };
 
     return TRUE;
+}
+
+
+- (NSArray *)logMessages
+{
+    return _logMessages;
+}
+
+- (void)insertObject:(P1LogMessage *)object inLogMessagesAtIndex:(NSUInteger)index
+{
+    [_logMessages insertObject:object atIndex:index];
+}
+
+- (void)removeObjectFromLogMessagesAtIndex:(NSUInteger)index
+{
+    [_logMessages removeObjectAtIndex:index];
+}
+
+
+static void logCallback(P1Object *object, P1LogLevel level, const char *format, va_list args, void *userData)
+{
+    @autoreleasepool {
+        P1ContextModel *self = (__bridge P1ContextModel *)userData;
+
+        char buffer[2048];
+        vsnprintf(buffer, sizeof(buffer), format, args);
+        NSString *message = [NSString stringWithUTF8String:buffer];
+
+        P1ObjectModel *objectModel = (__bridge P1ObjectModel *)object->user_data;
+        P1LogMessage *logMessage = [[P1LogMessage alloc] initWithModel:objectModel
+                                                              andLevel:level
+                                                            andMessage:message];
+
+        [self performSelectorOnMainThread:@selector(addLogMessage:)
+                               withObject:logMessage
+                            waitUntilDone:FALSE];
+    }
+}
+
+- (void)addLogMessage:(P1LogMessage *)logMessage
+{
+    [self insertObject:logMessage inLogMessagesAtIndex:[_logMessages count]];
 }
 
 @end

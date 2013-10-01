@@ -5,6 +5,8 @@
 @property (readonly) P1State state;
 @property P1TargetState target;
 
+@property (retain) NSString *name;
+
 - (id)initWithObject:(P1Object *)object;
 
 - (void)lock;

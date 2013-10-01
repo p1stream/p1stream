@@ -51,6 +51,10 @@
 		F682AC3C17E4C94C007DC0CF /* P1stream-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = F644CB9517B6291D007934C3 /* P1stream-cli */; };
 		F682AC3D17E4C960007DC0CF /* libp1stream.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */; };
 		F68E3E0717E5E6DB00EAA38E /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */; };
+		F6E161F717FA061A00167048 /* LogWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6E161F617FA061A00167048 /* LogWindow.xib */; };
+		F6E161FA17FA13DB00167048 /* P1LogMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161F917FA13DB00167048 /* P1LogMessage.m */; };
+		F6E161FD17FA158E00167048 /* P1LogWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161FC17FA158E00167048 /* P1LogWindowController.m */; };
+		F6E1620017FA215000167048 /* P1ImageFromLogLevel.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161FF17FA215000167048 /* P1ImageFromLogLevel.m */; };
 		F6F6077717B64C34009E6155 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077617B64C34009E6155 /* CoreFoundation.framework */; };
 /* End PBXBuildFile section */
 
@@ -131,6 +135,13 @@
 		F69E0C7817C423A3000EA1CD /* p1stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream.h; sourceTree = "<group>"; };
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
+		F6E161F617FA061A00167048 /* LogWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LogWindow.xib; sourceTree = "<group>"; };
+		F6E161F817FA13DB00167048 /* P1LogMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1LogMessage.h; sourceTree = "<group>"; };
+		F6E161F917FA13DB00167048 /* P1LogMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1LogMessage.m; sourceTree = "<group>"; };
+		F6E161FB17FA158E00167048 /* P1LogWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1LogWindowController.h; sourceTree = "<group>"; };
+		F6E161FC17FA158E00167048 /* P1LogWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1LogWindowController.m; sourceTree = "<group>"; };
+		F6E161FE17FA215000167048 /* P1ImageFromLogLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1ImageFromLogLevel.h; sourceTree = "<group>"; };
+		F6E161FF17FA215000167048 /* P1ImageFromLogLevel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1ImageFromLogLevel.m; sourceTree = "<group>"; };
 		F6F6076D17B6426F009E6155 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F6F6077117B6488C009E6155 /* video.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video.c; sourceTree = "<group>"; };
 		F6F6077417B64C28009E6155 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -216,6 +227,8 @@
 			children = (
 				F62471EB17F6B42B003428F6 /* P1IsRunningTarget.h */,
 				F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */,
+				F6E161FE17FA215000167048 /* P1ImageFromLogLevel.h */,
+				F6E161FF17FA215000167048 /* P1ImageFromLogLevel.m */,
 			);
 			path = transformers;
 			sourceTree = "<group>";
@@ -271,6 +284,8 @@
 		F65CD73417F4C7AD00CD3FBC /* models */ = {
 			isa = PBXGroup;
 			children = (
+				F6E161F817FA13DB00167048 /* P1LogMessage.h */,
+				F6E161F917FA13DB00167048 /* P1LogMessage.m */,
 				F65CD73517F4C84D00CD3FBC /* P1ObjectModel.h */,
 				F65CD73617F4C84D00CD3FBC /* P1ObjectModel.m */,
 				F65CD73117F4BEE100CD3FBC /* P1ContextModel.h */,
@@ -308,10 +323,13 @@
 				F65CD73417F4C7AD00CD3FBC /* models */,
 				F682AC3417E4C91C007DC0CF /* MainMenu.xib */,
 				F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */,
+				F6E161F617FA061A00167048 /* LogWindow.xib */,
 				F682AC3117E4C91C007DC0CF /* P1AppDelegate.h */,
 				F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */,
 				F643655717E5A08800314053 /* P1MainWindowController.h */,
 				F643655817E5A08800314053 /* P1MainWindowController.m */,
+				F6E161FB17FA158E00167048 /* P1LogWindowController.h */,
+				F6E161FC17FA158E00167048 /* P1LogWindowController.m */,
 				F643655A17E5ADB900314053 /* P1PreviewView.h */,
 				F643655B17E5ADB900314053 /* P1PreviewView.m */,
 				F682AC2617E4C91C007DC0CF /* Supporting Files */,
@@ -420,6 +438,7 @@
 			files = (
 				F682AC2A17E4C91C007DC0CF /* InfoPlist.strings in Resources */,
 				F682AC3017E4C91C007DC0CF /* Credits.rtf in Resources */,
+				F6E161F717FA061A00167048 /* LogWindow.xib in Resources */,
 				F682AC3617E4C91C007DC0CF /* MainMenu.xib in Resources */,
 				F68E3E0717E5E6DB00EAA38E /* MainWindow.xib in Resources */,
 			);
@@ -460,7 +479,10 @@
 				F682AC2C17E4C91C007DC0CF /* main.m in Sources */,
 				F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */,
 				F643655917E5A08800314053 /* P1MainWindowController.m in Sources */,
+				F6E161FD17FA158E00167048 /* P1LogWindowController.m in Sources */,
+				F6E1620017FA215000167048 /* P1ImageFromLogLevel.m in Sources */,
 				F65CD73317F4BEE100CD3FBC /* P1ContextModel.m in Sources */,
+				F6E161FA17FA13DB00167048 /* P1LogMessage.m in Sources */,
 				F643655C17E5ADB900314053 /* P1PreviewView.m in Sources */,
 				F62471ED17F6B42B003428F6 /* P1IsRunningTarget.m in Sources */,
 				F65CD73717F4C84D00CD3FBC /* P1ObjectModel.m in Sources */,

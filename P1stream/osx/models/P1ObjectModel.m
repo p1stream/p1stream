@@ -9,6 +9,30 @@
     if (self) {
         _object = object;
         _object->user_data = (__bridge void *)self;
+
+        switch (_object->type) {
+            case P1_OTYPE_CONTEXT:
+                _name = @"Context";
+                break;
+            case P1_OTYPE_AUDIO:
+                _name = @"Audio mixer";
+                break;
+            case P1_OTYPE_VIDEO:
+                _name = @"Video mixer";
+                break;
+            case P1_OTYPE_CONNECTION:
+                _name = @"Connection";
+                break;
+            case P1_OTYPE_AUDIO_SOURCE:
+                _name = [NSString stringWithFormat:@"Audio source %p", _object];
+                break;
+            case P1_OTYPE_VIDEO_CLOCK:
+                _name = @"Video clock";
+                break;
+            case P1_OTYPE_VIDEO_SOURCE:
+                _name = [NSString stringWithFormat:@"Video source %p", _object];
+                break;
+        }
     }
     return self;
 }

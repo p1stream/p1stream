@@ -6,11 +6,15 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Create context.
-    self.contextModel = [[P1ContextModel alloc] init];
+    _contextModel = [[P1ContextModel alloc] init];
+    _mainWindowController.contextModel = _contextModel;
+    _logWindowController.contextModel = _contextModel;
 
     // Show the main window.
-    _mainWindowController.contextModel = _contextModel;
     [_mainWindowController showWindow];
+
+    // Show the log window.
+    [_logWindowController showWindow];
 
     // Monitor context state for clean exit.
     _terminating = false;

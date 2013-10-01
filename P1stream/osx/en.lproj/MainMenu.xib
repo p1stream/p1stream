@@ -649,10 +649,12 @@
         </menu>
         <customObject id="494" customClass="P1AppDelegate">
             <connections>
+                <outlet property="logWindowController" destination="VSE-LJ-qLc" id="397-ec-jAl"/>
                 <outlet property="mainWindowController" destination="664" id="665"/>
             </connections>
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>
         <customObject id="664" customClass="P1MainWindowController"/>
+        <customObject id="VSE-LJ-qLc" customClass="P1LogWindowController"/>
     </objects>
 </document>
