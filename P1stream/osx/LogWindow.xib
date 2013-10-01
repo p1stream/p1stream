@@ -53,8 +53,8 @@
                                                     <rect key="frame" x="1" y="1" width="24" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kZw-Th-3V3">
-                                                            <rect key="frame" x="3" y="0.0" width="17" height="17"/>
+                                                        <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="kZw-Th-3V3">
+                                                            <rect key="frame" x="12" y="9" width="0.0" height="0.0"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="GEM-TO-0ip"/>
                                                             <connections>
@@ -66,6 +66,10 @@
                                                             </connections>
                                                         </imageView>
                                                     </subviews>
+                                                    <constraints>
+                                                        <constraint firstAttribute="centerY" secondItem="kZw-Th-3V3" secondAttribute="centerY" id="CR3-11-fmY"/>
+                                                        <constraint firstAttribute="centerX" secondItem="kZw-Th-3V3" secondAttribute="centerX" id="Cck-N1-6Ec"/>
+                                                    </constraints>
                                                     <connections>
                                                         <outlet property="imageView" destination="kZw-Th-3V3" id="Qhw-Vo-bXW"/>
                                                     </connections>
@@ -89,10 +93,10 @@
                                                     <rect key="frame" x="28" y="1" width="150" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fR4-59-1dU">
+                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="fR4-59-1dU">
                                                             <rect key="frame" x="0.0" y="0.0" width="150" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="54m-vL-yxA">
+                                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" usesSingleLineMode="YES" id="54m-vL-yxA">
                                                                 <font key="font" size="11" name="Menlo-Regular"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -102,6 +106,11 @@
                                                             </connections>
                                                         </textField>
                                                     </subviews>
+                                                    <constraints>
+                                                        <constraint firstAttribute="trailing" secondItem="fR4-59-1dU" secondAttribute="trailing" constant="3" id="nXX-gh-vwP"/>
+                                                        <constraint firstItem="fR4-59-1dU" firstAttribute="centerY" secondItem="0aP-0R-olz" secondAttribute="centerY" id="tsE-MK-SZ6"/>
+                                                        <constraint firstItem="fR4-59-1dU" firstAttribute="leading" secondItem="0aP-0R-olz" secondAttribute="leading" constant="3" id="zPV-8T-d1M"/>
+                                                    </constraints>
                                                     <connections>
                                                         <outlet property="textField" destination="fR4-59-1dU" id="Dfb-QQ-J3S"/>
                                                     </connections>
@@ -125,10 +134,10 @@
                                                     <rect key="frame" x="181" y="1" width="317" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2hg-pT-Pci">
+                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="2hg-pT-Pci">
                                                             <rect key="frame" x="0.0" y="0.0" width="317" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="pu7-GD-sNE">
+                                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" usesSingleLineMode="YES" id="pu7-GD-sNE">
                                                                 <font key="font" size="11" name="Menlo-Regular"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -138,6 +147,11 @@
                                                             </connections>
                                                         </textField>
                                                     </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="2hg-pT-Pci" firstAttribute="centerY" secondItem="Hwg-Zh-N70" secondAttribute="centerY" id="8g9-js-V2R"/>
+                                                        <constraint firstItem="2hg-pT-Pci" firstAttribute="leading" secondItem="Hwg-Zh-N70" secondAttribute="leading" constant="3" id="Lnf-nU-VBr"/>
+                                                        <constraint firstAttribute="trailing" secondItem="2hg-pT-Pci" secondAttribute="trailing" constant="3" id="xDv-RW-asZ"/>
+                                                    </constraints>
                                                     <connections>
                                                         <outlet property="textField" destination="2hg-pT-Pci" id="Bqd-fI-dZ2"/>
                                                     </connections>
