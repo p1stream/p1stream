@@ -14,10 +14,12 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         @"Context configuration": @{
             @"video": @{
                 @"clock": @{
+                    @"name": @"Display video clock",
                     @"type": @"display"
                 },
                 @"sources": @[
                     @{
+                        @"name": @"Display video source",
                         @"type": @"display"
                     }
                 ]
@@ -25,6 +27,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
             @"audio": @{
                 @"sources": @[
                     @{
+                        @"name": @"Audio input source",
                         @"type": @"input"
                     }
                 ]
@@ -123,6 +126,10 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         return FALSE;
     }
 
+    NSString *name = clockConfig[@"name"];
+    if (name)
+        model.name = name;
+
     self.context->video->clock = clock;
     [_objects addObject:model];
 
@@ -158,6 +165,10 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
             return FALSE;
         }
 
+        NSString *name = sourceConfig[@"name"];
+        if (name)
+            model.name = name;
+
         P1Source *source = (P1Source *)videoSource;
         p1_list_before(&self.context->video->sources, &source->link);
         [_objects addObject:model];
@@ -192,6 +203,10 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
             p1_plugin_free((P1Plugin *)audioSource);
             return FALSE;
         }
+
+        NSString *name = sourceConfig[@"name"];
+        if (name)
+            model.name = name;
 
         P1Source *source = (P1Source *)audioSource;
         p1_list_before(&self.context->audio->sources, &source->link);
