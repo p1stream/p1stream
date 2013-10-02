@@ -8,10 +8,6 @@
     // Create context.
     _contextModel = [[P1ContextModel alloc] init];
     _mainWindowController.contextModel = _contextModel;
-    _logWindowController.contextModel = _contextModel;
-
-    // Show the log window.
-    [_logWindowController showWindow:nil];
 
     // Show the main window.
     [_mainWindowController showWindow:nil];

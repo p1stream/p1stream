@@ -8,6 +8,11 @@
     return [super initWithWindowNibName:@"MainWindow"];
 }
 
+- (void)windowDidLoad
+{
+    _logWindowControler.contextModel = _contextModel;
+}
+
 - (void)showWindow:(id)sender
 {
     [super showWindow:sender];
@@ -17,6 +22,10 @@
 - (void)windowWillClose:(NSNotification *)notification
 {
     _preview.context = nil;
+}
+
+- (IBAction)viewLog:(id)sender {
+    [_logWindowControler showWindow:sender];
 }
 
 @end
