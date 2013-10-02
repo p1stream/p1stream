@@ -46,7 +46,7 @@
                         <button key="view" verticalHuggingPriority="750" id="TKf-jy-B9g">
                             <rect key="frame" x="6" y="14" width="39" height="28"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSRightFacingTriangleTemplate" imagePosition="only" alignment="center" alternateImage="NSStopProgressFreestandingTemplate" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="23g-pR-duG">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSRightFacingTriangleTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="23g-pR-duG">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -145,6 +145,5 @@
         <image name="NSListViewTemplate" width="11" height="10"/>
         <image name="NSRightFacingTriangleTemplate" width="9" height="9"/>
         <image name="NSStatusNone" width="16" height="16"/>
-        <image name="NSStopProgressFreestandingTemplate" width="12" height="12"/>
     </resources>
 </document>
