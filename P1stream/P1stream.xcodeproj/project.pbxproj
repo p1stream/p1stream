@@ -51,6 +51,8 @@
 		F682AC3C17E4C94C007DC0CF /* P1stream-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = F644CB9517B6291D007934C3 /* P1stream-cli */; };
 		F682AC3D17E4C960007DC0CF /* libp1stream.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */; };
 		F68E3E0717E5E6DB00EAA38E /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */; };
+		F69AFDD717FCAAB00062BC0C /* P1AvailabilityImageFromState.m in Sources */ = {isa = PBXBuildFile; fileRef = F69AFDD617FCAAB00062BC0C /* P1AvailabilityImageFromState.m */; };
+		F69AFDE817FCC56A0062BC0C /* P1ConnectionStringFromState.m in Sources */ = {isa = PBXBuildFile; fileRef = F69AFDE717FCC56A0062BC0C /* P1ConnectionStringFromState.m */; };
 		F6E161F717FA061A00167048 /* LogWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6E161F617FA061A00167048 /* LogWindow.xib */; };
 		F6E161FA17FA13DB00167048 /* P1LogMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161F917FA13DB00167048 /* P1LogMessage.m */; };
 		F6E161FD17FA158E00167048 /* P1LogWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161FC17FA158E00167048 /* P1LogWindowController.m */; };
@@ -132,6 +134,10 @@
 		F682AC3517E4C91C007DC0CF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		F6931F6817E6F75000B6B113 /* p1stream_osx_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream_osx_priv.h; sourceTree = "<group>"; };
+		F69AFDD517FCAAB00062BC0C /* P1AvailabilityImageFromState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1AvailabilityImageFromState.h; sourceTree = "<group>"; };
+		F69AFDD617FCAAB00062BC0C /* P1AvailabilityImageFromState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1AvailabilityImageFromState.m; sourceTree = "<group>"; };
+		F69AFDE617FCC56A0062BC0C /* P1ConnectionStringFromState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1ConnectionStringFromState.h; sourceTree = "<group>"; };
+		F69AFDE717FCC56A0062BC0C /* P1ConnectionStringFromState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1ConnectionStringFromState.m; sourceTree = "<group>"; };
 		F69E0C7817C423A3000EA1CD /* p1stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream.h; sourceTree = "<group>"; };
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
@@ -229,6 +235,10 @@
 				F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */,
 				F6E161FE17FA215000167048 /* P1ImageFromLogLevel.h */,
 				F6E161FF17FA215000167048 /* P1ImageFromLogLevel.m */,
+				F69AFDD517FCAAB00062BC0C /* P1AvailabilityImageFromState.h */,
+				F69AFDD617FCAAB00062BC0C /* P1AvailabilityImageFromState.m */,
+				F69AFDE617FCC56A0062BC0C /* P1ConnectionStringFromState.h */,
+				F69AFDE717FCC56A0062BC0C /* P1ConnectionStringFromState.m */,
 			);
 			path = transformers;
 			sourceTree = "<group>";
@@ -476,6 +486,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F69AFDD717FCAAB00062BC0C /* P1AvailabilityImageFromState.m in Sources */,
+				F69AFDE817FCC56A0062BC0C /* P1ConnectionStringFromState.m in Sources */,
 				F682AC2C17E4C91C007DC0CF /* main.m in Sources */,
 				F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */,
 				F643655917E5A08800314053 /* P1MainWindowController.m in Sources */,

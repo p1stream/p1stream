@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="P1MainWindowController">
             <connections>
+                <outlet property="connectButton" destination="TKf-jy-B9g" id="GZw-c6-nLW"/>
                 <outlet property="preview" destination="5" id="13"/>
                 <outlet property="window" destination="3" id="4n3-cm-jDV"/>
             </connections>
@@ -24,40 +25,104 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="5" customClass="P1PreviewView">
-                        <rect key="frame" x="0.0" y="59" width="640" height="360"/>
+                        <rect key="frame" x="0.0" y="0.0" width="640" height="419"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </customView>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IHs-CD-Z4m">
-                        <rect key="frame" x="306" y="16" width="28" height="27"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="25" id="9Hq-xV-31H"/>
-                        </constraints>
-                        <buttonCell key="cell" type="smallSquare" title="Rec" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" id="F8Y-8N-pRg">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <binding destination="-2" name="value" keyPath="contextModel.connectionModel.target" id="Qn6-cr-bZ2">
-                                <dictionary key="options">
-                                    <string key="NSValueTransformerName">P1IsRunningTarget</string>
-                                </dictionary>
-                            </binding>
-                        </connections>
-                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="5" firstAttribute="leading" secondItem="4" secondAttribute="leading" id="6"/>
                     <constraint firstItem="5" firstAttribute="top" secondItem="4" secondAttribute="top" id="8"/>
-                    <constraint firstAttribute="bottom" secondItem="5" secondAttribute="bottom" constant="59" id="9"/>
-                    <constraint firstAttribute="bottom" secondItem="IHs-CD-Z4m" secondAttribute="bottom" constant="17" id="6V4-Qh-lkY"/>
+                    <constraint firstAttribute="bottom" secondItem="5" secondAttribute="bottom" id="9"/>
                     <constraint firstAttribute="trailing" secondItem="5" secondAttribute="trailing" id="F1k-iy-iSo"/>
-                    <constraint firstAttribute="centerX" secondItem="IHs-CD-Z4m" secondAttribute="centerX" id="nRw-nj-fJM"/>
                 </constraints>
             </view>
+            <toolbar key="toolbar" implicitIdentifier="2B265EE7-5522-4A6C-86FB-77B6A8F57BF2" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="regular" id="0a1-Na-Kid">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="A0E1261C-1633-4FD7-AC5A-47F1FEE8707F" label="Connect" paletteLabel="Connect" image="NSRightFacingTriangleTemplate" id="278-ht-XF2">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="39" height="28"/>
+                        <size key="maxSize" width="39" height="28"/>
+                        <button key="view" verticalHuggingPriority="750" id="TKf-jy-B9g">
+                            <rect key="frame" x="6" y="14" width="39" height="28"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSRightFacingTriangleTemplate" imagePosition="only" alignment="center" alternateImage="NSStopProgressFreestandingTemplate" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="23g-pR-duG">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <binding destination="-2" name="value" keyPath="contextModel.connectionModel.target" id="vPm-07-siu">
+                                    <dictionary key="options">
+                                        <string key="NSValueTransformerName">P1IsRunningTarget</string>
+                                    </dictionary>
+                                </binding>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="2076DFBB-2613-44A2-8BCD-CB8ABE209ACA" label="" paletteLabel="Progress" tag="-1" id="E8j-8Y-3No">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="177" height="22"/>
+                        <size key="maxSize" width="183" height="28"/>
+                        <box key="view" autoresizesSubviews="NO" borderWidth="0.0" boxType="custom" borderType="none" titlePosition="noTitle" id="8Rx-VQ-kbr">
+                            <rect key="frame" x="0.0" y="14" width="177" height="22"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <view key="contentView">
+                                <rect key="frame" x="0.0" y="0.0" width="177" height="22"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="C2z-vl-LQp">
+                                        <rect key="frame" x="16" y="4" width="33" height="14"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" usesSingleLineMode="YES" id="USf-IH-wDx">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <connections>
+                                            <binding destination="-2" name="value" keyPath="contextModel.connectionModel.state" id="LIZ-li-odX">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">P1ConnectionStringFromState</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </textField>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cC8-gB-wsU">
+                                        <rect key="frame" x="0.0" y="3" width="16" height="16"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSStatusNone" id="CtE-KT-tQ6"/>
+                                        <connections>
+                                            <binding destination="-2" name="value" keyPath="contextModel.connectionModel.state" id="WKC-ZE-FfP">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">P1AvailabilityImageFromState</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </imageView>
+                                </subviews>
+                            </view>
+                            <constraints>
+                                <constraint firstItem="cC8-gB-wsU" firstAttribute="centerY" secondItem="C2z-vl-LQp" secondAttribute="centerY" id="Ow3-L5-ca0"/>
+                                <constraint firstItem="C2z-vl-LQp" firstAttribute="leading" secondItem="cC8-gB-wsU" secondAttribute="trailing" constant="3" id="PQV-RI-dWt"/>
+                                <constraint firstItem="cC8-gB-wsU" firstAttribute="leading" secondItem="8Rx-VQ-kbr" secondAttribute="leading" id="XOo-Sd-okd"/>
+                                <constraint firstAttribute="centerY" secondItem="C2z-vl-LQp" secondAttribute="centerY" id="sNa-gz-JUA"/>
+                            </constraints>
+                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        </box>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="278-ht-XF2"/>
+                    <toolbarItem reference="E8j-8Y-3No"/>
+                </defaultToolbarItems>
+            </toolbar>
             <connections>
                 <outlet property="delegate" destination="-2" id="k8v-e6-iiz"/>
             </connections>
         </window>
     </objects>
+    <resources>
+        <image name="NSRightFacingTriangleTemplate" width="9" height="9"/>
+        <image name="NSStatusNone" width="16" height="16"/>
+        <image name="NSStopProgressFreestandingTemplate" width="12" height="12"/>
+    </resources>
 </document>
