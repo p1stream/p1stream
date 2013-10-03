@@ -42,17 +42,15 @@
 		F682AC1217E4A79A007DC0CF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */; };
 		F682AC1817E4A87E007DC0CF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F682AC1617E4A875007DC0CF /* Foundation.framework */; };
 		F682AC2017E4C91C007DC0CF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F682AC1F17E4C91C007DC0CF /* Cocoa.framework */; };
-		F682AC2A17E4C91C007DC0CF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F682AC2817E4C91C007DC0CF /* InfoPlist.strings */; };
 		F682AC2C17E4C91C007DC0CF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F682AC2B17E4C91C007DC0CF /* main.m */; };
-		F682AC3017E4C91C007DC0CF /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = F682AC2E17E4C91C007DC0CF /* Credits.rtf */; };
 		F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */; };
-		F682AC3617E4C91C007DC0CF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F682AC3417E4C91C007DC0CF /* MainMenu.xib */; };
 		F682AC3B17E4C942007DC0CF /* libp1stream.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */; };
 		F682AC3C17E4C94C007DC0CF /* P1stream-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = F644CB9517B6291D007934C3 /* P1stream-cli */; };
 		F682AC3D17E4C960007DC0CF /* libp1stream.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */; };
 		F68E3E0717E5E6DB00EAA38E /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */; };
 		F69AFDD717FCAAB00062BC0C /* P1AvailabilityImageFromState.m in Sources */ = {isa = PBXBuildFile; fileRef = F69AFDD617FCAAB00062BC0C /* P1AvailabilityImageFromState.m */; };
 		F69AFDE817FCC56A0062BC0C /* P1ConnectionStringFromState.m in Sources */ = {isa = PBXBuildFile; fileRef = F69AFDE717FCC56A0062BC0C /* P1ConnectionStringFromState.m */; };
+		F6BDDD9917FDF1140078016F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6BDDD9817FDF1140078016F /* MainMenu.xib */; };
 		F6E161F717FA061A00167048 /* LogWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6E161F617FA061A00167048 /* LogWindow.xib */; };
 		F6E161FA17FA13DB00167048 /* P1LogMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161F917FA13DB00167048 /* P1LogMessage.m */; };
 		F6E161FD17FA158E00167048 /* P1LogWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161FC17FA158E00167048 /* P1LogWindowController.m */; };
@@ -88,8 +86,8 @@
 		F607452517B637E8004EA730 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		F607452717B637EE004EA730 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		F607452917B637F2004EA730 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
-		F62471EB17F6B42B003428F6 /* P1IsRunningTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1IsRunningTarget.h; sourceTree = "<group>"; };
-		F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1IsRunningTarget.m; sourceTree = "<group>"; };
+		F62471EB17F6B42B003428F6 /* P1IsRunningTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = P1IsRunningTarget.h; path = ../views/transformers/P1IsRunningTarget.h; sourceTree = "<group>"; };
+		F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = P1IsRunningTarget.m; path = ../views/transformers/P1IsRunningTarget.m; sourceTree = "<group>"; };
 		F627211617BC330700A889B4 /* libFraunhoferAAC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFraunhoferAAC.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F62DBA2D17C52833004DDFD6 /* p1stream_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream_priv.h; sourceTree = "<group>"; };
 		F62DBA3B17C52DC1004DDFD6 /* p1stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p1stream.c; sourceTree = "<group>"; };
@@ -125,29 +123,27 @@
 		F682AC1E17E4C91C007DC0CF /* P1stream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = P1stream.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F682AC1F17E4C91C007DC0CF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		F682AC2717E4C91C007DC0CF /* P1stream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "P1stream-Info.plist"; sourceTree = "<group>"; };
-		F682AC2917E4C91C007DC0CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F682AC2B17E4C91C007DC0CF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F682AC2D17E4C91C007DC0CF /* P1stream-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "P1stream-Prefix.pch"; sourceTree = "<group>"; };
-		F682AC2F17E4C91C007DC0CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		F682AC3117E4C91C007DC0CF /* P1AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = P1AppDelegate.h; sourceTree = "<group>"; };
 		F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = P1AppDelegate.m; sourceTree = "<group>"; };
-		F682AC3517E4C91C007DC0CF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		F6931F6817E6F75000B6B113 /* p1stream_osx_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream_osx_priv.h; sourceTree = "<group>"; };
-		F69AFDD517FCAAB00062BC0C /* P1AvailabilityImageFromState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1AvailabilityImageFromState.h; sourceTree = "<group>"; };
-		F69AFDD617FCAAB00062BC0C /* P1AvailabilityImageFromState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1AvailabilityImageFromState.m; sourceTree = "<group>"; };
-		F69AFDE617FCC56A0062BC0C /* P1ConnectionStringFromState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1ConnectionStringFromState.h; sourceTree = "<group>"; };
-		F69AFDE717FCC56A0062BC0C /* P1ConnectionStringFromState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1ConnectionStringFromState.m; sourceTree = "<group>"; };
+		F69AFDD517FCAAB00062BC0C /* P1AvailabilityImageFromState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = P1AvailabilityImageFromState.h; path = ../views/transformers/P1AvailabilityImageFromState.h; sourceTree = "<group>"; };
+		F69AFDD617FCAAB00062BC0C /* P1AvailabilityImageFromState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = P1AvailabilityImageFromState.m; path = ../views/transformers/P1AvailabilityImageFromState.m; sourceTree = "<group>"; };
+		F69AFDE617FCC56A0062BC0C /* P1ConnectionStringFromState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = P1ConnectionStringFromState.h; path = ../views/transformers/P1ConnectionStringFromState.h; sourceTree = "<group>"; };
+		F69AFDE717FCC56A0062BC0C /* P1ConnectionStringFromState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = P1ConnectionStringFromState.m; path = ../views/transformers/P1ConnectionStringFromState.m; sourceTree = "<group>"; };
 		F69E0C7817C423A3000EA1CD /* p1stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream.h; sourceTree = "<group>"; };
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
+		F6BDDD9817FDF1140078016F /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		F6E161F617FA061A00167048 /* LogWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LogWindow.xib; sourceTree = "<group>"; };
 		F6E161F817FA13DB00167048 /* P1LogMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1LogMessage.h; sourceTree = "<group>"; };
 		F6E161F917FA13DB00167048 /* P1LogMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1LogMessage.m; sourceTree = "<group>"; };
 		F6E161FB17FA158E00167048 /* P1LogWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1LogWindowController.h; sourceTree = "<group>"; };
 		F6E161FC17FA158E00167048 /* P1LogWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1LogWindowController.m; sourceTree = "<group>"; };
-		F6E161FE17FA215000167048 /* P1ImageFromLogLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1ImageFromLogLevel.h; sourceTree = "<group>"; };
-		F6E161FF17FA215000167048 /* P1ImageFromLogLevel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1ImageFromLogLevel.m; sourceTree = "<group>"; };
+		F6E161FE17FA215000167048 /* P1ImageFromLogLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = P1ImageFromLogLevel.h; path = ../views/transformers/P1ImageFromLogLevel.h; sourceTree = "<group>"; };
+		F6E161FF17FA215000167048 /* P1ImageFromLogLevel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = P1ImageFromLogLevel.m; path = ../views/transformers/P1ImageFromLogLevel.m; sourceTree = "<group>"; };
 		F6F6076D17B6426F009E6155 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F6F6077117B6488C009E6155 /* video.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video.c; sourceTree = "<group>"; };
 		F6F6077417B64C28009E6155 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -240,7 +236,8 @@
 				F69AFDE617FCC56A0062BC0C /* P1ConnectionStringFromState.h */,
 				F69AFDE717FCC56A0062BC0C /* P1ConnectionStringFromState.m */,
 			);
-			path = transformers;
+			name = transformers;
+			path = ../transformers;
 			sourceTree = "<group>";
 		};
 		F62DBA4117C53360004DDFD6 /* osx */ = {
@@ -329,34 +326,40 @@
 		F682AC2517E4C91C007DC0CF /* osx */ = {
 			isa = PBXGroup;
 			children = (
-				F62471E717F6B0E7003428F6 /* transformers */,
 				F65CD73417F4C7AD00CD3FBC /* models */,
-				F682AC3417E4C91C007DC0CF /* MainMenu.xib */,
-				F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */,
-				F6E161F617FA061A00167048 /* LogWindow.xib */,
+				F6BDDD9617FDF02A0078016F /* controllers */,
+				F6BDDD9717FDF0380078016F /* views */,
+				F682AC2717E4C91C007DC0CF /* P1stream-Info.plist */,
+				F682AC2D17E4C91C007DC0CF /* P1stream-Prefix.pch */,
+				F682AC2B17E4C91C007DC0CF /* main.m */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
+		F6BDDD9617FDF02A0078016F /* controllers */ = {
+			isa = PBXGroup;
+			children = (
 				F682AC3117E4C91C007DC0CF /* P1AppDelegate.h */,
 				F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */,
 				F643655717E5A08800314053 /* P1MainWindowController.h */,
 				F643655817E5A08800314053 /* P1MainWindowController.m */,
 				F6E161FB17FA158E00167048 /* P1LogWindowController.h */,
 				F6E161FC17FA158E00167048 /* P1LogWindowController.m */,
-				F643655A17E5ADB900314053 /* P1PreviewView.h */,
-				F643655B17E5ADB900314053 /* P1PreviewView.m */,
-				F682AC2617E4C91C007DC0CF /* Supporting Files */,
 			);
-			path = osx;
+			path = controllers;
 			sourceTree = "<group>";
 		};
-		F682AC2617E4C91C007DC0CF /* Supporting Files */ = {
+		F6BDDD9717FDF0380078016F /* views */ = {
 			isa = PBXGroup;
 			children = (
-				F682AC2717E4C91C007DC0CF /* P1stream-Info.plist */,
-				F682AC2817E4C91C007DC0CF /* InfoPlist.strings */,
-				F682AC2B17E4C91C007DC0CF /* main.m */,
-				F682AC2D17E4C91C007DC0CF /* P1stream-Prefix.pch */,
-				F682AC2E17E4C91C007DC0CF /* Credits.rtf */,
+				F62471E717F6B0E7003428F6 /* transformers */,
+				F6BDDD9817FDF1140078016F /* MainMenu.xib */,
+				F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */,
+				F6E161F617FA061A00167048 /* LogWindow.xib */,
+				F643655A17E5ADB900314053 /* P1PreviewView.h */,
+				F643655B17E5ADB900314053 /* P1PreviewView.m */,
 			);
-			name = "Supporting Files";
+			path = views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -446,10 +449,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F682AC2A17E4C91C007DC0CF /* InfoPlist.strings in Resources */,
-				F682AC3017E4C91C007DC0CF /* Credits.rtf in Resources */,
+				F6BDDD9917FDF1140078016F /* MainMenu.xib in Resources */,
 				F6E161F717FA061A00167048 /* LogWindow.xib in Resources */,
-				F682AC3617E4C91C007DC0CF /* MainMenu.xib in Resources */,
 				F68E3E0717E5E6DB00EAA38E /* MainWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -510,33 +511,6 @@
 			targetProxy = F682ABFD17E4A6AC007DC0CF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		F682AC2817E4C91C007DC0CF /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F682AC2917E4C91C007DC0CF /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		F682AC2E17E4C91C007DC0CF /* Credits.rtf */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F682AC2F17E4C91C007DC0CF /* en */,
-			);
-			name = Credits.rtf;
-			sourceTree = "<group>";
-		};
-		F682AC3417E4C91C007DC0CF /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F682AC3517E4C91C007DC0CF /* en */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		F644CB9C17B6291D007934C3 /* Debug */ = {
