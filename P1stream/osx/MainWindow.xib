@@ -8,7 +8,6 @@
         <customObject id="-2" userLabel="File's Owner" customClass="P1MainWindowController">
             <connections>
                 <outlet property="connectButton" destination="TKf-jy-B9g" id="GZw-c6-nLW"/>
-                <outlet property="logWindowControler" destination="qUf-kD-M3k" id="pkk-1C-Dnv"/>
                 <outlet property="preview" destination="5" id="13"/>
                 <outlet property="window" destination="3" id="4n3-cm-jDV"/>
             </connections>
@@ -59,21 +58,21 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2076DFBB-2613-44A2-8BCD-CB8ABE209ACA" label="" paletteLabel="Progress" tag="-1" id="E8j-8Y-3No">
+                    <toolbarItem implicitItemIdentifier="2076DFBB-2613-44A2-8BCD-CB8ABE209ACA" label="" paletteLabel="" tag="-1" id="E8j-8Y-3No">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="177" height="22"/>
+                        <size key="minSize" width="44" height="22"/>
                         <size key="maxSize" width="183" height="28"/>
                         <box key="view" autoresizesSubviews="NO" borderWidth="0.0" boxType="custom" borderType="none" titlePosition="noTitle" id="8Rx-VQ-kbr">
-                            <rect key="frame" x="0.0" y="14" width="177" height="22"/>
+                            <rect key="frame" x="0.0" y="14" width="70" height="22"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <view key="contentView">
-                                <rect key="frame" x="0.0" y="0.0" width="177" height="22"/>
+                                <rect key="frame" x="0.0" y="0.0" width="70" height="22"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="C2z-vl-LQp">
-                                        <rect key="frame" x="16" y="4" width="33" height="14"/>
+                                        <rect key="frame" x="16" y="4" width="51" height="14"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" usesSingleLineMode="YES" id="USf-IH-wDx">
+                                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Progress" usesSingleLineMode="YES" id="USf-IH-wDx">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -110,39 +109,18 @@
                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         </box>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="OPf-BN-hYl"/>
-                    <toolbarItem implicitItemIdentifier="57B9A5E9-A503-4A9C-8B91-872393FD184B" label="View log" paletteLabel="View log" image="NSListViewTemplate" id="qr1-Ak-1Pf">
-                        <nil key="toolTip"/>
-                        <size key="minSize" width="39" height="28"/>
-                        <size key="maxSize" width="39" height="28"/>
-                        <button key="view" verticalHuggingPriority="750" id="XMa-Iw-mgH">
-                            <rect key="frame" x="7" y="14" width="39" height="28"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSListViewTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="S0h-ma-6o2">
-                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="system"/>
-                            </buttonCell>
-                        </button>
-                        <connections>
-                            <action selector="viewLog:" target="-2" id="SGA-It-XuP"/>
-                        </connections>
-                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="278-ht-XF2"/>
                     <toolbarItem reference="E8j-8Y-3No"/>
-                    <toolbarItem reference="OPf-BN-hYl"/>
-                    <toolbarItem reference="qr1-Ak-1Pf"/>
                 </defaultToolbarItems>
             </toolbar>
             <connections>
                 <outlet property="delegate" destination="-2" id="k8v-e6-iiz"/>
             </connections>
         </window>
-        <customObject id="qUf-kD-M3k" customClass="P1LogWindowController"/>
     </objects>
     <resources>
-        <image name="NSListViewTemplate" width="11" height="10"/>
         <image name="NSRightFacingTriangleTemplate" width="9" height="9"/>
         <image name="NSStatusNone" width="16" height="16"/>
     </resources>

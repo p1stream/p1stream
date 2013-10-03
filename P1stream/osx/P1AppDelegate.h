@@ -9,5 +9,6 @@
 }
 
 @property (weak) IBOutlet P1MainWindowController *mainWindowController;
+@property (weak) IBOutlet P1LogWindowController *logWindowController;
 
 @end

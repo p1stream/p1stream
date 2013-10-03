@@ -8,6 +8,7 @@
     // Create context.
     _contextModel = [[P1ContextModel alloc] init];
     _mainWindowController.contextModel = _contextModel;
+    _logWindowController.contextModel = _contextModel;
 
     // Show the main window.
     [_mainWindowController showWindow:nil];
@@ -62,6 +63,12 @@
             [connectionModel unlock];
         }
     }
+}
+
+- (IBAction)visitWebsite:(id)sender
+{
+    NSURL *url = [NSURL URLWithString:@"http://p1stream.com/"];
+    [[NSWorkspace sharedWorkspace] openURL:url];
 }
 
 @end

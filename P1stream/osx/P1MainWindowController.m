@@ -10,22 +10,36 @@
 
 - (void)windowDidLoad
 {
-    _logWindowControler.contextModel = _contextModel;
+    [self.window addObserver:self
+                  forKeyPath:@"visible"
+                     options:0
+                     context:nil];
 }
 
-- (void)showWindow:(id)sender
+- (BOOL)windowShouldClose:(id)sender
 {
-    [super showWindow:sender];
-    _preview.context = _contextModel.context;
+    [NSApp terminate:sender];
+    return TRUE;
 }
 
-- (void)windowWillClose:(NSNotification *)notification
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
 {
-    _preview.context = nil;
+    if (object == self.window && [keyPath isEqualToString:@"visible"])
+        [self updatePreview];
 }
 
-- (IBAction)viewLog:(id)sender {
-    [_logWindowControler showWindow:sender];
+- (void)updatePreview
+{
+    if (!_preview)
+        return;
+
+    if ([self.window isVisible])
+        _preview.context = _contextModel.context;
+    else
+        _preview.context = nil;
 }
 
 @end

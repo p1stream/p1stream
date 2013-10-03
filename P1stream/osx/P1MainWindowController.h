@@ -7,7 +7,6 @@
 
 @property (assign) P1ContextModel *contextModel;
 
-@property (strong) IBOutlet P1LogWindowController *logWindowControler;
 @property (weak) IBOutlet P1PreviewView *preview;
 @property (weak) IBOutlet NSButton *connectButton;
 
