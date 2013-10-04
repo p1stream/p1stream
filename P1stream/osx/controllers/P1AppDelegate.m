@@ -5,10 +5,40 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    // Register config defaults
+    [defaults registerDefaults:@{
+        @"Context configuration": @{
+            @"video": @{
+                @"clock": @{
+                    @"name": @"Display video clock",
+                    @"type": @"display"
+                },
+                @"sources": @[
+                    @{
+                        @"name": @"Display video source",
+                        @"type": @"display"
+                    }
+                ]
+            },
+            @"audio": @{
+                @"sources": @[
+                    @{
+                        @"name": @"Audio input source",
+                        @"type": @"input"
+                    }
+                ]
+            },
+            @"stream": @{}
+        }
+    }];
+
     // Create context.
     _contextModel = [[P1ContextModel alloc] init];
-    _mainWindowController.contextModel = _contextModel;
-    _logWindowController.contextModel = _contextModel;
+    _mainWindowController.contextModel  = _contextModel;
+    _logWindowController.contextModel   = _contextModel;
+    _prefsWindowController.contextModel = _contextModel;
 
     // Show the main window.
     [_mainWindowController showWindow:nil];

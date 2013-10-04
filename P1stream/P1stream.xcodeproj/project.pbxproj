@@ -51,6 +51,8 @@
 		F69AFDD717FCAAB00062BC0C /* P1AvailabilityImageFromState.m in Sources */ = {isa = PBXBuildFile; fileRef = F69AFDD617FCAAB00062BC0C /* P1AvailabilityImageFromState.m */; };
 		F69AFDE817FCC56A0062BC0C /* P1ConnectionStringFromState.m in Sources */ = {isa = PBXBuildFile; fileRef = F69AFDE717FCC56A0062BC0C /* P1ConnectionStringFromState.m */; };
 		F6BDDD9917FDF1140078016F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6BDDD9817FDF1140078016F /* MainMenu.xib */; };
+		F6BDDD9B17FE08AA0078016F /* PrefsWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6BDDD9A17FE08AA0078016F /* PrefsWindow.xib */; };
+		F6BDDD9E17FE08DF0078016F /* P1PrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6BDDD9D17FE08DF0078016F /* P1PrefsWindowController.m */; };
 		F6E161F717FA061A00167048 /* LogWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6E161F617FA061A00167048 /* LogWindow.xib */; };
 		F6E161FA17FA13DB00167048 /* P1LogMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161F917FA13DB00167048 /* P1LogMessage.m */; };
 		F6E161FD17FA158E00167048 /* P1LogWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161FC17FA158E00167048 /* P1LogWindowController.m */; };
@@ -137,6 +139,9 @@
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 		F6BDDD9817FDF1140078016F /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		F6BDDD9A17FE08AA0078016F /* PrefsWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PrefsWindow.xib; sourceTree = "<group>"; };
+		F6BDDD9C17FE08DF0078016F /* P1PrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1PrefsWindowController.h; sourceTree = "<group>"; };
+		F6BDDD9D17FE08DF0078016F /* P1PrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1PrefsWindowController.m; sourceTree = "<group>"; };
 		F6E161F617FA061A00167048 /* LogWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LogWindow.xib; sourceTree = "<group>"; };
 		F6E161F817FA13DB00167048 /* P1LogMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1LogMessage.h; sourceTree = "<group>"; };
 		F6E161F917FA13DB00167048 /* P1LogMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1LogMessage.m; sourceTree = "<group>"; };
@@ -345,6 +350,8 @@
 				F643655817E5A08800314053 /* P1MainWindowController.m */,
 				F6E161FB17FA158E00167048 /* P1LogWindowController.h */,
 				F6E161FC17FA158E00167048 /* P1LogWindowController.m */,
+				F6BDDD9C17FE08DF0078016F /* P1PrefsWindowController.h */,
+				F6BDDD9D17FE08DF0078016F /* P1PrefsWindowController.m */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -356,6 +363,7 @@
 				F6BDDD9817FDF1140078016F /* MainMenu.xib */,
 				F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */,
 				F6E161F617FA061A00167048 /* LogWindow.xib */,
+				F6BDDD9A17FE08AA0078016F /* PrefsWindow.xib */,
 				F643655A17E5ADB900314053 /* P1PreviewView.h */,
 				F643655B17E5ADB900314053 /* P1PreviewView.m */,
 			);
@@ -449,6 +457,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6BDDD9B17FE08AA0078016F /* PrefsWindow.xib in Resources */,
 				F6BDDD9917FDF1140078016F /* MainMenu.xib in Resources */,
 				F6E161F717FA061A00167048 /* LogWindow.xib in Resources */,
 				F68E3E0717E5E6DB00EAA38E /* MainWindow.xib in Resources */,
@@ -489,6 +498,7 @@
 			files = (
 				F69AFDD717FCAAB00062BC0C /* P1AvailabilityImageFromState.m in Sources */,
 				F69AFDE817FCC56A0062BC0C /* P1ConnectionStringFromState.m in Sources */,
+				F6BDDD9E17FE08DF0078016F /* P1PrefsWindowController.m in Sources */,
 				F682AC2C17E4C91C007DC0CF /* main.m in Sources */,
 				F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */,
 				F643655917E5A08800314053 /* P1MainWindowController.m in Sources */,

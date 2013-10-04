@@ -9,33 +9,6 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-    // Register config defaults
-    [defaults registerDefaults:@{
-        @"Context configuration": @{
-            @"video": @{
-                @"clock": @{
-                    @"name": @"Display video clock",
-                    @"type": @"display"
-                },
-                @"sources": @[
-                    @{
-                        @"name": @"Display video source",
-                        @"type": @"display"
-                    }
-                ]
-            },
-            @"audio": @{
-                @"sources": @[
-                    @{
-                        @"name": @"Audio input source",
-                        @"type": @"input"
-                    }
-                ]
-            },
-            @"stream": @{}
-        }
-    }];
-
     // Create context and objects
     NSDictionary *config = [defaults dictionaryForKey:@"Context configuration"];
 

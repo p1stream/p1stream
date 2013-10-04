@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="12F37" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment defaultVersion="1080" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="P1PrefsWindowController">
+            <connections>
+                <outlet property="tabView" destination="X47-uQ-wiY" id="HFd-yP-j1B"/>
+                <outlet property="toolbar" destination="FzX-5z-Au1" id="lSe-bY-xbL"/>
+                <outlet property="window" destination="1" id="z93-ZD-cJu"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" wantsToBeColor="NO" visibleAtLaunch="NO" animationBehavior="default" id="1">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="600" height="270"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
+            <view key="contentView" id="2">
+                <rect key="frame" x="0.0" y="0.0" width="600" height="270"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <tabView drawsBackground="NO" type="noTabsNoBorder" translatesAutoresizingMaskIntoConstraints="NO" id="X47-uQ-wiY">
+                        <rect key="frame" x="-1" y="0.0" width="602" height="270"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <tabViewItems>
+                            <tabViewItem label="Connection" identifier="P1ConnectionPage" id="50p-fa-hDj">
+                                <view key="view" id="FVI-2I-alQ">
+                                    <rect key="frame" x="0.0" y="0.0" width="602" height="270"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="K5a-ad-Tvy">
+                                            <rect key="frame" x="17" y="230" width="120" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Stream RTMP URL:" id="QTy-Ph-F8F">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nG8-4p-DyG">
+                                            <rect key="frame" x="142" y="228" width="440" height="22"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="mSB-H1-r5e">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="nG8-4p-DyG" firstAttribute="leading" secondItem="K5a-ad-Tvy" secondAttribute="trailing" constant="8" symbolic="YES" id="6O1-OA-Ppo"/>
+                                        <constraint firstAttribute="trailing" secondItem="nG8-4p-DyG" secondAttribute="trailing" constant="20" symbolic="YES" id="S00-2n-lGA"/>
+                                        <constraint firstItem="nG8-4p-DyG" firstAttribute="top" secondItem="FVI-2I-alQ" secondAttribute="top" constant="20" symbolic="YES" id="jUm-vB-uQA"/>
+                                        <constraint firstItem="nG8-4p-DyG" firstAttribute="baseline" secondItem="K5a-ad-Tvy" secondAttribute="baseline" id="tGR-ee-QJC"/>
+                                        <constraint firstItem="K5a-ad-Tvy" firstAttribute="leading" secondItem="FVI-2I-alQ" secondAttribute="leading" constant="20" symbolic="YES" id="uIB-52-MNs"/>
+                                    </constraints>
+                                </view>
+                            </tabViewItem>
+                        </tabViewItems>
+                    </tabView>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="X47-uQ-wiY" secondAttribute="trailing" constant="-1" id="7tC-C8-KbY"/>
+                    <constraint firstItem="X47-uQ-wiY" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="-1" id="BkI-Gx-x9Y"/>
+                    <constraint firstItem="X47-uQ-wiY" firstAttribute="top" secondItem="2" secondAttribute="top" id="PWG-9h-NpI"/>
+                    <constraint firstAttribute="bottom" secondItem="X47-uQ-wiY" secondAttribute="bottom" id="ni3-QS-rmD"/>
+                </constraints>
+            </view>
+            <toolbar key="toolbar" implicitIdentifier="D40664B6-B1BD-4DD5-A06A-265607962A33" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconAndLabel" sizeMode="regular" id="FzX-5z-Au1">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="C72042B8-AB16-4940-A72C-746A56A96C50" explicitItemIdentifier="P1ConnectionPage" label="Connection" paletteLabel="Connection" tag="-1" image="NSNetwork" selectable="YES" id="Ypf-mT-c8E">
+                        <connections>
+                            <action selector="selectTabForToolbarItem:" target="-2" id="i7J-0c-aSh"/>
+                        </connections>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="Ypf-mT-c8E"/>
+                </defaultToolbarItems>
+            </toolbar>
+            <connections>
+                <outlet property="delegate" destination="-2" id="jY5-0z-3H2"/>
+            </connections>
+        </window>
+    </objects>
+    <resources>
+        <image name="NSNetwork" width="32" height="32"/>
+    </resources>
+</document>

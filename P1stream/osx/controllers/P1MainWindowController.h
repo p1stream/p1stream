@@ -1,6 +1,5 @@
 #import "P1ContextModel.h"
 #import "P1PreviewView.h"
-#import "P1LogWindowController.h"
 
 
 @interface P1MainWindowController : NSWindowController <NSWindowDelegate>

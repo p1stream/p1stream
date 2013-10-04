@@ -26,7 +26,11 @@
                             <menuItem isSeparatorItem="YES" id="236">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Preferences…" keyEquivalent="," id="129"/>
+                            <menuItem title="Preferences…" keyEquivalent="," id="129">
+                                <connections>
+                                    <action selector="showWindow:" target="foo-3i-GYY" id="Lnn-Yt-8Sg"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="143">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
@@ -330,9 +334,11 @@
             <connections>
                 <outlet property="logWindowController" destination="Lt7-vA-Lgs" id="Y9D-ld-7Rj"/>
                 <outlet property="mainWindowController" destination="664" id="665"/>
+                <outlet property="prefsWindowController" destination="foo-3i-GYY" id="qvT-EJ-tfy"/>
             </connections>
         </customObject>
         <customObject id="664" customClass="P1MainWindowController"/>
         <customObject id="Lt7-vA-Lgs" customClass="P1LogWindowController"/>
+        <customObject id="foo-3i-GYY" customClass="P1PrefsWindowController"/>
     </objects>
 </document>
