@@ -13,13 +13,13 @@
 		F65CD73317F4BEE100CD3FBC /* P1ContextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F65CD73217F4BEE100CD3FBC /* P1ContextModel.m */; };
 		F65CD73717F4C84D00CD3FBC /* P1ObjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F65CD73617F4C84D00CD3FBC /* P1ObjectModel.m */; };
 		F6768A1B17E65CD20088D1F9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6768A1917E65CC20088D1F9 /* QuartzCore.framework */; };
-		F682ABE717E4A616007DC0CF /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F682ABE617E4A610007DC0CF /* main.c */; };
+		F682ABE717E4A616007DC0CF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F682ABE617E4A610007DC0CF /* main.m */; };
 		F682ABF217E4A68A007DC0CF /* p1stream.c in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA3B17C52DC1004DDFD6 /* p1stream.c */; };
 		F682ABF317E4A68A007DC0CF /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD417B6FE31002FE99E /* audio.c */; };
 		F682ABF417E4A68A007DC0CF /* video.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6077117B6488C009E6155 /* video.c */; };
 		F682ABF517E4A68A007DC0CF /* conn.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6077E17B68E0B009E6155 /* conn.c */; };
 		F682ABF717E4A68A007DC0CF /* p1stream_osx.m in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA4517C53360004DDFD6 /* p1stream_osx.m */; };
-		F682ABF817E4A68A007DC0CF /* conf_plist.c in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA4417C53360004DDFD6 /* conf_plist.c */; };
+		F682ABF817E4A68A007DC0CF /* conf_plist.m in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA4417C53360004DDFD6 /* conf_plist.m */; };
 		F682ABF917E4A68A007DC0CF /* audio_input.c in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA4217C53360004DDFD6 /* audio_input.c */; };
 		F682ABFA17E4A68A007DC0CF /* clock_display.c in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA4317C53360004DDFD6 /* clock_display.c */; };
 		F682ABFB17E4A68A007DC0CF /* video_display.c in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA4917C53360004DDFD6 /* video_display.c */; };
@@ -95,7 +95,7 @@
 		F62DBA3B17C52DC1004DDFD6 /* p1stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p1stream.c; sourceTree = "<group>"; };
 		F62DBA4217C53360004DDFD6 /* audio_input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio_input.c; sourceTree = "<group>"; };
 		F62DBA4317C53360004DDFD6 /* clock_display.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = clock_display.c; sourceTree = "<group>"; };
-		F62DBA4417C53360004DDFD6 /* conf_plist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_plist.c; sourceTree = "<group>"; };
+		F62DBA4417C53360004DDFD6 /* conf_plist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = conf_plist.m; sourceTree = "<group>"; };
 		F62DBA4517C53360004DDFD6 /* p1stream_osx.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = p1stream_osx.m; sourceTree = "<group>"; };
 		F62DBA4617C53360004DDFD6 /* p1stream_osx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream_osx.h; sourceTree = "<group>"; };
 		F62DBA4717C53360004DDFD6 /* sample_config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sample_config.plist; sourceTree = "<group>"; };
@@ -117,7 +117,7 @@
 		F65CD73517F4C84D00CD3FBC /* P1ObjectModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1ObjectModel.h; sourceTree = "<group>"; };
 		F65CD73617F4C84D00CD3FBC /* P1ObjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1ObjectModel.m; sourceTree = "<group>"; };
 		F6768A1917E65CC20088D1F9 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		F682ABE617E4A610007DC0CF /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		F682ABE617E4A610007DC0CF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libp1stream.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F682AC0117E4A6DA007DC0CF /* librtmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = librtmp.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F682AC0217E4A6DA007DC0CF /* libx264.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libx264.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -251,7 +251,7 @@
 				F62DBA4617C53360004DDFD6 /* p1stream_osx.h */,
 				F6931F6817E6F75000B6B113 /* p1stream_osx_priv.h */,
 				F62DBA4517C53360004DDFD6 /* p1stream_osx.m */,
-				F62DBA4417C53360004DDFD6 /* conf_plist.c */,
+				F62DBA4417C53360004DDFD6 /* conf_plist.m */,
 				F62DBA4217C53360004DDFD6 /* audio_input.c */,
 				F62DBA4317C53360004DDFD6 /* clock_display.c */,
 				F62DBA4917C53360004DDFD6 /* video_display.c */,
@@ -323,7 +323,7 @@
 		F682ABE517E4A610007DC0CF /* cli */ = {
 			isa = PBXGroup;
 			children = (
-				F682ABE617E4A610007DC0CF /* main.c */,
+				F682ABE617E4A610007DC0CF /* main.m */,
 			);
 			path = cli;
 			sourceTree = "<group>";
@@ -471,7 +471,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F682ABE717E4A616007DC0CF /* main.c in Sources */,
+				F682ABE717E4A616007DC0CF /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,7 +484,7 @@
 				F682ABF417E4A68A007DC0CF /* video.c in Sources */,
 				F682ABF517E4A68A007DC0CF /* conn.c in Sources */,
 				F682ABF717E4A68A007DC0CF /* p1stream_osx.m in Sources */,
-				F682ABF817E4A68A007DC0CF /* conf_plist.c in Sources */,
+				F682ABF817E4A68A007DC0CF /* conf_plist.m in Sources */,
 				F682ABF917E4A68A007DC0CF /* audio_input.c in Sources */,
 				F682ABFA17E4A68A007DC0CF /* clock_display.c in Sources */,
 				F682ABFB17E4A68A007DC0CF /* video_display.c in Sources */,

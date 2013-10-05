@@ -86,7 +86,7 @@ static const size_t yuv_work_size[] = {
 };
 
 
-bool p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect)
+bool p1_video_init(P1VideoFull *videof)
 {
     P1Video *video = (P1Video *) videof;
     P1Object *videoobj = (P1Object *) videof;
@@ -103,6 +103,11 @@ fail_params:
 
 fail_object:
     return false;
+}
+
+void p1_video_config(P1VideoFull *videof, P1Config *cfg)
+{
+    // FIXME
 }
 
 void p1_video_start(P1VideoFull *videof)
@@ -442,41 +447,49 @@ fail:
     p1_object_unlock(videoobj);
 }
 
-bool p1_video_clock_init(P1VideoClock *vclock, P1Config *cfg, P1ConfigSection *sect)
+
+bool p1_video_clock_init(P1VideoClock *vclock)
 {
-    P1Object *obj = (P1Object *) vclock;
-
-    if (!p1_object_init(obj, P1_OTYPE_VIDEO_CLOCK))
-        return false;
-
-    return true;
+    return p1_object_init((P1Object *) vclock, P1_OTYPE_VIDEO_CLOCK);
 }
 
-bool p1_video_source_init(P1VideoSource *vsrc, P1Config *cfg, P1ConfigSection *sect)
+void p1_video_clock_config(P1VideoClock *vclock, P1Config *cfg)
 {
-    P1Object *obj = (P1Object *) vsrc;
+    P1Plugin *pel = (P1Plugin *) vclock;
 
-    if (!p1_object_init(obj, P1_OTYPE_VIDEO_SOURCE))
-        return false;
+    if (pel->config != NULL)
+        pel->config(pel, cfg);
+}
 
-    if (!cfg->get_float(cfg, sect, "x1", &vsrc->x1))
+
+bool p1_video_source_init(P1VideoSource *vsrc)
+{
+    return p1_object_init((P1Object *) vsrc, P1_OTYPE_VIDEO_SOURCE);
+}
+
+void p1_video_source_config(P1VideoSource *vsrc, P1Config *cfg)
+{
+    P1Plugin *pel = (P1Plugin *) vsrc;
+
+    if (!cfg->get_float(cfg, "x1", &vsrc->x1))
         vsrc->x1 = -1;
-    if (!cfg->get_float(cfg, sect, "y1", &vsrc->y1))
+    if (!cfg->get_float(cfg, "y1", &vsrc->y1))
         vsrc->y1 = -1;
-    if (!cfg->get_float(cfg, sect, "x2", &vsrc->x2))
+    if (!cfg->get_float(cfg, "x2", &vsrc->x2))
         vsrc->x2 = +1;
-    if (!cfg->get_float(cfg, sect, "y2", &vsrc->y2))
+    if (!cfg->get_float(cfg, "y2", &vsrc->y2))
         vsrc->y2 = +1;
-    if (!cfg->get_float(cfg, sect, "u1", &vsrc->u1))
+    if (!cfg->get_float(cfg, "u1", &vsrc->u1))
         vsrc->u1 = 0;
-    if (!cfg->get_float(cfg, sect, "v1", &vsrc->v1))
+    if (!cfg->get_float(cfg, "v1", &vsrc->v1))
         vsrc->v1 = 0;
-    if (!cfg->get_float(cfg, sect, "u2", &vsrc->u2))
+    if (!cfg->get_float(cfg, "u2", &vsrc->u2))
         vsrc->u2 = 1;
-    if (!cfg->get_float(cfg, sect, "v2", &vsrc->v2))
+    if (!cfg->get_float(cfg, "v2", &vsrc->v2))
         vsrc->v2 = 1;
 
-    return true;
+    if (pel->config != NULL)
+        pel->config(pel, cfg);
 }
 
 void p1_video_source_frame(P1VideoSource *vsrc, int width, int height, void *data)
@@ -484,6 +497,7 @@ void p1_video_source_frame(P1VideoSource *vsrc, int width, int height, void *dat
     glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, width, height, 0,
                  GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data);
 }
+
 
 static GLuint p1_build_shader(P1Object *videoobj, GLuint type, const char *source)
 {

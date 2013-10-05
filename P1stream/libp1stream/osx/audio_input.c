@@ -20,7 +20,8 @@ struct _P1InputAudioSource {
     AudioQueueBufferRef buffers[num_buffers];
 };
 
-static bool p1_input_audio_source_init(P1InputAudioSource *iasrc, P1Config *cfg, P1ConfigSection *sect);
+static bool p1_input_audio_source_init(P1InputAudioSource *iasrc);
+static void p1_input_audio_source_config(P1Plugin *pel, P1Config *cfg);
 static void p1_input_audio_source_start(P1Plugin *pel);
 static void p1_input_audio_source_stop(P1Plugin *pel);
 static void p1_input_audio_source_kill_session(P1InputAudioSource *iasrc);
@@ -38,12 +39,12 @@ static void p1_input_audio_source_running_callback(
     AudioQueuePropertyID inID);
 
 
-P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect)
+P1AudioSource *p1_input_audio_source_create()
 {
     P1InputAudioSource *iasrc = calloc(1, sizeof(P1InputAudioSource));
 
     if (iasrc != NULL) {
-        if (!p1_input_audio_source_init(iasrc, cfg, sect)) {
+        if (!p1_input_audio_source_init(iasrc)) {
             free(iasrc);
             iasrc = NULL;
         }
@@ -52,20 +53,26 @@ P1AudioSource *p1_input_audio_source_create(P1Config *cfg, P1ConfigSection *sect
     return (P1AudioSource *) iasrc;
 }
 
-static bool p1_input_audio_source_init(P1InputAudioSource *iasrc, P1Config *cfg, P1ConfigSection *sect)
+static bool p1_input_audio_source_init(P1InputAudioSource *iasrc)
 {
     P1AudioSource *asrc = (P1AudioSource *) iasrc;
     P1Plugin *pel = (P1Plugin *) iasrc;
 
-    if (!p1_audio_source_init(asrc, cfg, sect))
+    if (!p1_audio_source_init(asrc))
         return false;
 
+    pel->config = p1_input_audio_source_config;
     pel->start = p1_input_audio_source_start;
     pel->stop = p1_input_audio_source_stop;
 
-    cfg->get_string(cfg, sect, "device", iasrc->device, sizeof(iasrc->device));
-
     return true;
+}
+
+static void p1_input_audio_source_config(P1Plugin *pel, P1Config *cfg)
+{
+    P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
+
+    cfg->get_string(cfg, "device", iasrc->device, sizeof(iasrc->device));
 }
 
 static void p1_input_audio_source_start(P1Plugin *pel)

@@ -71,8 +71,10 @@ struct _P1VideoFull {
     x264_picture_t out_pic;
 };
 
-bool p1_video_init(P1VideoFull *videof, P1Config *cfg, P1ConfigSection *sect);
+bool p1_video_init(P1VideoFull *videof);
 #define p1_video_destroy(_videof) p1_object_destroy((P1Object *) _videof)
+
+void p1_video_config(P1VideoFull *videof, P1Config *cfg);
 
 void p1_video_start(P1VideoFull *videof);
 void p1_video_stop(P1VideoFull *videof);
@@ -102,8 +104,10 @@ struct _P1AudioFull {
     pthread_cond_t cond;
 };
 
-bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect);
+bool p1_audio_init(P1AudioFull *audiof);
 void p1_audio_destroy(P1AudioFull *audiof);
+
+void p1_audio_config(P1AudioFull *videof, P1Config *cfg);
 
 void p1_audio_start(P1AudioFull *audiof);
 void p1_audio_stop(P1AudioFull *audiof);
@@ -140,8 +144,10 @@ struct _P1ConnectionFull {
     void *audio_out;
 };
 
-bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect);
+bool p1_conn_init(P1ConnectionFull *connf);
 void p1_conn_destroy(P1ConnectionFull *connf);
+
+void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg);
 
 void p1_conn_start(P1ConnectionFull *connf);
 void p1_conn_stop(P1ConnectionFull *connf);

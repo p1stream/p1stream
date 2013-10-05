@@ -7,17 +7,19 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
 - (id)init
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
+    P1Config *config = p1_plist_config_create(dict);
+    if (config == NULL)
+        return nil;
 
-    // Create context and objects
-    NSDictionary *config = [defaults dictionaryForKey:@"Context configuration"];
+    P1Context *context = p1_create();
+    if (context == NULL) {
+        p1_config_free(config);
+        return nil;
+    }
 
-    P1Config *p1Config = p1_plist_config_create((__bridge CFDictionaryRef) config);
-    assert(p1Config != NULL);
-
-    P1Context *context = p1_create(p1Config, NULL);
-    p1_config_free(p1Config);
-    assert(context != NULL);
+    p1_config(context, config);
+    p1_config_free(config);
 
     self = [super initWithObject:(P1Object *) context];
     if (self) {
@@ -33,9 +35,9 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
         if (!_logMessages || !_audioModel || !_videoModel || !_connectionModel || !_objects) return nil;
 
-        if (![self createVideoClock:config]) return nil;
-        if (![self createVideoSources:config]) return nil;
-        if (![self createAudioSources:config]) return nil;
+        if (![self createVideoClock:dict]) return nil;
+        if (![self createVideoSources:dict]) return nil;
+        if (![self createAudioSources:dict]) return nil;
 
         if (![self listenForNotifications]) return nil;
     }
@@ -73,10 +75,10 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 }
 
 
-- (BOOL)createVideoClock:(NSDictionary *)config
+- (BOOL)createVideoClock:(NSDictionary *)dict
 {
-    NSDictionary *clockConfig = config[@"video"][@"clock"];
-    NSString *type = clockConfig[@"type"];
+    NSDictionary *clockDict = dict[@"video-clock"];
+    NSString *type = clockDict[@"type"];
 
     P1VideoClockFactory *factory = NULL;
     if ([type isEqualToString:@"display"])
@@ -84,36 +86,40 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
     if (factory == NULL)
         return FALSE;
 
-    P1Config *p1Config = p1_plist_config_create((__bridge CFDictionaryRef) clockConfig);
-    if (p1Config == NULL)
+    P1Config *config = p1_plist_config_create(clockDict);
+    if (config == NULL)
         return FALSE;
 
-    P1VideoClock *clock = factory(p1Config, NULL);
-    p1_config_free(p1Config);
-    if (clock == NULL)
-        return FALSE;
-
-    P1ObjectModel *model = [[P1ObjectModel alloc] initWithObject:(P1Object *)clock];
-    if (!model) {
-        p1_plugin_free((P1Plugin *)clock);
+    P1VideoClock *videoClock = factory();
+    if (videoClock == NULL) {
+        p1_config_free(config);
         return FALSE;
     }
 
-    NSString *name = clockConfig[@"name"];
+    p1_video_clock_config(videoClock, config);
+    p1_config_free(config);
+
+    P1ObjectModel *model = [[P1ObjectModel alloc] initWithObject:(P1Object *)videoClock];
+    if (!model) {
+        p1_plugin_free((P1Plugin *)videoClock);
+        return FALSE;
+    }
+
+    NSString *name = clockDict[@"name"];
     if (name)
         model.name = name;
 
-    self.context->video->clock = clock;
+    self.context->video->clock = videoClock;
     [_objects addObject:model];
 
     return TRUE;
 }
 
-- (BOOL)createVideoSources:(NSDictionary *)config
+- (BOOL)createVideoSources:(NSDictionary *)dict
 {
-    NSArray *sourceConfigs = config[@"video"][@"sources"];
-    for (NSDictionary *sourceConfig in sourceConfigs) {
-        NSString *type = sourceConfig[@"type"];
+    NSArray *sourcesArray = dict[@"video-sources"];
+    for (NSDictionary *sourceDict in sourcesArray) {
+        NSString *type = sourceDict[@"type"];
 
         P1VideoSourceFactory *factory = NULL;
         if ([type isEqualToString:@"display"])
@@ -123,14 +129,18 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         if (factory == NULL)
             return FALSE;
 
-        P1Config *p1Config = p1_plist_config_create((__bridge CFDictionaryRef) sourceConfig);
-        if (p1Config == NULL)
+        P1Config *config = p1_plist_config_create(sourceDict);
+        if (config == NULL)
             return FALSE;
 
-        P1VideoSource *videoSource = factory(p1Config, NULL);
-        p1_config_free(p1Config);
-        if (videoSource == NULL)
+        P1VideoSource *videoSource = factory();
+        if (videoSource == NULL) {
+            p1_config_free(config);
             return FALSE;
+        }
+
+        p1_video_source_config(videoSource, config);
+        p1_config_free(config);
 
         P1ObjectModel *model = [[P1ObjectModel alloc] initWithObject:(P1Object *)videoSource];
         if (!model) {
@@ -138,7 +148,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
             return FALSE;
         }
 
-        NSString *name = sourceConfig[@"name"];
+        NSString *name = sourceDict[@"name"];
         if (name)
             model.name = name;
 
@@ -150,11 +160,11 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
     return TRUE;
 }
 
-- (BOOL)createAudioSources:(NSDictionary *)config
+- (BOOL)createAudioSources:(NSDictionary *)dict
 {
-    NSArray *sourceConfigs = config[@"audio"][@"sources"];
-    for (NSDictionary *sourceConfig in sourceConfigs) {
-        NSString *type = sourceConfig[@"type"];
+    NSArray *sourcesArray = dict[@"audio-sources"];
+    for (NSDictionary *sourceDict in sourcesArray) {
+        NSString *type = sourceDict[@"type"];
 
         P1AudioSourceFactory *factory = NULL;
         if ([type isEqualToString:@"input"])
@@ -162,14 +172,18 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         if (factory == NULL)
             return FALSE;
 
-        P1Config *p1Config = p1_plist_config_create((__bridge CFDictionaryRef) sourceConfig);
-        if (p1Config == NULL)
+        P1Config *config = p1_plist_config_create(sourceDict);
+        if (config == NULL)
             return FALSE;
 
-        P1AudioSource *audioSource = factory(p1Config, NULL);
-        p1_config_free(p1Config);
-        if (audioSource == NULL)
+        P1AudioSource *audioSource = factory();
+        if (audioSource == NULL) {
+            p1_config_free(config);
             return FALSE;
+        }
+
+        p1_audio_source_config(audioSource, config);
+        p1_config_free(config);
 
         P1ObjectModel *model = [[P1ObjectModel alloc] initWithObject:(P1Object *)audioSource];
         if (!model) {
@@ -177,7 +191,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
             return FALSE;
         }
 
-        NSString *name = sourceConfig[@"name"];
+        NSString *name = sourceDict[@"name"];
         if (name)
             model.name = name;
 

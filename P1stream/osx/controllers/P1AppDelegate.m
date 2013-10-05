@@ -9,29 +9,23 @@
 
     // Register config defaults
     [defaults registerDefaults:@{
-        @"Context configuration": @{
-            @"video": @{
-                @"clock": @{
-                    @"name": @"Display video clock",
-                    @"type": @"display"
-                },
-                @"sources": @[
-                    @{
-                        @"name": @"Display video source",
-                        @"type": @"display"
-                    }
-                ]
-            },
-            @"audio": @{
-                @"sources": @[
-                    @{
-                        @"name": @"Audio input source",
-                        @"type": @"input"
-                    }
-                ]
-            },
-            @"stream": @{}
-        }
+        @"url": @"rtmp://localhost/app/test",
+        @"audio-sources": @[
+            @{
+                @"name": @"Audio input source",
+                @"type": @"input"
+            }
+        ],
+        @"video-clock": @{
+            @"name": @"Display video clock",
+            @"type": @"display"
+        },
+        @"video-sources": @[
+            @{
+                @"name": @"Display video source",
+                @"type": @"display"
+            }
+        ]
     }];
 
     // Create context.

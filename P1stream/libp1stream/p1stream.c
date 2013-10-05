@@ -5,7 +5,7 @@
 
 typedef enum _P1Action P1Action;
 
-static bool p1_init(P1ContextFull *ctxf, P1Config *cfg, P1ConfigSection *sect);
+static bool p1_init(P1ContextFull *ctxf);
 static void p1_destroy(P1ContextFull *ctxf);
 static void p1_close_pipe(P1Object *ctxobj, int fd);
 static void p1_log_default(P1Object *obj, P1LogLevel level, const char *fmt, va_list args, void *user_data);
@@ -84,12 +84,8 @@ void p1_plugin_free(P1Plugin *pel)
         free(pel);
 }
 
-P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
+P1Context *p1_create()
 {
-    P1ConfigSection *video_sect = cfg->get_section(cfg, sect, "video");
-    P1ConfigSection *audio_sect = cfg->get_section(cfg, sect, "audio");
-    P1ConfigSection *stream_sect = cfg->get_section(cfg, sect, "stream");
-
     P1Context *ctx = calloc(1,
         sizeof(P1ContextFull) + sizeof(P1VideoFull) +
         sizeof(P1AudioFull) + sizeof(P1ConnectionFull));
@@ -102,20 +98,20 @@ P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect)
     if (!ctx)
         goto fail_alloc;
 
-    if (!p1_init(ctxf, cfg, sect))
+    if (!p1_init(ctxf))
         goto fail_context;
 
-    if (!p1_video_init(videof, cfg, video_sect))
+    if (!p1_video_init(videof))
         goto fail_video;
     ctx->video = (P1Video *) videof;
     ((P1Object *) videof)->ctx = ctx;
 
-    if (!p1_audio_init(audiof, cfg, audio_sect))
+    if (!p1_audio_init(audiof))
         goto fail_audio;
     ctx->audio = (P1Audio *) audiof;
     ((P1Object *) audiof)->ctx = ctx;
 
-    if (!p1_conn_init(connf, cfg, stream_sect))
+    if (!p1_conn_init(connf))
         goto fail_conn;
     ctx->conn = (P1Connection *) connf;
     ((P1Object *) connf)->ctx = ctx;
@@ -138,7 +134,7 @@ fail_alloc:
     return NULL;
 }
 
-static bool p1_init(P1ContextFull *ctxf, P1Config *cfg, P1ConfigSection *sect)
+static bool p1_init(P1ContextFull *ctxf)
 {
     P1Context *ctx = (P1Context *) ctxf;
     P1Object *ctxobj = (P1Object *) ctxf;
@@ -233,6 +229,13 @@ void p1_free(P1Context *ctx, P1FreeOptions options)
     p1_destroy(ctxf);
 
     free(ctxf);
+}
+
+void p1_config(P1Context *ctx, P1Config *cfg)
+{
+    p1_audio_config((P1AudioFull *) ctx->audio, cfg);
+    p1_video_config((P1VideoFull *) ctx->video, cfg);
+    p1_conn_config((P1ConnectionFull *) ctx->conn, cfg);
 }
 
 static void p1_close_pipe(P1Object *ctxobj, int fd)

@@ -54,19 +54,17 @@ typedef enum _P1NotificationType P1NotificationType;
 typedef enum _P1ObjectType P1ObjectType;
 typedef struct _P1ListNode P1ListNode;
 typedef struct _P1Notification P1Notification;
-typedef void P1ConfigSection; // abstract
 
 // Callback signatures.
-typedef bool (*P1ConfigIterSection)(P1Config *cfg, P1ConfigSection *sect, void *data);
-typedef bool (*P1ConfigIterString)(P1Config *cfg, const char *key, char *val, void *data);
+typedef bool (*P1ConfigIterString)(P1Config *cfg, const char *key, const char *val, void *data);
 typedef void (*P1LogCallback)(P1Object *obj, P1LogLevel level, const char *fmt, va_list args, void *user_data);
 typedef void (*P1VideoPreviewCallback)(size_t width, size_t height, uint8_t *data, void *user_data);
 
 // These types are for convenience. Sources usually want to have a function
 // following one of these signatures to instantiate them.
-typedef P1VideoClock *(P1VideoClockFactory)(P1Config *cfg, P1ConfigSection *sect);
-typedef P1VideoSource *(P1VideoSourceFactory)(P1Config *cfg, P1ConfigSection *sect);
-typedef P1AudioSource *(P1AudioSourceFactory)(P1Config *cfg, P1ConfigSection *sect);
+typedef P1VideoClock *(P1VideoClockFactory)();
+typedef P1VideoSource *(P1VideoSourceFactory)();
+typedef P1AudioSource *(P1AudioSourceFactory)();
 
 
 // Log levels. These match x264s.
@@ -168,33 +166,22 @@ enum _P1ObjectType {
 // This should be simple enough to allow backing by a variety of stores like a
 // JSON file, property list file, or registry.
 
-// Keys are strings that may identify an item several levels deep, separated by
-// periods. Each level is called a section, and would for example be an object
-// in JSON. Though it's also possible to have a flat store and treat keys as
-// paths, properly concatenating where the interface requires it.
-
 struct _P1Config {
     // Free resources.
     void (*free)(P1Config *cfg);
 
-    // Get a reference to the section. If this returns NULL, all items expected
-    // to be inside should be treated as undefined.
-    P1ConfigSection *(*get_section)(P1Config *cfg, P1ConfigSection *sect, const char *key);
-
     // The following methods return true if successful and false if undefined.
-    // Unexpected types / values should be treated as undefined.
+    // Unexpected types should also be treated as undefined.
 
     // Copy a string value to the output buffer.
-    bool (*get_string)(P1Config *cfg, P1ConfigSection *sect, const char *key, char *buf, size_t bufsize);
+    bool (*get_string)(P1Config *cfg, const char *key, char *buf, size_t bufsize);
     // Read a float value.
-    bool (*get_float)(P1Config *cfg, P1ConfigSection *sect, const char *key, float *out);
+    bool (*get_float)(P1Config *cfg, const char *key, float *out);
     // Read a boolean value.
-    bool (*get_bool)(P1Config *cfg, P1ConfigSection *sect, const char *key, bool *out);
+    bool (*get_bool)(P1Config *cfg, const char *key, bool *out);
 
-    // Iterate sections in an array, used to gather sources.
-    bool (*each_section)(P1Config *cfg, P1ConfigSection *sect, const char *key, P1ConfigIterSection iter, void *data);
-    // Iterate keys and string values in a section.
-    bool (*each_string)(P1Config *cfg, P1ConfigSection *sect, const char *key, P1ConfigIterString iter, void *data);
+    // Iterate keys and string values with the given prefix.
+    bool (*each_string)(P1Config *cfg, const char *prefix, P1ConfigIterString iter, void *data);
 };
 
 // Free a config object.
@@ -376,6 +363,9 @@ struct _P1Object {
 struct _P1Plugin {
     P1Object super;
 
+    // Read / load configuration. Implementation is optional.
+    void (*config)(P1Plugin *pel, P1Config *cfg);
+
     // Free the object and associated resources. (Assume idle.)
     // Implementation is optional. If NULL, a regular free() is used instead.
     void (*free)(P1Plugin *pel);
@@ -414,8 +404,11 @@ struct _P1VideoClock {
     uint32_t fps_den;
 };
 
-// Subclasses should call into this from the initializer.
-bool p1_video_clock_init(P1VideoClock *vclock, P1Config *cfg, P1ConfigSection *sect);
+// Subclasses should call this from the initializer.
+bool p1_video_clock_init(P1VideoClock *vclock);
+
+// Configure the video clock. Calls into the subclass config method.
+void p1_video_clock_config(P1VideoClock *vclock, P1Config *cfg);
 
 // Callback for video clocks to emit ticks.
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time);
@@ -443,7 +436,10 @@ struct _P1VideoSource {
 };
 
 // Subclasses should call into this from the initializer.
-bool p1_video_source_init(P1VideoSource *vsrc, P1Config *cfg, P1ConfigSection *sect);
+bool p1_video_source_init(P1VideoSource *vsrc);
+
+// Configure the video source. Calls into the subclass config method.
+void p1_video_source_config(P1VideoSource *vsrc, P1Config *cfg);
 
 // Callback for video sources to provide frame data.
 void p1_video_source_frame(P1VideoSource *vsrc, int width, int height, void *data);
@@ -461,7 +457,10 @@ struct _P1AudioSource {
 };
 
 // Subclasses should call into this from the initializer.
-bool p1_audio_source_init(P1AudioSource *asrc, P1Config *cfg, P1ConfigSection *sect);
+bool p1_audio_source_init(P1AudioSource *asrc);
+
+// Configure the audio source. Calls into the subclass config method.
+void p1_audio_source_config(P1AudioSource *asrc, P1Config *cfg);
 
 // Callback for audio sources to provide audio buffer data.
 void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples);
@@ -522,8 +521,10 @@ struct _P1Context {
     P1Connection *conn;
 };
 
-// Create a new context based on the given configuration.
-P1Context *p1_create(P1Config *cfg, P1ConfigSection *sect);
+// Create a new context.
+P1Context *p1_create();
+// Configure a context based on the given configuration.
+void p1_config(P1Context *ctx, P1Config *cfg);
 
 // Free all resources related to the context, and optionally other objects.
 void p1_free(P1Context *ctx, P1FreeOptions options);

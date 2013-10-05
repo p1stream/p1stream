@@ -18,6 +18,8 @@ static const int audio_out_min_size = 6144 / 8 * audio_num_channels;
 // Complete output buffer size, roughly two seconds.
 static const int audio_out_size = audio_out_min_size * 128;
 
+static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, const char *val, void *data);
+
 static bool p1_conn_stream_video_config(P1ConnectionFull *connf);
 static bool p1_conn_stream_audio_config(P1ConnectionFull *connf);
 
@@ -36,14 +38,11 @@ static void p1_conn_stop_video(P1ConnectionFull *connf);
 static void p1_conn_signal(P1ConnectionFull *connf);
 static void p1_conn_clear(P1PacketQueue *q);
 
-static bool p1_conn_init_x264_params(P1ConnectionFull *videof, P1Config *cfg, P1ConfigSection *sect);
-static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, char *val, void *data);
 static void p1_conn_x264_log_callback(void *data, int level, const char *fmt, va_list args);
-
 static void p1_conn_rtmp_log_callback(int level, const char *fmt, va_list);
 
 
-bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
+bool p1_conn_init(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
     int ret;
@@ -68,12 +67,6 @@ bool p1_conn_init(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
         p1_log(connobj, P1_LOG_ERROR, "Failed to initialize mutex: %s", strerror(ret));
         goto fail_video_lock;
     }
-
-    if (!p1_conn_init_x264_params(connf, cfg, sect))
-        goto fail_params;
-
-    if (!cfg->get_string(cfg, sect, "url", connf->url, sizeof(connf->url)))
-        strcpy(connf->url, default_url);
 
     return true;
 
@@ -117,6 +110,54 @@ void p1_conn_destroy(P1ConnectionFull *connf)
         p1_log(connobj, P1_LOG_ERROR, "Failed to destroy condition variable: %s", strerror(ret));
 
     p1_object_destroy(connobj);
+}
+
+void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
+{
+    x264_param_t *params = &connf->video_params;
+    char tmp[128];
+
+    x264_param_default(&connf->video_params);
+
+    if (!cfg->get_string(cfg, "url", connf->url, sizeof(connf->url)))
+        strcpy(connf->url, default_url);
+
+    // x264 already logs errors, except for x264_param_parse.
+
+    if (cfg->get_string(cfg, "x264-preset", tmp, sizeof(tmp)))
+        x264_param_default_preset(params, tmp, NULL);
+
+    if (cfg->get_string(cfg, "x264-tune", tmp, sizeof(tmp)))
+        x264_param_default_preset(params, NULL, tmp);
+
+    cfg->each_string(cfg, "x264-", p1_conn_parse_x264_param, connf);
+
+    x264_param_apply_fastfirstpass(params);
+
+    if (cfg->get_string(cfg, "x264-profile", tmp, sizeof(tmp)))
+        x264_param_apply_profile(params, tmp);
+}
+
+static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, const char *val, void *data)
+{
+    P1Object *connobj = (P1Object *) data;
+    P1ConnectionFull *connf = (P1ConnectionFull *) data;
+    int ret;
+
+    if (strcmp(key, "x264-preset") == 0 ||
+        strcmp(key, "x264-profile") == 0 ||
+        strcmp(key, "x264-tune") == 0)
+        return true;
+
+    ret = x264_param_parse(&connf->video_params, key, val);
+    if (ret != 0) {
+        if (ret == X264_PARAM_BAD_NAME)
+            p1_log(connobj, P1_LOG_ERROR, "Invalid x264 parameter name '%s'", key);
+        else if (ret == X264_PARAM_BAD_VALUE)
+            p1_log(connobj, P1_LOG_ERROR, "Invalid value for x264 parameter '%s'", key);
+    }
+
+    return true;
 }
 
 void p1_conn_start(P1ConnectionFull *connf)
@@ -780,65 +821,6 @@ static void p1_conn_clear(P1PacketQueue *q)
 }
 
 
-static bool p1_conn_init_x264_params(P1ConnectionFull *connf, P1Config *cfg, P1ConfigSection *sect)
-{
-    x264_param_t *params = &connf->video_params;
-    char tmp[128];
-    int ret;
-
-    // x264 already logs errors, except for x264_param_parse.
-
-    x264_param_default(params);
-
-    if (cfg->get_string(cfg, sect, "encoder.preset", tmp, sizeof(tmp))) {
-        ret = x264_param_default_preset(params, tmp, NULL);
-        if (ret != 0)
-            return false;
-    }
-
-    if (cfg->get_string(cfg, sect, "encoder.tune", tmp, sizeof(tmp))) {
-        ret = x264_param_default_preset(params, NULL, tmp);
-        if (ret != 0)
-            return false;
-    }
-
-    if (!cfg->each_string(cfg, sect, "encoder", p1_conn_parse_x264_param, connf))
-        return false;
-
-    x264_param_apply_fastfirstpass(params);
-
-    if (cfg->get_string(cfg, sect, "encoder.profile", tmp, sizeof(tmp))) {
-        ret = x264_param_apply_profile(params, tmp);
-        if (ret != 0)
-            return false;
-    }
-
-    return true;
-}
-
-static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, char *val, void *data)
-{
-    P1Object *connobj = (P1Object *) data;
-    P1ConnectionFull *connf = (P1ConnectionFull *) data;
-    int ret;
-
-    if (strcmp(key, "preset") == 0 ||
-        strcmp(key, "profile") == 0 ||
-        strcmp(key, "tune") == 0)
-        return true;
-
-    ret = x264_param_parse(&connf->video_params, key, val);
-    if (ret != 0) {
-        if (ret == X264_PARAM_BAD_NAME)
-            p1_log(connobj, P1_LOG_ERROR, "Invalid x264 parameter name '%s'", key);
-        else if (ret == X264_PARAM_BAD_VALUE)
-            p1_log(connobj, P1_LOG_ERROR, "Invalid value for x264 parameter '%s'", key);
-        return false;
-    }
-
-    return true;
-}
-
 static void p1_conn_x264_log_callback(void *data, int level, const char *fmt, va_list args)
 {
     P1Object *videobj = (P1Object *) data;
@@ -854,7 +836,6 @@ static void p1_conn_x264_log_callback(void *data, int level, const char *fmt, va
 
     p1_logv(videobj, (P1LogLevel) level, fmt, args);
 }
-
 
 static void p1_conn_rtmp_log_callback(int level, const char *fmt, va_list args)
 {

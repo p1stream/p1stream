@@ -23,7 +23,7 @@ static size_t p1_audio_time_to_samples(P1ContextFull *ctxf, int64_t time);
 static int64_t p1_audio_samples_to_time(P1ContextFull *ctx, size_t samples);
 
 
-bool p1_audio_init(P1AudioFull *audiof, P1Config *cfg, P1ConfigSection *sect)
+bool p1_audio_init(P1AudioFull *audiof)
 {
     P1Audio *audio = (P1Audio *) audiof;
     P1Object *audioobj = (P1Object *) audiof;
@@ -61,6 +61,11 @@ void p1_audio_destroy(P1AudioFull *audiof)
     p1_object_destroy(audioobj);
 }
 
+void p1_audio_config(P1AudioFull *audiof, P1Config *cfg)
+{
+    // FIXME
+}
+
 void p1_audio_start(P1AudioFull *audiof)
 {
     P1Object *audioobj = (P1Object *) audiof;
@@ -88,17 +93,20 @@ void p1_audio_stop(P1AudioFull *audiof)
 }
 
 
-bool p1_audio_source_init(P1AudioSource *asrc, P1Config *cfg, P1ConfigSection *sect)
+bool p1_audio_source_init(P1AudioSource *asrc)
 {
-    P1Object *obj = (P1Object *) asrc;
+    return p1_object_init((P1Object *) asrc, P1_OTYPE_AUDIO_SOURCE);
+}
 
-    if (!p1_object_init(obj, P1_OTYPE_AUDIO_SOURCE))
-        return false;
+void p1_audio_source_config(P1AudioSource *asrc, P1Config *cfg)
+{
+    P1Plugin *pel = (P1Plugin *) asrc;
 
-    if (!cfg->get_float(cfg, sect, "volume", &asrc->volume))
+    if (!cfg->get_float(cfg, "volume", &asrc->volume))
         asrc->volume = 1.0;
 
-    return true;
+    if (pel->config != NULL)
+        pel->config(pel, cfg);
 }
 
 void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples)
