@@ -149,7 +149,7 @@ static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, const char 
         strcmp(key, "x264-tune") == 0)
         return true;
 
-    ret = x264_param_parse(&connf->video_params, key, val);
+    ret = x264_param_parse(&connf->video_params, key + 5, val);
     if (ret != 0) {
         if (ret == X264_PARAM_BAD_NAME)
             p1_log(connobj, P1_LOG_ERROR, "Invalid x264 parameter name '%s'", key);
