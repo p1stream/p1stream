@@ -10,27 +10,12 @@
 
 - (void)windowDidLoad
 {
-    [self updateSelectedToolbarItem];
-    [_tabView addObserver:self forKeyPath:@"selectedTabViewItem" options:0 context:nil];
+    _toolbar.selectedItemIdentifier = @"P1ConnectionPage";
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
+- (IBAction)dummy:(NSToolbarItem *)item
 {
-    if (object == _tabView && [keyPath isEqualToString:@"selectedTabViewItem"])
-        [self updateSelectedToolbarItem];
-}
-
-- (void)updateSelectedToolbarItem
-{
-    _toolbar.selectedItemIdentifier = _tabView.selectedTabViewItem.identifier;
-}
-
-- (IBAction)selectTabForToolbarItem:(NSToolbarItem *)item
-{
-    [_tabView selectTabViewItemWithIdentifier:item.itemIdentifier];
+    // This is apparently needed to make items clickable.
 }
 
 @end

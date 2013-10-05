@@ -65,6 +65,9 @@
                                 </view>
                             </tabViewItem>
                         </tabViewItems>
+                        <connections>
+                            <binding destination="-2" name="selectedIdentifier" keyPath="toolbar.selectedItemIdentifier" id="RQM-Es-JBP"/>
+                        </connections>
                     </tabView>
                 </subviews>
                 <constraints>
@@ -78,7 +81,7 @@
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="C72042B8-AB16-4940-A72C-746A56A96C50" explicitItemIdentifier="P1ConnectionPage" label="Connection" paletteLabel="Connection" tag="-1" image="NSNetwork" selectable="YES" id="Ypf-mT-c8E">
                         <connections>
-                            <action selector="selectTabForToolbarItem:" target="-2" id="i7J-0c-aSh"/>
+                            <action selector="dummy:" target="-2" id="4bC-UR-2Ie"/>
                         </connections>
                     </toolbarItem>
                 </allowedToolbarItems>
