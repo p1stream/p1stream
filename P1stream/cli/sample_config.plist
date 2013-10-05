@@ -18,7 +18,7 @@
 	<string>4096</string>
 	<key>x264-nal-hrd</key>
 	<string>cbr</string>
-	<key>audio_sources</key>
+	<key>audio-sources</key>
 	<array>
 		<dict>
 			<key>type</key>
@@ -29,12 +29,12 @@
 			<integer>1</integer>
 		</dict>
 	</array>
-	<key>video_clock</key>
+	<key>video-clock</key>
 	<dict>
 		<key>type</key>
 		<string>display</string>
 	</dict>
-	<key>video_sources</key>
+	<key>video-sources</key>
 	<array>
 		<dict>
 			<key>type</key>
