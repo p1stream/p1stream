@@ -15,6 +15,7 @@
 
         CALayer *layer = [CALayer layer];
         layer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
+        layer.opaque = TRUE;
 
         self.layer = layer;
         self.wantsLayer = TRUE;
@@ -30,6 +31,16 @@
         CFRelease(_colorSpace);
         _colorSpace = NULL;
     }
+}
+
+- (BOOL)isOpaque
+{
+    return TRUE;
+}
+
+- (BOOL)mouseDownCanMoveWindow
+{
+    return TRUE;
 }
 
 - (P1Context *)context

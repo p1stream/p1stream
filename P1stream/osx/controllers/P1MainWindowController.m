@@ -10,6 +10,8 @@
 
 - (void)windowDidLoad
 {
+    self.window.movableByWindowBackground = TRUE;
+
     [self.window addObserver:self
                   forKeyPath:@"visible"
                      options:0

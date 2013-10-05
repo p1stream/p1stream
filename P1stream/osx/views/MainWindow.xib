@@ -36,7 +36,7 @@
                     <constraint firstAttribute="trailing" secondItem="5" secondAttribute="trailing" id="F1k-iy-iSo"/>
                 </constraints>
             </view>
-            <toolbar key="toolbar" implicitIdentifier="2B265EE7-5522-4A6C-86FB-77B6A8F57BF2" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="regular" id="0a1-Na-Kid">
+            <toolbar key="toolbar" implicitIdentifier="2B265EE7-5522-4A6C-86FB-77B6A8F57BF2" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="0a1-Na-Kid">
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="A0E1261C-1633-4FD7-AC5A-47F1FEE8707F" label="Connect" paletteLabel="Connect" image="NSRightFacingTriangleTemplate" id="278-ht-XF2">
                         <nil key="toolTip"/>
