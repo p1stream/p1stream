@@ -469,14 +469,25 @@ static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     // Determine which queue to use.
     P1PacketQueue *q;
     switch (pkt->m_packetType) {
-        case RTMP_PACKET_TYPE_AUDIO: q = &connf->audio_queue; break;
-        case RTMP_PACKET_TYPE_VIDEO: q = &connf->video_queue; break;
+        case RTMP_PACKET_TYPE_AUDIO:
+            q = &connf->audio_queue;
+            if (q->length == UINT8_MAX) {
+                if (connf->video_queue.length == 0)
+                    goto fail_video_lag;
+                else
+                    goto fail_conn_lag;
+            }
+            break;
+        case RTMP_PACKET_TYPE_VIDEO:
+            q = &connf->video_queue;
+            if (q->length == UINT8_MAX) {
+                if (connf->audio_queue.length == 0)
+                    goto fail_audio_lag;
+                else
+                    goto fail_conn_lag;
+            }
+            break;
         default: abort();
-    }
-    if (q->length == UINT8_MAX) {
-        free(pkt);
-        p1_log(connobj, P1_LOG_WARNING, "Packet queue full, dropping packet!");
-        return false;
     }
 
     // Set timestamp, if one was given.
@@ -501,6 +512,22 @@ static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
     p1_conn_signal(connf);
 
     return true;
+
+fail_audio_lag:
+    p1_log(connobj, P1_LOG_WARNING, "Audio stream lagging, dropping packet!");
+    goto fail;
+
+fail_video_lag:
+    p1_log(connobj, P1_LOG_WARNING, "Video stream lagging, dropping packet!");
+    goto fail;
+
+fail_conn_lag:
+    p1_log(connobj, P1_LOG_WARNING, "Connection lagging, dropping packet!");
+    goto fail;
+
+fail:
+    free(pkt);
+    return false;
 }
 
 
