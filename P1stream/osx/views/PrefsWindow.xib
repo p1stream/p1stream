@@ -50,6 +50,9 @@
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
+                                            <connections>
+                                                <binding destination="Caf-v7-l2A" name="value" keyPath="values.url" id="vAs-NT-0ju"/>
+                                            </connections>
                                         </textField>
                                     </subviews>
                                     <constraints>
@@ -87,6 +90,34 @@
                 <outlet property="delegate" destination="-2" id="jY5-0z-3H2"/>
             </connections>
         </window>
+        <userDefaultsController representsSharedInstance="YES" id="Caf-v7-l2A"/>
+        <arrayController id="J9Q-Ni-a3y" userLabel="Audio Sources Controller">
+            <connections>
+                <binding destination="Caf-v7-l2A" name="contentArray" keyPath="values.audio-sources" id="11f-eV-hzi">
+                    <dictionary key="options">
+                        <bool key="NSHandlesContentAsCompoundValue" value="YES"/>
+                    </dictionary>
+                </binding>
+            </connections>
+        </arrayController>
+        <objectController id="BIL-QI-M0g" userLabel="Video Clock Controller">
+            <connections>
+                <binding destination="Caf-v7-l2A" name="contentObject" keyPath="values.video-clock" id="qJv-tl-Kqo">
+                    <dictionary key="options">
+                        <bool key="NSHandlesContentAsCompoundValue" value="YES"/>
+                    </dictionary>
+                </binding>
+            </connections>
+        </objectController>
+        <arrayController id="3iF-ai-XG6" userLabel="Video Sources Controller">
+            <connections>
+                <binding destination="Caf-v7-l2A" name="contentArray" keyPath="values.video-sources" id="8ny-Ga-8Ff">
+                    <dictionary key="options">
+                        <bool key="NSHandlesContentAsCompoundValue" value="YES"/>
+                    </dictionary>
+                </binding>
+            </connections>
+        </arrayController>
     </objects>
     <resources>
         <image name="NSNetwork" width="32" height="32"/>
