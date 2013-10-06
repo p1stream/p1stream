@@ -546,6 +546,7 @@ static void *p1_conn_main(void *data)
 {
     P1ConnectionFull *connf = (P1ConnectionFull *) data;
     P1Object *connobj = (P1Object *) data;
+    char url_copy[2048];
     RTMP *r;
     int ret;
 
@@ -569,7 +570,8 @@ static void *p1_conn_main(void *data)
 
     RTMP_Init(r);
 
-    ret = RTMP_SetupURL(r, connf->url);
+    strcpy(url_copy, connf->url);
+    ret = RTMP_SetupURL(r, url_copy);
     if (!ret) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to parse URL.");
         goto fail_rtmp;
