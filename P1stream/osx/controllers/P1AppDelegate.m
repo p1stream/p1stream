@@ -5,9 +5,8 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
     // Register config defaults
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults registerDefaults:@{
         @"url": @"rtmp://localhost/app/test",
         @"audio-sources": @[
@@ -27,6 +26,9 @@
             }
         ]
     }];
+
+    NSUserDefaultsController *defaultsController = [NSUserDefaultsController sharedUserDefaultsController];
+    defaultsController.appliesImmediately = FALSE;
 
     // Create context.
     _contextModel = [[P1ContextModel alloc] init];

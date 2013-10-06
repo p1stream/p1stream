@@ -13,9 +13,22 @@
     _toolbar.selectedItemIdentifier = @"P1ConnectionPage";
 }
 
-- (IBAction)dummy:(NSToolbarItem *)item
+- (void)windowWillClose:(NSNotification *)notification
 {
-    // This is apparently needed to make items clickable.
+    if (_userDefaultsController.hasUnappliedChanges)
+        [_userDefaultsController revert:nil];
+}
+
+- (IBAction)dummy:(id)sender
+{
+    // This is apparently needed to make toolbar items clickable.
+}
+
+- (IBAction)applySettings:(id)sender
+{
+    [_userDefaultsController save:sender];
+
+    // FIXME: Apply defaults to context.
 }
 
 @end

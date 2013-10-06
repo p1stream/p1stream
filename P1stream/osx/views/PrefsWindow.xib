@@ -9,6 +9,7 @@
             <connections>
                 <outlet property="tabView" destination="X47-uQ-wiY" id="HFd-yP-j1B"/>
                 <outlet property="toolbar" destination="FzX-5z-Au1" id="lSe-bY-xbL"/>
+                <outlet property="userDefaultsController" destination="Caf-v7-l2A" id="u8u-LX-Wzh"/>
                 <outlet property="window" destination="1" id="z93-ZD-cJu"/>
             </connections>
         </customObject>
@@ -24,17 +25,17 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView drawsBackground="NO" type="noTabsNoBorder" translatesAutoresizingMaskIntoConstraints="NO" id="X47-uQ-wiY">
-                        <rect key="frame" x="-1" y="0.0" width="602" height="270"/>
+                        <rect key="frame" x="0.0" y="80" width="600" height="190"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="Connection" identifier="P1ConnectionPage" id="50p-fa-hDj">
                                 <view key="view" id="FVI-2I-alQ">
-                                    <rect key="frame" x="0.0" y="0.0" width="602" height="270"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="190"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="K5a-ad-Tvy">
-                                            <rect key="frame" x="17" y="230" width="120" height="17"/>
+                                            <rect key="frame" x="17" y="150" width="120" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Stream RTMP URL:" id="QTy-Ph-F8F">
                                                 <font key="font" metaFont="system"/>
@@ -43,7 +44,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nG8-4p-DyG">
-                                            <rect key="frame" x="142" y="228" width="440" height="22"/>
+                                            <rect key="frame" x="142" y="148" width="438" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="mSB-H1-r5e">
                                                 <font key="font" metaFont="system"/>
@@ -51,7 +52,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Caf-v7-l2A" name="value" keyPath="values.url" id="vAs-NT-0ju"/>
+                                                <binding destination="Caf-v7-l2A" name="value" keyPath="values.url" id="gRJ-Vz-fP2"/>
                                             </connections>
                                         </textField>
                                     </subviews>
@@ -69,12 +70,40 @@
                             <binding destination="-2" name="selectedIdentifier" keyPath="toolbar.selectedItemIdentifier" id="RQM-Es-JBP"/>
                         </connections>
                     </tabView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4U5-fC-Aes">
+                        <rect key="frame" x="510" y="13" width="76" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FOv-OG-4Pl">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="applySettings:" target="-2" id="zok-vF-FOy"/>
+                            <binding destination="Caf-v7-l2A" name="enabled" keyPath="hasUnappliedChanges" id="lnL-hl-Xep"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DCh-nM-B7A">
+                        <rect key="frame" x="430" y="13" width="80" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Revert" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hug-3r-PsV">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="revert:" target="Caf-v7-l2A" id="xvC-Tb-Dhx"/>
+                            <binding destination="Caf-v7-l2A" name="enabled" keyPath="hasUnappliedChanges" id="HvL-YM-ILy"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="trailing" secondItem="X47-uQ-wiY" secondAttribute="trailing" constant="-1" id="7tC-C8-KbY"/>
-                    <constraint firstItem="X47-uQ-wiY" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="-1" id="BkI-Gx-x9Y"/>
+                    <constraint firstAttribute="trailing" secondItem="X47-uQ-wiY" secondAttribute="trailing" id="7tC-C8-KbY"/>
+                    <constraint firstItem="X47-uQ-wiY" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="BkI-Gx-x9Y"/>
+                    <constraint firstAttribute="trailing" secondItem="4U5-fC-Aes" secondAttribute="trailing" constant="20" symbolic="YES" id="FKS-qK-9xE"/>
                     <constraint firstItem="X47-uQ-wiY" firstAttribute="top" secondItem="2" secondAttribute="top" id="PWG-9h-NpI"/>
-                    <constraint firstAttribute="bottom" secondItem="X47-uQ-wiY" secondAttribute="bottom" id="ni3-QS-rmD"/>
+                    <constraint firstItem="4U5-fC-Aes" firstAttribute="baseline" secondItem="DCh-nM-B7A" secondAttribute="baseline" id="dMC-Fp-xhz"/>
+                    <constraint firstItem="4U5-fC-Aes" firstAttribute="leading" secondItem="DCh-nM-B7A" secondAttribute="trailing" constant="12" symbolic="YES" id="lQV-An-IUj"/>
+                    <constraint firstAttribute="bottom" secondItem="X47-uQ-wiY" secondAttribute="bottom" constant="80" id="ni3-QS-rmD"/>
+                    <constraint firstAttribute="bottom" secondItem="4U5-fC-Aes" secondAttribute="bottom" constant="20" symbolic="YES" id="rQo-gh-QPC"/>
                 </constraints>
             </view>
             <toolbar key="toolbar" implicitIdentifier="D40664B6-B1BD-4DD5-A06A-265607962A33" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconAndLabel" sizeMode="regular" id="FzX-5z-Au1">
