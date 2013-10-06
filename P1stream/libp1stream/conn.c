@@ -114,8 +114,10 @@ void p1_conn_destroy(P1ConnectionFull *connf)
 
 void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
 {
-    x264_param_t *params = &connf->video_params;
-    char tmp[128];
+    x264_param_t *vp = &connf->video_params;
+    char s_tmp[128];
+    int i_tmp;
+    float f_tmp;
 
     x264_param_default(&connf->video_params);
 
@@ -124,18 +126,31 @@ void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
 
     // x264 already logs errors, except for x264_param_parse.
 
-    if (cfg->get_string(cfg, "x264-preset", tmp, sizeof(tmp)))
-        x264_param_default_preset(params, tmp, NULL);
+    // Apply presets.
+    if (cfg->get_string(cfg, "x264-preset", s_tmp, sizeof(s_tmp)))
+        x264_param_default_preset(vp, s_tmp, NULL);
+    if (cfg->get_string(cfg, "x264-tune", s_tmp, sizeof(s_tmp)))
+        x264_param_default_preset(vp, NULL, s_tmp);
 
-    if (cfg->get_string(cfg, "x264-tune", tmp, sizeof(tmp)))
-        x264_param_default_preset(params, NULL, tmp);
+    // For convenience, we provide some short-hands.
+    if (cfg->get_int(cfg, "x264-bitrate", &i_tmp)) {
+        vp->rc.i_rc_method = X264_RC_ABR;
+        vp->rc.i_bitrate = i_tmp;
+        vp->rc.i_vbv_max_bitrate = i_tmp;
+        vp->rc.i_vbv_buffer_size = i_tmp;
+    }
+    if (cfg->get_float(cfg, "x264-keyint-sec", &f_tmp))
+        connf->keyint_sec = f_tmp;
+    else
+        connf->keyint_sec = 0;
 
-    cfg->each_string(cfg, "x264-", p1_conn_parse_x264_param, connf);
+    // Specific user overrides.
+    cfg->each_string(cfg, "x264-x-", p1_conn_parse_x264_param, connf);
 
-    x264_param_apply_fastfirstpass(params);
-
-    if (cfg->get_string(cfg, "x264-profile", tmp, sizeof(tmp)))
-        x264_param_apply_profile(params, tmp);
+    // Apply presets.
+    x264_param_apply_fastfirstpass(vp);
+    if (cfg->get_string(cfg, "x264-profile", s_tmp, sizeof(s_tmp)))
+        x264_param_apply_profile(vp, s_tmp);
 }
 
 static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, const char *val, void *data)
@@ -144,12 +159,7 @@ static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, const char 
     P1ConnectionFull *connf = (P1ConnectionFull *) data;
     int ret;
 
-    if (strcmp(key, "x264-preset") == 0 ||
-        strcmp(key, "x264-profile") == 0 ||
-        strcmp(key, "x264-tune") == 0)
-        return true;
-
-    ret = x264_param_parse(&connf->video_params, key + 5, val);
+    ret = x264_param_parse(&connf->video_params, key + 7, val);
     if (ret != 0) {
         if (ret == X264_PARAM_BAD_NAME)
             p1_log(connobj, P1_LOG_ERROR, "Invalid x264 parameter name '%s'", key);
@@ -804,6 +814,11 @@ static bool p1_conn_start_video(P1ConnectionFull *connf)
 
     vp->i_fps_num = vclock->fps_num;
     vp->i_fps_den = vclock->fps_den;
+
+    if (connf->keyint_sec) {
+        double keyint = vclock->fps_num * connf->keyint_sec / vclock->fps_den;
+        vp->i_keyint_max = (int) round(keyint);
+    }
 
     connf->video_enc = x264_encoder_open(vp);
     if (connf->video_enc == NULL) {

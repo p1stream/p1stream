@@ -175,6 +175,8 @@ struct _P1Config {
 
     // Copy a string value to the output buffer.
     bool (*get_string)(P1Config *cfg, const char *key, char *buf, size_t bufsize);
+    // Read an integer value.
+    bool (*get_int)(P1Config *cfg, const char *key, int *out);
     // Read a float value.
     bool (*get_float)(P1Config *cfg, const char *key, float *out);
     // Read a boolean value.

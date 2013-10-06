@@ -4,19 +4,15 @@
 <dict>
 	<key>url</key>
 	<string>rtmp://localhost/app/test</string>
+	<key>x264-bitrate</key>
+	<integer>4096</integer>
+	<key>x264-keyint-sec</key>
+	<integer>2</integer>
 	<key>x264-profile</key>
 	<string>baseline</string>
 	<key>x264-preset</key>
 	<string>veryfast</string>
-	<key>x264-keyint</key>
-	<string>60</string>
-	<key>x264-bitrate</key>
-	<string>4096</string>
-	<key>x264-vbv-maxrate</key>
-	<string>4096</string>
-	<key>x264-vbv-bufsize</key>
-	<string>4096</string>
-	<key>x264-nal-hrd</key>
+	<key>x264-x-nal-hrd</key>
 	<string>cbr</string>
 	<key>audio-sources</key>
 	<array>

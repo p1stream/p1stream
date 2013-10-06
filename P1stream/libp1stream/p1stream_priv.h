@@ -136,6 +136,7 @@ struct _P1ConnectionFull {
     // Video encoding
     pthread_mutex_t video_lock;
     x264_param_t video_params;
+    float keyint_sec;
     x264_t *video_enc;
 
     // Audio encoding
