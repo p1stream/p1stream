@@ -9,6 +9,11 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults registerDefaults:@{
         @"url": @"rtmp://localhost/app/test",
+        @"x264-bitrate": @4096,
+        @"x264-keyint-sec": @2,
+        @"x264-profile": @"baseline",
+        @"x264-preset": @"veryfast",
+        @"x264-x-nal-hrd": @"cbr",
         @"audio-sources": @[
             @{
                 @"name": @"Audio input source",

@@ -35,8 +35,11 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="K5a-ad-Tvy">
-                                            <rect key="frame" x="17" y="150" width="120" height="17"/>
+                                            <rect key="frame" x="17" y="150" width="126" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="120" id="kmt-ud-E8Z"/>
+                                            </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Stream RTMP URL:" id="QTy-Ph-F8F">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -44,7 +47,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nG8-4p-DyG">
-                                            <rect key="frame" x="142" y="148" width="438" height="22"/>
+                                            <rect key="frame" x="148" y="148" width="432" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="mSB-H1-r5e">
                                                 <font key="font" metaFont="system"/>
@@ -55,13 +58,168 @@
                                                 <binding destination="Caf-v7-l2A" name="value" keyPath="values.url" id="gRJ-Vz-fP2"/>
                                             </connections>
                                         </textField>
+                                        <box autoresizesSubviews="NO" verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Ce8-gS-2o5">
+                                            <rect key="frame" x="20" y="137" width="560" height="5"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ssJ-aM-WFp">
+                                            <rect key="frame" x="17" y="111" width="126" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="120" id="2FO-js-AWR"/>
+                                            </constraints>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Video bitrate:" id="eJh-Xi-WXg">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Fmr-hg-PYb">
+                                            <rect key="frame" x="148" y="109" width="96" height="22"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="96" id="2Yj-db-8Gb"/>
+                                            </constraints>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="GeF-bj-3Vg">
+                                                <numberFormatter key="formatter" formatterBehavior="default10_4" positiveFormat="#,##0.###" negativeFormat="#,##0.###" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="309" minimumFractionDigits="0" maximumFractionDigits="3" id="CT3-Xp-MMS">
+                                                    <real key="roundingIncrement" value="0.0"/>
+                                                    <metadata>
+                                                        <bool key="localizesFormat" value="YES"/>
+                                                    </metadata>
+                                                </numberFormatter>
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                            <connections>
+                                                <binding destination="Caf-v7-l2A" name="value" keyPath="values.x264-bitrate" id="9XU-Af-5SQ"/>
+                                            </connections>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sWG-pt-N9l">
+                                            <rect key="frame" x="17" y="83" width="126" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="120" id="Duh-uW-j1s"/>
+                                            </constraints>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="H.264 profile:" id="185-cc-qd8">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pIJ-aY-6ZW">
+                                            <rect key="frame" x="146" y="77" width="125" height="26"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="120" id="o4g-uK-R5g"/>
+                                            </constraints>
+                                            <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="vFA-Fz-4DH">
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="menu"/>
+                                                <menu key="menu" title="H.264 profiles" id="27E-WR-WGf"/>
+                                            </popUpButtonCell>
+                                            <connections>
+                                                <binding destination="-2" name="contentValues" keyPath="profileNames" id="nfk-zn-WYj">
+                                                    <dictionary key="options">
+                                                        <bool key="NSInsertsNullPlaceholder" value="YES"/>
+                                                    </dictionary>
+                                                </binding>
+                                                <binding destination="Caf-v7-l2A" name="selectedValue" keyPath="values.x264-profile" previousBinding="nfk-zn-WYj" id="pxv-va-qje"/>
+                                            </connections>
+                                        </popUpButton>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Tf8-He-iRF">
+                                            <rect key="frame" x="17" y="54" width="126" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="120" id="Lzt-6L-sd6"/>
+                                            </constraints>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Encoder preset:" id="bRz-gI-y0I">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="36j-tI-VRm">
+                                            <rect key="frame" x="146" y="48" width="125" height="26"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="120" id="6BZ-RY-Epd"/>
+                                            </constraints>
+                                            <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="GsX-d3-SGc">
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="menu"/>
+                                                <menu key="menu" title="OtherViews" id="l58-1e-2LA"/>
+                                            </popUpButtonCell>
+                                            <connections>
+                                                <binding destination="-2" name="contentValues" keyPath="presetNames" id="JAs-AV-eZP">
+                                                    <dictionary key="options">
+                                                        <bool key="NSInsertsNullPlaceholder" value="YES"/>
+                                                    </dictionary>
+                                                </binding>
+                                                <binding destination="Caf-v7-l2A" name="selectedValue" keyPath="values.x264-preset" previousBinding="JAs-AV-eZP" id="eFk-uy-vnf"/>
+                                            </connections>
+                                        </popUpButton>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cKG-LJ-n1x">
+                                            <rect key="frame" x="17" y="25" width="126" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="120" id="l6v-Ah-0AZ"/>
+                                            </constraints>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Encoder tuning:" id="Sjh-iO-0rY">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lYB-TS-e06">
+                                            <rect key="frame" x="146" y="19" width="125" height="26"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="120" id="wyt-iF-TQW"/>
+                                            </constraints>
+                                            <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="nw0-Qh-xJg">
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="menu"/>
+                                                <menu key="menu" title="OtherViews" id="q5O-b9-9FM"/>
+                                            </popUpButtonCell>
+                                            <connections>
+                                                <binding destination="-2" name="contentValues" keyPath="tuneNames" id="JOe-vQ-T7M">
+                                                    <dictionary key="options">
+                                                        <bool key="NSInsertsNullPlaceholder" value="YES"/>
+                                                    </dictionary>
+                                                </binding>
+                                                <binding destination="Caf-v7-l2A" name="selectedValue" keyPath="values.x264-tune" previousBinding="JOe-vQ-T7M" id="2SH-b7-URj"/>
+                                            </connections>
+                                        </popUpButton>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="nG8-4p-DyG" firstAttribute="leading" secondItem="K5a-ad-Tvy" secondAttribute="trailing" constant="8" symbolic="YES" id="6O1-OA-Ppo"/>
+                                        <constraint firstItem="36j-tI-VRm" firstAttribute="top" secondItem="pIJ-aY-6ZW" secondAttribute="bottom" constant="8" id="773-99-AXM"/>
+                                        <constraint firstAttribute="trailing" secondItem="Ce8-gS-2o5" secondAttribute="trailing" constant="20" symbolic="YES" id="8FD-1J-SCG"/>
+                                        <constraint firstItem="ssJ-aM-WFp" firstAttribute="leading" secondItem="FVI-2I-alQ" secondAttribute="leading" constant="20" symbolic="YES" id="HXt-J8-lW6"/>
+                                        <constraint firstItem="lYB-TS-e06" firstAttribute="top" secondItem="36j-tI-VRm" secondAttribute="bottom" constant="8" id="MGN-SI-vgY"/>
+                                        <constraint firstItem="Ce8-gS-2o5" firstAttribute="leading" secondItem="FVI-2I-alQ" secondAttribute="leading" constant="20" symbolic="YES" id="NGm-R1-sKI"/>
+                                        <constraint firstItem="lYB-TS-e06" firstAttribute="baseline" secondItem="cKG-LJ-n1x" secondAttribute="baseline" id="OdB-8e-AKE"/>
                                         <constraint firstAttribute="trailing" secondItem="nG8-4p-DyG" secondAttribute="trailing" constant="20" symbolic="YES" id="S00-2n-lGA"/>
+                                        <constraint firstItem="lYB-TS-e06" firstAttribute="leading" secondItem="cKG-LJ-n1x" secondAttribute="trailing" constant="8" symbolic="YES" id="Zim-Mp-Tm1"/>
+                                        <constraint firstItem="sWG-pt-N9l" firstAttribute="baseline" secondItem="pIJ-aY-6ZW" secondAttribute="baseline" id="ePV-vq-Fsb"/>
+                                        <constraint firstItem="sWG-pt-N9l" firstAttribute="leading" secondItem="FVI-2I-alQ" secondAttribute="leading" constant="20" symbolic="YES" id="evu-ya-dxN"/>
+                                        <constraint firstItem="pIJ-aY-6ZW" firstAttribute="top" secondItem="Fmr-hg-PYb" secondAttribute="bottom" constant="8" id="fOG-6m-s8f"/>
                                         <constraint firstItem="nG8-4p-DyG" firstAttribute="top" secondItem="FVI-2I-alQ" secondAttribute="top" constant="20" symbolic="YES" id="jUm-vB-uQA"/>
+                                        <constraint firstItem="cKG-LJ-n1x" firstAttribute="leading" secondItem="FVI-2I-alQ" secondAttribute="leading" constant="20" symbolic="YES" id="nNG-jE-o9x"/>
+                                        <constraint firstItem="36j-tI-VRm" firstAttribute="leading" secondItem="Tf8-He-iRF" secondAttribute="trailing" constant="8" symbolic="YES" id="ncW-qx-TNN"/>
                                         <constraint firstItem="nG8-4p-DyG" firstAttribute="baseline" secondItem="K5a-ad-Tvy" secondAttribute="baseline" id="tGR-ee-QJC"/>
+                                        <constraint firstItem="pIJ-aY-6ZW" firstAttribute="leading" secondItem="sWG-pt-N9l" secondAttribute="trailing" constant="8" symbolic="YES" id="u0W-4C-6kX"/>
                                         <constraint firstItem="K5a-ad-Tvy" firstAttribute="leading" secondItem="FVI-2I-alQ" secondAttribute="leading" constant="20" symbolic="YES" id="uIB-52-MNs"/>
+                                        <constraint firstItem="Tf8-He-iRF" firstAttribute="baseline" secondItem="36j-tI-VRm" secondAttribute="baseline" id="vWm-Xf-hta"/>
+                                        <constraint firstItem="Fmr-hg-PYb" firstAttribute="leading" secondItem="ssJ-aM-WFp" secondAttribute="trailing" constant="8" symbolic="YES" id="wP7-mX-AFL"/>
+                                        <constraint firstItem="Ce8-gS-2o5" firstAttribute="top" secondItem="nG8-4p-DyG" secondAttribute="bottom" constant="8" id="yVg-6C-oYd"/>
+                                        <constraint firstItem="Tf8-He-iRF" firstAttribute="leading" secondItem="FVI-2I-alQ" secondAttribute="leading" constant="20" symbolic="YES" id="yvK-rq-EMg"/>
+                                        <constraint firstItem="Fmr-hg-PYb" firstAttribute="top" secondItem="Ce8-gS-2o5" secondAttribute="bottom" constant="8" id="zQh-rI-bRn"/>
+                                        <constraint firstItem="Fmr-hg-PYb" firstAttribute="baseline" secondItem="ssJ-aM-WFp" secondAttribute="baseline" id="zmb-MW-6Sk"/>
                                     </constraints>
                                 </view>
                             </tabViewItem>
