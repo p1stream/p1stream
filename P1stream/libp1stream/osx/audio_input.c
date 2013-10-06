@@ -151,7 +151,6 @@ static void p1_input_audio_source_stop(P1Plugin *pel)
     if (ret != noErr) {
         p1_log(obj, P1_LOG_ERROR, "Failed to stop audio queue");
         p1_log_os_status(obj, P1_LOG_ERROR, ret);
-
     }
 }
 
