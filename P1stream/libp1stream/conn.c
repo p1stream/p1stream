@@ -180,7 +180,8 @@ void p1_conn_start(P1ConnectionFull *connf)
     int ret = pthread_create(&connf->thread, NULL, p1_conn_main, connf);
     if (ret != 0) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to start connection thread: %s", strerror(ret));
-        p1_object_set_state(connobj, P1_STATE_HALTED);
+        connobj->flags |= P1_FLAG_ERROR;
+        p1_object_set_state(connobj, P1_STATE_IDLE);
     }
 }
 
@@ -330,7 +331,8 @@ fail:
 
     p1_object_lock(connobj);
     if (connobj->state == P1_STATE_RUNNING) {
-        p1_object_set_state(connobj, P1_STATE_HALTING);
+        connobj->flags |= P1_FLAG_ERROR;
+        p1_object_set_state(connobj, P1_STATE_STOPPING);
         p1_conn_signal(connf);
     }
     p1_object_unlock(connobj);
@@ -437,7 +439,8 @@ fail:
 
     p1_object_lock(connobj);
     if (connobj->state == P1_STATE_RUNNING) {
-        p1_object_set_state(connobj, P1_STATE_HALTING);
+        connobj->flags |= P1_FLAG_ERROR;
+        p1_object_set_state(connobj, P1_STATE_STOPPING);
         p1_conn_signal(connf);
     }
     p1_object_unlock(connobj);
@@ -553,10 +556,15 @@ static void *p1_conn_main(void *data)
     p1_object_lock(connobj);
     r = &connf->rtmp;
 
-    if (!p1_conn_start_audio(connf))
-        goto fail_audio;
-    if (!p1_conn_start_video(connf))
-        goto fail_video;
+    if (!p1_conn_start_audio(connf)) {
+        connobj->flags |= P1_FLAG_ERROR;
+        goto cleanup;
+    }
+
+    if (!p1_conn_start_video(connf)) {
+        connobj->flags |= P1_FLAG_ERROR;
+        goto cleanup_audio;
+    }
 
     // Connection setup
     if (current_conn == NULL) {
@@ -574,7 +582,8 @@ static void *p1_conn_main(void *data)
     ret = RTMP_SetupURL(r, url_copy);
     if (!ret) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to parse URL.");
-        goto fail_rtmp;
+        connobj->flags |= P1_FLAG_ERROR;
+        goto cleanup_video;
     }
 
     RTMP_EnableWrite(r);
@@ -596,15 +605,17 @@ static void *p1_conn_main(void *data)
     }
     if (!ret) {
         p1_log(connobj, P1_LOG_ERROR, "Connection failed.");
-        goto fail_rtmp;
+        connobj->flags |= P1_FLAG_ERROR;
+        goto cleanup_video;
     }
     p1_log(connobj, P1_LOG_INFO, "Connected.");
 
     // Queue configuration packets
-    if (!p1_conn_stream_audio_config(connf))
-        goto fail_rtmp;
-    if (!p1_conn_stream_video_config(connf))
-        goto fail_rtmp;
+    if (!p1_conn_stream_audio_config(connf)
+        || !p1_conn_stream_video_config(connf)) {
+        connobj->flags |= P1_FLAG_ERROR;
+        goto cleanup_video;
+    }
 
     // Connection event loop
     connf->start = p1_get_time();
@@ -614,14 +625,17 @@ static void *p1_conn_main(void *data)
         ret = pthread_cond_wait(&connf->cond, &connobj->lock);
         if (ret != 0) {
             p1_log(connobj, P1_LOG_ERROR, "Failed to wait on condition: %s", strerror(ret));
-            goto fail_rtmp;
+            connobj->flags |= P1_FLAG_ERROR;
+            goto cleanup_video;
         }
 
         if (connobj->state != P1_STATE_RUNNING)
             break;
 
-        if (!p1_conn_flush(connf))
-            goto fail_rtmp;
+        if (!p1_conn_flush(connf)) {
+            connobj->flags |= P1_FLAG_ERROR;
+            goto cleanup_video;
+        }
 
     } while (connobj->state == P1_STATE_RUNNING);
     p1_log(connobj, P1_LOG_INFO, "Disconnected.");
@@ -640,26 +654,11 @@ cleanup:
     p1_conn_clear(&connf->video_queue);
     p1_conn_clear(&connf->audio_queue);
 
-    if (connobj->state == P1_STATE_STOPPING)
-        p1_object_set_state(connobj, P1_STATE_IDLE);
-    else
-        p1_object_set_state(connobj, P1_STATE_HALTED);
+    p1_object_set_state(connobj, P1_STATE_IDLE);
 
     p1_object_unlock(connobj);
 
     return NULL;
-
-fail_rtmp:
-    p1_object_set_state(connobj, P1_STATE_HALTING);
-    goto cleanup_video;
-
-fail_video:
-    p1_object_set_state(connobj, P1_STATE_HALTING);
-    goto cleanup_audio;
-
-fail_audio:
-    p1_object_set_state(connobj, P1_STATE_HALTING);
-    goto cleanup;
 }
 
 // Flush as many queued packets as we can to the connection.

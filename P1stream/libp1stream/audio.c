@@ -76,7 +76,8 @@ void p1_audio_start(P1AudioFull *audiof)
     int ret = pthread_create(&audiof->thread, NULL, p1_audio_main, audiof);
     if (ret != 0) {
         p1_log(audioobj, P1_LOG_ERROR, "Failed to start audio mixer thread: %s", strerror(ret));
-        p1_object_set_state(audioobj, P1_STATE_HALTED);
+        audioobj->flags |= P1_FLAG_ERROR;
+        p1_object_set_state(audioobj, P1_STATE_IDLE);
     }
 }
 
@@ -181,14 +182,15 @@ static void *p1_audio_main(void *data)
     audiof->mix = calloc(buf_samples, sizeof(float));
     if (audiof->mix == NULL) {
         p1_log(audioobj, P1_LOG_ERROR, "Failed to allocate audio mix buffer");
-        goto fail_mix;
+        audioobj->flags |= P1_FLAG_ERROR;
+        goto cleanup;
     }
 
     audiof->out = malloc(buf_samples * sizeof(int16_t));
     if (audiof->out == NULL) {
         p1_log(audioobj, P1_LOG_ERROR, "Failed to allocate audio output buffer");
-        p1_object_set_state(audioobj, P1_STATE_HALTING);
-        goto fail_out;
+        audioobj->flags |= P1_FLAG_ERROR;
+        goto cleanup_mix;
     }
 
     audiof->mix_time = p1_get_time() - p1_audio_samples_to_time(ctxf, buf_center);
@@ -203,7 +205,8 @@ static void *p1_audio_main(void *data)
         ret = gettimeofday(&delay_end, NULL);
         if (ret != 0) {
             p1_log(audioobj, P1_LOG_ERROR, "Failed to get time: %s", strerror(errno));
-            goto fail_loop;
+            audioobj->flags |= P1_FLAG_ERROR;
+            goto cleanup_out;
         }
 
         // Set the delay end time.
@@ -225,7 +228,8 @@ static void *p1_audio_main(void *data)
         }
         else if (ret != ETIMEDOUT) {
             p1_log(audioobj, P1_LOG_ERROR, "Failed to wait on condition: %s", strerror(ret));
-            goto fail_loop;
+            audioobj->flags |= P1_FLAG_ERROR;
+            goto cleanup_out;
         }
 
         // Process mixed samples up to this point.
@@ -268,26 +272,11 @@ cleanup_mix:
     free(audiof->mix);
 
 cleanup:
-    if (audioobj->state == P1_STATE_STOPPING)
-        p1_object_set_state(audioobj, P1_STATE_IDLE);
-    else
-        p1_object_set_state(audioobj, P1_STATE_HALTED);
+    p1_object_set_state(audioobj, P1_STATE_IDLE);
 
     p1_object_unlock(audioobj);
 
     return NULL;
-
-fail_loop:
-    p1_object_set_state(audioobj, P1_STATE_HALTING);
-    goto cleanup_out;
-
-fail_out:
-    p1_object_set_state(audioobj, P1_STATE_HALTING);
-    goto cleanup_mix;
-
-fail_mix:
-    p1_object_set_state(audioobj, P1_STATE_HALTING);
-    goto cleanup;
 }
 
 // Resample to the output buffer.

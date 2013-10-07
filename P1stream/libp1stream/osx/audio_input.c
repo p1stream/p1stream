@@ -174,9 +174,12 @@ static void p1_input_audio_source_halt(P1InputAudioSource *iasrc)
 {
     P1Object *obj = (P1Object *) iasrc;
 
-    p1_object_set_state(obj, P1_STATE_HALTING);
+    obj->flags |= P1_FLAG_ERROR;
+    p1_object_set_state(obj, P1_STATE_STOPPING);
+
     p1_input_audio_source_kill_session(iasrc);
-    p1_object_set_state(obj, P1_STATE_HALTED);
+
+    p1_object_set_state(obj, P1_STATE_IDLE);
 }
 
 static void p1_input_audio_source_input_callback(

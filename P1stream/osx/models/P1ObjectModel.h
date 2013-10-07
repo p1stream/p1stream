@@ -4,6 +4,7 @@
 
 @property (readonly) P1State state;
 @property P1TargetState target;
+@property (readonly) BOOL error;
 
 @property (retain) NSString *name;
 
@@ -13,7 +14,5 @@
 - (void)unlock;
 
 - (void)handleNotification:(P1Notification *)n;
-
-- (void)clearHalt;
 
 @end

@@ -76,9 +76,10 @@ static void p1_capture_video_source_start(P1Plugin *pel)
     P1Object *obj = (P1Object *) pel;
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
 
-#define P1_CVSRC_HALT {                         \
-    p1_object_set_state(obj, P1_STATE_HALTED);  \
-    return;                                     \
+#define P1_CVSRC_ERROR {                            \
+    obj->flags |= P1_FLAG_ERROR;                    \
+    p1_object_set_state(obj, P1_STATE_IDLE);        \
+    return;                                         \
 }
 
     p1_object_set_state(obj, P1_STATE_STARTING);
@@ -98,7 +99,7 @@ static void p1_capture_video_source_start(P1Plugin *pel)
 
         if (!delegate || !session || !notif_center) {
             p1_log(obj, P1_LOG_ERROR, "Failed to setup capture session");
-            P1_CVSRC_HALT;
+            P1_CVSRC_ERROR;
         }
 
         // Open the default video capture device.
@@ -108,7 +109,7 @@ static void p1_capture_video_source_start(P1Plugin *pel)
         if (!input || ![session canAddInput:input]) {
             p1_log(obj, P1_LOG_ERROR, "Failed to open capture device");
             p1_log_ns_error(obj, P1_LOG_ERROR, error);
-            P1_CVSRC_HALT;
+            P1_CVSRC_ERROR;
         }
         [session addInput:input];
 
@@ -121,7 +122,7 @@ static void p1_capture_video_source_start(P1Plugin *pel)
         };
         if (!output || ![session canAddOutput:output]) {
             p1_log(obj, P1_LOG_ERROR, "Failed to setup capture output");
-            P1_CVSRC_HALT;
+            P1_CVSRC_ERROR;
         }
         [session addOutput:output];
 
@@ -136,7 +137,7 @@ static void p1_capture_video_source_start(P1Plugin *pel)
     }
 
     // We may have gotten an error notification during startRunning.
-    if (obj->state != P1_STATE_HALTED)
+    if (!(obj->flags & P1_FLAG_ERROR))
         p1_object_set_state(obj, P1_STATE_RUNNING);
 
 #undef P1_CVSRC_HALT
@@ -153,8 +154,7 @@ static void p1_capture_video_source_stop(P1Plugin *pel)
         p1_capture_video_source_kill_session(cvsrc);
     }
 
-    if (obj->state != P1_STATE_HALTED)
-        p1_object_set_state(obj, P1_STATE_IDLE);
+    p1_object_set_state(obj, P1_STATE_IDLE);
 }
 
 static bool p1_capture_video_source_frame(P1VideoSource *vsrc)
@@ -228,9 +228,13 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     CVPixelBufferRef frame = CMSampleBufferGetImageBuffer(sampleBuffer);
     if (frame == NULL) {
         p1_log(obj, P1_LOG_ERROR, "Failed to get image buffer for capture source frame");
-        p1_object_set_state(obj, P1_STATE_HALTING);
+
+        obj->flags |= P1_FLAG_ERROR;
+        p1_object_set_state(obj, P1_STATE_STOPPING);
+
         p1_capture_video_source_kill_session(cvsrc);
-        p1_object_set_state(obj, P1_STATE_HALTED);
+
+        p1_object_set_state(obj, P1_STATE_IDLE);
     }
     else {
         CFRetain(frame);
@@ -250,12 +254,12 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     NSError *err = [n.userInfo objectForKey:AVCaptureSessionErrorKey];
     p1_log_ns_error(obj, P1_LOG_ERROR, err);
 
-    if (obj->state != P1_STATE_STOPPING) {
-        p1_object_set_state(obj, P1_STATE_HALTING);
-        p1_capture_video_source_kill_session(cvsrc);
-    }
+    obj->flags |= P1_FLAG_ERROR;
+    p1_object_set_state(obj, P1_STATE_STOPPING);
 
-    p1_object_set_state(obj, P1_STATE_HALTED);
+    p1_capture_video_source_kill_session(cvsrc);
+
+    p1_object_set_state(obj, P1_STATE_IDLE);
 
     p1_object_unlock(obj);
 }

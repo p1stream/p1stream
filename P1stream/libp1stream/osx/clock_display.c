@@ -87,9 +87,13 @@ static void p1_display_video_clock_start(P1Plugin *pel)
 
 halt:
     p1_log(obj, P1_LOG_ERROR, "Failed to start display link: Core Video error %d", ret);
-    p1_object_set_state(obj, P1_STATE_HALTING);
+
+    obj->flags |= P1_FLAG_ERROR;
+    p1_object_set_state(obj, P1_STATE_STOPPING);
+
     p1_display_video_clock_kill_session(dvclock);
-    p1_object_set_state(obj, P1_STATE_HALTED);
+
+    p1_object_set_state(obj, P1_STATE_IDLE);
 }
 
 static void p1_display_video_clock_stop(P1Plugin *pel)
@@ -107,15 +111,13 @@ static void p1_display_video_clock_stop(P1Plugin *pel)
 
     if (ret != kCVReturnSuccess) {
         p1_log(obj, P1_LOG_ERROR, "Failed to stop display link: Core Video error %d", ret);
-        p1_object_set_state(obj, P1_STATE_HALTING);
+        obj->flags |= P1_FLAG_ERROR;
+        p1_object_set_state(obj, P1_STATE_STOPPING);
     }
 
     p1_display_video_clock_kill_session(dvclock);
 
-    if (obj->state == P1_STATE_HALTING)
-        p1_object_set_state(obj, P1_STATE_HALTED);
-    else
-        p1_object_set_state(obj, P1_STATE_IDLE);
+    p1_object_set_state(obj, P1_STATE_IDLE);
 }
 
 static void p1_display_video_clock_kill_session(P1DisplayVideoClock *dvclock)

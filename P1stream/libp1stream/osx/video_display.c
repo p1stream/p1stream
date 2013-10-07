@@ -127,9 +127,12 @@ static void p1_display_video_source_halt(P1DisplayVideoSource *dvsrc)
 {
     P1Object *obj = (P1Object *) dvsrc;
 
-    p1_object_set_state(obj, P1_STATE_HALTING);
+    obj->flags |= P1_FLAG_ERROR;
+    p1_object_set_state(obj, P1_STATE_STOPPING);
+
     p1_display_video_source_kill_session(dvsrc);
-    p1_object_set_state(obj, P1_STATE_HALTED);
+
+    p1_object_set_state(obj, P1_STATE_IDLE);
 }
 
 static bool p1_display_video_source_frame(P1VideoSource *vsrc)

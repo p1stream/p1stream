@@ -87,10 +87,9 @@
     // If our connection breaks, reset to idle state.
     P1ObjectModel *connectionModel = _contextModel.connectionModel;
     if (object == connectionModel && [keyPath isEqualToString:@"state"]) {
-        if (connectionModel.state == P1_STATE_HALTED) {
+        if (connectionModel.error) {
             [connectionModel lock];
             connectionModel.target = P1_TARGET_IDLE;
-            [connectionModel clearHalt];
             [connectionModel unlock];
         }
     }

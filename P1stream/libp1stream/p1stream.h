@@ -103,13 +103,7 @@ enum _P1State {
     P1_STATE_IDLE       = 0, // Initial value.
     P1_STATE_STARTING   = 1,
     P1_STATE_RUNNING    = 2,
-    P1_STATE_STOPPING   = 3,
-
-    // These are the same as stopping / idle, but for unexpected situations.
-    // No further action is taken until the situation is resolved with
-    // p1_object_clear_halt.
-    P1_STATE_HALTING    = 4,
-    P1_STATE_HALTED     = 5
+    P1_STATE_STOPPING   = 3
 };
 
 
@@ -123,6 +117,16 @@ enum _P1TargetState {
     // remove the source from the list and free it, once idle.
     P1_TARGET_REMOVE    = 2
 };
+
+
+// Additional bit flags used in object state handling.
+
+typedef uint8_t P1Flags;
+
+// The object stopped because of an error. The error state can be cleared by
+// calling p1_object_set_target with P1_TARGET_RUNNING. (Even if the object
+// already has its target state set to running.)
+#define P1_FLAG_ERROR   1
 
 
 // Notification types.
@@ -298,6 +302,8 @@ struct _P1Object {
     P1State state;
     // Target state. This field can be updated with p1_set_target.
     P1TargetState target;
+    // Additional state flags.
+    P1Flags flags;
 
     // Anything the user may want to associate with this object.
     void *user_data;
@@ -318,45 +324,31 @@ struct _P1Object {
 #define p1_object_set_state(_obj, _state) ({                    \
     P1Object *_p1_obj = (_obj);                                 \
     P1State _p1_state = (_state);                               \
-    bool _p1_changed = (_p1_obj->state != _p1_state);           \
-    if (_p1_changed) {                                          \
-        _p1_obj->state = _p1_state;                             \
-        _p1_notify((P1Notification) {                           \
-            .type = P1_NTYPE_STATE_CHANGE,                      \
-            .object = _p1_obj,                                  \
-            .state_change = {                                   \
-                .state = _p1_state                              \
-            }                                                   \
-        });                                                     \
-    }                                                           \
-    _p1_changed;                                                \
+    _p1_obj->state = _p1_state;                                 \
+    _p1_notify((P1Notification) {                               \
+        .type = P1_NTYPE_STATE_CHANGE,                          \
+        .object = _p1_obj,                                      \
+        .state_change = {                                       \
+            .state = _p1_state                                  \
+        }                                                       \
+    });                                                         \
 })
 
-// This method should be used to change the target field.
+// This method should be used to change the target field. When setting the
+// target to running, this will also clear the error flag.
 #define p1_object_set_target(_obj, _target) ({                  \
     P1Object *_p1_obj = (_obj);                                 \
     P1TargetState _p1_target = (_target);                       \
-    bool _p1_changed = (_p1_obj->target != _p1_target);         \
-    if (_p1_changed) {                                          \
-        _p1_obj->target = _p1_target;                           \
-        _p1_notify((P1Notification) {                           \
-            .type = P1_NTYPE_TARGET_CHANGE,                     \
-            .object = _p1_obj,                                  \
-            .target_change = {                                  \
-                .target = _p1_target                            \
-            }                                                   \
-        });                                                     \
-    }                                                           \
-    _p1_changed;                                                \
-})
-
-// Clear a situation that has caused the object to go into a halt state.
-#define p1_object_clear_halt(_obj) ({                           \
-    P1Object *_p1_objx = (_obj);                                \
-    bool _p1_is_halted = (_p1_objx->state == P1_STATE_HALTED);  \
-    if (_p1_is_halted)                                          \
-        p1_object_set_state(_p1_objx, P1_STATE_IDLE);           \
-    _p1_is_halted;                                              \
+    if (_p1_target == P1_TARGET_RUNNING)                        \
+        _p1_obj->flags &= ~P1_FLAG_ERROR;                       \
+    _p1_obj->target = _p1_target;                               \
+    _p1_notify((P1Notification) {                               \
+        .type = P1_NTYPE_TARGET_CHANGE,                         \
+        .object = _p1_obj,                                      \
+        .target_change = {                                      \
+            .target = _p1_target                                \
+        }                                                       \
+    });                                                         \
 })
 
 

@@ -263,7 +263,8 @@ fail_platform:
     p1_video_destroy_platform(videof);
 
 fail:
-    p1_object_set_state(videoobj, P1_STATE_HALTED);
+    videoobj->flags |= P1_FLAG_ERROR;
+    p1_object_set_state(videoobj, P1_STATE_IDLE);
 }
 
 void p1_video_stop(P1VideoFull *videof)
@@ -271,7 +272,9 @@ void p1_video_stop(P1VideoFull *videof)
     P1Object *videoobj = (P1Object *) videof;
 
     p1_object_set_state(videoobj, P1_STATE_STOPPING);
+
     p1_video_kill_session(videof);
+
     p1_object_set_state(videoobj, P1_STATE_IDLE);
 }
 
@@ -440,9 +443,12 @@ fail_cl:
     p1_log(videoobj, P1_LOG_ERROR, "Failure during colorspace conversion: OpenCL error %d", cl_err);
 
 fail:
-    p1_object_set_state(videoobj, P1_STATE_HALTING);
+    videoobj->flags |= P1_FLAG_ERROR;
+    p1_object_set_state(videoobj, P1_STATE_STOPPING);
+
     p1_video_kill_session(videof);
-    p1_object_set_state(videoobj, P1_STATE_HALTED);
+
+    p1_object_set_state(videoobj, P1_STATE_IDLE);
 
     p1_object_unlock(videoobj);
 }

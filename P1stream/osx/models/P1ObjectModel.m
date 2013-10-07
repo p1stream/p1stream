@@ -74,7 +74,6 @@
 {
     return _object->target;
 }
-
 - (void)setTarget:(P1TargetState)target
 {
     [self lock];
@@ -83,11 +82,9 @@
 }
 
 
-- (void)clearHalt
+- (BOOL)error
 {
-    [self lock];
-    p1_object_clear_halt(_object);
-    [self unlock];
+    return _object->flags & P1_FLAG_ERROR;
 }
 
 @end

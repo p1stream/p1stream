@@ -11,7 +11,7 @@ static void p1_close_pipe(P1Object *ctxobj, int fd);
 static void p1_log_default(P1Object *obj, P1LogLevel level, const char *fmt, va_list args, void *user_data);
 static void *p1_ctrl_main(void *data);
 static bool p1_ctrl_progress(P1Context *ctx);
-static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1TargetState target, bool can_interrupt);
+static P1Action p1_ctrl_determine_action(P1Object *obj, P1TargetState target, bool can_interrupt);
 static void p1_ctrl_comm(P1ContextFull *ctxf);
 static void p1_ctrl_log_notification(P1Notification *notification);
 
@@ -535,8 +535,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
 // After an action, check if we need to wait.
 #define P1_CHECK_WAIT(_obj)                                 \
     if ((_obj)->state == P1_STATE_STARTING ||               \
-        (_obj)->state == P1_STATE_STOPPING ||               \
-        (_obj)->state == P1_STATE_HALTING)                  \
+        (_obj)->state == P1_STATE_STOPPING)                 \
         wait = true;
 
 // Common action handling for fixed elements.
@@ -568,16 +567,13 @@ static bool p1_ctrl_progress(P1Context *ctx)
         P1Object *obj = (P1Object *) vclock;
 
         p1_object_lock(obj);
+        obj->ctx = ctx;
 
         // Clock target state is tied to the context.
         obj->target = (ctxobj->state == P1_STATE_STOPPING)
                     ? P1_TARGET_IDLE : P1_TARGET_RUNNING;
 
-        P1Action action = p1_ctrl_determine_action(ctx, obj->state, obj->target, false);
-
-        if (action == P1_ACTION_START)
-            obj->ctx = ctx;
-
+        P1Action action = p1_ctrl_determine_action(obj, obj->target, false);
         P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
 
         vclock_state = obj->state;
@@ -588,7 +584,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
     // Progress video mixer.
     P1State video_state;
     {
-        P1Action action = p1_ctrl_determine_action(ctx, fixed->state, fixed->target, false);
+        P1Action action = p1_ctrl_determine_action(fixed, fixed->target, false);
         P1_RUN_ACTION(action, fixed, videof, p1_video_start, p1_video_stop);
 
         video_state = fixed->state;
@@ -603,16 +599,14 @@ static bool p1_ctrl_progress(P1Context *ctx)
         P1Object *obj = (P1Object *) src;
 
         p1_object_lock(obj);
+        obj->ctx = ctx;
 
-        P1Action action = p1_ctrl_determine_action(ctx, obj->state, obj->target, false);
+        P1Action action = p1_ctrl_determine_action(obj, obj->target, false);
 
         if (action == P1_ACTION_START) {
-            obj->ctx = ctx;
-
             if (video_state == P1_STATE_RUNNING) {
                 if (!p1_video_link_source(vsrc)) {
-                    // FIXME: Probably should halt the video mixer instead.
-                    obj->state = P1_STATE_HALTED;
+                    obj->flags |= P1_FLAG_ERROR;
                     action = P1_ACTION_NONE;
                 }
             }
@@ -642,7 +636,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
     // Progress audio mixer.
     P1State audio_state;
     {
-        P1Action action = p1_ctrl_determine_action(ctx, fixed->state, fixed->target, false);
+        P1Action action = p1_ctrl_determine_action(fixed, fixed->target, false);
         P1_RUN_ACTION(action, fixed, audiof, p1_audio_start, p1_audio_stop);
 
         audio_state = fixed->state;
@@ -656,13 +650,9 @@ static bool p1_ctrl_progress(P1Context *ctx)
         P1Object *obj = (P1Object *) src;
 
         p1_object_lock(obj);
+        obj->ctx = ctx;
 
-        P1Action action = p1_ctrl_determine_action(ctx, obj->state, obj->target, false);
-
-        if (action == P1_ACTION_START) {
-            obj->ctx = ctx;
-        }
-
+        P1Action action = p1_ctrl_determine_action(obj, obj->target, false);
         P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
 
         p1_object_unlock(obj);
@@ -687,7 +677,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
         if (vclock_state != P1_STATE_RUNNING)
             target = P1_TARGET_IDLE;
 
-        P1Action action = p1_ctrl_determine_action(ctx, fixed->state, target, true);
+        P1Action action = p1_ctrl_determine_action(fixed, target, true);
 
         // Delay start until everything else is running.
         if (action == P1_ACTION_START && wait)
@@ -705,22 +695,24 @@ static bool p1_ctrl_progress(P1Context *ctx)
 }
 
 // Determine action to take on an object.
-static P1Action p1_ctrl_determine_action(P1Context *ctx, P1State state, P1TargetState target, bool can_interrupt)
+static P1Action p1_ctrl_determine_action(P1Object *obj, P1TargetState target, bool can_interrupt)
 {
+    P1State state = obj->state;
+    P1Context *ctx = obj->ctx;
     P1Object *ctxobj = (P1Object *) ctx;
 
     // We need to wait on the transition to finish.
-    if (state == P1_STATE_STOPPING || state == P1_STATE_HALTING)
+    if (state == P1_STATE_STOPPING)
         return P1_ACTION_WAIT;
 
     // If the context is stopping, override target.
-    // Make sure we preserve remove targets.
+    // Make sure we preserve special targets.
     if (target == P1_TARGET_RUNNING && ctxobj->state == P1_STATE_STOPPING)
         target = P1_TARGET_IDLE;
 
     // Take steps towards target.
     if (target == P1_TARGET_RUNNING) {
-        if (state == P1_STATE_IDLE)
+        if (state == P1_STATE_IDLE && !(obj->flags & P1_FLAG_ERROR))
             return P1_ACTION_START;
 
         if (state == P1_STATE_STARTING)
@@ -761,8 +753,6 @@ static void p1_ctrl_log_notification(P1Notification *notification)
                 case P1_STATE_STARTING: value = "starting"; break;
                 case P1_STATE_RUNNING:  value = "running";  break;
                 case P1_STATE_STOPPING: value = "stopping"; break;
-                case P1_STATE_HALTING:  value = "halting";  break;
-                case P1_STATE_HALTED:   value = "halted";   break;
                 default: return;
             }
             break;
