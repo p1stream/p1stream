@@ -112,7 +112,10 @@
     [self lock];
 
     _restart = false;
+
+    [self willChangeValueForKey:@"error"];
     p1_object_set_target(_object, target);
+    [self didChangeValueForKey:@"error"];
 
     [self unlock];
 }
