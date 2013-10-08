@@ -123,9 +123,14 @@ enum _P1TargetState {
 
 typedef uint8_t P1Flags;
 
-// The object stopped because of an error. The error state can be cleared by
-// calling p1_object_set_target with P1_TARGET_RUNNING. (Even if the object
-// already has its target state set to running.)
+// The object stopped because of an error.
+//
+// Objects settings this flag should always follow it with a call to
+// p1_object_set_state. (Even if that doesn't change the state.)
+//
+// The error flag can be cleared by calling p1_object_set_target with
+// P1_TARGET_RUNNING. (Even if that was already the current target state.)
+
 #define P1_FLAG_ERROR   1
 
 
@@ -219,6 +224,7 @@ struct _P1Notification {
 
         struct {
             P1State state;
+            P1Flags flags;
         } state_change;
 
         struct {
@@ -329,7 +335,8 @@ struct _P1Object {
         .type = P1_NTYPE_STATE_CHANGE,                          \
         .object = _p1_obj,                                      \
         .state_change = {                                       \
-            .state = _p1_state                                  \
+            .state = _p1_state,                                 \
+            .flags = _p1_obj->flags                             \
         }                                                       \
     });                                                         \
 })

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F62471ED17F6B42B003428F6 /* P1IsRunningTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */; };
+		F6383C051804683B0026BF67 /* P1ConnectionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F6383C041804683B0026BF67 /* P1ConnectionModel.m */; };
 		F643655917E5A08800314053 /* P1MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F643655817E5A08800314053 /* P1MainWindowController.m */; };
 		F643655C17E5ADB900314053 /* P1PreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = F643655B17E5ADB900314053 /* P1PreviewView.m */; };
 		F65CD73317F4BEE100CD3FBC /* P1ContextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F65CD73217F4BEE100CD3FBC /* P1ContextModel.m */; };
@@ -48,8 +49,6 @@
 		F682AC3C17E4C94C007DC0CF /* P1stream-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = F644CB9517B6291D007934C3 /* P1stream-cli */; };
 		F682AC3D17E4C960007DC0CF /* libp1stream.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */; };
 		F68E3E0717E5E6DB00EAA38E /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */; };
-		F69AFDD717FCAAB00062BC0C /* P1AvailabilityImageFromState.m in Sources */ = {isa = PBXBuildFile; fileRef = F69AFDD617FCAAB00062BC0C /* P1AvailabilityImageFromState.m */; };
-		F69AFDE817FCC56A0062BC0C /* P1ConnectionStringFromState.m in Sources */ = {isa = PBXBuildFile; fileRef = F69AFDE717FCC56A0062BC0C /* P1ConnectionStringFromState.m */; };
 		F6BDDD9917FDF1140078016F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6BDDD9817FDF1140078016F /* MainMenu.xib */; };
 		F6BDDD9B17FE08AA0078016F /* PrefsWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6BDDD9A17FE08AA0078016F /* PrefsWindow.xib */; };
 		F6BDDD9E17FE08DF0078016F /* P1PrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6BDDD9D17FE08DF0078016F /* P1PrefsWindowController.m */; };
@@ -88,8 +87,8 @@
 		F607452517B637E8004EA730 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		F607452717B637EE004EA730 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		F607452917B637F2004EA730 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
-		F62471EB17F6B42B003428F6 /* P1IsRunningTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = P1IsRunningTarget.h; path = P1IsRunningTarget.h; sourceTree = "<group>"; };
-		F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = P1IsRunningTarget.m; path = P1IsRunningTarget.m; sourceTree = "<group>"; };
+		F62471EB17F6B42B003428F6 /* P1IsRunningTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1IsRunningTarget.h; sourceTree = "<group>"; };
+		F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1IsRunningTarget.m; sourceTree = "<group>"; };
 		F627211617BC330700A889B4 /* libFraunhoferAAC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFraunhoferAAC.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F62DBA2D17C52833004DDFD6 /* p1stream_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream_priv.h; sourceTree = "<group>"; };
 		F62DBA3B17C52DC1004DDFD6 /* p1stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p1stream.c; sourceTree = "<group>"; };
@@ -101,6 +100,8 @@
 		F62DBA4717C53360004DDFD6 /* sample_config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sample_config.plist; sourceTree = "<group>"; };
 		F62DBA4817C53360004DDFD6 /* video_capture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = video_capture.m; sourceTree = "<group>"; };
 		F62DBA4917C53360004DDFD6 /* video_display.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video_display.c; sourceTree = "<group>"; };
+		F6383C031804683B0026BF67 /* P1ConnectionModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1ConnectionModel.h; sourceTree = "<group>"; };
+		F6383C041804683B0026BF67 /* P1ConnectionModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1ConnectionModel.m; sourceTree = "<group>"; };
 		F643655717E5A08800314053 /* P1MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1MainWindowController.h; sourceTree = "<group>"; };
 		F643655817E5A08800314053 /* P1MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1MainWindowController.m; sourceTree = "<group>"; };
 		F643655A17E5ADB900314053 /* P1PreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1PreviewView.h; sourceTree = "<group>"; };
@@ -131,10 +132,6 @@
 		F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = P1AppDelegate.m; sourceTree = "<group>"; };
 		F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		F6931F6817E6F75000B6B113 /* p1stream_osx_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream_osx_priv.h; sourceTree = "<group>"; };
-		F69AFDD517FCAAB00062BC0C /* P1AvailabilityImageFromState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = P1AvailabilityImageFromState.h; path = P1AvailabilityImageFromState.h; sourceTree = "<group>"; };
-		F69AFDD617FCAAB00062BC0C /* P1AvailabilityImageFromState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = P1AvailabilityImageFromState.m; path = P1AvailabilityImageFromState.m; sourceTree = "<group>"; };
-		F69AFDE617FCC56A0062BC0C /* P1ConnectionStringFromState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = P1ConnectionStringFromState.h; path = P1ConnectionStringFromState.h; sourceTree = "<group>"; };
-		F69AFDE717FCC56A0062BC0C /* P1ConnectionStringFromState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = P1ConnectionStringFromState.m; path = P1ConnectionStringFromState.m; sourceTree = "<group>"; };
 		F69E0C7817C423A3000EA1CD /* p1stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream.h; sourceTree = "<group>"; };
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
@@ -147,8 +144,8 @@
 		F6E161F917FA13DB00167048 /* P1LogMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1LogMessage.m; sourceTree = "<group>"; };
 		F6E161FB17FA158E00167048 /* P1LogWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1LogWindowController.h; sourceTree = "<group>"; };
 		F6E161FC17FA158E00167048 /* P1LogWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1LogWindowController.m; sourceTree = "<group>"; };
-		F6E161FE17FA215000167048 /* P1ImageFromLogLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = P1ImageFromLogLevel.h; path = P1ImageFromLogLevel.h; sourceTree = "<group>"; };
-		F6E161FF17FA215000167048 /* P1ImageFromLogLevel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = P1ImageFromLogLevel.m; path = P1ImageFromLogLevel.m; sourceTree = "<group>"; };
+		F6E161FE17FA215000167048 /* P1ImageFromLogLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1ImageFromLogLevel.h; sourceTree = "<group>"; };
+		F6E161FF17FA215000167048 /* P1ImageFromLogLevel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1ImageFromLogLevel.m; sourceTree = "<group>"; };
 		F6F6076D17B6426F009E6155 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F6F6077117B6488C009E6155 /* video.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video.c; sourceTree = "<group>"; };
 		F6F6077417B64C28009E6155 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -236,10 +233,6 @@
 				F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */,
 				F6E161FE17FA215000167048 /* P1ImageFromLogLevel.h */,
 				F6E161FF17FA215000167048 /* P1ImageFromLogLevel.m */,
-				F69AFDD517FCAAB00062BC0C /* P1AvailabilityImageFromState.h */,
-				F69AFDD617FCAAB00062BC0C /* P1AvailabilityImageFromState.m */,
-				F69AFDE617FCC56A0062BC0C /* P1ConnectionStringFromState.h */,
-				F69AFDE717FCC56A0062BC0C /* P1ConnectionStringFromState.m */,
 			);
 			path = transformers;
 			sourceTree = "<group>";
@@ -300,6 +293,8 @@
 				F65CD73617F4C84D00CD3FBC /* P1ObjectModel.m */,
 				F65CD73117F4BEE100CD3FBC /* P1ContextModel.h */,
 				F65CD73217F4BEE100CD3FBC /* P1ContextModel.m */,
+				F6383C031804683B0026BF67 /* P1ConnectionModel.h */,
+				F6383C041804683B0026BF67 /* P1ConnectionModel.m */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -495,8 +490,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F69AFDD717FCAAB00062BC0C /* P1AvailabilityImageFromState.m in Sources */,
-				F69AFDE817FCC56A0062BC0C /* P1ConnectionStringFromState.m in Sources */,
 				F6BDDD9E17FE08DF0078016F /* P1PrefsWindowController.m in Sources */,
 				F682AC2C17E4C91C007DC0CF /* main.m in Sources */,
 				F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */,
@@ -505,6 +498,7 @@
 				F6E1620017FA215000167048 /* P1ImageFromLogLevel.m in Sources */,
 				F65CD73317F4BEE100CD3FBC /* P1ContextModel.m in Sources */,
 				F6E161FA17FA13DB00167048 /* P1LogMessage.m in Sources */,
+				F6383C051804683B0026BF67 /* P1ConnectionModel.m in Sources */,
 				F643655C17E5ADB900314053 /* P1PreviewView.m in Sources */,
 				F62471ED17F6B42B003428F6 /* P1IsRunningTarget.m in Sources */,
 				F65CD73717F4C84D00CD3FBC /* P1ObjectModel.m in Sources */,

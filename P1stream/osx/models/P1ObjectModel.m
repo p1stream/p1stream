@@ -54,16 +54,27 @@
 {
     if ([key isEqualToString:@"state"])
         return NO;
+    else if ([key isEqualToString:@"error"])
+        return NO;
     else
         return [super automaticallyNotifiesObserversForKey:key];
 }
-
 - (void)handleNotification:(P1Notification *)n
 {
     if (n->type == P1_NTYPE_STATE_CHANGE) {
-        [self willChangeValueForKey:@"state"];
-        _state = n->state_change.state;
-        [self didChangeValueForKey:@"state"];
+        P1State state = n->state_change.state;
+        if (state != _state) {
+            [self willChangeValueForKey:@"state"];
+            _state = state;
+            [self didChangeValueForKey:@"state"];
+        }
+
+        BOOL error = (n->state_change.flags & P1_FLAG_ERROR) ? TRUE : FALSE;
+        if (error != _error) {
+            [self willChangeValueForKey:@"error"];
+            _error = error;
+            [self didChangeValueForKey:@"error"];
+        }
     }
 }
 
@@ -82,9 +93,38 @@
 }
 
 
-- (BOOL)error
+- (NSImage *)availabilityImage
 {
-    return _object->flags & P1_FLAG_ERROR;
+    NSString *imageName;
+
+    if (_error) {
+        imageName = NSImageNameStatusUnavailable;
+    }
+    else {
+        switch (_state) {
+            case P1_STATE_IDLE:
+                imageName = NSImageNameStatusNone;
+                break;
+            case P1_STATE_STARTING:
+                imageName = NSImageNameStatusPartiallyAvailable;
+                break;
+            case P1_STATE_RUNNING:
+                imageName = NSImageNameStatusAvailable;
+                break;
+            case P1_STATE_STOPPING:
+                imageName = NSImageNameStatusPartiallyAvailable;
+                break;
+            default:
+                imageName = NSImageNameStatusUnavailable;
+                break;
+        }
+    }
+
+    return [NSImage imageNamed:imageName];
+}
++ (NSSet *)keyPathsForValuesAffectingAvailabilityImage
+{
+    return [NSSet setWithObjects:@"state", @"error", nil];
 }
 
 @end

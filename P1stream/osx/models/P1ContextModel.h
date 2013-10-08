@@ -1,4 +1,5 @@
 #import "P1ObjectModel.h"
+#import "P1ConnectionModel.h"
 #import "P1LogMessage.h"
 
 
@@ -19,7 +20,7 @@
 
 @property (readonly, retain) P1ObjectModel* audioModel;
 @property (readonly, retain) P1ObjectModel* videoModel;
-@property (readonly, retain) P1ObjectModel* connectionModel;
+@property (readonly, retain) P1ConnectionModel* connectionModel;
 
 - (void)start;
 - (void)stop;

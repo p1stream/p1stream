@@ -78,11 +78,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                         <connections>
-                                            <binding destination="-2" name="value" keyPath="contextModel.connectionModel.state" id="LIZ-li-odX">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">P1ConnectionStringFromState</string>
-                                                </dictionary>
-                                            </binding>
+                                            <binding destination="-2" name="value" keyPath="contextModel.connectionModel.stateMessage" id="2Oy-YB-3Ol"/>
                                         </connections>
                                     </textField>
                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cC8-gB-wsU">
@@ -90,19 +86,15 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSStatusNone" id="CtE-KT-tQ6"/>
                                         <connections>
-                                            <binding destination="-2" name="value" keyPath="contextModel.connectionModel.state" id="WKC-ZE-FfP">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">P1AvailabilityImageFromState</string>
-                                                </dictionary>
-                                            </binding>
+                                            <binding destination="-2" name="value" keyPath="contextModel.connectionModel.availabilityImage" id="8Lg-qo-8HH"/>
                                         </connections>
                                     </imageView>
                                 </subviews>
                             </view>
                             <constraints>
-                                <constraint firstItem="cC8-gB-wsU" firstAttribute="centerY" secondItem="C2z-vl-LQp" secondAttribute="centerY" id="Ow3-L5-ca0"/>
                                 <constraint firstItem="C2z-vl-LQp" firstAttribute="leading" secondItem="cC8-gB-wsU" secondAttribute="trailing" constant="3" id="PQV-RI-dWt"/>
                                 <constraint firstItem="cC8-gB-wsU" firstAttribute="leading" secondItem="8Rx-VQ-kbr" secondAttribute="leading" id="XOo-Sd-okd"/>
+                                <constraint firstAttribute="centerY" secondItem="cC8-gB-wsU" secondAttribute="centerY" id="lZ6-ed-29d"/>
                                 <constraint firstAttribute="centerY" secondItem="C2z-vl-LQp" secondAttribute="centerY" id="sNa-gz-JUA"/>
                             </constraints>
                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>

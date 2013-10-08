@@ -29,7 +29,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
         _audioModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->audio];
         _videoModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->video];
-        _connectionModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->conn];
+        _connectionModel = [[P1ConnectionModel alloc] initWithObject:(P1Object *)context->conn];
 
         _objects = [[NSMutableArray alloc] init];
 

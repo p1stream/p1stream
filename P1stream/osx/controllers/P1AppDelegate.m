@@ -49,7 +49,7 @@
     [_contextModel addObserver:self forKeyPath:@"state" options:0 context:nil];
 
     // Monitor connection state.
-    [_contextModel.connectionModel addObserver:self forKeyPath:@"state" options:0 context:nil];
+    [_contextModel.connectionModel addObserver:self forKeyPath:@"error" options:0 context:nil];
 
     // Start disconnected.
     _contextModel.connectionModel.target = P1_TARGET_IDLE;
@@ -86,7 +86,7 @@
 
     // If our connection breaks, reset to idle state.
     P1ObjectModel *connectionModel = _contextModel.connectionModel;
-    if (object == connectionModel && [keyPath isEqualToString:@"state"]) {
+    if (object == connectionModel && [keyPath isEqualToString:@"error"]) {
         if (connectionModel.error) {
             [connectionModel lock];
             connectionModel.target = P1_TARGET_IDLE;
