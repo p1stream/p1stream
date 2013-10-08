@@ -279,6 +279,11 @@ void p1_conn_stream_video(P1ConnectionFull *connf, int64_t time, x264_picture_t 
     // Encode and build packet using fine-grained lock.
     p1_lock(connobj, &connf->video_lock);
 
+    if (connobj->state != P1_STATE_RUNNING) {
+        p1_unlock(connobj, &connf->video_lock);
+        return;
+    }
+
     pic->i_dts = time;
     pic->i_pts = time;
 
@@ -370,6 +375,11 @@ size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf,
 
     // Encode and build packet using fine-grained lock.
     p1_lock(connobj, &connf->audio_lock);
+
+    if (connobj->state != P1_STATE_RUNNING) {
+        p1_unlock(connobj, &connf->audio_lock);
+        return samples;     // Consume all
+    }
 
     AACENC_BufDesc in_desc = {
         .numBufs           = 1,
@@ -557,15 +567,23 @@ static void *p1_conn_main(void *data)
     p1_object_lock(connobj);
     r = &connf->rtmp;
 
+    // This locking is to make cleanup easier; we can assume locked at the
+    // fail_* labels, but not at the cleanup label.
+    p1_lock(connobj, &connf->audio_lock);
+    p1_lock(connobj, &connf->video_lock);
+
     if (!p1_conn_start_audio(connf)) {
         connobj->flags |= P1_FLAG_ERROR;
-        goto cleanup;
+        goto fail_audio;
     }
 
     if (!p1_conn_start_video(connf)) {
         connobj->flags |= P1_FLAG_ERROR;
-        goto cleanup_audio;
+        goto fail_video;
     }
+
+    p1_unlock(connobj, &connf->video_lock);
+    p1_unlock(connobj, &connf->audio_lock);
 
     // Connection setup
     if (current_conn == NULL) {
@@ -584,7 +602,7 @@ static void *p1_conn_main(void *data)
     if (!ret) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to parse URL.");
         connobj->flags |= P1_FLAG_ERROR;
-        goto cleanup_video;
+        goto cleanup;
     }
 
     RTMP_EnableWrite(r);
@@ -607,12 +625,12 @@ static void *p1_conn_main(void *data)
     // connection errors and simply clean up.
     if (connobj->state == P1_STATE_STOPPING) {
         p1_log(connobj, P1_LOG_INFO, "Connection interrupted.");
-        goto cleanup_video;
+        goto cleanup;
     }
     if (!ret) {
         p1_log(connobj, P1_LOG_ERROR, "Connection failed.");
         connobj->flags |= P1_FLAG_ERROR;
-        goto cleanup_video;
+        goto cleanup;
     }
     p1_log(connobj, P1_LOG_INFO, "Connected.");
 
@@ -620,7 +638,7 @@ static void *p1_conn_main(void *data)
     if (!p1_conn_stream_audio_config(connf)
         || !p1_conn_stream_video_config(connf)) {
         connobj->flags |= P1_FLAG_ERROR;
-        goto cleanup_video;
+        goto cleanup;
     }
 
     // Connection event loop
@@ -632,7 +650,7 @@ static void *p1_conn_main(void *data)
         if (ret != 0) {
             p1_log(connobj, P1_LOG_ERROR, "Failed to wait on condition: %s", strerror(ret));
             connobj->flags |= P1_FLAG_ERROR;
-            goto cleanup_video;
+            goto cleanup;
         }
 
         if (connobj->state != P1_STATE_RUNNING)
@@ -640,27 +658,33 @@ static void *p1_conn_main(void *data)
 
         if (!p1_conn_flush(connf)) {
             connobj->flags |= P1_FLAG_ERROR;
-            goto cleanup_video;
+            goto cleanup;
         }
 
     } while (connobj->state == P1_STATE_RUNNING);
     p1_log(connobj, P1_LOG_INFO, "Disconnected.");
 
-cleanup_video:
+cleanup:
+    p1_lock(connobj, &connf->audio_lock);
+    p1_lock(connobj, &connf->video_lock);
+
     p1_conn_stop_video(connf);
 
-cleanup_audio:
+fail_video:
     p1_conn_stop_audio(connf);
 
-cleanup:
+fail_audio:
     RTMP_Close(r);
     if (current_conn == connobj)
         current_conn = NULL;
 
-    p1_conn_clear(&connf->video_queue);
     p1_conn_clear(&connf->audio_queue);
+    p1_conn_clear(&connf->video_queue);
 
     p1_object_set_state(connobj, P1_STATE_IDLE);
+
+    p1_unlock(connobj, &connf->video_lock);
+    p1_unlock(connobj, &connf->audio_lock);
 
     p1_object_unlock(connobj);
 
@@ -838,13 +862,7 @@ static bool p1_conn_start_video(P1ConnectionFull *connf)
 
 static void p1_conn_stop_video(P1ConnectionFull *connf)
 {
-    P1Object *connobj = (P1Object *) connf;
-
-    p1_lock(connobj, &connf->video_lock);
-
     x264_encoder_close(connf->video_enc);
-
-    p1_unlock(connobj, &connf->video_lock);
 }
 
 
