@@ -16,4 +16,20 @@
     return self;
 }
 
+- (NSImage *)levelIcon
+{
+    switch (_level) {
+        case P1_LOG_WARNING:
+            return [NSImage imageNamed:NSImageNameStatusPartiallyAvailable];
+        case P1_LOG_ERROR:
+            return [NSImage imageNamed:NSImageNameStatusUnavailable];
+        default:
+            return nil;
+    }
+}
++ (NSSet *)keyPathsForValuesAffectingLevelIcon
+{
+    return [NSSet setWithObjects:@"level", nil];
+}
+
 @end
