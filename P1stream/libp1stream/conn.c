@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
 
 static const char *default_url = "rtmp://localhost/app/test";
 
@@ -593,8 +594,13 @@ static void *p1_conn_main(void *data)
            r->Link.hostname.av_len, r->Link.hostname.av_val, r->Link.port);
     p1_object_unlock(connobj);
     ret = RTMP_Connect(r, NULL);
-    if (ret)
-        ret = RTMP_ConnectStream(r, 0);
+    if (ret) {
+        int tmp = 1;
+        ret = setsockopt(r->m_sb.sb_socket, SOL_SOCKET, SO_NOSIGPIPE, &tmp, sizeof(int));
+        ret = (ret == 0);
+        if (ret)
+            ret = RTMP_ConnectStream(r, 0);
+    }
     p1_object_lock(connobj);
 
     // State can change to stopping from p1_conn_stop. In that case, disregard
