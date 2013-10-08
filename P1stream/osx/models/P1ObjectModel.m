@@ -49,6 +49,23 @@
 }
 
 
+- (void)restart
+{
+    [self lock];
+
+    if (_state == P1_STATE_IDLE) {
+        _restart = false;
+        self.target = P1_TARGET_RUNNING;
+    }
+    else {
+        _restart = true;
+        self.target = P1_TARGET_IDLE;
+    }
+
+    [self unlock];
+}
+
+
 // We hold a copy of the state, based on notifications, in order to stay KVO compliant.
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
 {
@@ -75,6 +92,11 @@
             _error = error;
             [self didChangeValueForKey:@"error"];
         }
+
+        if (_restart && state == P1_STATE_IDLE) {
+            _restart = false;
+            self.target = P1_TARGET_RUNNING;
+        }
     }
 }
 
@@ -88,7 +110,10 @@
 - (void)setTarget:(P1TargetState)target
 {
     [self lock];
+
+    _restart = false;
     p1_object_set_target(_object, target);
+
     [self unlock];
 }
 

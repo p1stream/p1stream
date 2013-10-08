@@ -12,6 +12,8 @@
     // For now, we just create a fairly useless P1ObjectModel instance for every
     // P1Object, and reference it from here.
     NSMutableArray *_objects;
+
+    BOOL _restartContext;
 }
 
 @property (readonly, assign) P1Context *context;

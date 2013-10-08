@@ -63,15 +63,47 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 }
 
 
+// p1_start and p1_stop, of course, bypass the target setter. We fix that here.
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
+{
+    if ([key isEqualToString:@"target"])
+        return NO;
+    else
+        return [super automaticallyNotifiesObserversForKey:key];
+}
+
 - (void)start
 {
+    _restartContext = FALSE;
+
+    [self willChangeValueForKey:@"target"];
     bool ret = p1_start(self.context);
-    assert(ret);
+    [self didChangeValueForKey:@"target"];
+
+    if (!ret)
+        abort();
 }
 
 - (void)stop
 {
+    _restartContext = FALSE;
+
+    [self willChangeValueForKey:@"target"];
     p1_stop(self.context, P1_STOP_ASYNC);
+    [self didChangeValueForKey:@"target"];
+}
+
+// Context needs some special logic to restart.
+- (void)restart
+{
+    if (self.state == P1_STATE_IDLE) {
+        _restartContext = FALSE;
+        [self start];
+    }
+    else {
+        _restartContext = TRUE;
+        [self stop];
+    }
 }
 
 
@@ -221,6 +253,19 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
     };
 
     return TRUE;
+}
+
+- (void)handleNotification:(P1Notification *)n
+{
+    [super handleNotification:n];
+
+    if (n->type == P1_NTYPE_STATE_CHANGE) {
+        P1State state = n->state_change.state;
+        if (_restartContext && state == P1_STATE_IDLE) {
+            _restartContext = false;
+            [self start];
+        }
+    }
 }
 
 
