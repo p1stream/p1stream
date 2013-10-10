@@ -1,7 +1,6 @@
 @interface P1ObjectModel : NSObject
 {
     P1State _state;
-    BOOL _restart;
 }
 
 @property (readonly) P1Object *object;
@@ -20,8 +19,6 @@
 
 - (void)lock;
 - (void)unlock;
-
-- (void)restart;
 
 - (void)handleNotification:(P1Notification *)n;
 

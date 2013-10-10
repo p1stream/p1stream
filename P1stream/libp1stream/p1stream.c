@@ -543,6 +543,14 @@ static bool p1_ctrl_progress(P1Context *ctx)
     P1ListNode *node;
     bool wait = false;
 
+// Before an action, check special targets.
+#define P1_CHECK_TARGET(_obj)                               \
+    if ((_obj)->state.target == P1_TARGET_RESTART &&        \
+        (_obj)->state.current == P1_STATE_IDLE) {           \
+        (_obj)->state.target = P1_TARGET_RUNNING;           \
+        p1_object_notify(_obj);                             \
+    }
+
 // After an action, check if we need to wait.
 #define P1_CHECK_WAIT(_obj)                                 \
     if ((_obj)->state.current == P1_STATE_STARTING ||       \
@@ -595,6 +603,8 @@ static bool p1_ctrl_progress(P1Context *ctx)
     // Progress video mixer.
     P1CurrentState video_state;
     {
+        P1_CHECK_TARGET(fixed);
+
         P1Action action = p1_ctrl_determine_action(fixed, fixed->state.target, false);
         P1_RUN_ACTION(action, fixed, videof, p1_video_start, p1_video_stop);
 
@@ -611,6 +621,8 @@ static bool p1_ctrl_progress(P1Context *ctx)
 
         p1_object_lock(obj);
         obj->ctx = ctx;
+
+        P1_CHECK_TARGET(obj);
 
         P1Action action = p1_ctrl_determine_action(obj, obj->state.target, false);
 
@@ -648,6 +660,8 @@ static bool p1_ctrl_progress(P1Context *ctx)
     // Progress audio mixer.
     P1CurrentState audio_state;
     {
+        P1_CHECK_TARGET(fixed);
+
         P1Action action = p1_ctrl_determine_action(fixed, fixed->state.target, false);
         P1_RUN_ACTION(action, fixed, audiof, p1_audio_start, p1_audio_stop);
 
@@ -663,6 +677,8 @@ static bool p1_ctrl_progress(P1Context *ctx)
 
         p1_object_lock(obj);
         obj->ctx = ctx;
+
+        P1_CHECK_TARGET(obj);
 
         P1Action action = p1_ctrl_determine_action(obj, obj->state.target, false);
         P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
@@ -683,9 +699,10 @@ static bool p1_ctrl_progress(P1Context *ctx)
 
     // Progress stream connnection.
     {
-        P1TargetState target = fixed->state.target;
+        P1_CHECK_TARGET(fixed);
 
         // We need a running clock for this.
+        P1TargetState target = fixed->state.target;
         if (vclock_state != P1_STATE_RUNNING)
             target = P1_TARGET_IDLE;
 
@@ -760,6 +777,7 @@ static void p1_ctrl_log_notification(P1Notification *n)
         switch (n->state.target) {
             case P1_TARGET_RUNNING: target = "running"; break;
             case P1_TARGET_IDLE:    target = "idle";    break;
+            case P1_TARGET_RESTART: target = "restart"; break;
             case P1_TARGET_REMOVE:  target = "remove";  break;
             default: return;
         }

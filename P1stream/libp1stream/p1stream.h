@@ -113,9 +113,13 @@ enum _P1TargetState {
     P1_TARGET_RUNNING   = 0, // Initial value.
     P1_TARGET_IDLE      = 1,
 
+    // This is the same as idle, but will automatically switch to the running
+    // target once the object becomes idle.
+    P1_TARGET_RESTART   = 2,
+
     // Only valid for sources. This is the same as idle, but will in addition
     // remove the source from the list and free it, once idle.
-    P1_TARGET_REMOVE    = 2
+    P1_TARGET_REMOVE    = 3
 };
 
 

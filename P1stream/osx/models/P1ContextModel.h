@@ -13,7 +13,7 @@
     // P1Object, and reference it from here.
     NSMutableArray *_objects;
 
-    BOOL _restartContext;
+    BOOL _restart;
 }
 
 @property (readonly, assign) P1Context *context;

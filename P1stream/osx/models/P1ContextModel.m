@@ -65,7 +65,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
 - (void)start
 {
-    _restartContext = FALSE;
+    _restart = FALSE;
 
     bool ret = p1_start(self.context);
     if (!ret)
@@ -74,7 +74,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
 - (void)stop
 {
-    _restartContext = FALSE;
+    _restart = FALSE;
 
     p1_stop(self.context, P1_STOP_ASYNC);
 }
@@ -83,11 +83,11 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 - (void)restart
 {
     if (self.currentState == P1_STATE_IDLE) {
-        _restartContext = FALSE;
+        _restart = FALSE;
         [self start];
     }
     else {
-        _restartContext = TRUE;
+        _restart = TRUE;
         [self stop];
     }
 }
@@ -245,8 +245,8 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 {
     [super handleNotification:n];
 
-    if (_restartContext && n->state.current == P1_STATE_IDLE) {
-        _restartContext = false;
+    if (_restart && n->state.current == P1_STATE_IDLE) {
+        _restart = false;
         [self start];
     }
 }

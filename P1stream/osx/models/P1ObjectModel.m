@@ -49,23 +49,6 @@
 }
 
 
-- (void)restart
-{
-    [self lock];
-
-    if (self.currentState == P1_STATE_IDLE) {
-        _restart = false;
-        self.target = P1_TARGET_RUNNING;
-    }
-    else {
-        _restart = true;
-        self.target = P1_TARGET_IDLE;
-    }
-
-    [self unlock];
-}
-
-
 // We handle these using notifications.
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
 {
@@ -97,11 +80,6 @@
     [self willChangeValueForKey:@"state"];
     _state = n->state;
     [self didChangeValueForKey:@"state"];
-
-    if (_restart && self.currentState == P1_STATE_IDLE) {
-        _restart = false;
-        self.target = P1_TARGET_RUNNING;
-    }
 }
 
 
