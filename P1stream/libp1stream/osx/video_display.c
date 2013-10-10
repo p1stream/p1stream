@@ -69,12 +69,11 @@ static void p1_display_video_source_start(P1Plugin *pel)
     size_t width  = CGDisplayPixelsWide(dvsrc->display_id);
     size_t height = CGDisplayPixelsHigh(dvsrc->display_id);
 
-    p1_object_set_state(obj, P1_STATE_STARTING);
-
     dvsrc->dispatch = dispatch_queue_create("video_desktop", DISPATCH_QUEUE_SERIAL);
     if (dvsrc->dispatch == NULL) {
         p1_log(obj, P1_LOG_ERROR, "Failed to create dispatch queue");
         p1_display_video_source_halt(dvsrc);
+        return;
     }
 
     dvsrc->display_stream = CGDisplayStreamCreateWithDispatchQueue(
@@ -89,13 +88,18 @@ static void p1_display_video_source_start(P1Plugin *pel)
     if (dvsrc->display_stream == NULL) {
         p1_log(obj, P1_LOG_ERROR, "Failed to create display stream");
         p1_display_video_source_halt(dvsrc);
+        return;
     }
 
     ret = CGDisplayStreamStart(dvsrc->display_stream);
     if (ret != kCGErrorSuccess) {
         p1_log(obj, P1_LOG_ERROR, "Failed to start display stream: Core Graphics error %d", ret);
         p1_display_video_source_halt(dvsrc);
+        return;
     }
+
+    obj->state.current = P1_STATE_STARTING;
+    p1_object_notify(obj);
 
     return;
 }
@@ -105,7 +109,8 @@ static void p1_display_video_source_stop(P1Plugin *pel)
     P1Object *obj = (P1Object *) pel;
     P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) pel;
 
-    p1_object_set_state(obj, P1_STATE_STOPPING);
+    obj->state.current = P1_STATE_STOPPING;
+    p1_object_notify(obj);
 
     CGError ret = CGDisplayStreamStop(dvsrc->display_stream);
     if (ret != kCGErrorSuccess) {
@@ -127,12 +132,11 @@ static void p1_display_video_source_halt(P1DisplayVideoSource *dvsrc)
 {
     P1Object *obj = (P1Object *) dvsrc;
 
-    obj->flags |= P1_FLAG_ERROR;
-    p1_object_set_state(obj, P1_STATE_STOPPING);
-
     p1_display_video_source_kill_session(dvsrc);
 
-    p1_object_set_state(obj, P1_STATE_IDLE);
+    obj->state.current = P1_STATE_IDLE;
+    obj->state.flags |= P1_FLAG_ERROR;
+    p1_object_notify(obj);
 }
 
 static bool p1_display_video_source_frame(P1VideoSource *vsrc)
@@ -173,8 +177,9 @@ static void p1_display_video_source_callback(
     if (status == kCGDisplayStreamFrameStatusStopped) {
         p1_display_video_source_kill_session(dvsrc);
 
-        if (obj->state == P1_STATE_STOPPING) {
-            p1_object_set_state(obj, P1_STATE_IDLE);
+        if (obj->state.current == P1_STATE_STOPPING) {
+            obj->state.current = P1_STATE_IDLE;
+            p1_object_notify(obj);
         }
         else {
             p1_log(obj, P1_LOG_ERROR, "Display stream stopped itself");
@@ -182,8 +187,10 @@ static void p1_display_video_source_callback(
         }
     }
     else {
-        if (obj->state == P1_STATE_STARTING)
-            p1_object_set_state(obj, P1_STATE_RUNNING);
+        if (obj->state.current == P1_STATE_STARTING) {
+            obj->state.current = P1_STATE_RUNNING;
+            p1_object_notify(obj);
+        }
     }
 
     p1_object_unlock(obj);

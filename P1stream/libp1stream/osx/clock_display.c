@@ -66,8 +66,6 @@ static void p1_display_video_clock_start(P1Plugin *pel)
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
     CVReturn ret;
 
-    p1_object_set_state(obj, P1_STATE_STARTING);
-
     dvclock->skip_counter = 0;
 
     ret = CVDisplayLinkCreateWithCGDisplay(dvclock->display_id, &dvclock->display_link);
@@ -83,17 +81,19 @@ static void p1_display_video_clock_start(P1Plugin *pel)
     if (ret != kCVReturnSuccess)
         goto halt;
 
+    obj->state.current = P1_STATE_STARTING;
+    p1_object_notify(obj);
+
     return;
 
 halt:
     p1_log(obj, P1_LOG_ERROR, "Failed to start display link: Core Video error %d", ret);
 
-    obj->flags |= P1_FLAG_ERROR;
-    p1_object_set_state(obj, P1_STATE_STOPPING);
-
     p1_display_video_clock_kill_session(dvclock);
 
-    p1_object_set_state(obj, P1_STATE_IDLE);
+    obj->state.current = P1_STATE_IDLE;
+    obj->state.flags |= P1_FLAG_ERROR;
+    p1_object_notify(obj);
 }
 
 static void p1_display_video_clock_stop(P1Plugin *pel)
@@ -102,8 +102,6 @@ static void p1_display_video_clock_stop(P1Plugin *pel)
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
     CVReturn ret;
 
-    p1_object_set_state(obj, P1_STATE_STOPPING);
-
     // Stop the display link. This apparently blocks.
     p1_object_unlock(obj);
     ret = CVDisplayLinkStop(dvclock->display_link);
@@ -111,13 +109,13 @@ static void p1_display_video_clock_stop(P1Plugin *pel)
 
     if (ret != kCVReturnSuccess) {
         p1_log(obj, P1_LOG_ERROR, "Failed to stop display link: Core Video error %d", ret);
-        obj->flags |= P1_FLAG_ERROR;
-        p1_object_set_state(obj, P1_STATE_STOPPING);
+        obj->state.flags |= P1_FLAG_ERROR;
     }
 
     p1_display_video_clock_kill_session(dvclock);
 
-    p1_object_set_state(obj, P1_STATE_IDLE);
+    obj->state.current = P1_STATE_IDLE;
+    p1_object_notify(obj);
 }
 
 static void p1_display_video_clock_kill_session(P1DisplayVideoClock *dvclock)
@@ -142,7 +140,7 @@ static CVReturn p1_display_video_clock_callback(
 
     p1_object_lock(obj);
 
-    if (obj->state == P1_STATE_STARTING) {
+    if (obj->state.current == P1_STATE_STARTING) {
         // Get the display refresh period.
         double period = CVDisplayLinkGetActualOutputVideoRefreshPeriod(dvclock->display_link);
         if (period == 0.0)
@@ -153,10 +151,11 @@ static CVReturn p1_display_video_clock_callback(
         vclock->fps_den = dvclock->divisor;
 
         // Report running.
-        p1_object_set_state(obj, P1_STATE_RUNNING);
+        obj->state.current = P1_STATE_RUNNING;
+        p1_object_notify(obj);
     }
 
-    if (obj->state == P1_STATE_RUNNING) {
+    if (obj->state.current == P1_STATE_RUNNING) {
         // Skip tick based on divisor.
         if (dvclock->skip_counter >= dvclock->divisor)
             dvclock->skip_counter = 0;

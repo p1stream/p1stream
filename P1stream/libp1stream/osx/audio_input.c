@@ -82,8 +82,6 @@ static void p1_input_audio_source_start(P1Plugin *pel)
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
-    p1_object_set_state(obj, P1_STATE_STARTING);
-
     AudioStreamBasicDescription fmt;
     fmt.mFormatID = kAudioFormatLinearPCM;
     fmt.mFormatFlags = kLinearPCMFormatFlagIsFloat;
@@ -130,6 +128,9 @@ static void p1_input_audio_source_start(P1Plugin *pel)
     if (ret != noErr)
         goto fail;
 
+    obj->state.current = P1_STATE_STARTING;
+    p1_object_notify(obj);
+
     return;
 
 fail:
@@ -144,7 +145,8 @@ static void p1_input_audio_source_stop(P1Plugin *pel)
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
     OSStatus ret;
 
-    p1_object_set_state(obj, P1_STATE_STOPPING);
+    obj->state.current = P1_STATE_STOPPING;
+    p1_object_notify(obj);
 
     // Async, waits until running callback.
     ret = AudioQueueStop(iasrc->queue, FALSE);
@@ -165,7 +167,6 @@ static void p1_input_audio_source_kill_session(P1InputAudioSource *iasrc)
         if (ret != noErr) {
             p1_log(obj, P1_LOG_ERROR, "Failed to dispose of audio queue");
             p1_log_os_status(obj, P1_LOG_ERROR, ret);
-            p1_input_audio_source_halt(iasrc);
         }
     }
 }
@@ -174,12 +175,11 @@ static void p1_input_audio_source_halt(P1InputAudioSource *iasrc)
 {
     P1Object *obj = (P1Object *) iasrc;
 
-    obj->flags |= P1_FLAG_ERROR;
-    p1_object_set_state(obj, P1_STATE_STOPPING);
-
     p1_input_audio_source_kill_session(iasrc);
 
-    p1_object_set_state(obj, P1_STATE_IDLE);
+    obj->state.current = P1_STATE_IDLE;
+    obj->state.flags |= P1_FLAG_ERROR;
+    p1_object_notify(obj);
 }
 
 static void p1_input_audio_source_input_callback(
@@ -195,7 +195,7 @@ static void p1_input_audio_source_input_callback(
     P1InputAudioSource *iasrc = (P1InputAudioSource *) inUserData;
 
     // FIXME: should we worry about this being atomic?
-    if (obj->state == P1_STATE_RUNNING)
+    if (obj->state.current == P1_STATE_RUNNING)
         p1_audio_source_buffer(asrc, inStartTime->mHostTime, inBuffer->mAudioData,
                                inBuffer->mAudioDataByteSize / sample_size);
 
@@ -234,21 +234,23 @@ static void p1_input_audio_source_running_callback(
 
     if (running) {
         // Confirm start.
-        if (obj->state == P1_STATE_STARTING)
-            p1_object_set_state(obj, P1_STATE_RUNNING);
+        if (obj->state.current == P1_STATE_STARTING) {
+            obj->state.current = P1_STATE_RUNNING;
+            p1_object_notify(obj);
+        }
     }
     else {
         // Clean up after stopping.
         p1_input_audio_source_kill_session(iasrc);
+        obj->state.current = P1_STATE_IDLE;
 
         // Check if this was a proper shutdown.
-        if (obj->state == P1_STATE_STOPPING) {
-            p1_object_set_state(obj, P1_STATE_IDLE);
-        }
-        else if (obj->state == P1_STATE_RUNNING) {
+        if (obj->state.current == P1_STATE_RUNNING) {
             p1_log(obj, P1_LOG_ERROR, "Audio queue stopped itself");
-            p1_input_audio_source_halt(iasrc);
+            obj->state.flags |= P1_FLAG_ERROR;
         }
+
+        p1_object_notify(obj);
     }
 
 end:

@@ -175,15 +175,18 @@ void p1_conn_start(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
 
-    p1_object_set_state(connobj, P1_STATE_STARTING);
-
-    // Thread will continue start, and set state to running
     int ret = pthread_create(&connf->thread, NULL, p1_conn_main, connf);
     if (ret != 0) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to start connection thread: %s", strerror(ret));
-        connobj->flags |= P1_FLAG_ERROR;
-        p1_object_set_state(connobj, P1_STATE_IDLE);
+        connobj->state.current = P1_STATE_IDLE;
+        connobj->state.flags |= P1_FLAG_ERROR;
     }
+    else {
+        // Thread will continue start, and set state to running
+        connobj->state.current = P1_STATE_STARTING;
+    }
+
+    p1_object_notify(connobj);
 }
 
 void p1_conn_stop(P1ConnectionFull *connf)
@@ -192,10 +195,12 @@ void p1_conn_stop(P1ConnectionFull *connf)
 
     // If we acquired the lock during the starting state, that means we're in
     // the middle of a connection attempt. Abort it.
-    if (connobj->state == P1_STATE_STARTING)
+    if (connobj->state.current == P1_STATE_STARTING)
         RTMP_Close(&connf->rtmp);
 
-    p1_object_set_state(connobj, P1_STATE_STOPPING);
+    connobj->state.current = P1_STATE_STOPPING;
+    p1_object_notify(connobj);
+
     p1_conn_signal(connf);
 }
 
@@ -279,7 +284,7 @@ void p1_conn_stream_video(P1ConnectionFull *connf, int64_t time, x264_picture_t 
     // Encode and build packet using fine-grained lock.
     p1_lock(connobj, &connf->video_lock);
 
-    if (connobj->state != P1_STATE_RUNNING) {
+    if (connobj->state.current != P1_STATE_RUNNING) {
         p1_unlock(connobj, &connf->video_lock);
         return;
     }
@@ -323,7 +328,7 @@ void p1_conn_stream_video(P1ConnectionFull *connf, int64_t time, x264_picture_t 
     // Stream using full lock.
     p1_object_lock(connobj);
 
-    if (connobj->state == P1_STATE_RUNNING)
+    if (connobj->state.current == P1_STATE_RUNNING)
         p1_conn_submit_packet(connf, pkt, time);
     else
         free(pkt);
@@ -336,9 +341,10 @@ fail:
     p1_unlock(connobj, &connf->video_lock);
 
     p1_object_lock(connobj);
-    if (connobj->state == P1_STATE_RUNNING) {
-        connobj->flags |= P1_FLAG_ERROR;
-        p1_object_set_state(connobj, P1_STATE_STOPPING);
+    if (connobj->state.current == P1_STATE_RUNNING) {
+        connobj->state.current = P1_STATE_STOPPING;
+        connobj->state.flags |= P1_FLAG_ERROR;
+        p1_object_notify(connobj);
         p1_conn_signal(connf);
     }
     p1_object_unlock(connobj);
@@ -376,7 +382,7 @@ size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf,
     // Encode and build packet using fine-grained lock.
     p1_lock(connobj, &connf->audio_lock);
 
-    if (connobj->state != P1_STATE_RUNNING) {
+    if (connobj->state.current != P1_STATE_RUNNING) {
         p1_unlock(connobj, &connf->audio_lock);
         return samples;     // Consume all
     }
@@ -431,7 +437,7 @@ size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf,
     // Stream using full lock.
     p1_object_lock(connobj);
 
-    if (connobj->state == P1_STATE_RUNNING) {
+    if (connobj->state.current == P1_STATE_RUNNING) {
         p1_conn_submit_packet(connf, pkt, time);
     }
     else {
@@ -449,9 +455,10 @@ fail:
     p1_unlock(connobj, &connf->audio_lock);
 
     p1_object_lock(connobj);
-    if (connobj->state == P1_STATE_RUNNING) {
-        connobj->flags |= P1_FLAG_ERROR;
-        p1_object_set_state(connobj, P1_STATE_STOPPING);
+    if (connobj->state.current == P1_STATE_RUNNING) {
+        connobj->state.current = P1_STATE_STOPPING;
+        connobj->state.flags |= P1_FLAG_ERROR;
+        p1_object_notify(connobj);
         p1_conn_signal(connf);
     }
     p1_object_unlock(connobj);
@@ -573,12 +580,12 @@ static void *p1_conn_main(void *data)
     p1_lock(connobj, &connf->video_lock);
 
     if (!p1_conn_start_audio(connf)) {
-        connobj->flags |= P1_FLAG_ERROR;
+        connobj->state.flags |= P1_FLAG_ERROR;
         goto fail_audio;
     }
 
     if (!p1_conn_start_video(connf)) {
-        connobj->flags |= P1_FLAG_ERROR;
+        connobj->state.flags |= P1_FLAG_ERROR;
         goto fail_video;
     }
 
@@ -601,7 +608,7 @@ static void *p1_conn_main(void *data)
     ret = RTMP_SetupURL(r, url_copy);
     if (!ret) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to parse URL.");
-        connobj->flags |= P1_FLAG_ERROR;
+        connobj->state.flags |= P1_FLAG_ERROR;
         goto cleanup;
     }
 
@@ -623,13 +630,13 @@ static void *p1_conn_main(void *data)
 
     // State can change to stopping from p1_conn_stop. In that case, disregard
     // connection errors and simply clean up.
-    if (connobj->state == P1_STATE_STOPPING) {
+    if (connobj->state.current == P1_STATE_STOPPING) {
         p1_log(connobj, P1_LOG_INFO, "Connection interrupted.");
         goto cleanup;
     }
     if (!ret) {
         p1_log(connobj, P1_LOG_ERROR, "Connection failed.");
-        connobj->flags |= P1_FLAG_ERROR;
+        connobj->state.flags |= P1_FLAG_ERROR;
         goto cleanup;
     }
     p1_log(connobj, P1_LOG_INFO, "Connected.");
@@ -637,31 +644,33 @@ static void *p1_conn_main(void *data)
     // Queue configuration packets
     if (!p1_conn_stream_audio_config(connf)
         || !p1_conn_stream_video_config(connf)) {
-        connobj->flags |= P1_FLAG_ERROR;
+        connobj->state.flags |= P1_FLAG_ERROR;
         goto cleanup;
     }
 
     // Connection event loop
     connf->start = p1_get_time();
-    p1_object_set_state(connobj, P1_STATE_RUNNING);
+
+    connobj->state.current = P1_STATE_RUNNING;
+    p1_object_notify(connobj);
 
     do {
         ret = pthread_cond_wait(&connf->cond, &connobj->lock);
         if (ret != 0) {
             p1_log(connobj, P1_LOG_ERROR, "Failed to wait on condition: %s", strerror(ret));
-            connobj->flags |= P1_FLAG_ERROR;
+            connobj->state.flags |= P1_FLAG_ERROR;
             goto cleanup;
         }
 
-        if (connobj->state != P1_STATE_RUNNING)
+        if (connobj->state.current != P1_STATE_RUNNING)
             break;
 
         if (!p1_conn_flush(connf)) {
-            connobj->flags |= P1_FLAG_ERROR;
+            connobj->state.flags |= P1_FLAG_ERROR;
             goto cleanup;
         }
 
-    } while (connobj->state == P1_STATE_RUNNING);
+    } while (connobj->state.current == P1_STATE_RUNNING);
     p1_log(connobj, P1_LOG_INFO, "Disconnected.");
 
 cleanup:
@@ -681,7 +690,8 @@ fail_audio:
     p1_conn_clear(&connf->audio_queue);
     p1_conn_clear(&connf->video_queue);
 
-    p1_object_set_state(connobj, P1_STATE_IDLE);
+    connobj->state.current = P1_STATE_IDLE;
+    p1_object_notify(connobj);
 
     p1_unlock(connobj, &connf->video_lock);
     p1_unlock(connobj, &connf->audio_lock);
@@ -753,7 +763,7 @@ static bool p1_conn_flush(P1ConnectionFull *connf)
         }
 
         p1_object_lock(connobj);
-    } while (connobj->state == P1_STATE_RUNNING);
+    } while (connobj->state.current == P1_STATE_RUNNING);
 
     return true;
 }

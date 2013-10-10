@@ -77,12 +77,11 @@ static void p1_capture_video_source_start(P1Plugin *pel)
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
 
 #define P1_CVSRC_ERROR {                            \
-    obj->flags |= P1_FLAG_ERROR;                    \
-    p1_object_set_state(obj, P1_STATE_IDLE);        \
+    obj->state.current = P1_STATE_IDLE;             \
+    obj->state.flags |= P1_FLAG_ERROR;              \
+    p1_object_notify(obj);                          \
     return;                                         \
 }
-
-    p1_object_set_state(obj, P1_STATE_STARTING);
 
     @autoreleasepool {
         P1VideoCaptureDelegate *delegate = [[P1VideoCaptureDelegate alloc] initWithSource:cvsrc];
@@ -137,8 +136,10 @@ static void p1_capture_video_source_start(P1Plugin *pel)
     }
 
     // We may have gotten an error notification during startRunning.
-    if (!(obj->flags & P1_FLAG_ERROR))
-        p1_object_set_state(obj, P1_STATE_RUNNING);
+    if (!(obj->state.flags & P1_FLAG_ERROR)) {
+        obj->state.current = P1_STATE_RUNNING;
+        p1_object_notify(obj);
+    }
 
 #undef P1_CVSRC_HALT
 }
@@ -148,13 +149,12 @@ static void p1_capture_video_source_stop(P1Plugin *pel)
     P1Object *obj = (P1Object *) pel;
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
 
-    p1_object_set_state(obj, P1_STATE_STOPPING);
-
     @autoreleasepool {
         p1_capture_video_source_kill_session(cvsrc);
     }
 
-    p1_object_set_state(obj, P1_STATE_IDLE);
+    obj->state.current = P1_STATE_IDLE;
+    p1_object_notify(obj);
 }
 
 static bool p1_capture_video_source_frame(P1VideoSource *vsrc)
@@ -220,7 +220,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     if (cvsrc->frame)
         CFRelease(cvsrc->frame);
 
-    if (obj->state != P1_STATE_RUNNING) {
+    if (obj->state.current != P1_STATE_RUNNING) {
         p1_object_unlock(obj);
         return;
     }
@@ -229,12 +229,14 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     if (frame == NULL) {
         p1_log(obj, P1_LOG_ERROR, "Failed to get image buffer for capture source frame");
 
-        obj->flags |= P1_FLAG_ERROR;
-        p1_object_set_state(obj, P1_STATE_STOPPING);
+        obj->state.current = P1_STATE_STOPPING;
+        obj->state.flags |= P1_FLAG_ERROR;
+        p1_object_notify(obj);
 
         p1_capture_video_source_kill_session(cvsrc);
 
-        p1_object_set_state(obj, P1_STATE_IDLE);
+        obj->state.current = P1_STATE_IDLE;
+        p1_object_notify(obj);
     }
     else {
         CFRetain(frame);
@@ -254,12 +256,11 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     NSError *err = [n.userInfo objectForKey:AVCaptureSessionErrorKey];
     p1_log_ns_error(obj, P1_LOG_ERROR, err);
 
-    obj->flags |= P1_FLAG_ERROR;
-    p1_object_set_state(obj, P1_STATE_STOPPING);
-
     p1_capture_video_source_kill_session(cvsrc);
 
-    p1_object_set_state(obj, P1_STATE_IDLE);
+    obj->state.current = P1_STATE_IDLE;
+    obj->state.flags |= P1_FLAG_ERROR;
+    p1_object_notify(obj);
 
     p1_object_unlock(obj);
 }

@@ -51,7 +51,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 {
     P1Context *context = self.context;
     if (context != NULL) {
-        assert(self.state == P1_STATE_IDLE);
+        assert(self.currentState == P1_STATE_IDLE);
         p1_free(self.context, P1_FREE_EVERYTHING);
     }
 }
@@ -63,23 +63,11 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 }
 
 
-// p1_start and p1_stop, of course, bypass the target setter. We fix that here.
-+ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
-{
-    if ([key isEqualToString:@"target"])
-        return NO;
-    else
-        return [super automaticallyNotifiesObserversForKey:key];
-}
-
 - (void)start
 {
     _restartContext = FALSE;
 
-    [self willChangeValueForKey:@"target"];
     bool ret = p1_start(self.context);
-    [self didChangeValueForKey:@"target"];
-
     if (!ret)
         abort();
 }
@@ -88,15 +76,13 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 {
     _restartContext = FALSE;
 
-    [self willChangeValueForKey:@"target"];
     p1_stop(self.context, P1_STOP_ASYNC);
-    [self didChangeValueForKey:@"target"];
 }
 
 // Context needs some special logic to restart.
 - (void)restart
 {
-    if (self.state == P1_STATE_IDLE) {
+    if (self.currentState == P1_STATE_IDLE) {
         _restartContext = FALSE;
         [self start];
     }
@@ -246,7 +232,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
     _contextFileHandle.readabilityHandler = ^(NSFileHandle *fh) {
         P1Notification n;
         p1_read(context, &n);
-        if (n.type != P1_NTYPE_NULL) {
+        if (n.object != NULL) {
             P1ObjectModel *obj = (__bridge P1ObjectModel *) n.object->user_data;
             [obj handleNotification:&n];
         }
@@ -259,12 +245,9 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 {
     [super handleNotification:n];
 
-    if (n->type == P1_NTYPE_STATE_CHANGE) {
-        P1State state = n->state_change.state;
-        if (_restartContext && state == P1_STATE_IDLE) {
-            _restartContext = false;
-            [self start];
-        }
+    if (_restartContext && n->state.current == P1_STATE_IDLE) {
+        _restartContext = false;
+        [self start];
     }
 }
 

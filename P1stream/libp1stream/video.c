@@ -225,14 +225,15 @@ void p1_video_start(P1VideoFull *videof)
         P1Object *obj = (P1Object *) src;
         P1VideoSource *vsrc = (P1VideoSource *) src;
 
-        if (obj->state == P1_STATE_STARTING || obj->state == P1_STATE_RUNNING) {
+        if (obj->state.current == P1_STATE_STARTING || obj->state.current == P1_STATE_RUNNING) {
             // FIXME: We leak textures if the source stops itself.
             if (!p1_video_link_source(vsrc))
                 goto fail_yuv_kernel;
         }
     }
 
-    p1_object_set_state(videoobj, P1_STATE_RUNNING);
+    videoobj->state.current = P1_STATE_RUNNING;
+    p1_object_notify(videoobj);
 
     return;
 
@@ -263,19 +264,19 @@ fail_platform:
     p1_video_destroy_platform(videof);
 
 fail:
-    videoobj->flags |= P1_FLAG_ERROR;
-    p1_object_set_state(videoobj, P1_STATE_IDLE);
+    videoobj->state.current = P1_STATE_IDLE;
+    videoobj->state.flags |= P1_FLAG_ERROR;
+    p1_object_notify(videoobj);
 }
 
 void p1_video_stop(P1VideoFull *videof)
 {
     P1Object *videoobj = (P1Object *) videof;
 
-    p1_object_set_state(videoobj, P1_STATE_STOPPING);
-
     p1_video_kill_session(videof);
 
-    p1_object_set_state(videoobj, P1_STATE_IDLE);
+    videoobj->state.current = P1_STATE_IDLE;
+    p1_object_notify(videoobj);
 }
 
 static void p1_video_kill_session(P1VideoFull *videof)
@@ -335,7 +336,7 @@ void p1_video_unlink_source(P1VideoSource *vsrc)
     GLenum err;
 
     // No use if the context is getting destroyed any way.
-    if (videoobj->state != P1_STATE_RUNNING)
+    if (videoobj->state.current != P1_STATE_RUNNING)
         return;
 
     glDeleteTextures(1, &vsrc->texture);
@@ -363,7 +364,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
 
     p1_object_lock(videoobj);
 
-    if (videoobj->state != P1_STATE_RUNNING) {
+    if (videoobj->state.current != P1_STATE_RUNNING) {
         p1_object_unlock(videoobj);
         return;
     }
@@ -382,7 +383,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
         b_ret = true;
 
         p1_object_lock(el);
-        if (el->state == P1_STATE_RUNNING) {
+        if (el->state.current == P1_STATE_RUNNING) {
             glBindTexture(GL_TEXTURE_RECTANGLE, vsrc->texture);
             b_ret = vsrc->frame(vsrc);
 
@@ -418,7 +419,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     // Streaming. The state test is a preliminary check. The state may change,
     // and the connection code does a final check itself, but checking here as
     // well saves us a bunch of processing.
-    if (connobj->state == P1_STATE_RUNNING) {
+    if (connobj->state.current == P1_STATE_RUNNING) {
         // Colorspace conversion
         cl_err = clEnqueueAcquireGLObjects(videof->clq, 1, &videof->tex_mem, 0, NULL, NULL);
         if (cl_err != CL_SUCCESS) goto fail_cl;
@@ -443,12 +444,11 @@ fail_cl:
     p1_log(videoobj, P1_LOG_ERROR, "Failure during colorspace conversion: OpenCL error %d", cl_err);
 
 fail:
-    videoobj->flags |= P1_FLAG_ERROR;
-    p1_object_set_state(videoobj, P1_STATE_STOPPING);
-
     p1_video_kill_session(videof);
 
-    p1_object_set_state(videoobj, P1_STATE_IDLE);
+    videoobj->state.current = P1_STATE_IDLE;
+    videoobj->state.flags |= P1_FLAG_ERROR;
+    p1_object_notify(videoobj);
 
     p1_object_unlock(videoobj);
 }

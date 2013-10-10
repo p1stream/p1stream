@@ -64,7 +64,7 @@
     [_mainWindowController close];
 
     // Wait for p1_stop.
-    if (_contextModel.state == P1_STATE_IDLE) {
+    if (_contextModel.currentState == P1_STATE_IDLE) {
         return NSTerminateNow;
     }
     else {
@@ -80,18 +80,15 @@
 {
     // Handle p1_stop result.
     if (object == _contextModel && [keyPath isEqualToString:@"state"]) {
-        if (_terminating && _contextModel.state == P1_STATE_IDLE)
+        if (_terminating && _contextModel.currentState == P1_STATE_IDLE)
             [NSApp replyToApplicationShouldTerminate:TRUE];
     }
 
     // If our connection breaks, reset to idle state.
     P1ObjectModel *connectionModel = _contextModel.connectionModel;
     if (object == connectionModel && [keyPath isEqualToString:@"error"]) {
-        if (connectionModel.error) {
-            [connectionModel lock];
+        if (connectionModel.error && connectionModel.target != P1_TARGET_IDLE)
             connectionModel.target = P1_TARGET_IDLE;
-            [connectionModel unlock];
-        }
     }
 }
 

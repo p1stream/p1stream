@@ -48,9 +48,9 @@ typedef struct _P1Context P1Context;
 typedef enum _P1LogLevel P1LogLevel;
 typedef enum _P1StopOptions P1StopOptions;
 typedef enum _P1FreeOptions P1FreeOptions;
-typedef enum _P1State P1State;
+typedef enum _P1CurrentState P1CurrentState;
 typedef enum _P1TargetState P1TargetState;
-typedef enum _P1NotificationType P1NotificationType;
+typedef struct _P1State P1State;
 typedef enum _P1ObjectType P1ObjectType;
 typedef struct _P1ListNode P1ListNode;
 typedef struct _P1Notification P1Notification;
@@ -99,7 +99,7 @@ enum _P1FreeOptions {
 
 // Objects track simple state. These are the possible states.
 
-enum _P1State {
+enum _P1CurrentState {
     P1_STATE_IDLE       = 0, // Initial value.
     P1_STATE_STARTING   = 1,
     P1_STATE_RUNNING    = 2,
@@ -128,18 +128,21 @@ typedef uint8_t P1Flags;
 // Objects settings this flag should always follow it with a call to
 // p1_object_set_state. (Even if that doesn't change the state.)
 //
-// The error flag can be cleared by calling p1_object_set_target with
+// The error flag can be cleared by calling p1_object_target with
 // P1_TARGET_RUNNING. (Even if that was already the current target state.)
 
 #define P1_FLAG_ERROR   1
 
 
-// Notification types.
+// Struct that encapsulates all state.
 
-enum _P1NotificationType {
-    P1_NTYPE_NULL           = 0,
-    P1_NTYPE_STATE_CHANGE   = 1,
-    P1_NTYPE_TARGET_CHANGE  = 2
+struct _P1State {
+    // Current state of the object. Only the object itself should update this field.
+    P1CurrentState current;
+    // Target state we want the object to be int.
+    P1TargetState target;
+    // Additional flags.
+    P1Flags flags;
 };
 
 
@@ -202,7 +205,7 @@ struct _P1Config {
 }
 
 
-// Notifications are sent to the control thread so that it may track important
+// Notifications are sent to the control thread so that it may track state
 // changes that require it to take action.
 
 // The same notification system is also used to update the user, which can be
@@ -214,24 +217,12 @@ struct _P1Config {
 // users main thread is unable to read for seconds.
 
 struct _P1Notification {
-    P1NotificationType type;
-
-    // Object that sent the notification.
+    // Object that changed state.
     P1Object *object;
-
-    // Content depends on the type field.
-    union {
-
-        struct {
-            P1State state;
-            P1Flags flags;
-        } state_change;
-
-        struct {
-            P1TargetState target;
-        } target_change;
-
-    };
+    // Current (new) state.
+    P1State state;
+    // Previous state.
+    P1State last_state;
 };
 
 
@@ -303,13 +294,10 @@ struct _P1Object {
     // (Certain exceptions are possible, e.g. the source or context is idle.)
     pthread_mutex_t lock;
 
-    // Current state. Only the element itself should update this field, and do
-    // so with p1_set_state.
+    // Object state. Any updates to this should be followed by a p1_notify.
     P1State state;
-    // Target state. This field can be updated with p1_set_target.
-    P1TargetState target;
-    // Additional state flags.
-    P1Flags flags;
+    // State at the last p1_notify. Read-only.
+    P1State last_state;
 
     // Anything the user may want to associate with this object.
     void *user_data;
@@ -326,37 +314,29 @@ struct _P1Object {
     p1_unlock(_p1_obj, &_p1_obj->lock);                         \
 })
 
-// This method should be used to change the state field.
-#define p1_object_set_state(_obj, _state) ({                    \
-    P1Object *_p1_obj = (_obj);                                 \
-    P1State _p1_state = (_state);                               \
-    _p1_obj->state = _p1_state;                                 \
+// Send a notification about state that was just changed. Can be called from any
+// thread, and should be called after every change to the state field.
+#define p1_object_notify(_obj) ({                               \
+    P1Object *_p1_objx = (_obj);                                \
     _p1_notify((P1Notification) {                               \
-        .type = P1_NTYPE_STATE_CHANGE,                          \
-        .object = _p1_obj,                                      \
-        .state_change = {                                       \
-            .state = _p1_state,                                 \
-            .flags = _p1_obj->flags                             \
-        }                                                       \
+        .object = _p1_objx,                                     \
+        .last_state = _p1_objx->last_state,                     \
+        .state = _p1_objx->state                                \
     });                                                         \
+    _p1_objx->last_state = _p1_objx->state;                     \
 })
 
-// This method should be used to change the target field. When setting the
-// target to running, this will also clear the error flag.
-#define p1_object_set_target(_obj, _target) ({                  \
+// Convenience method that sets an objects target.
+// If set to running, the error state is cleared as well.
+#define p1_object_target(_obj, _target) ({                      \
     P1Object *_p1_obj = (_obj);                                 \
     P1TargetState _p1_target = (_target);                       \
+    _p1_obj->state.target = _p1_target;                         \
     if (_p1_target == P1_TARGET_RUNNING)                        \
-        _p1_obj->flags &= ~P1_FLAG_ERROR;                       \
-    _p1_obj->target = _p1_target;                               \
-    _p1_notify((P1Notification) {                               \
-        .type = P1_NTYPE_TARGET_CHANGE,                         \
-        .object = _p1_obj,                                      \
-        .target_change = {                                      \
-            .target = _p1_target                                \
-        }                                                       \
-    });                                                         \
+        _p1_obj->state.flags &= ~P1_FLAG_ERROR;                 \
+    p1_object_notify(_p1_obj);                                  \
 })
+
 
 
 // Base for all plugin (non-fixed) elements.

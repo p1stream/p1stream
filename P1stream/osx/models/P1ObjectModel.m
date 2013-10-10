@@ -53,7 +53,7 @@
 {
     [self lock];
 
-    if (_state == P1_STATE_IDLE) {
+    if (self.currentState == P1_STATE_IDLE) {
         _restart = false;
         self.target = P1_TARGET_RUNNING;
     }
@@ -66,58 +66,78 @@
 }
 
 
-// We hold a copy of the state, based on notifications, in order to stay KVO compliant.
+// We handle these using notifications.
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
 {
     if ([key isEqualToString:@"state"])
+        return NO;
+    else if ([key isEqualToString:@"currentState"])
+        return NO;
+    else if ([key isEqualToString:@"target"])
         return NO;
     else if ([key isEqualToString:@"error"])
         return NO;
     else
         return [super automaticallyNotifiesObserversForKey:key];
 }
+
+
+- (P1State)state
+{
+    P1State state;
+
+    [self lock];
+    state = _state;
+    [self unlock];
+
+    return state;
+}
 - (void)handleNotification:(P1Notification *)n
 {
-    if (n->type == P1_NTYPE_STATE_CHANGE) {
-        P1State state = n->state_change.state;
-        if (state != _state) {
-            [self willChangeValueForKey:@"state"];
-            _state = state;
-            [self didChangeValueForKey:@"state"];
-        }
+    [self willChangeValueForKey:@"state"];
+    _state = n->state;
+    [self didChangeValueForKey:@"state"];
 
-        BOOL error = (n->state_change.flags & P1_FLAG_ERROR) ? TRUE : FALSE;
-        if (error != _error) {
-            [self willChangeValueForKey:@"error"];
-            _error = error;
-            [self didChangeValueForKey:@"error"];
-        }
-
-        if (_restart && state == P1_STATE_IDLE) {
-            _restart = false;
-            self.target = P1_TARGET_RUNNING;
-        }
+    if (_restart && self.currentState == P1_STATE_IDLE) {
+        _restart = false;
+        self.target = P1_TARGET_RUNNING;
     }
 }
 
 
-// Target is backed directly by the real target field.
-// This should be fine, because this property is the only way we access target.
+- (P1CurrentState)currentState
+{
+    return _state.current;
+}
++ (NSSet *)keyPathsForValuesAffectingCurrentState
+{
+    return [NSSet setWithObjects:@"state", nil];
+}
+
+
 - (P1TargetState)target
 {
-    return _object->target;
+    return _state.target;
 }
 - (void)setTarget:(P1TargetState)target
 {
     [self lock];
-
-    _restart = false;
-
-    [self willChangeValueForKey:@"error"];
-    p1_object_set_target(_object, target);
-    [self didChangeValueForKey:@"error"];
-
+    p1_object_target(_object, target);
     [self unlock];
+}
++ (NSSet *)keyPathsForValuesAffectingTarget
+{
+    return [NSSet setWithObjects:@"state", nil];
+}
+
+
+- (BOOL)error
+{
+    return (_state.flags & P1_FLAG_ERROR);
+}
++ (NSSet *)keyPathsForValuesAffectingError
+{
+    return [NSSet setWithObjects:@"state", nil];
 }
 
 
@@ -125,11 +145,11 @@
 {
     NSString *imageName;
 
-    if (_error) {
+    if (self.error) {
         imageName = NSImageNameStatusUnavailable;
     }
     else {
-        switch (_state) {
+        switch (self.currentState) {
             case P1_STATE_IDLE:
                 imageName = NSImageNameStatusNone;
                 break;
@@ -152,7 +172,7 @@
 }
 + (NSSet *)keyPathsForValuesAffectingAvailabilityImage
 {
-    return [NSSet setWithObjects:@"state", @"error", nil];
+    return [NSSet setWithObjects:@"error", @"currentState", nil];
 }
 
 @end

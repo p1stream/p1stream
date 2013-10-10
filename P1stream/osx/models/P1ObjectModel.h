@@ -1,11 +1,14 @@
 @interface P1ObjectModel : NSObject
 {
+    P1State _state;
     BOOL _restart;
 }
 
 @property (readonly) P1Object *object;
 
 @property (readonly) P1State state;
+
+@property (readonly) P1CurrentState currentState;
 @property P1TargetState target;
 @property (readonly) BOOL error;
 
@@ -22,6 +25,9 @@
 
 - (void)handleNotification:(P1Notification *)n;
 
++ (NSSet *)keyPathsForValuesAffectingCurrentState;
++ (NSSet *)keyPathsForValuesAffectingTarget;
++ (NSSet *)keyPathsForValuesAffectingError;
 + (NSSet *)keyPathsForValuesAffectingAvailabilityImage;
 
 @end

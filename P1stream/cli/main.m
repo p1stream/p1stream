@@ -114,7 +114,7 @@ static void notify_fd_callback(CFFileDescriptorRef fd, CFOptionFlags callBackTyp
     P1Notification n;
     p1_read(ctx, &n);
 
-    if (n.object == ctxobj && n.type == P1_NTYPE_STATE_CHANGE && n.state_change.state == P1_STATE_IDLE) {
+    if (n.object == ctxobj && n.state.current == P1_STATE_IDLE) {
         p1_free(ctx, P1_FREE_EVERYTHING);
         CFRunLoopStop(CFRunLoopGetMain());
     }

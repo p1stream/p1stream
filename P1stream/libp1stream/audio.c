@@ -70,15 +70,18 @@ void p1_audio_start(P1AudioFull *audiof)
 {
     P1Object *audioobj = (P1Object *) audiof;
 
-    p1_object_set_state(audioobj, P1_STATE_STARTING);
-
-    // Thread will continue start, and set state to running
     int ret = pthread_create(&audiof->thread, NULL, p1_audio_main, audiof);
     if (ret != 0) {
         p1_log(audioobj, P1_LOG_ERROR, "Failed to start audio mixer thread: %s", strerror(ret));
-        audioobj->flags |= P1_FLAG_ERROR;
-        p1_object_set_state(audioobj, P1_STATE_IDLE);
+        audioobj->state.current = P1_STATE_IDLE;
+        audioobj->state.flags |= P1_FLAG_ERROR;
     }
+    else {
+        // Thread will continue start, and set state to running
+        audioobj->state.current = P1_STATE_STARTING;
+    }
+
+    p1_object_notify(audioobj);
 }
 
 void p1_audio_stop(P1AudioFull *audiof)
@@ -86,7 +89,8 @@ void p1_audio_stop(P1AudioFull *audiof)
     P1Object *audioobj = (P1Object *) audiof;
     int ret;
 
-    p1_object_set_state(audioobj, P1_STATE_STOPPING);
+    audioobj->state.current = P1_STATE_STOPPING;
+    p1_object_notify(audioobj);
 
     ret = pthread_cond_signal(&audiof->cond);
     if (ret != 0)
@@ -121,7 +125,7 @@ void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t
 
     p1_object_lock(audioobj);
 
-    if (audioobj->state != P1_STATE_RUNNING)
+    if (audioobj->state.current != P1_STATE_RUNNING)
         goto end;
 
     size_t mix_time = audiof->mix_time;
@@ -182,14 +186,14 @@ static void *p1_audio_main(void *data)
     audiof->mix = calloc(buf_samples, sizeof(float));
     if (audiof->mix == NULL) {
         p1_log(audioobj, P1_LOG_ERROR, "Failed to allocate audio mix buffer");
-        audioobj->flags |= P1_FLAG_ERROR;
+        audioobj->state.flags |= P1_FLAG_ERROR;
         goto cleanup;
     }
 
     audiof->out = malloc(buf_samples * sizeof(int16_t));
     if (audiof->out == NULL) {
         p1_log(audioobj, P1_LOG_ERROR, "Failed to allocate audio output buffer");
-        audioobj->flags |= P1_FLAG_ERROR;
+        audioobj->state.flags |= P1_FLAG_ERROR;
         goto cleanup_mix;
     }
 
@@ -197,7 +201,8 @@ static void *p1_audio_main(void *data)
     audiof->out_pos = 0;
     audiof->out_time = audiof->mix_time;
 
-    p1_object_set_state(audioobj, P1_STATE_RUNNING);
+    audioobj->state.current = P1_STATE_RUNNING;
+    p1_object_notify(audioobj);
 
     do {
         // Get the current time.
@@ -205,7 +210,7 @@ static void *p1_audio_main(void *data)
         ret = gettimeofday(&delay_end, NULL);
         if (ret != 0) {
             p1_log(audioobj, P1_LOG_ERROR, "Failed to get time: %s", strerror(errno));
-            audioobj->flags |= P1_FLAG_ERROR;
+            audioobj->state.flags |= P1_FLAG_ERROR;
             goto cleanup_out;
         }
 
@@ -228,7 +233,7 @@ static void *p1_audio_main(void *data)
         }
         else if (ret != ETIMEDOUT) {
             p1_log(audioobj, P1_LOG_ERROR, "Failed to wait on condition: %s", strerror(ret));
-            audioobj->flags |= P1_FLAG_ERROR;
+            audioobj->state.flags |= P1_FLAG_ERROR;
             goto cleanup_out;
         }
 
@@ -245,7 +250,7 @@ static void *p1_audio_main(void *data)
         // Streaming. The state test is a preliminary check. The state may change,
         // and the connection code does a final check itself, but checking here as
         // well saves us a bunch of processing.
-        if (connobj->state == P1_STATE_RUNNING) {
+        if (connobj->state.current == P1_STATE_RUNNING) {
             // Resample into the output buffer.
             p1_audio_resample(audiof, samples);
 
@@ -272,7 +277,8 @@ cleanup_mix:
     free(audiof->mix);
 
 cleanup:
-    p1_object_set_state(audioobj, P1_STATE_IDLE);
+    audioobj->state.current = P1_STATE_IDLE;
+    p1_object_notify(audioobj);
 
     p1_object_unlock(audioobj);
 

@@ -253,19 +253,21 @@ bool p1_start(P1Context *ctx)
 
     p1_object_lock(ctxobj);
 
-    p1_object_set_target(ctxobj, P1_TARGET_RUNNING);
+    ctxobj->state.target = P1_TARGET_RUNNING;
 
     // Bootstrap.
-    if (ctxobj->state == P1_STATE_IDLE) {
-        p1_object_set_state(ctxobj, P1_STATE_STARTING);
-
+    if (ctxobj->state.current == P1_STATE_IDLE) {
         int ret = pthread_create(&ctxf->ctrl_thread, NULL, p1_ctrl_main, ctx);
         if (ret != 0) {
             p1_log(ctxobj, P1_LOG_ERROR, "Failed to start control thread: %s", strerror(ret));
-            p1_object_set_state(ctxobj, P1_STATE_IDLE);
             result = false;
         }
+        else {
+            ctxobj->state.current = P1_STATE_STARTING;
+        }
     }
+
+    p1_object_notify(ctxobj);
 
     p1_object_unlock(ctxobj);
 
@@ -280,12 +282,14 @@ void p1_stop(P1Context *ctx, P1StopOptions options)
 
     p1_object_lock(ctxobj);
 
-    p1_object_set_target(ctxobj, P1_TARGET_IDLE);
-    is_idle = (ctxobj->state == P1_STATE_IDLE);
+    ctxobj->state.target = P1_TARGET_IDLE;
+    is_idle = (ctxobj->state.current == P1_STATE_IDLE);
 
     // Set to stopping immediately, if possible.
-    if (ctxobj->state == P1_STATE_RUNNING)
-        p1_object_set_state(ctxobj, P1_STATE_STOPPING);
+    if (ctxobj->state.current == P1_STATE_RUNNING)
+        ctxobj->state.current = P1_STATE_STOPPING;
+
+    p1_object_notify(ctxobj);
 
     p1_object_unlock(ctxobj);
 
@@ -307,7 +311,7 @@ void p1_read(P1Context *ctx, P1Notification *out)
         const char *reason = (ret < 0) ? strerror(errno) : "Invalid read";
         p1_log(ctxobj, P1_LOG_ERROR, "Failed to read notification: %s", reason);
 
-        out->type = P1_NTYPE_NULL;
+        out->object = NULL;
     }
 }
 
@@ -433,7 +437,8 @@ static void *p1_ctrl_main(void *data)
 
     p1_object_lock(ctxobj);
 
-    p1_object_set_state(ctxobj, P1_STATE_RUNNING);
+    ctxobj->state.current = P1_STATE_RUNNING;
+    p1_object_notify(ctxobj);
 
     while (true) {
         // Deal with the notification channels. Don't hold the lock during this.
@@ -442,24 +447,30 @@ static void *p1_ctrl_main(void *data)
         p1_object_lock(ctxobj);
 
         // Go into stopping state if that's our goal.
-        if (ctxobj->target != P1_TARGET_RUNNING && ctxobj->state == P1_STATE_RUNNING)
-            p1_object_set_state(ctxobj, P1_STATE_STOPPING);
+        if (ctxobj->state.target != P1_TARGET_RUNNING && ctxobj->state.current == P1_STATE_RUNNING) {
+            ctxobj->state.current = P1_STATE_STOPPING;
+            p1_object_notify(ctxobj);
+        }
 
         // Progress state of our objects.
         wait = p1_ctrl_progress(ctx);
 
         // If there's nothing left to wait on, and we're stopping.
-        if (!wait && ctxobj->state == P1_STATE_STOPPING) {
+        if (!wait && ctxobj->state.current == P1_STATE_STOPPING) {
             // Restart if our target is no longer to idle.
-            if (ctxobj->target == P1_TARGET_RUNNING)
-                p1_object_set_state(ctxobj, P1_STATE_RUNNING);
+            if (ctxobj->state.target == P1_TARGET_RUNNING) {
+                ctxobj->state.current = P1_STATE_RUNNING;
+                p1_object_notify(ctxobj);
+            }
             // Otherwise, we're done.
-            else
+            else {
                 break;
+            }
         }
     };
 
-    p1_object_set_state(ctxobj, P1_STATE_IDLE);
+    ctxobj->state.current = P1_STATE_IDLE;
+    p1_object_notify(ctxobj);
 
     p1_object_unlock(ctxobj);
 
@@ -534,8 +545,8 @@ static bool p1_ctrl_progress(P1Context *ctx)
 
 // After an action, check if we need to wait.
 #define P1_CHECK_WAIT(_obj)                                 \
-    if ((_obj)->state == P1_STATE_STARTING ||               \
-        (_obj)->state == P1_STATE_STOPPING)                 \
+    if ((_obj)->state.current == P1_STATE_STARTING ||       \
+        (_obj)->state.current == P1_STATE_STOPPING)         \
         wait = true;
 
 // Common action handling for fixed elements.
@@ -560,7 +571,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
     p1_object_lock(fixed);
 
     // Progress clock.
-    P1State vclock_state;
+    P1CurrentState vclock_state;
     {
         P1VideoClock *vclock = ctx->video->clock;
         P1Plugin *pel = (P1Plugin *) vclock;
@@ -570,24 +581,24 @@ static bool p1_ctrl_progress(P1Context *ctx)
         obj->ctx = ctx;
 
         // Clock target state is tied to the context.
-        obj->target = (ctxobj->state == P1_STATE_STOPPING)
-                    ? P1_TARGET_IDLE : P1_TARGET_RUNNING;
+        obj->state.target = (ctxobj->state.current == P1_STATE_STOPPING)
+                            ? P1_TARGET_IDLE : P1_TARGET_RUNNING;
 
-        P1Action action = p1_ctrl_determine_action(obj, obj->target, false);
+        P1Action action = p1_ctrl_determine_action(obj, obj->state.target, false);
         P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
 
-        vclock_state = obj->state;
+        vclock_state = obj->state.current;
 
         p1_object_unlock(obj);
     }
 
     // Progress video mixer.
-    P1State video_state;
+    P1CurrentState video_state;
     {
-        P1Action action = p1_ctrl_determine_action(fixed, fixed->target, false);
+        P1Action action = p1_ctrl_determine_action(fixed, fixed->state.target, false);
         P1_RUN_ACTION(action, fixed, videof, p1_video_start, p1_video_stop);
 
-        video_state = fixed->state;
+        video_state = fixed->state.current;
     }
 
     // Progress video sources.
@@ -601,12 +612,13 @@ static bool p1_ctrl_progress(P1Context *ctx)
         p1_object_lock(obj);
         obj->ctx = ctx;
 
-        P1Action action = p1_ctrl_determine_action(obj, obj->target, false);
+        P1Action action = p1_ctrl_determine_action(obj, obj->state.target, false);
 
         if (action == P1_ACTION_START) {
             if (video_state == P1_STATE_RUNNING) {
                 if (!p1_video_link_source(vsrc)) {
-                    obj->flags |= P1_FLAG_ERROR;
+                    obj->state.flags |= P1_FLAG_ERROR;
+                    p1_object_notify(obj);
                     action = P1_ACTION_NONE;
                 }
             }
@@ -634,12 +646,12 @@ static bool p1_ctrl_progress(P1Context *ctx)
     p1_object_lock(fixed);
 
     // Progress audio mixer.
-    P1State audio_state;
+    P1CurrentState audio_state;
     {
-        P1Action action = p1_ctrl_determine_action(fixed, fixed->target, false);
+        P1Action action = p1_ctrl_determine_action(fixed, fixed->state.target, false);
         P1_RUN_ACTION(action, fixed, audiof, p1_audio_start, p1_audio_stop);
 
-        audio_state = fixed->state;
+        audio_state = fixed->state.current;
     }
 
     // Progress audio sources.
@@ -652,7 +664,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
         p1_object_lock(obj);
         obj->ctx = ctx;
 
-        P1Action action = p1_ctrl_determine_action(obj, obj->target, false);
+        P1Action action = p1_ctrl_determine_action(obj, obj->state.target, false);
         P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
 
         p1_object_unlock(obj);
@@ -671,7 +683,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
 
     // Progress stream connnection.
     {
-        P1TargetState target = fixed->target;
+        P1TargetState target = fixed->state.target;
 
         // We need a running clock for this.
         if (vclock_state != P1_STATE_RUNNING)
@@ -697,7 +709,7 @@ static bool p1_ctrl_progress(P1Context *ctx)
 // Determine action to take on an object.
 static P1Action p1_ctrl_determine_action(P1Object *obj, P1TargetState target, bool can_interrupt)
 {
-    P1State state = obj->state;
+    P1CurrentState state = obj->state.current;
     P1Context *ctx = obj->ctx;
     P1Object *ctxobj = (P1Object *) ctx;
 
@@ -707,12 +719,12 @@ static P1Action p1_ctrl_determine_action(P1Object *obj, P1TargetState target, bo
 
     // If the context is stopping, override target.
     // Make sure we preserve special targets.
-    if (target == P1_TARGET_RUNNING && ctxobj->state == P1_STATE_STOPPING)
+    if (target == P1_TARGET_RUNNING && ctxobj->state.current == P1_STATE_STOPPING)
         target = P1_TARGET_IDLE;
 
     // Take steps towards target.
     if (target == P1_TARGET_RUNNING) {
-        if (state == P1_STATE_IDLE && !(obj->flags & P1_FLAG_ERROR))
+        if (state == P1_STATE_IDLE && !(obj->state.flags & P1_FLAG_ERROR))
             return P1_ACTION_START;
 
         if (state == P1_STATE_STARTING)
@@ -739,34 +751,30 @@ static P1Action p1_ctrl_determine_action(P1Object *obj, P1TargetState target, bo
 }
 
 // Log a notification.
-static void p1_ctrl_log_notification(P1Notification *notification)
+static void p1_ctrl_log_notification(P1Notification *n)
 {
-    P1Object *obj = notification->object;
+    P1Object *obj = n->object;
 
-    const char *type;
-    const char *value;
-    switch (notification->type) {
-        case P1_NTYPE_STATE_CHANGE:
-            type = "state";
-            switch (notification->state_change.state) {
-                case P1_STATE_IDLE:     value = "idle";     break;
-                case P1_STATE_STARTING: value = "starting"; break;
-                case P1_STATE_RUNNING:  value = "running";  break;
-                case P1_STATE_STOPPING: value = "stopping"; break;
-                default: return;
-            }
-            break;
-        case P1_NTYPE_TARGET_CHANGE:
-            type = "target";
-            switch (notification->target_change.target) {
-                case P1_TARGET_RUNNING: value = "running"; break;
-                case P1_TARGET_IDLE:    value = "idle";    break;
-                case P1_TARGET_REMOVE:  value = "remove";  break;
-                default: return;
-            }
-            break;
-        default: return;
+    if (n->state.target != n->last_state.target) {
+        const char *target;
+        switch (n->state.target) {
+            case P1_TARGET_RUNNING: target = "running"; break;
+            case P1_TARGET_IDLE:    target = "idle";    break;
+            case P1_TARGET_REMOVE:  target = "remove";  break;
+            default: return;
+        }
+        p1_log(obj, P1_LOG_INFO, "target -> %s", target);
     }
 
-    p1_log(obj, P1_LOG_INFO, "%s -> %s", type, value);
+    if (n->state.current != n->last_state.current) {
+        const char *state;
+        switch (n->state.current) {
+            case P1_STATE_IDLE:     state = "idle";     break;
+            case P1_STATE_STARTING: state = "starting"; break;
+            case P1_STATE_RUNNING:  state = "running";  break;
+            case P1_STATE_STOPPING: state = "stopping"; break;
+            default: return;
+        }
+        p1_log(obj, P1_LOG_INFO, "state -> %s", state);
+    }
 }

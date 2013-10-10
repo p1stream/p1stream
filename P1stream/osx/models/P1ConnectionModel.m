@@ -9,7 +9,7 @@
         return @"Connection failed";
     }
     else {
-        switch (self.state) {
+        switch (self.currentState) {
             case P1_STATE_IDLE:
                 return @"Not connected";
             case P1_STATE_STARTING:
@@ -25,7 +25,7 @@
 }
 + (NSSet *)keyPathsForValuesAffectingStateMessage
 {
-    return [NSSet setWithObjects:@"state", @"error", nil];
+    return [NSSet setWithObjects:@"error", @"currentState", nil];
 }
 
 @end
