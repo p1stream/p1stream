@@ -149,6 +149,15 @@ struct _P1State {
     P1Flags flags;
 };
 
+// Compare two state structs for equality.
+#define p1_state_eq(_a, _b) ({                                  \
+    P1State *_p1_a = (_a);                                      \
+    P1State *_p1_b = (_b);                                      \
+    _p1_a->current == _p1_b->current &&                         \
+    _p1_a->target == _p1_b->target &&                           \
+    _p1_a->flags == _p1_b->flags;                               \
+})
+
 
 // Object types.
 
@@ -321,24 +330,26 @@ struct _P1Object {
 // Send a notification about state that was just changed. Can be called from any
 // thread, and should be called after every change to the state field.
 #define p1_object_notify(_obj) ({                               \
-    P1Object *_p1_objx = (_obj);                                \
-    _p1_notify((P1Notification) {                               \
-        .object = _p1_objx,                                     \
-        .last_state = _p1_objx->last_state,                     \
-        .state = _p1_objx->state                                \
-    });                                                         \
-    _p1_objx->last_state = _p1_objx->state;                     \
+    P1Object *_p1_obj = (_obj);                                 \
+    if (!p1_state_eq(&_p1_obj->state, &_p1_obj->last_state)) {  \
+        _p1_notify((P1Notification) {                           \
+            .object = _p1_obj,                                  \
+            .last_state = _p1_obj->last_state,                  \
+            .state = _p1_obj->state                             \
+        });                                                     \
+        _p1_obj->last_state = _p1_obj->state;                   \
+    }                                                           \
 })
 
 // Convenience method that sets an objects target.
 // If set to running, the error state is cleared as well.
 #define p1_object_target(_obj, _target) ({                      \
-    P1Object *_p1_obj = (_obj);                                 \
+    P1Object *_p1_objx = (_obj);                                \
     P1TargetState _p1_target = (_target);                       \
-    _p1_obj->state.target = _p1_target;                         \
+    _p1_objx->state.target = _p1_target;                        \
     if (_p1_target == P1_TARGET_RUNNING)                        \
-        _p1_obj->state.flags &= ~P1_FLAG_ERROR;                 \
-    p1_object_notify(_p1_obj);                                  \
+        _p1_objx->state.flags &= ~P1_FLAG_ERROR;                \
+    p1_object_notify(_p1_objx);                                 \
 })
 
 
