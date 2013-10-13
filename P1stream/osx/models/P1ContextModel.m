@@ -101,15 +101,15 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 // We handle this using notifications.
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
 {
-    if ([key isEqualToString:@"hasObjectsThatNeedToRestart"])
+    if ([key isEqualToString:@"needsConnectionRestart"])
         return NO;
     else
         return [super automaticallyNotifiesObserversForKey:key];
 }
 
-- (BOOL)hasObjectsThatNeedToRestart
+- (BOOL)needsConnectionRestart
 {
-    return _hasObjectsThatNeedToRestart;
+    return _needsConnectionRestart;
 }
 
 
@@ -276,18 +276,12 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
 - (void)checkNeedsRestart
 {
-    [self willChangeValueForKey:@"hasObjectsThatNeedToRestart"];
-    BOOL v = FALSE;
-    v = v || _audioModel.needsRestart;
-    for (P1ObjectModel *sourceModel in _audioModel.sourceModels)
-        v = v || sourceModel.needsRestart;
-    v = v || _videoModel.needsRestart;
-    v = v || _videoModel.clockModel.needsRestart;
-    for (P1ObjectModel *sourceModel in _videoModel.sourceModels)
-        v = v || sourceModel.needsRestart;
-    v = v || _connectionModel.needsRestart;
-    _hasObjectsThatNeedToRestart = v;
-    [self didChangeValueForKey:@"hasObjectsThatNeedToRestart"];
+    [self willChangeValueForKey:@"needsConnectionRestart"];
+    _needsConnectionRestart = _audioModel.needsRestart ||
+                              _videoModel.needsRestart ||
+                              _videoModel.clockModel.needsRestart ||
+                              _connectionModel.needsRestart;
+    [self didChangeValueForKey:@"needsConnectionRestart"];
 }
 
 

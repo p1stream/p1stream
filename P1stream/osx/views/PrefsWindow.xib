@@ -261,7 +261,7 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="hidden" keyPath="contextModel.hasObjectsThatNeedToRestart" id="tem-9J-rQe">
+                            <binding destination="-2" name="hidden" keyPath="contextModel.needsConnectionRestart" id="cPT-JK-x86">
                                 <dictionary key="options">
                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                 </dictionary>
@@ -277,7 +277,7 @@
                         </constraints>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSInfo" id="knM-wF-mya"/>
                         <connections>
-                            <binding destination="-2" name="hidden" keyPath="contextModel.hasObjectsThatNeedToRestart" id="XJH-EY-oJB">
+                            <binding destination="-2" name="hidden" keyPath="contextModel.needsConnectionRestart" id="O8F-8c-bMj">
                                 <dictionary key="options">
                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                 </dictionary>

@@ -114,13 +114,15 @@
     // When the connection is idle, restart objects as needed.
     if (contextModel.connectionModel.currentState == P1_STATE_IDLE) {
         [contextModel.audioModel restartIfNeeded];
-        for (P1ObjectModel *sourceModel in contextModel.audioModel.sourceModels)
-            [sourceModel restartIfNeeded];
         [contextModel.videoModel restartIfNeeded];
         [contextModel.videoModel.clockModel restartIfNeeded];
-        for (P1ObjectModel *sourceModel in contextModel.videoModel.sourceModels)
-            [sourceModel restartIfNeeded];
     }
+
+    // We can restart sources whenever.
+    for (P1ObjectModel *sourceModel in contextModel.audioModel.sourceModels)
+        [sourceModel restartIfNeeded];
+    for (P1ObjectModel *sourceModel in contextModel.videoModel.sourceModels)
+        [sourceModel restartIfNeeded];
 }
 
 - (IBAction)visitWebsite:(id)sender
