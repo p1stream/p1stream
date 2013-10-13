@@ -25,12 +25,13 @@ enum _P1Action {
 };
 
 
-bool p1_object_init(P1Object *obj, P1ObjectType type)
+bool p1_object_init(P1Object *obj, P1ObjectType type, P1Context *ctx)
 {
     pthread_mutexattr_t attr;
     int ret;
 
     obj->type = type;
+    obj->ctx = ctx;
 
     ret = pthread_mutexattr_init(&attr);
     if (ret != 0) {
@@ -101,20 +102,17 @@ P1Context *p1_create()
     if (!p1_init(ctxf))
         goto fail_context;
 
-    if (!p1_video_init(videof))
+    if (!p1_video_init(videof, ctx))
         goto fail_video;
     ctx->video = (P1Video *) videof;
-    ((P1Object *) videof)->ctx = ctx;
 
-    if (!p1_audio_init(audiof))
+    if (!p1_audio_init(audiof, ctx))
         goto fail_audio;
     ctx->audio = (P1Audio *) audiof;
-    ((P1Object *) audiof)->ctx = ctx;
 
-    if (!p1_conn_init(connf))
+    if (!p1_conn_init(connf, ctx))
         goto fail_conn;
     ctx->conn = (P1Connection *) connf;
-    ((P1Object *) connf)->ctx = ctx;
 
     return ctx;
 
@@ -140,7 +138,7 @@ static bool p1_init(P1ContextFull *ctxf)
     P1Object *ctxobj = (P1Object *) ctxf;
     int ret;
 
-    if (!p1_object_init(ctxobj, P1_OTYPE_CONTEXT))
+    if (!p1_object_init(ctxobj, P1_OTYPE_CONTEXT, ctx))
         goto fail_object;
 
     if (!p1_init_platform(ctxf))

@@ -30,7 +30,8 @@ typedef struct _P1ContextFull P1ContextFull;
 
 
 // Private P1Object methods.
-bool p1_object_init(P1Object *obj, P1ObjectType type);
+
+bool p1_object_init(P1Object *obj, P1ObjectType type, P1Context *ctx);
 void p1_object_destroy(P1Object *obj);
 
 
@@ -71,7 +72,7 @@ struct _P1VideoFull {
     x264_picture_t out_pic;
 };
 
-bool p1_video_init(P1VideoFull *videof);
+bool p1_video_init(P1VideoFull *videof, P1Context *ctx);
 #define p1_video_destroy(_videof) p1_object_destroy((P1Object *) _videof)
 
 void p1_video_config(P1VideoFull *videof, P1Config *cfg);
@@ -104,7 +105,7 @@ struct _P1AudioFull {
     pthread_cond_t cond;
 };
 
-bool p1_audio_init(P1AudioFull *audiof);
+bool p1_audio_init(P1AudioFull *audiof, P1Context *ctx);
 void p1_audio_destroy(P1AudioFull *audiof);
 
 void p1_audio_config(P1AudioFull *videof, P1Config *cfg);
@@ -145,7 +146,7 @@ struct _P1ConnectionFull {
     void *audio_out;
 };
 
-bool p1_conn_init(P1ConnectionFull *connf);
+bool p1_conn_init(P1ConnectionFull *connf, P1Context *ctx);
 void p1_conn_destroy(P1ConnectionFull *connf);
 
 void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg);

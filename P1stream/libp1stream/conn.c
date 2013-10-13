@@ -43,12 +43,12 @@ static void p1_conn_x264_log_callback(void *data, int level, const char *fmt, va
 static void p1_conn_rtmp_log_callback(int level, const char *fmt, va_list);
 
 
-bool p1_conn_init(P1ConnectionFull *connf)
+bool p1_conn_init(P1ConnectionFull *connf, P1Context *ctx)
 {
     P1Object *connobj = (P1Object *) connf;
     int ret;
 
-    if (!p1_object_init(connobj, P1_OTYPE_CONNECTION))
+    if (!p1_object_init(connobj, P1_OTYPE_CONNECTION, ctx))
         goto fail_object;
 
     ret = pthread_cond_init(&connf->cond, NULL);

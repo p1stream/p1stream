@@ -62,9 +62,9 @@ typedef void (*P1VideoPreviewCallback)(size_t width, size_t height, uint8_t *dat
 
 // These types are for convenience. Sources usually want to have a function
 // following one of these signatures to instantiate them.
-typedef P1VideoClock *(P1VideoClockFactory)();
-typedef P1VideoSource *(P1VideoSourceFactory)();
-typedef P1AudioSource *(P1AudioSourceFactory)();
+typedef P1VideoClock *(P1VideoClockFactory)(P1Context *ctx);
+typedef P1VideoSource *(P1VideoSourceFactory)(P1Context *ctx);
+typedef P1AudioSource *(P1AudioSourceFactory)(P1Context *ctx);
 
 
 // Log levels. These match x264s.
@@ -297,11 +297,11 @@ struct _P1ListNode {
 // Base of all objects that live in a context.
 
 struct _P1Object {
-    // Back reference. This will be set automatically.
-    P1Context *ctx;
-
     // Basic type of the object.
     P1ObjectType type;
+
+    // Back reference.
+    P1Context *ctx;
 
     // All operations on an element should be done while its lock is held.
     // (Certain exceptions are possible, e.g. the source or context is idle.)
@@ -401,7 +401,7 @@ struct _P1VideoClock {
 };
 
 // Subclasses should call this from the initializer.
-bool p1_video_clock_init(P1VideoClock *vclock);
+bool p1_video_clock_init(P1VideoClock *vclock, P1Context *ctx);
 
 // Configure the video clock. Calls into the subclass config method.
 void p1_video_clock_config(P1VideoClock *vclock, P1Config *cfg);
@@ -432,7 +432,7 @@ struct _P1VideoSource {
 };
 
 // Subclasses should call into this from the initializer.
-bool p1_video_source_init(P1VideoSource *vsrc);
+bool p1_video_source_init(P1VideoSource *vsrc, P1Context *ctx);
 
 // Configure the video source. Calls into the subclass config method.
 void p1_video_source_config(P1VideoSource *vsrc, P1Config *cfg);
@@ -453,7 +453,7 @@ struct _P1AudioSource {
 };
 
 // Subclasses should call into this from the initializer.
-bool p1_audio_source_init(P1AudioSource *asrc);
+bool p1_audio_source_init(P1AudioSource *asrc, P1Context *ctx);
 
 // Configure the audio source. Calls into the subclass config method.
 void p1_audio_source_config(P1AudioSource *asrc, P1Config *cfg);

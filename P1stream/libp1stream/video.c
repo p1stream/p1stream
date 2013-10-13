@@ -86,12 +86,12 @@ static const size_t yuv_work_size[] = {
 };
 
 
-bool p1_video_init(P1VideoFull *videof)
+bool p1_video_init(P1VideoFull *videof, P1Context *ctx)
 {
     P1Video *video = (P1Video *) videof;
     P1Object *videoobj = (P1Object *) videof;
 
-    if (!p1_object_init(videoobj, P1_OTYPE_VIDEO))
+    if (!p1_object_init(videoobj, P1_OTYPE_VIDEO, ctx))
         goto fail_object;
 
     p1_list_init(&video->sources);
@@ -454,9 +454,9 @@ fail:
 }
 
 
-bool p1_video_clock_init(P1VideoClock *vclock)
+bool p1_video_clock_init(P1VideoClock *vclock, P1Context *ctx)
 {
-    return p1_object_init((P1Object *) vclock, P1_OTYPE_VIDEO_CLOCK);
+    return p1_object_init((P1Object *) vclock, P1_OTYPE_VIDEO_CLOCK, ctx);
 }
 
 void p1_video_clock_config(P1VideoClock *vclock, P1Config *cfg)
@@ -468,9 +468,9 @@ void p1_video_clock_config(P1VideoClock *vclock, P1Config *cfg)
 }
 
 
-bool p1_video_source_init(P1VideoSource *vsrc)
+bool p1_video_source_init(P1VideoSource *vsrc, P1Context *ctx)
 {
-    return p1_object_init((P1Object *) vsrc, P1_OTYPE_VIDEO_SOURCE);
+    return p1_object_init((P1Object *) vsrc, P1_OTYPE_VIDEO_SOURCE, ctx);
 }
 
 void p1_video_source_config(P1VideoSource *vsrc, P1Config *cfg)

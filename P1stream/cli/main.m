@@ -156,7 +156,7 @@ static void create_audio_sources(P1Context *ctx, NSDictionary *dict)
         if (cfg == NULL)
             exit(EX_SOFTWARE);
 
-        P1AudioSource *source = factory();
+        P1AudioSource *source = factory(ctx);
         if (source == NULL) {
             p1_config_free(cfg);
             exit(EX_SOFTWARE);
@@ -196,7 +196,7 @@ static void create_video_clock(P1Context *ctx, NSDictionary *dict)
     if (cfg == NULL)
         exit(EX_SOFTWARE);
 
-    P1VideoClock *clock = factory();
+    P1VideoClock *clock = factory(ctx);
     if (cfg == NULL) {
         p1_config_free(cfg);
         exit(EX_SOFTWARE);
@@ -233,7 +233,7 @@ static void create_video_sources(P1Context *ctx, NSDictionary *dict)
         if (cfg == NULL)
             exit(EX_SOFTWARE);
 
-        P1VideoSource *source = factory();
+        P1VideoSource *source = factory(ctx);
         if (source == NULL) {
             p1_config_free(cfg);
             exit(EX_SOFTWARE);

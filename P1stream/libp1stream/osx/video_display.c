@@ -17,7 +17,7 @@ struct _P1DisplayVideoSource {
     IOSurfaceRef frame;
 };
 
-static bool p1_display_video_source_init(P1DisplayVideoSource *dvsrc);
+static bool p1_display_video_source_init(P1DisplayVideoSource *dvsrc, P1Context *ctx);
 static void p1_display_video_source_start(P1Plugin *pel);
 static void p1_display_video_source_stop(P1Plugin *pel);
 static void p1_display_video_source_kill_session(P1DisplayVideoSource *dvsrc);
@@ -29,12 +29,12 @@ static void p1_display_video_source_callback(
     IOSurfaceRef frame);
 
 
-P1VideoSource *p1_display_video_source_create()
+P1VideoSource *p1_display_video_source_create(P1Context *ctx)
 {
     P1DisplayVideoSource *dvsrc = calloc(1, sizeof(P1DisplayVideoSource));
 
     if (dvsrc != NULL) {
-        if (!p1_display_video_source_init(dvsrc)) {
+        if (!p1_display_video_source_init(dvsrc, ctx)) {
             free(dvsrc);
             dvsrc = NULL;
         }
@@ -43,12 +43,12 @@ P1VideoSource *p1_display_video_source_create()
     return (P1VideoSource *) dvsrc;
 }
 
-static bool p1_display_video_source_init(P1DisplayVideoSource *dvsrc)
+static bool p1_display_video_source_init(P1DisplayVideoSource *dvsrc, P1Context *ctx)
 {
     P1VideoSource *vsrc = (P1VideoSource *) dvsrc;
     P1Plugin *pel = (P1Plugin *) dvsrc;
 
-    if (!p1_video_source_init(vsrc))
+    if (!p1_video_source_init(vsrc, ctx))
         return false;
 
     pel->start = p1_display_video_source_start;

@@ -108,7 +108,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
     if (config == NULL)
         return FALSE;
 
-    P1VideoClock *videoClock = factory();
+    P1VideoClock *videoClock = factory(self.context);
     if (videoClock == NULL) {
         p1_config_free(config);
         return FALSE;
@@ -151,7 +151,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         if (config == NULL)
             return FALSE;
 
-        P1VideoSource *videoSource = factory();
+        P1VideoSource *videoSource = factory(self.context);
         if (videoSource == NULL) {
             p1_config_free(config);
             return FALSE;
@@ -194,7 +194,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         if (config == NULL)
             return FALSE;
 
-        P1AudioSource *audioSource = factory();
+        P1AudioSource *audioSource = factory(self.context);
         if (audioSource == NULL) {
             p1_config_free(config);
             return FALSE;

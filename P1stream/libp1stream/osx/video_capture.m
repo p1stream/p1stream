@@ -17,7 +17,7 @@ struct _P1CaptureVideoSource {
     CVPixelBufferRef frame;
 };
 
-static bool p1_capture_video_source_init(P1CaptureVideoSource *cvsrc);
+static bool p1_capture_video_source_init(P1CaptureVideoSource *cvsrc, P1Context *ctx);
 static void p1_capture_video_source_start(P1Plugin *pel);
 static void p1_capture_video_source_stop(P1Plugin *pel);
 static bool p1_capture_video_source_frame(P1VideoSource *vsrc);
@@ -42,12 +42,12 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 @end
 
 
-P1VideoSource *p1_capture_video_source_create()
+P1VideoSource *p1_capture_video_source_create(P1Context *ctx)
 {
     P1CaptureVideoSource *cvsrc = calloc(1, sizeof(P1CaptureVideoSource));
 
     if (cvsrc != NULL) {
-        if (!p1_capture_video_source_init(cvsrc)) {
+        if (!p1_capture_video_source_init(cvsrc, ctx)) {
             free(cvsrc);
             return NULL;
         }
@@ -56,12 +56,12 @@ P1VideoSource *p1_capture_video_source_create()
     return (P1VideoSource *) cvsrc;
 }
 
-static bool p1_capture_video_source_init(P1CaptureVideoSource *cvsrc)
+static bool p1_capture_video_source_init(P1CaptureVideoSource *cvsrc, P1Context *ctx)
 {
     P1VideoSource *vsrc = (P1VideoSource *) cvsrc;
     P1Plugin *pel = (P1Plugin *) cvsrc;
 
-    if (!p1_video_source_init(vsrc))
+    if (!p1_video_source_init(vsrc, ctx))
         return false;
 
     pel->start = p1_capture_video_source_start;

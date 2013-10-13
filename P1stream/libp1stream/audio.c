@@ -23,13 +23,13 @@ static size_t p1_audio_time_to_samples(P1ContextFull *ctxf, int64_t time);
 static int64_t p1_audio_samples_to_time(P1ContextFull *ctx, size_t samples);
 
 
-bool p1_audio_init(P1AudioFull *audiof)
+bool p1_audio_init(P1AudioFull *audiof, P1Context *ctx)
 {
     P1Audio *audio = (P1Audio *) audiof;
     P1Object *audioobj = (P1Object *) audiof;
     int ret;
 
-    if (!p1_object_init(audioobj, P1_OTYPE_AUDIO))
+    if (!p1_object_init(audioobj, P1_OTYPE_AUDIO, ctx))
         goto fail_object;
 
     ret = pthread_cond_init(&audiof->cond, NULL);
@@ -98,9 +98,9 @@ void p1_audio_stop(P1AudioFull *audiof)
 }
 
 
-bool p1_audio_source_init(P1AudioSource *asrc)
+bool p1_audio_source_init(P1AudioSource *asrc, P1Context *ctx)
 {
-    return p1_object_init((P1Object *) asrc, P1_OTYPE_AUDIO_SOURCE);
+    return p1_object_init((P1Object *) asrc, P1_OTYPE_AUDIO_SOURCE, ctx);
 }
 
 void p1_audio_source_config(P1AudioSource *asrc, P1Config *cfg)

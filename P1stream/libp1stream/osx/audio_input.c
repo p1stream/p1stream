@@ -20,7 +20,7 @@ struct _P1InputAudioSource {
     AudioQueueBufferRef buffers[num_buffers];
 };
 
-static bool p1_input_audio_source_init(P1InputAudioSource *iasrc);
+static bool p1_input_audio_source_init(P1InputAudioSource *iasrc, P1Context *ctx);
 static void p1_input_audio_source_config(P1Plugin *pel, P1Config *cfg);
 static void p1_input_audio_source_start(P1Plugin *pel);
 static void p1_input_audio_source_stop(P1Plugin *pel);
@@ -39,12 +39,12 @@ static void p1_input_audio_source_running_callback(
     AudioQueuePropertyID inID);
 
 
-P1AudioSource *p1_input_audio_source_create()
+P1AudioSource *p1_input_audio_source_create(P1Context *ctx)
 {
     P1InputAudioSource *iasrc = calloc(1, sizeof(P1InputAudioSource));
 
     if (iasrc != NULL) {
-        if (!p1_input_audio_source_init(iasrc)) {
+        if (!p1_input_audio_source_init(iasrc, ctx)) {
             free(iasrc);
             iasrc = NULL;
         }
@@ -53,12 +53,12 @@ P1AudioSource *p1_input_audio_source_create()
     return (P1AudioSource *) iasrc;
 }
 
-static bool p1_input_audio_source_init(P1InputAudioSource *iasrc)
+static bool p1_input_audio_source_init(P1InputAudioSource *iasrc, P1Context *ctx)
 {
     P1AudioSource *asrc = (P1AudioSource *) iasrc;
     P1Plugin *pel = (P1Plugin *) iasrc;
 
-    if (!p1_audio_source_init(asrc))
+    if (!p1_audio_source_init(asrc, ctx))
         return false;
 
     pel->config = p1_input_audio_source_config;

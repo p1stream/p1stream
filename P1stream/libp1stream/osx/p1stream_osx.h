@@ -29,17 +29,17 @@ P1Config *p1_plist_config_create(NSDictionary *dict);
 
 
 // Audio source using a system audio input. Uses Audio Toolbox.
-P1AudioSource *p1_input_audio_source_create();
+P1AudioSource *p1_input_audio_source_create(P1Context *ctx);
 
 
 // Video clock timed to the refresh rate of a display. Uses Core Video.
-P1VideoClock *p1_display_video_clock_create();
+P1VideoClock *p1_display_video_clock_create(P1Context *ctx);
 
 
 // Video source that captures from a display. Uses Core Graphics.
-P1VideoSource *p1_display_video_source_create();
+P1VideoSource *p1_display_video_source_create(P1Context *ctx);
 
 // Video source that opens a system capture device. Uses AV Foundation.
-P1VideoSource *p1_capture_video_source_create();
+P1VideoSource *p1_capture_video_source_create(P1Context *ctx);
 
 #endif

@@ -15,7 +15,7 @@ struct _P1DisplayVideoClock {
     uint8_t skip_counter;
 };
 
-static bool p1_display_video_clock_init(P1DisplayVideoClock *dvclock);
+static bool p1_display_video_clock_init(P1DisplayVideoClock *dvclock, P1Context *ctx);
 static void p1_display_video_clock_start(P1Plugin *pel);
 static void p1_display_video_clock_stop(P1Plugin *pel);
 static void p1_display_video_clock_kill_session(P1DisplayVideoClock *dvclock);
@@ -28,12 +28,12 @@ static CVReturn p1_display_video_clock_callback(
     void *displayLinkContext);
 
 
-P1VideoClock *p1_display_video_clock_create()
+P1VideoClock *p1_display_video_clock_create(P1Context *ctx)
 {
     P1DisplayVideoClock *dvclock = calloc(1, sizeof(P1DisplayVideoClock));
 
     if (dvclock) {
-        if (!p1_display_video_clock_init(dvclock)) {
+        if (!p1_display_video_clock_init(dvclock, ctx)) {
             free(dvclock);
             dvclock = NULL;
         }
@@ -42,12 +42,12 @@ P1VideoClock *p1_display_video_clock_create()
     return (P1VideoClock *) dvclock;
 }
 
-static bool p1_display_video_clock_init(P1DisplayVideoClock *dvclock)
+static bool p1_display_video_clock_init(P1DisplayVideoClock *dvclock, P1Context *ctx)
 {
     P1VideoClock *vclock = (P1VideoClock *) dvclock;
     P1Plugin *pel = (P1Plugin *) dvclock;
 
-    if (!p1_video_clock_init(vclock))
+    if (!p1_video_clock_init(vclock, ctx))
         return false;
 
     pel->start = p1_display_video_clock_start;
