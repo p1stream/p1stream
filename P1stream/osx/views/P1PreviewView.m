@@ -95,15 +95,15 @@ static void videoPreviewCallback(size_t width, size_t height, uint8_t *data, voi
 {
     if (aspect == _aspect)
         return;
+
     _aspect = aspect;
 
-    if (aspect == 0) {
-        if (_constraint) {
-            [self removeConstraint:_constraint];
-            _constraint = nil;
-        }
+    if (_constraint) {
+        [self removeConstraint:_constraint];
+        _constraint = nil;
     }
-    else {
+
+    if (aspect != 0) {
         _constraint = [NSLayoutConstraint constraintWithItem:self
                                                    attribute:NSLayoutAttributeWidth
                                                    relatedBy:NSLayoutRelationEqual
