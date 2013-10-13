@@ -109,6 +109,36 @@
 }
 
 
+- (BOOL)needsRestart
+{
+    return (_state.flags & P1_FLAG_NEEDS_RESTART);
+}
++ (NSSet *)keyPathsForValuesAffectingNeedsRestart
+{
+    return [NSSet setWithObjects:@"state", nil];
+}
+
+
+- (BOOL)configValid
+{
+    return (_state.flags & P1_FLAG_CONFIG_VALID);
+}
++ (NSSet *)keyPathsForValuesAffectingConfigValid
+{
+    return [NSSet setWithObjects:@"state", nil];
+}
+
+
+- (BOOL)canStart
+{
+    return (_state.flags & P1_FLAG_CAN_START);
+}
++ (NSSet *)keyPathsForValuesAffectingCanStart
+{
+    return [NSSet setWithObjects:@"state", nil];
+}
+
+
 - (BOOL)error
 {
     return (_state.flags & P1_FLAG_ERROR);

@@ -9,6 +9,9 @@
 
 @property (readonly) P1CurrentState currentState;
 @property P1TargetState target;
+@property (readonly) BOOL needsRestart;
+@property (readonly) BOOL configValid;
+@property (readonly) BOOL canStart;
 @property (readonly) BOOL error;
 
 @property (retain) NSString *name;
@@ -24,6 +27,9 @@
 
 + (NSSet *)keyPathsForValuesAffectingCurrentState;
 + (NSSet *)keyPathsForValuesAffectingTarget;
++ (NSSet *)keyPathsForValuesAffectingNeedsRestart;
++ (NSSet *)keyPathsForValuesAffectingConfigValid;
++ (NSSet *)keyPathsForValuesAffectingCanStart;
 + (NSSet *)keyPathsForValuesAffectingError;
 + (NSSet *)keyPathsForValuesAffectingAvailabilityImage;
 
