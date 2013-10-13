@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="12F37" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="12F45" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1080" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
@@ -18,20 +18,20 @@
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" wantsToBeColor="NO" visibleAtLaunch="NO" animationBehavior="default" id="1">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="600" height="270"/>
+            <rect key="contentRect" x="196" y="240" width="700" height="270"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
             <view key="contentView" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="600" height="270"/>
+                <rect key="frame" x="0.0" y="0.0" width="700" height="270"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView drawsBackground="NO" type="noTabsNoBorder" translatesAutoresizingMaskIntoConstraints="NO" id="X47-uQ-wiY">
-                        <rect key="frame" x="0.0" y="80" width="600" height="190"/>
+                        <rect key="frame" x="0.0" y="80" width="700" height="190"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="Connection" identifier="P1ConnectionPage" id="50p-fa-hDj">
                                 <view key="view" id="FVI-2I-alQ">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="190"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="700" height="190"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="K5a-ad-Tvy">
@@ -47,7 +47,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nG8-4p-DyG">
-                                            <rect key="frame" x="148" y="148" width="432" height="22"/>
+                                            <rect key="frame" x="148" y="148" width="532" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="mSB-H1-r5e">
                                                 <font key="font" metaFont="system"/>
@@ -59,7 +59,7 @@
                                             </connections>
                                         </textField>
                                         <box autoresizesSubviews="NO" verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Ce8-gS-2o5">
-                                            <rect key="frame" x="20" y="137" width="560" height="5"/>
+                                            <rect key="frame" x="20" y="137" width="660" height="5"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -229,7 +229,7 @@
                         </connections>
                     </tabView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4U5-fC-Aes">
-                        <rect key="frame" x="510" y="13" width="76" height="32"/>
+                        <rect key="frame" x="610" y="13" width="76" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FOv-OG-4Pl">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -241,7 +241,7 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DCh-nM-B7A">
-                        <rect key="frame" x="430" y="13" width="80" height="32"/>
+                        <rect key="frame" x="530" y="13" width="80" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Revert" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hug-3r-PsV">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -252,16 +252,52 @@
                             <binding destination="Caf-v7-l2A" name="enabled" keyPath="hasUnappliedChanges" id="HvL-YM-ILy"/>
                         </connections>
                     </button>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qIJ-wM-G4c">
+                        <rect key="frame" x="41" y="23" width="390" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Certain changes cannot be applied until you stop the stream." id="UZD-vr-LYe">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="-2" name="hidden" keyPath="contextModel.hasObjectsThatNeedToRestart" id="tem-9J-rQe">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </textField>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="S1Z-X0-qEm">
+                        <rect key="frame" x="20" y="24" width="16" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="16" id="8ME-ED-KPU"/>
+                            <constraint firstAttribute="height" constant="16" id="fSD-IL-pTG"/>
+                        </constraints>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSInfo" id="knM-wF-mya"/>
+                        <connections>
+                            <binding destination="-2" name="hidden" keyPath="contextModel.hasObjectsThatNeedToRestart" id="XJH-EY-oJB">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </imageView>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="X47-uQ-wiY" secondAttribute="trailing" id="7tC-C8-KbY"/>
+                    <constraint firstItem="S1Z-X0-qEm" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="BB8-KG-pca"/>
                     <constraint firstItem="X47-uQ-wiY" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="BkI-Gx-x9Y"/>
                     <constraint firstAttribute="trailing" secondItem="4U5-fC-Aes" secondAttribute="trailing" constant="20" symbolic="YES" id="FKS-qK-9xE"/>
+                    <constraint firstItem="S1Z-X0-qEm" firstAttribute="centerY" secondItem="qIJ-wM-G4c" secondAttribute="centerY" id="Hb9-DJ-zvK"/>
                     <constraint firstItem="X47-uQ-wiY" firstAttribute="top" secondItem="2" secondAttribute="top" id="PWG-9h-NpI"/>
                     <constraint firstItem="4U5-fC-Aes" firstAttribute="baseline" secondItem="DCh-nM-B7A" secondAttribute="baseline" id="dMC-Fp-xhz"/>
+                    <constraint firstItem="qIJ-wM-G4c" firstAttribute="baseline" secondItem="DCh-nM-B7A" secondAttribute="baseline" id="eof-7A-e8T"/>
                     <constraint firstItem="4U5-fC-Aes" firstAttribute="leading" secondItem="DCh-nM-B7A" secondAttribute="trailing" constant="12" symbolic="YES" id="lQV-An-IUj"/>
                     <constraint firstAttribute="bottom" secondItem="X47-uQ-wiY" secondAttribute="bottom" constant="80" id="ni3-QS-rmD"/>
                     <constraint firstAttribute="bottom" secondItem="4U5-fC-Aes" secondAttribute="bottom" constant="20" symbolic="YES" id="rQo-gh-QPC"/>
+                    <constraint firstItem="qIJ-wM-G4c" firstAttribute="leading" secondItem="S1Z-X0-qEm" secondAttribute="trailing" constant="8" symbolic="YES" id="tW0-v5-UYQ"/>
                 </constraints>
             </view>
             <toolbar key="toolbar" implicitIdentifier="D40664B6-B1BD-4DD5-A06A-265607962A33" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconAndLabel" sizeMode="regular" id="FzX-5z-Au1">
@@ -310,6 +346,7 @@
         </arrayController>
     </objects>
     <resources>
+        <image name="NSInfo" width="32" height="32"/>
         <image name="NSNetwork" width="32" height="32"/>
     </resources>
 </document>

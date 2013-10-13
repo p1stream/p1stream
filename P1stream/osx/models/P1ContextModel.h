@@ -11,6 +11,7 @@
     NSMutableArray *_logMessages;
 
     BOOL _restart;
+    BOOL _hasObjectsThatNeedToRestart;
 }
 
 @property (readonly) P1Context *context;
@@ -20,6 +21,8 @@
 @property (readonly, retain) P1AudioModel* audioModel;
 @property (readonly, retain) P1VideoModel* videoModel;
 @property (readonly, retain) P1ConnectionModel* connectionModel;
+
+@property (readonly) BOOL hasObjectsThatNeedToRestart;
 
 - (void)reconfigure;
 

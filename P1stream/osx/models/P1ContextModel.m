@@ -98,6 +98,21 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 }
 
 
+// We handle this using notifications.
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
+{
+    if ([key isEqualToString:@"hasObjectsThatNeedToRestart"])
+        return NO;
+    else
+        return [super automaticallyNotifiesObserversForKey:key];
+}
+
+- (BOOL)hasObjectsThatNeedToRestart
+{
+    return _hasObjectsThatNeedToRestart;
+}
+
+
 - (BOOL)createVideoClock:(NSDictionary *)dict
 {
     NSDictionary *clockDict = dict[@"video-clock"];
@@ -239,6 +254,8 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
             P1ObjectModel *obj = (__bridge P1ObjectModel *) n.object->user_data;
             [obj handleNotification:&n];
 
+            [obj.contextModel checkNeedsRestart];
+
             NSValue *box = [NSValue valueWithPointer:&n];
             [nc postNotificationName:@"P1Notification"
                               object:obj
@@ -255,6 +272,22 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
     if (_restart && n->state.current == P1_STATE_IDLE)
         [self start];
+}
+
+- (void)checkNeedsRestart
+{
+    [self willChangeValueForKey:@"hasObjectsThatNeedToRestart"];
+    BOOL v = FALSE;
+    v = v || _audioModel.needsRestart;
+    for (P1ObjectModel *sourceModel in _audioModel.sourceModels)
+        v = v || sourceModel.needsRestart;
+    v = v || _videoModel.needsRestart;
+    v = v || _videoModel.clockModel.needsRestart;
+    for (P1ObjectModel *sourceModel in _videoModel.sourceModels)
+        v = v || sourceModel.needsRestart;
+    v = v || _connectionModel.needsRestart;
+    _hasObjectsThatNeedToRestart = v;
+    [self didChangeValueForKey:@"hasObjectsThatNeedToRestart"];
 }
 
 
