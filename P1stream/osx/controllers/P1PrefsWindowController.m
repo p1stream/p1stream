@@ -54,8 +54,7 @@ static NSArray *arrayWithX264Names(char const * const *names)
 - (IBAction)applySettings:(id)sender
 {
     [_userDefaultsController save:sender];
-
-    // FIXME: Apply defaults to context.
+    [_contextModel reconfigure];
 }
 
 @end

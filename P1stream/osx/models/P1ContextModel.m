@@ -7,19 +7,9 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
 - (id)init
 {
-    NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
-    P1Config *config = p1_plist_config_create(dict);
-    if (config == NULL)
-        return nil;
-
     P1Context *context = p1_create();
-    if (context == NULL) {
-        p1_config_free(config);
+    if (context == NULL)
         return nil;
-    }
-
-    p1_config(context, config);
-    p1_config_free(config);
 
     self = [super initWithObject:(P1Object *) context];
     if (self) {
@@ -33,6 +23,10 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
         if (!_logMessages || !_audioModel || !_videoModel || !_connectionModel) return nil;
 
+        [self reconfigure];
+
+        // FIXME: Move this to reconfigure, compare objects.
+        NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
         if (![self createVideoClock:dict]) return nil;
         if (![self createVideoSources:dict]) return nil;
         if (![self createAudioSources:dict]) return nil;
@@ -58,6 +52,20 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 - (P1Context *)context
 {
     return (P1Context *)self.object;
+}
+
+
+- (void)reconfigure
+{
+    NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
+
+    P1Config *config = p1_plist_config_create(dict);
+    if (config == NULL)
+        abort();
+
+    p1_config(self.context, config);
+
+    p1_config_free(config);
 }
 
 

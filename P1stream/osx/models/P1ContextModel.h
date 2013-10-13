@@ -21,6 +21,8 @@
 @property (readonly, retain) P1VideoModel* videoModel;
 @property (readonly, retain) P1ConnectionModel* connectionModel;
 
+- (void)reconfigure;
+
 - (void)start;
 - (void)stop;
 
