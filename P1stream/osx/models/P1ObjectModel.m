@@ -149,6 +149,13 @@
 }
 
 
+- (void)restartIfNeeded
+{
+    if (self.needsRestart)
+        self.target = P1_TARGET_RESTART;
+}
+
+
 - (NSImage *)availabilityImage
 {
     NSString *imageName;

@@ -217,6 +217,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
 - (BOOL)listenForNotifications
 {
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     P1Context *context = self.context;
 
     _contextFileHandle = [[NSFileHandle alloc] initWithFileDescriptor:p1_fd(context)];
@@ -229,6 +230,11 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         if (n.object != NULL) {
             P1ObjectModel *obj = (__bridge P1ObjectModel *) n.object->user_data;
             [obj handleNotification:&n];
+
+            NSValue *box = [NSValue valueWithPointer:&n];
+            [nc postNotificationName:@"P1Notification"
+                              object:obj
+                            userInfo:@{ @"notification": box }];
         }
     };
 

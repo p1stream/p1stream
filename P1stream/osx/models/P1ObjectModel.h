@@ -25,6 +25,8 @@
 
 - (void)handleNotification:(P1Notification *)n;
 
+- (void)restartIfNeeded;
+
 + (NSSet *)keyPathsForValuesAffectingCurrentState;
 + (NSSet *)keyPathsForValuesAffectingTarget;
 + (NSSet *)keyPathsForValuesAffectingNeedsRestart;

@@ -51,6 +51,12 @@
     // Monitor connection state.
     [_contextModel.connectionModel addObserver:self forKeyPath:@"error" options:0 context:nil];
 
+    // Monitor other notifications so we can restart objects.
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self
+           selector:@selector(restartObjectsIfNeeded:)
+               name:@"P1Notification" object:nil];
+
     // Start disconnected.
     _contextModel.connectionModel.target = P1_TARGET_IDLE;
     [_contextModel start];
@@ -80,8 +86,10 @@
 {
     // Handle p1_stop result.
     if (object == _contextModel && [keyPath isEqualToString:@"state"]) {
-        if (_terminating && _contextModel.currentState == P1_STATE_IDLE)
+        if (_terminating && _contextModel.currentState == P1_STATE_IDLE) {
             [NSApp replyToApplicationShouldTerminate:TRUE];
+            return;
+        }
     }
 
     // If our connection breaks, reset to idle state.
@@ -89,6 +97,29 @@
     if (object == connectionModel && [keyPath isEqualToString:@"error"]) {
         if (connectionModel.error && connectionModel.target != P1_TARGET_IDLE)
             connectionModel.target = P1_TARGET_IDLE;
+    }
+}
+
+- (void)restartObjectsIfNeeded:(NSNotification *)notification
+{
+    P1Notification *n;
+
+    NSValue *box = notification.userInfo[@"notification"];
+    [box getValue:&n];
+
+    P1Context *context = n->object->ctx;
+    P1Object *contextObject = (P1Object *)context;
+    P1ContextModel *contextModel = (__bridge P1ContextModel *)contextObject->user_data;
+
+    // When the connection is idle, restart objects as needed.
+    if (contextModel.connectionModel.currentState == P1_STATE_IDLE) {
+        [contextModel.audioModel restartIfNeeded];
+        for (P1ObjectModel *sourceModel in contextModel.audioModel.sourceModels)
+            [sourceModel restartIfNeeded];
+        [contextModel.videoModel restartIfNeeded];
+        [contextModel.videoModel.clockModel restartIfNeeded];
+        for (P1ObjectModel *sourceModel in contextModel.videoModel.sourceModels)
+            [sourceModel restartIfNeeded];
     }
 }
 
