@@ -450,7 +450,7 @@ struct _P1VideoSource {
     P1Source super;
 
     // Texture name. The source need not touch this.
-    uint32_t texture;
+    unsigned int texture;
 
     // Top left and bottom right coordinates of where to place frames in the
     // output image. These are in the range [-1, +1].
@@ -513,6 +513,10 @@ struct _P1Audio {
 
 struct _P1Video {
     P1Object super;
+
+    // Active dimensions, set once running. Read-only.
+    int width;
+    int height;
 
     // The video clock. Only modify this when the video mixer is idle.
     P1VideoClock *clock;

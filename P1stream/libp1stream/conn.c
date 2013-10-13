@@ -860,7 +860,8 @@ static bool p1_conn_start_video(P1ConnectionFull *connf)
     P1Object *connobj = (P1Object *) connf;
     P1Context *ctx = connobj->ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
-    P1VideoClock *vclock = ctx->video->clock;
+    P1Video *video = ctx->video;
+    P1VideoClock *vclock = video->clock;
     x264_param_t *vp = &connf->video_params;
 
     vp->pf_log = p1_conn_x264_log_callback;
@@ -873,8 +874,8 @@ static bool p1_conn_start_video(P1ConnectionFull *connf)
     vp->b_aud = 1;
     vp->b_annexb = 0;
 
-    vp->i_width = 1280;
-    vp->i_height = 720;
+    vp->i_width = video->width;
+    vp->i_height = video->height;
 
     vp->i_fps_num = vclock->fps_num;
     vp->i_fps_den = vclock->fps_den;

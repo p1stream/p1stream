@@ -74,6 +74,10 @@ struct _P1VideoFull {
     GLuint tex;
     GLuint fbo;
 
+    // Config
+    int cfg_width;
+    int cfg_height;
+
     // GL objects
     GLuint vao;
     GLuint vbo;
@@ -81,6 +85,8 @@ struct _P1VideoFull {
     GLuint tex_u;
 
     // CL objects
+    size_t out_size;
+    size_t yuv_work_size[2];
     cl_command_queue clq;
     cl_mem tex_mem;
     cl_mem out_mem;

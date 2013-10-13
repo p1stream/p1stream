@@ -53,6 +53,7 @@ bool p1_init_platform(P1ContextFull *ctxf)
 
 bool p1_video_init_platform(P1VideoFull *videof)
 {
+    P1Video *video = (P1Video *) videof;
     P1Object *videoobj = (P1Object *) videof;
     CGLError cgl_err;
     cl_int cl_err;
@@ -90,8 +91,8 @@ bool p1_video_init_platform(P1VideoFull *videof)
 
     @autoreleasepool {
         videof->gl.surface = IOSurfaceCreate((__bridge CFDictionaryRef) @{
-            (__bridge NSString *) kIOSurfaceWidth: @1280,
-            (__bridge NSString *) kIOSurfaceHeight: @720,
+            (__bridge NSString *) kIOSurfaceWidth:  [NSNumber numberWithInt:video->width],
+            (__bridge NSString *) kIOSurfaceHeight: [NSNumber numberWithInt:video->height],
             (__bridge NSString *) kIOSurfaceBytesPerElement: @4
         });
     }
@@ -113,7 +114,7 @@ bool p1_video_init_platform(P1VideoFull *videof)
     }
 
     cgl_err = CGLTexImageIOSurface2D(videof->gl.cglContext, GL_TEXTURE_RECTANGLE,
-                                     GL_RGBA8, 1280, 720,
+                                     GL_RGBA8, video->width, video->height,
                                      GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, videof->gl.surface, 0);
     if (cgl_err != kCGLNoError) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to bind IOSurface to GL texture: Core Graphics error %d", cgl_err);
@@ -171,7 +172,7 @@ bool p1_video_preview(P1VideoFull *videof)
     }
 
     uint8_t *data = IOSurfaceGetBaseAddress(videof->gl.surface);
-    video->preview_fn(1280, 720, data, video->preview_user_data);
+    video->preview_fn(video->width, video->height, data, video->preview_user_data);
 
     ret = IOSurfaceUnlock(videof->gl.surface, kIOSurfaceLockReadOnly, &seed);
     if (ret != kIOReturnSuccess)

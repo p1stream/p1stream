@@ -78,15 +78,6 @@ static const GLsizei vbo_stride = 4 * sizeof(GLfloat);
 static const GLsizei vbo_size = 4 * vbo_stride;
 static const void *vbo_tex_coord_offset = (void *)(2 * sizeof(GLfloat));
 
-static const GLsizei output_width = 1280;
-static const GLsizei output_height = 720;
-static const size_t output_yuv_size = output_width * output_height * 1.5;
-
-static const size_t yuv_work_size[] = {
-    output_width / 2,
-    output_height / 2
-};
-
 
 bool p1_video_init(P1VideoFull *videof, P1Context *ctx)
 {
@@ -109,7 +100,28 @@ fail_object:
 
 bool p1_video_config(P1VideoFull *videof, P1Config *cfg)
 {
-    // FIXME
+    P1Video *video = (P1Video *) videof;
+    P1Object *videoobj = (P1Object *) videof;
+
+    bool have_width  = cfg->get_int(cfg, "video-width",  &videof->cfg_width);
+    bool have_height = cfg->get_int(cfg, "video-height", &videof->cfg_height);
+
+    if (!have_width || !have_height) {
+        p1_log(videoobj, P1_LOG_ERROR, "Missing video dimensions.");
+        return false;
+    }
+
+    if ((videof->cfg_width % 1) != 0 || (videof->cfg_height % 1) != 0) {
+        p1_log(videoobj, P1_LOG_ERROR, "Video dimensions must be multiples of 2.");
+        return false;
+    }
+
+    if (videoobj->state.current != P1_STATE_IDLE &&
+        (videof->cfg_width  != video->width ||
+         videof->cfg_height != video->height)) {
+            videoobj->state.flags |= P1_FLAG_NEEDS_RESTART;
+    }
+
     return true;
 }
 
@@ -150,6 +162,12 @@ void p1_video_start(P1VideoFull *videof)
     bool b_ret;
     size_t size;
 
+    video->width = videof->cfg_width;
+    video->height = videof->cfg_height;
+    videof->out_size = video->width * video->height * 1.5;
+    videof->yuv_work_size[0] = video->width / 2;
+    videof->yuv_work_size[1] = video->height / 2;
+
     b_ret = p1_video_init_platform(videof);
     if (!b_ret)
         goto fail;
@@ -167,7 +185,7 @@ void p1_video_start(P1VideoFull *videof)
         goto fail_platform;
     }
 
-    i_ret = x264_picture_alloc(&videof->out_pic, X264_CSP_I420, output_width, output_height);
+    i_ret = x264_picture_alloc(&videof->out_pic, X264_CSP_I420, video->width, video->height);
     if (i_ret < 0) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to alloc x264 picture buffer");
         goto fail_clq;
@@ -195,7 +213,7 @@ void p1_video_start(P1VideoFull *videof)
         goto fail_out_pic;
     }
 
-    videof->out_mem = clCreateBuffer(videof->cl, CL_MEM_WRITE_ONLY, output_yuv_size, NULL, &cl_err);
+    videof->out_mem = clCreateBuffer(videof->cl, CL_MEM_WRITE_ONLY, videof->out_size, NULL, &cl_err);
     if (cl_err != CL_SUCCESS) {
         p1_log(videoobj, P1_LOG_ERROR, "Failed to create CL output buffer: OpenCL error %d", cl_err);
         goto fail_tex_mem;
@@ -220,7 +238,7 @@ void p1_video_start(P1VideoFull *videof)
     }
 
     // GL state init. Most of this is up here because we can.
-    glViewport(0, 0, output_width, output_height);
+    glViewport(0, 0, video->width, video->height);
     glClearColor(0, 0, 0, 1);
     glActiveTexture(GL_TEXTURE0);
     glBindBuffer(GL_ARRAY_BUFFER, videof->vbo);
@@ -451,11 +469,11 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
         // Colorspace conversion
         cl_err = clEnqueueAcquireGLObjects(videof->clq, 1, &videof->tex_mem, 0, NULL, NULL);
         if (cl_err != CL_SUCCESS) goto fail_cl;
-        cl_err = clEnqueueNDRangeKernel(videof->clq, videof->yuv_kernel, 2, NULL, yuv_work_size, NULL, 0, NULL, NULL);
+        cl_err = clEnqueueNDRangeKernel(videof->clq, videof->yuv_kernel, 2, NULL, videof->yuv_work_size, NULL, 0, NULL, NULL);
         if (cl_err != CL_SUCCESS) goto fail_cl;
         cl_err = clEnqueueReleaseGLObjects(videof->clq, 1, &videof->tex_mem, 0, NULL, NULL);
         if (cl_err != CL_SUCCESS) goto fail_cl;
-        cl_err = clEnqueueReadBuffer(videof->clq, videof->out_mem, CL_FALSE, 0, output_yuv_size, videof->out_pic.img.plane[0], 0, NULL, NULL);
+        cl_err = clEnqueueReadBuffer(videof->clq, videof->out_mem, CL_FALSE, 0, videof->out_size, videof->out_pic.img.plane[0], 0, NULL, NULL);
         if (cl_err != CL_SUCCESS) goto fail_cl;
         cl_err = clFinish(videof->clq);
         if (cl_err != CL_SUCCESS) goto fail_cl;
