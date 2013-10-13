@@ -27,13 +27,11 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         context->log_fn = logCallback;
         context->log_user_data = (__bridge void *)self;
 
-        _audioModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->audio];
-        _videoModel = [[P1ObjectModel alloc] initWithObject:(P1Object *)context->video];
+        _audioModel = [[P1AudioModel alloc] initWithObject:(P1Object *)context->audio];
+        _videoModel = [[P1VideoModel alloc] initWithObject:(P1Object *)context->video];
         _connectionModel = [[P1ConnectionModel alloc] initWithObject:(P1Object *)context->conn];
 
-        _objects = [[NSMutableArray alloc] init];
-
-        if (!_logMessages || !_audioModel || !_videoModel || !_connectionModel || !_objects) return nil;
+        if (!_logMessages || !_audioModel || !_videoModel || !_connectionModel) return nil;
 
         if (![self createVideoClock:dict]) return nil;
         if (![self createVideoSources:dict]) return nil;
@@ -126,8 +124,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
     if (name)
         model.name = name;
 
-    self.context->video->clock = videoClock;
-    [_objects addObject:model];
+    self.videoModel.clockModel = model;
 
     return TRUE;
 }
@@ -169,9 +166,8 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         if (name)
             model.name = name;
 
-        P1Source *source = (P1Source *)videoSource;
-        p1_list_before(&self.context->video->sources, &source->link);
-        [_objects addObject:model];
+        [self.videoModel insertObject:model
+                inSourceModelsAtIndex:[self.videoModel.sourceModels count]];
     }
 
     return TRUE;
@@ -212,9 +208,8 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         if (name)
             model.name = name;
 
-        P1Source *source = (P1Source *)audioSource;
-        p1_list_before(&self.context->audio->sources, &source->link);
-        [_objects addObject:model];
+        [self.audioModel insertObject:model
+                inSourceModelsAtIndex:[self.audioModel.sourceModels count]];
     }
 
     return TRUE;

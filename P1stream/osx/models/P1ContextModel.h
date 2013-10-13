@@ -1,4 +1,6 @@
 #import "P1ObjectModel.h"
+#import "P1AudioModel.h"
+#import "P1VideoModel.h"
 #import "P1ConnectionModel.h"
 #import "P1LogMessage.h"
 
@@ -8,20 +10,15 @@
     NSFileHandle *_contextFileHandle;
     NSMutableArray *_logMessages;
 
-    // FIXME: This is a stub until we create proper ObjC models for plugins.
-    // For now, we just create a fairly useless P1ObjectModel instance for every
-    // P1Object, and reference it from here.
-    NSMutableArray *_objects;
-
     BOOL _restart;
 }
 
-@property (readonly, assign) P1Context *context;
+@property (readonly) P1Context *context;
 
 @property (readonly, retain) NSArray *logMessages;
 
-@property (readonly, retain) P1ObjectModel* audioModel;
-@property (readonly, retain) P1ObjectModel* videoModel;
+@property (readonly, retain) P1AudioModel* audioModel;
+@property (readonly, retain) P1VideoModel* videoModel;
 @property (readonly, retain) P1ConnectionModel* connectionModel;
 
 - (void)start;
