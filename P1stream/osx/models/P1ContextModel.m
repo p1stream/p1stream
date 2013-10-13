@@ -83,12 +83,11 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 - (void)restart
 {
     if (self.currentState == P1_STATE_IDLE) {
-        _restart = FALSE;
         [self start];
     }
     else {
-        _restart = TRUE;
         [self stop];
+        _restart = TRUE;
     }
 }
 
@@ -245,10 +244,8 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 {
     [super handleNotification:n];
 
-    if (_restart && n->state.current == P1_STATE_IDLE) {
-        _restart = false;
+    if (_restart && n->state.current == P1_STATE_IDLE)
         [self start];
-    }
 }
 
 
