@@ -37,7 +37,7 @@ static NSArray *arrayWithX264Names(char const * const *names)
 
 - (void)windowDidLoad
 {
-    _toolbar.selectedItemIdentifier = @"P1ConnectionPage";
+    _toolbar.selectedItemIdentifier = @"P1GeneralPage";
 }
 
 - (void)windowWillClose:(NSNotification *)notification

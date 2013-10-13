@@ -29,7 +29,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
-                            <tabViewItem label="Connection" identifier="P1ConnectionPage" id="50p-fa-hDj">
+                            <tabViewItem label="General" identifier="P1GeneralPage" id="50p-fa-hDj">
                                 <view key="view" id="FVI-2I-alQ">
                                     <rect key="frame" x="0.0" y="0.0" width="700" height="190"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -223,6 +223,24 @@
                                     </constraints>
                                 </view>
                             </tabViewItem>
+                            <tabViewItem label="Audio" identifier="P1AudioPage" id="X4s-OP-HmT">
+                                <view key="view" id="azm-ah-LSj">
+                                    <rect key="frame" x="0.0" y="0.0" width="700" height="190"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Video" identifier="P1VideoPage" id="WAs-PZ-kKX">
+                                <view key="view" id="py5-zz-IF7">
+                                    <rect key="frame" x="0.0" y="0.0" width="700" height="190"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Advanced" identifier="P1AdvancedPage" id="ZFX-dQ-xYN">
+                                <view key="view" id="3J9-mT-Sai">
+                                    <rect key="frame" x="0.0" y="0.0" width="700" height="190"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
                         </tabViewItems>
                         <connections>
                             <binding destination="-2" name="selectedIdentifier" keyPath="toolbar.selectedItemIdentifier" id="RQM-Es-JBP"/>
@@ -302,14 +320,32 @@
             </view>
             <toolbar key="toolbar" implicitIdentifier="D40664B6-B1BD-4DD5-A06A-265607962A33" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconAndLabel" sizeMode="regular" id="FzX-5z-Au1">
                 <allowedToolbarItems>
-                    <toolbarItem implicitItemIdentifier="C72042B8-AB16-4940-A72C-746A56A96C50" explicitItemIdentifier="P1ConnectionPage" label="Connection" paletteLabel="Connection" tag="-1" image="NSNetwork" selectable="YES" id="Ypf-mT-c8E">
+                    <toolbarItem implicitItemIdentifier="C72042B8-AB16-4940-A72C-746A56A96C50" explicitItemIdentifier="P1GeneralPage" label="General" paletteLabel="General" tag="-1" image="NSPreferencesGeneral" selectable="YES" id="Ypf-mT-c8E">
                         <connections>
                             <action selector="dummy:" target="-2" id="4bC-UR-2Ie"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="A049CB87-DB75-4095-B29B-CF4D61ECE254" explicitItemIdentifier="P1AudioPage" label="Audio" paletteLabel="Audio" tag="-1" image="NSAdvanced" selectable="YES" id="69C-ll-TCD">
+                        <connections>
+                            <action selector="dummy:" target="-2" id="o8l-ml-kgr"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="D40A9017-407C-4166-A68A-F744CBA86B84" explicitItemIdentifier="P1VideoPage" label="Video" paletteLabel="Video" tag="-1" image="NSAdvanced" selectable="YES" id="1lm-we-L0c">
+                        <connections>
+                            <action selector="dummy:" target="-2" id="o2g-jO-YKC"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="EF19F50B-CC90-4B57-BCE3-123B22374A2A" explicitItemIdentifier="P1AdvancedPage" label="Advanced" paletteLabel="Advanced" tag="-1" image="NSAdvanced" selectable="YES" id="7b9-G0-zZj">
+                        <connections>
+                            <action selector="dummy:" target="-2" id="WTt-R8-8V5"/>
                         </connections>
                     </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="Ypf-mT-c8E"/>
+                    <toolbarItem reference="69C-ll-TCD"/>
+                    <toolbarItem reference="1lm-we-L0c"/>
+                    <toolbarItem reference="7b9-G0-zZj"/>
                 </defaultToolbarItems>
             </toolbar>
             <connections>
@@ -346,7 +382,8 @@
         </arrayController>
     </objects>
     <resources>
+        <image name="NSAdvanced" width="32" height="32"/>
         <image name="NSInfo" width="32" height="32"/>
-        <image name="NSNetwork" width="32" height="32"/>
+        <image name="NSPreferencesGeneral" width="32" height="32"/>
     </resources>
 </document>
