@@ -113,7 +113,7 @@ void p1_conn_destroy(P1ConnectionFull *connf)
     p1_object_destroy(connobj);
 }
 
-void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
+bool p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
 {
     x264_param_t *vp = &connf->video_params;
     char s_tmp[128];
@@ -152,6 +152,9 @@ void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
     x264_param_apply_fastfirstpass(vp);
     if (cfg->get_string(cfg, "x264-profile", s_tmp, sizeof(s_tmp)))
         x264_param_apply_profile(vp, s_tmp);
+
+    // FIXME
+    return true;
 }
 
 static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, const char *val, void *data)
@@ -169,6 +172,26 @@ static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, const char 
     }
 
     return true;
+}
+
+bool p1_conn_notify(P1ConnectionFull *connf, P1Notification *n)
+{
+    P1Object *connobj = (P1Object *) connf;
+    P1Context *ctx = connobj->ctx;
+    P1Object *audioobj = (P1Object *) ctx->audio;
+    P1Object *videoobj = (P1Object *) ctx->video;
+    P1Object *vclockobj = (P1Object *) ctx->video->clock;
+
+    bool deps_ok =
+        audioobj->state.current  == P1_STATE_RUNNING &&
+        videoobj->state.current  == P1_STATE_RUNNING &&
+        vclockobj->state.current == P1_STATE_RUNNING;
+
+    if (!deps_ok && (connobj->state.current == P1_STATE_STARTING ||
+                     connobj->state.current == P1_STATE_RUNNING))
+        p1_conn_stop(connf);
+
+    return deps_ok;
 }
 
 void p1_conn_start(P1ConnectionFull *connf)

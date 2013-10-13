@@ -127,15 +127,37 @@ enum _P1TargetState {
 
 typedef uint8_t P1Flags;
 
-// The object stopped because of an error.
+// A flag that is immediately unset, but will force a notification. Used to
+// signal something other than state has changed.
+
+#define P1_FLAG_RESYNC          (1 << 0)
+
+// New configuration for the object won't take effect until the object is
+// restarted. Automatically cleared when the object becomes idle.
+
+#define P1_FLAG_NEEDS_RESTART   (1 << 1)
+
+// The object configuration is valid. This flag must be set, or the start
+// method will never be called.
 //
-// Objects settings this flag should always follow it with a call to
-// p1_object_set_state. (Even if that doesn't change the state.)
+// This will be set based on the return value of the config method.
+
+#define P1_FLAG_CONFIG_VALID    (1 << 2)
+
+// The object can start based on state of other objects. This flag must be set,
+// or the start method will never be called.
+//
+// This will be set based on the return value of the notify method.
+
+#define P1_FLAG_CAN_START       (1 << 3)
+
+// The object stopped because of an error. This flag must be cleared, or the
+// start method will never be called.
 //
 // The error flag can be cleared by calling p1_object_target with
 // P1_TARGET_RUNNING. (Even if that was already the current target state.)
 
-#define P1_FLAG_ERROR   1
+#define P1_FLAG_ERROR           (1 << 4)
 
 
 // Struct that encapsulates all state.
@@ -307,9 +329,9 @@ struct _P1Object {
     // (Certain exceptions are possible, e.g. the source or context is idle.)
     pthread_mutex_t lock;
 
-    // Object state. Any updates to this should be followed by a p1_notify.
+    // Object state. Any updates to this should be followed by p1_object_notify.
     P1State state;
-    // State at the last p1_notify. Read-only.
+    // State at the last p1_object_notify. Read-only.
     P1State last_state;
 
     // Anything the user may want to associate with this object.
@@ -352,6 +374,13 @@ struct _P1Object {
     p1_object_notify(_p1_objx);                                 \
 })
 
+// Signal something other than state has changed.
+#define p1_object_resync(_obj) ({                               \
+    P1Object *_p1_objx = (_obj);                                \
+    _p1_objx->state.flags |= P1_FLAG_RESYNC;                    \
+    p1_object_notify(_p1_objx);                                 \
+})
+
 
 
 // Base for all plugin (non-fixed) elements.
@@ -359,8 +388,12 @@ struct _P1Object {
 struct _P1Plugin {
     P1Object super;
 
-    // Read / load configuration. Implementation is optional.
-    void (*config)(P1Plugin *pel, P1Config *cfg);
+    // Read configuration. Implementation is optional.
+    // The return value sets P1_FLAG_CONFIG_VALID, and defaults to true.
+    bool (*config)(P1Plugin *pel, P1Config *cfg);
+    // Another object changed state. Implementation is optional.
+    // The return value sets P1_FLAG_CAN_START, and defaults to true.
+    bool (*notify)(P1Plugin *pel, P1Notification *n);
 
     // Free the object and associated resources. (Assume idle.)
     // Implementation is optional. If NULL, a regular free() is used instead.
@@ -472,6 +505,9 @@ struct _P1Audio {
     P1ListNode sources;
 };
 
+// Notify that sources have changed.
+#define p1_audio_resync(_audio) p1_object_resync((P1Object *) (_audio))
+
 
 // Fixed video mixer element.
 
@@ -490,6 +526,9 @@ struct _P1Video {
     P1VideoPreviewCallback preview_fn;
     void *preview_user_data;
 };
+
+// Notify that the clock or sources have changed.
+#define p1_video_resync(_video) p1_object_resync((P1Object *) (_video))
 
 
 // Fixed stream connection element.

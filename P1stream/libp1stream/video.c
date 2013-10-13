@@ -3,6 +3,8 @@
 #include <string.h>
 
 static void p1_video_kill_session(P1VideoFull *videof);
+static void p1_video_link_source(P1VideoSource *vsrc);
+static void p1_video_unlink_source(P1VideoSource *vsrc);
 static GLuint p1_build_shader(P1Object *videoobj, GLuint type, const char *source);
 static bool p1_video_build_program(P1Object *videoobj, GLuint program, const char *vertexShader, const char *fragmentShader);
 
@@ -105,9 +107,35 @@ fail_object:
     return false;
 }
 
-void p1_video_config(P1VideoFull *videof, P1Config *cfg)
+bool p1_video_config(P1VideoFull *videof, P1Config *cfg)
 {
     // FIXME
+    return true;
+}
+
+bool p1_video_notify(P1VideoFull *videof, P1Notification *n)
+{
+    P1Object *obj = n->object;
+    P1Object *videoobj = (P1Object *) videof;
+
+    // When video sources change state, link/unlink them.
+    if (obj->type == P1_OTYPE_VIDEO_SOURCE &&
+            n->state.current != n->last_state.current &&
+            videoobj->state.current == P1_STATE_RUNNING &&
+            p1_video_activate_gl(videof)) {
+
+        P1VideoSource *vsrc = (P1VideoSource *) obj;
+        p1_object_lock(obj);
+
+        if (obj->state.current == P1_STATE_RUNNING)
+            p1_video_link_source(vsrc);
+        else
+            p1_video_unlink_source(vsrc);
+
+        p1_object_unlock(obj);
+    }
+
+    return true;
 }
 
 void p1_video_start(P1VideoFull *videof)
@@ -191,7 +219,7 @@ void p1_video_start(P1VideoFull *videof)
         goto fail_out_mem;
     }
 
-    /* State init. This is only up here because we can. */
+    // GL state init. Most of this is up here because we can.
     glViewport(0, 0, output_width, output_height);
     glClearColor(0, 0, 0, 1);
     glActiveTexture(GL_TEXTURE0);
@@ -219,21 +247,20 @@ void p1_video_start(P1VideoFull *videof)
         goto fail_yuv_kernel;
     }
 
+    // Change state.
+    videoobj->state.current = P1_STATE_RUNNING;
+    p1_object_notify(videoobj);
+
+    // Link already active sources.
     head = &video->sources;
     p1_list_iterate(head, node) {
         P1Source *src = p1_list_get_container(node, P1Source, link);
         P1Object *obj = (P1Object *) src;
         P1VideoSource *vsrc = (P1VideoSource *) src;
 
-        if (obj->state.current == P1_STATE_STARTING || obj->state.current == P1_STATE_RUNNING) {
-            // FIXME: We leak textures if the source stops itself.
-            if (!p1_video_link_source(vsrc))
-                goto fail_yuv_kernel;
-        }
+        if (obj->state.current == P1_STATE_RUNNING)
+            p1_video_link_source(vsrc);
     }
-
-    videoobj->state.current = P1_STATE_RUNNING;
-    p1_object_notify(videoobj);
 
     return;
 
@@ -281,11 +308,21 @@ void p1_video_stop(P1VideoFull *videof)
 
 static void p1_video_kill_session(P1VideoFull *videof)
 {
+    P1Video *video = (P1Video *) videof;
     P1Object *videoobj = (P1Object *) videof;
+    P1ListNode *head;
+    P1ListNode *node;
     cl_int cl_err;
 
-    // Note: Don't need to call unlink, because it only deletes textures.
-    // But we're destroying the context any way.
+    // Quick unlink of sources. We don't have to delete textures, but do set the
+    // texture field to 0, because it is our linked/unlinked indicator.
+    head = &video->sources;
+    p1_list_iterate(head, node) {
+        P1Source *src = p1_list_get_container(node, P1Source, link);
+        P1VideoSource *vsrc = (P1VideoSource *) src;
+
+        vsrc->texture = 0;
+    }
 
     cl_err = clReleaseKernel(videof->yuv_kernel);
     if (cl_err != CL_SUCCESS)
@@ -309,37 +346,28 @@ static void p1_video_kill_session(P1VideoFull *videof)
 }
 
 
-bool p1_video_link_source(P1VideoSource *vsrc)
-{
-    P1Object *obj = (P1Object *) vsrc;
-    P1VideoFull *videof = (P1VideoFull *) obj->ctx->video;
-    P1Object *videoobj = (P1Object *) videof;
-    GLenum err;
-
-    if (!p1_video_activate_gl(videof))
-        return false;
-
-    glGenTextures(1, &vsrc->texture);
-    err = glGetError();
-    if (err != GL_NO_ERROR) {
-        p1_log(videoobj, P1_LOG_ERROR, "Failed to create texture: OpenGL error %d", err);
-        return false;
-    }
-
-    return true;
-}
-
-void p1_video_unlink_source(P1VideoSource *vsrc)
+static void p1_video_link_source(P1VideoSource *vsrc)
 {
     P1Object *obj = (P1Object *) vsrc;
     P1Object *videoobj = (P1Object *) obj->ctx->video;
     GLenum err;
 
-    // No use if the context is getting destroyed any way.
-    if (videoobj->state.current != P1_STATE_RUNNING)
-        return;
+    glGenTextures(1, &vsrc->texture);
+    err = glGetError();
+    if (err != GL_NO_ERROR) {
+        vsrc->texture = 0;
+        p1_log(videoobj, P1_LOG_ERROR, "Failed to create texture: OpenGL error %d", err);
+    }
+}
+
+static void p1_video_unlink_source(P1VideoSource *vsrc)
+{
+    P1Object *obj = (P1Object *) vsrc;
+    P1Object *videoobj = (P1Object *) obj->ctx->video;
+    GLenum err;
 
     glDeleteTextures(1, &vsrc->texture);
+    vsrc->texture = 0;
     err = glGetError();
     if (err != GL_NO_ERROR)
         p1_log(videoobj, P1_LOG_ERROR, "Failed to delete texture: OpenGL error %d", err);
@@ -378,12 +406,12 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
     head = &video->sources;
     p1_list_iterate(head, node) {
         P1Source *src = p1_list_get_container(node, P1Source, link);
-        P1Object *el = (P1Object *) src;
+        P1Object *obj = (P1Object *) src;
         P1VideoSource *vsrc = (P1VideoSource *) src;
         b_ret = true;
 
-        p1_object_lock(el);
-        if (el->state.current == P1_STATE_RUNNING) {
+        p1_object_lock(obj);
+        if (obj->state.current == P1_STATE_RUNNING && vsrc->texture != 0) {
             glBindTexture(GL_TEXTURE_RECTANGLE, vsrc->texture);
             b_ret = vsrc->frame(vsrc);
 
@@ -397,7 +425,7 @@ void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
                 glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
             }
         }
-        p1_object_unlock(el);
+        p1_object_unlock(obj);
 
         if (!b_ret)
             goto fail;
@@ -462,9 +490,13 @@ bool p1_video_clock_init(P1VideoClock *vclock, P1Context *ctx)
 void p1_video_clock_config(P1VideoClock *vclock, P1Config *cfg)
 {
     P1Plugin *pel = (P1Plugin *) vclock;
+    P1Object *obj = (P1Object *) vclock;
+    bool valid = true;
 
     if (pel->config != NULL)
-        pel->config(pel, cfg);
+        valid = pel->config(pel, cfg);
+
+    p1_object_set_flag(obj, P1_FLAG_CONFIG_VALID, valid);
 }
 
 
@@ -476,6 +508,8 @@ bool p1_video_source_init(P1VideoSource *vsrc, P1Context *ctx)
 void p1_video_source_config(P1VideoSource *vsrc, P1Config *cfg)
 {
     P1Plugin *pel = (P1Plugin *) vsrc;
+    P1Object *obj = (P1Object *) vsrc;
+    bool valid = true;
 
     if (!cfg->get_float(cfg, "x1", &vsrc->x1))
         vsrc->x1 = -1;
@@ -495,7 +529,9 @@ void p1_video_source_config(P1VideoSource *vsrc, P1Config *cfg)
         vsrc->v2 = 1;
 
     if (pel->config != NULL)
-        pel->config(pel, cfg);
+        valid = pel->config(pel, cfg);
+
+    p1_object_set_flag(obj, P1_FLAG_CONFIG_VALID, valid);
 }
 
 void p1_video_source_frame(P1VideoSource *vsrc, int width, int height, void *data)

@@ -61,9 +61,10 @@ void p1_audio_destroy(P1AudioFull *audiof)
     p1_object_destroy(audioobj);
 }
 
-void p1_audio_config(P1AudioFull *audiof, P1Config *cfg)
+bool p1_audio_config(P1AudioFull *audiof, P1Config *cfg)
 {
     // FIXME
+    return true;
 }
 
 void p1_audio_start(P1AudioFull *audiof)
@@ -106,12 +107,16 @@ bool p1_audio_source_init(P1AudioSource *asrc, P1Context *ctx)
 void p1_audio_source_config(P1AudioSource *asrc, P1Config *cfg)
 {
     P1Plugin *pel = (P1Plugin *) asrc;
+    P1Object *obj = (P1Object *) asrc;
+    bool valid = true;
 
     if (!cfg->get_float(cfg, "volume", &asrc->volume))
         asrc->volume = 1.0;
 
     if (pel->config != NULL)
-        pel->config(pel, cfg);
+        valid = pel->config(pel, cfg);
+
+    p1_object_set_flag(obj, P1_FLAG_CONFIG_VALID, valid);
 }
 
 void p1_audio_source_buffer(P1AudioSource *asrc, int64_t time, float *in, size_t samples)

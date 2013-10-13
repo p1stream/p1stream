@@ -21,7 +21,7 @@ struct _P1InputAudioSource {
 };
 
 static bool p1_input_audio_source_init(P1InputAudioSource *iasrc, P1Context *ctx);
-static void p1_input_audio_source_config(P1Plugin *pel, P1Config *cfg);
+static bool p1_input_audio_source_config(P1Plugin *pel, P1Config *cfg);
 static void p1_input_audio_source_start(P1Plugin *pel);
 static void p1_input_audio_source_stop(P1Plugin *pel);
 static void p1_input_audio_source_kill_session(P1InputAudioSource *iasrc);
@@ -68,11 +68,13 @@ static bool p1_input_audio_source_init(P1InputAudioSource *iasrc, P1Context *ctx
     return true;
 }
 
-static void p1_input_audio_source_config(P1Plugin *pel, P1Config *cfg)
+static bool p1_input_audio_source_config(P1Plugin *pel, P1Config *cfg)
 {
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
 
     cfg->get_string(cfg, "device", iasrc->device, sizeof(iasrc->device));
+
+    return true;
 }
 
 static void p1_input_audio_source_start(P1Plugin *pel)
