@@ -10,6 +10,9 @@
         _object = object;
         _object->user_data = (__bridge void *)self;
 
+        P1Object *ctxobj = (P1Object *)_object->ctx;
+        _contextModel = (__bridge P1ContextModel *)ctxobj->user_data;
+
         switch (_object->type) {
             case P1_OTYPE_CONTEXT:
                 _name = @"Context";

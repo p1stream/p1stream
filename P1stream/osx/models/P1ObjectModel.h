@@ -1,9 +1,14 @@
+@class P1ContextModel;
+
+
 @interface P1ObjectModel : NSObject
 {
     P1State _state;
 }
 
 @property (readonly) P1Object *object;
+
+@property (readonly, weak) P1ContextModel *contextModel;
 
 @property (readonly) P1State state;
 
