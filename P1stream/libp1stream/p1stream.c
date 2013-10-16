@@ -74,6 +74,56 @@ void p1_object_destroy(P1Object *obj)
         p1_log(obj, P1_LOG_ERROR, "Failed to destroy mutex: %s", strerror(ret));
 }
 
+void p1_object_notify(P1Object *obj)
+{
+    P1ContextFull *ctxf = (P1ContextFull *) obj->ctx;
+    P1Object *ctxobj = (P1Object *) ctxf;
+    P1State *state = &obj->state;
+    P1State *last_state = &obj->last_state;
+    P1Notification n;
+
+    if (state->current == P1_STATE_IDLE) {
+        // Clear restart flag.
+        state->flags &= ~P1_FLAG_NEEDS_RESTART;
+
+        // Check if we satisfied the restart target.
+        if (state->target == P1_TARGET_RESTART) {
+            state->target = P1_TARGET_RUNNING;
+            state->flags &= ~P1_FLAG_ERROR;
+        }
+    }
+
+    // Check if anything actually changed.
+    if (state->current == last_state->current &&
+        state->target == last_state->target &&
+        state->flags == last_state->flags)
+        return;
+
+    // Clear the resync flag.
+    state->flags &= ~P1_FLAG_RESYNC;
+
+    // Build notification.
+    n = (P1Notification) {
+        .object = obj,
+        .state = *state,
+        .last_state = *last_state
+    };
+
+    // Log changes.
+    p1_ctrl_log_notification(&n);
+
+    // Send to control thread.
+    ssize_t size = sizeof(P1Notification);
+    ssize_t ret = write(ctxf->ctrl_pipe[1], &n, size);
+    if (ret != size) {
+        const char *reason = (ret < 0) ? strerror(errno) : "Invalid write";
+        p1_log(ctxobj, P1_LOG_ERROR, "Failed to write notification: %s", reason);
+    }
+
+    // Set last state.
+    obj->last_state = obj->state;
+}
+
 void p1_plugin_free(P1Plugin *pel)
 {
     P1Object *obj = (P1Object *) pel;
@@ -340,21 +390,6 @@ int p1_fd(P1Context *_ctx)
     return ctx->user_pipe[0];
 }
 
-void _p1_notify(P1Notification notification)
-{
-    P1Object *ctxobj = (P1Object *) notification.object->ctx;
-    P1ContextFull *ctxf = (P1ContextFull *) ctxobj;
-
-    p1_ctrl_log_notification(&notification);
-
-    ssize_t size = sizeof(P1Notification);
-    ssize_t ret = write(ctxf->ctrl_pipe[1], &notification, size);
-    if (ret != size) {
-        const char *reason = (ret < 0) ? strerror(errno) : "Invalid write";
-        p1_log(ctxobj, P1_LOG_ERROR, "Failed to write notification: %s", reason);
-    }
-}
-
 void p1_log(P1Object *obj, P1LogLevel level, const char *fmt, ...)
 {
     va_list args;
@@ -541,9 +576,6 @@ static void p1_ctrl_comm(P1ContextFull *ctxf)
             break;
         }
 
-        // Clear the resync flag.
-        n.object->state.flags &= ~P1_FLAG_RESYNC;
-
         // Flush other notifications.
         i_ret = poll(&fd, 1, 0);
         if (i_ret < 0) {
@@ -555,7 +587,6 @@ static void p1_ctrl_comm(P1ContextFull *ctxf)
 
 static void p1_ctrl_notify_objects(P1Context *ctx, P1Notification *n)
 {
-    P1Object *obj = n->object;
     P1Audio *audio = ctx->audio;
     P1AudioFull *audiof = (P1AudioFull *) audio;
     P1Object *audioobj = (P1Object *) audio;
@@ -584,23 +615,6 @@ static void p1_ctrl_notify_objects(P1Context *ctx, P1Notification *n)
     p1_object_set_flag(_obj, P1_FLAG_CAN_START, _can_start);    \
     p1_object_unlock(_obj);                                     \
 })
-
-    p1_object_lock(obj);
-
-    if (obj->state.current == P1_STATE_IDLE) {
-        // Clear restart flag.
-        obj->state.flags &= ~P1_FLAG_NEEDS_RESTART;
-
-        // Check if we satisfied the restart target.
-        if (obj->state.target == P1_TARGET_RESTART) {
-            obj->state.target = P1_TARGET_RUNNING;
-            obj->state.flags &= ~P1_FLAG_ERROR;
-        }
-
-        p1_object_notify(obj);
-    }
-
-    p1_object_unlock(obj);
 
     p1_object_lock(audioobj);
 
@@ -826,18 +840,6 @@ static void p1_ctrl_log_notification(P1Notification *n)
 {
     P1Object *obj = n->object;
 
-    if (n->state.target != n->last_state.target) {
-        const char *target;
-        switch (n->state.target) {
-            case P1_TARGET_RUNNING: target = "running"; break;
-            case P1_TARGET_IDLE:    target = "idle";    break;
-            case P1_TARGET_RESTART: target = "restart"; break;
-            case P1_TARGET_REMOVE:  target = "remove";  break;
-            default: return;
-        }
-        p1_log(obj, P1_LOG_INFO, "target -> %s", target);
-    }
-
     if (n->state.current != n->last_state.current) {
         const char *state;
         switch (n->state.current) {
@@ -848,5 +850,17 @@ static void p1_ctrl_log_notification(P1Notification *n)
             default: return;
         }
         p1_log(obj, P1_LOG_INFO, "state -> %s", state);
+    }
+
+    if (n->state.target != n->last_state.target) {
+        const char *target;
+        switch (n->state.target) {
+            case P1_TARGET_RUNNING: target = "running"; break;
+            case P1_TARGET_IDLE:    target = "idle";    break;
+            case P1_TARGET_RESTART: target = "restart"; break;
+            case P1_TARGET_REMOVE:  target = "remove";  break;
+            default: return;
+        }
+        p1_log(obj, P1_LOG_INFO, "target -> %s", target);
     }
 }

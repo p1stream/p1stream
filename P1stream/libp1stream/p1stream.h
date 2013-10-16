@@ -171,15 +171,6 @@ struct _P1State {
     P1Flags flags;
 };
 
-// Compare two state structs for equality.
-#define p1_state_eq(_a, _b) ({                                  \
-    P1State *_p1_a = (_a);                                      \
-    P1State *_p1_b = (_b);                                      \
-    _p1_a->current == _p1_b->current &&                         \
-    _p1_a->target == _p1_b->target &&                           \
-    _p1_a->flags == _p1_b->flags;                               \
-})
-
 
 // Object types.
 
@@ -351,17 +342,7 @@ struct _P1Object {
 
 // Send a notification about state that was just changed. Can be called from any
 // thread, and should be called after every change to the state field.
-#define p1_object_notify(_obj) ({                               \
-    P1Object *_p1_obj = (_obj);                                 \
-    if (!p1_state_eq(&_p1_obj->state, &_p1_obj->last_state)) {  \
-        _p1_notify((P1Notification) {                           \
-            .object = _p1_obj,                                  \
-            .last_state = _p1_obj->last_state,                  \
-            .state = _p1_obj->state                             \
-        });                                                     \
-        _p1_obj->last_state = _p1_obj->state;                   \
-    }                                                           \
-})
+void p1_object_notify(P1Object *obj);
 
 // Convenience method that sets an objects target.
 // If set to running, the error state is cleared as well.
@@ -584,8 +565,6 @@ int p1_fd(P1Context *ctx);
 void p1_log(P1Object *obj, P1LogLevel level, const char *fmt, ...) __printflike(3, 4);
 void p1_logv(P1Object *obj, P1LogLevel level, const char *fmt, va_list args) __printflike(3, 0);
 
-// Notification helper.
-void _p1_notify(P1Notification notification);
 
 
 // Platform-specific functionality.
