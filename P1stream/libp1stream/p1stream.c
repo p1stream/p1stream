@@ -288,21 +288,17 @@ void p1_config(P1Context *ctx, P1Config *cfg)
     P1Object *videoobj = (P1Object *) video;
     P1Connection *conn = ctx->conn;
     P1Object *connobj = (P1Object *) conn;
-    bool valid;
 
     p1_object_lock(audioobj);
-    valid = p1_audio_config((P1AudioFull *) audio, cfg);
-    p1_object_set_flag(audioobj, P1_FLAG_CONFIG_VALID, valid);
+    p1_audio_config((P1AudioFull *) audio, cfg);
     p1_object_unlock(audioobj);
 
     p1_object_lock(videoobj);
-    valid = p1_video_config((P1VideoFull *) video, cfg);
-    p1_object_set_flag(videoobj, P1_FLAG_CONFIG_VALID, valid);
+    p1_video_config((P1VideoFull *) video, cfg);
     p1_object_unlock(videoobj);
 
     p1_object_lock(connobj);
-    valid = p1_conn_config((P1ConnectionFull *) conn, cfg);
-    p1_object_set_flag(connobj, P1_FLAG_CONFIG_VALID, valid);
+    p1_conn_config((P1ConnectionFull *) conn, cfg);
     p1_object_unlock(connobj);
 }
 
@@ -599,33 +595,24 @@ static void p1_ctrl_notify_objects(P1Context *ctx, P1Notification *n)
     P1ListNode *head;
     P1ListNode *node;
 
-#define P1_NOTIFY_FIXED(_full, _method) ({                      \
+#define P1_NOTIFY_PLUGIN(_ref, _type, _method) ({               \
+    _type *_full = (_type *) (_ref);                            \
     P1Object *_obj = (P1Object *) _full;                        \
-    bool _can_start = _method(_full, n);                        \
-    p1_object_set_flag(_obj, P1_FLAG_CAN_START, _can_start);    \
-})
-
-#define P1_NOTIFY_PLUGIN(_ref) ({                               \
-    P1Plugin *_pel = (P1Plugin *) (_ref);                       \
-    P1Object *_obj = (P1Object *) _pel;                         \
-    bool _can_start = true;                                     \
     p1_object_lock(_obj);                                       \
-    if (_pel->notify)                                           \
-        _can_start = _pel->notify(_pel, n);                     \
-    p1_object_set_flag(_obj, P1_FLAG_CAN_START, _can_start);    \
+    _method(_full, n);                                          \
     p1_object_unlock(_obj);                                     \
 })
 
     p1_object_lock(audioobj);
 
     // Notify audio mixer;
-    P1_NOTIFY_FIXED(audiof, p1_audio_notify);
+    p1_audio_notify(audiof, n);
 
     // Notify audio sources.
     head = &audio->sources;
     p1_list_iterate(head, node) {
         P1Source *src = p1_list_get_container(node, P1Source, link);
-        P1_NOTIFY_PLUGIN(src);
+        P1_NOTIFY_PLUGIN(src, P1AudioSource, p1_audio_source_notify);
     }
 
     p1_object_unlock(audioobj);
@@ -633,16 +620,16 @@ static void p1_ctrl_notify_objects(P1Context *ctx, P1Notification *n)
     p1_object_lock(videoobj);
 
     // Notify video mixer;
-    P1_NOTIFY_FIXED(videof, p1_video_notify);
+    p1_video_notify(videof, n);
 
     // Notify video clock.
-    P1_NOTIFY_PLUGIN(video->clock);
+    P1_NOTIFY_PLUGIN(video->clock, P1VideoClock, p1_video_clock_notify);
 
     // Notify video sources.
     head = &video->sources;
     p1_list_iterate(head, node) {
         P1Source *src = p1_list_get_container(node, P1Source, link);
-        P1_NOTIFY_PLUGIN(src);
+        P1_NOTIFY_PLUGIN(src, P1VideoSource, p1_video_source_notify);
     }
 
     p1_object_unlock(videoobj);
@@ -650,7 +637,7 @@ static void p1_ctrl_notify_objects(P1Context *ctx, P1Notification *n)
     p1_object_lock(connobj);
 
     // Notify connection.
-    P1_NOTIFY_FIXED(connf, p1_conn_notify);
+    p1_conn_notify(connf, n);
 
     p1_object_unlock(connobj);
 
@@ -808,7 +795,7 @@ static P1Action p1_ctrl_determine_action(P1Object *obj, bool can_interrupt)
 
     // Take steps towards target.
     if (state.target == P1_TARGET_RUNNING) {
-        if (state.current == P1_STATE_IDLE && p1_startable(state.flags))
+        if (state.current == P1_STATE_IDLE && p1_startable_flags(state.flags))
             return P1_ACTION_START;
 
         if (state.current == P1_STATE_STARTING)

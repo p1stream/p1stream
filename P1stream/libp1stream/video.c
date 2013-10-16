@@ -98,37 +98,41 @@ fail_object:
     return false;
 }
 
-bool p1_video_config(P1VideoFull *videof, P1Config *cfg)
+void p1_video_config(P1VideoFull *videof, P1Config *cfg)
 {
     P1Video *video = (P1Video *) videof;
     P1Object *videoobj = (P1Object *) videof;
+
+    p1_object_reset_config_flags(videoobj);
 
     bool have_width  = cfg->get_int(cfg, "video-width",  &videof->cfg_width);
     bool have_height = cfg->get_int(cfg, "video-height", &videof->cfg_height);
 
     if (!have_width || !have_height) {
         p1_log(videoobj, P1_LOG_ERROR, "Missing video dimensions.");
-        return false;
+        p1_object_clear_flag(videoobj, P1_FLAG_CONFIG_VALID);
+        return;
     }
 
     if ((videof->cfg_width % 1) != 0 || (videof->cfg_height % 1) != 0) {
         p1_log(videoobj, P1_LOG_ERROR, "Video dimensions must be multiples of 2.");
-        return false;
+        p1_object_clear_flag(videoobj, P1_FLAG_CONFIG_VALID);
+        return;
     }
 
-    if (videoobj->state.current != P1_STATE_IDLE &&
-        (videof->cfg_width  != video->width ||
-         videof->cfg_height != video->height)) {
-            videoobj->state.flags |= P1_FLAG_NEEDS_RESTART;
-    }
+    if (videof->cfg_width  != video->width ||
+        videof->cfg_height != video->height)
+        p1_object_set_flag(videoobj, P1_FLAG_NEEDS_RESTART);
 
-    return true;
+    p1_object_notify(videoobj);
 }
 
-bool p1_video_notify(P1VideoFull *videof, P1Notification *n)
+void p1_video_notify(P1VideoFull *videof, P1Notification *n)
 {
     P1Object *obj = n->object;
     P1Object *videoobj = (P1Object *) videof;
+
+    p1_object_reset_notify_flags(videoobj);
 
     // When video sources change state, link/unlink them.
     if (obj->type == P1_OTYPE_VIDEO_SOURCE &&
@@ -147,7 +151,7 @@ bool p1_video_notify(P1VideoFull *videof, P1Notification *n)
         p1_object_unlock(obj);
     }
 
-    return true;
+    p1_object_notify(videoobj);
 }
 
 void p1_video_start(P1VideoFull *videof)
@@ -392,6 +396,37 @@ static void p1_video_unlink_source(P1VideoSource *vsrc)
 }
 
 
+bool p1_video_clock_init(P1VideoClock *vclock, P1Context *ctx)
+{
+    return p1_object_init((P1Object *) vclock, P1_OTYPE_VIDEO_CLOCK, ctx);
+}
+
+void p1_video_clock_config(P1VideoClock *vclock, P1Config *cfg)
+{
+    P1Plugin *pel = (P1Plugin *) vclock;
+    P1Object *obj = (P1Object *) vclock;
+
+    p1_object_reset_config_flags(obj);
+
+    if (pel->config != NULL)
+        pel->config(pel, cfg);
+
+    p1_object_notify(obj);
+}
+
+void p1_video_clock_notify(P1VideoClock *vclock, P1Notification *n)
+{
+    P1Plugin *pel = (P1Plugin *) vclock;
+    P1Object *obj = (P1Object *) vclock;
+
+    p1_object_reset_notify_flags(obj);
+
+    if (pel->notify != NULL)
+        pel->notify(pel, n);
+
+    p1_object_notify(obj);
+}
+
 void p1_video_clock_tick(P1VideoClock *vclock, int64_t time)
 {
     P1Object *obj = (P1Object *) vclock;
@@ -500,24 +535,6 @@ fail:
 }
 
 
-bool p1_video_clock_init(P1VideoClock *vclock, P1Context *ctx)
-{
-    return p1_object_init((P1Object *) vclock, P1_OTYPE_VIDEO_CLOCK, ctx);
-}
-
-void p1_video_clock_config(P1VideoClock *vclock, P1Config *cfg)
-{
-    P1Plugin *pel = (P1Plugin *) vclock;
-    P1Object *obj = (P1Object *) vclock;
-    bool valid = true;
-
-    if (pel->config != NULL)
-        valid = pel->config(pel, cfg);
-
-    p1_object_set_flag(obj, P1_FLAG_CONFIG_VALID, valid);
-}
-
-
 bool p1_video_source_init(P1VideoSource *vsrc, P1Context *ctx)
 {
     return p1_object_init((P1Object *) vsrc, P1_OTYPE_VIDEO_SOURCE, ctx);
@@ -527,7 +544,8 @@ void p1_video_source_config(P1VideoSource *vsrc, P1Config *cfg)
 {
     P1Plugin *pel = (P1Plugin *) vsrc;
     P1Object *obj = (P1Object *) vsrc;
-    bool valid = true;
+
+    p1_object_reset_config_flags(obj);
 
     if (!cfg->get_float(cfg, "x1", &vsrc->x1))
         vsrc->x1 = -1;
@@ -547,9 +565,22 @@ void p1_video_source_config(P1VideoSource *vsrc, P1Config *cfg)
         vsrc->v2 = 1;
 
     if (pel->config != NULL)
-        valid = pel->config(pel, cfg);
+        pel->config(pel, cfg);
 
-    p1_object_set_flag(obj, P1_FLAG_CONFIG_VALID, valid);
+    p1_object_notify(obj);
+}
+
+void p1_video_source_notify(P1VideoSource *vsrc, P1Notification *n)
+{
+    P1Plugin *pel = (P1Plugin *) vsrc;
+    P1Object *obj = (P1Object *) vsrc;
+
+    p1_object_reset_notify_flags(obj);
+
+    if (pel->notify != NULL)
+        pel->notify(pel, n);
+
+    p1_object_notify(obj);
 }
 
 void p1_video_source_frame(P1VideoSource *vsrc, int width, int height, void *data)

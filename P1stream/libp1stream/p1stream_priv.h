@@ -31,11 +31,31 @@ typedef struct _P1ContextFull P1ContextFull;
 
 // The checks performed on flags to see if an object can start.
 
-#define P1_STARTABLE_MASK       (P1_FLAG_CONFIG_VALID | P1_FLAG_CAN_START | P1_FLAG_ERROR)
-#define P1_STARTABLE_VALUE      (P1_FLAG_CONFIG_VALID | P1_FLAG_CAN_START)
+#define P1_FLAGS_STARTABLE_MASK     (P1_FLAG_CONFIG_VALID | P1_FLAG_CAN_START | P1_FLAG_ERROR)
+#define P1_FLAGS_STARTABLE_VALUE    (P1_FLAG_CONFIG_VALID | P1_FLAG_CAN_START)
 
-#define p1_startable(_flags) \
-(((_flags) & P1_STARTABLE_MASK) == P1_STARTABLE_VALUE)
+#define p1_startable_flags(_flags)                  \
+    (((_flags) & P1_FLAGS_STARTABLE_MASK) == P1_FLAGS_STARTABLE_VALUE)
+
+// The flags that are reset before the config method is called.
+
+#define P1_FLAGS_CONFIG_MASK        (P1_FLAG_CONFIG_VALID | P1_FLAG_NEEDS_RESTART)
+#define P1_FLAGS_CONFIG_VALUE       (P1_FLAG_CONFIG_VALID)
+
+#define p1_object_reset_config_flags(_obj) ({       \
+    P1Flags *_p1_flags = &(_obj)->state.flags;      \
+    *_p1_flags = ((*_p1_flags) & ~P1_FLAGS_CONFIG_MASK) | P1_FLAGS_CONFIG_VALUE;    \
+})
+
+// The flags that are reset before the notify method is called.
+
+#define P1_FLAGS_NOTIFY_MASK        (P1_FLAG_CAN_START)
+#define P1_FLAGS_NOTIFY_VALUE       (P1_FLAG_CAN_START)
+
+#define p1_object_reset_notify_flags(_obj) ({       \
+    P1Flags *_p1_flags = &(_obj)->state.flags;      \
+    *_p1_flags = ((*_p1_flags) & ~P1_FLAGS_NOTIFY_MASK) | P1_FLAGS_NOTIFY_VALUE;    \
+})
 
 
 // Private P1Object methods.
@@ -43,14 +63,8 @@ typedef struct _P1ContextFull P1ContextFull;
 bool p1_object_init(P1Object *obj, P1ObjectType type, P1Context *ctx);
 void p1_object_destroy(P1Object *obj);
 
-#define p1_object_set_flag(_obj, _flag, _bool) ({   \
-    P1Object *_p1_objx = (_obj);                    \
-    if (_bool)                                      \
-        _p1_objx->state.flags |= (_flag);           \
-    else                                            \
-        _p1_objx->state.flags &= ~(_flag);          \
-    p1_object_notify(_p1_objx);                     \
-})
+#define p1_object_set_flag(_obj, _flag) ((_obj)->state.flags |= (_flag))
+#define p1_object_clear_flag(_obj, _flag) ((_obj)->state.flags &= ~(_flag))
 
 
 // This is a ringbuffer of RMTPPacket pointers.
@@ -99,13 +113,16 @@ struct _P1VideoFull {
 bool p1_video_init(P1VideoFull *videof, P1Context *ctx);
 #define p1_video_destroy(_videof) p1_object_destroy((P1Object *) _videof)
 
-bool p1_video_config(P1VideoFull *videof, P1Config *cfg);
-bool p1_video_notify(P1VideoFull *videof, P1Notification *n);
+void p1_video_config(P1VideoFull *videof, P1Config *cfg);
+void p1_video_notify(P1VideoFull *videof, P1Notification *n);
 
 void p1_video_start(P1VideoFull *videof);
 void p1_video_stop(P1VideoFull *videof);
 
 void p1_video_cl_notify_callback(const char *errstr, const void *private_info, size_t cb, void *user_data);
+
+void p1_video_clock_notify(P1VideoClock *vclock, P1Notification *n);
+void p1_video_source_notify(P1VideoSource *vsrc, P1Notification *n);
 
 
 // Private part of P1Audio.
@@ -130,11 +147,13 @@ struct _P1AudioFull {
 bool p1_audio_init(P1AudioFull *audiof, P1Context *ctx);
 void p1_audio_destroy(P1AudioFull *audiof);
 
-bool p1_audio_config(P1AudioFull *audiof, P1Config *cfg);
-#define p1_audio_notify(_audiof, _n) (true)
+void p1_audio_config(P1AudioFull *audiof, P1Config *cfg);
+void p1_audio_notify(P1AudioFull *audiof, P1Notification *n);
 
 void p1_audio_start(P1AudioFull *audiof);
 void p1_audio_stop(P1AudioFull *audiof);
+
+void p1_audio_source_notify(P1AudioSource *asrc, P1Notification *n);
 
 
 // Private part of P1StreamConnection.
@@ -172,8 +191,8 @@ struct _P1ConnectionFull {
 bool p1_conn_init(P1ConnectionFull *connf, P1Context *ctx);
 void p1_conn_destroy(P1ConnectionFull *connf);
 
-bool p1_conn_config(P1ConnectionFull *connf, P1Config *cfg);
-bool p1_conn_notify(P1ConnectionFull *connf, P1Notification *n);
+void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg);
+void p1_conn_notify(P1ConnectionFull *connf, P1Notification *n);
 
 void p1_conn_start(P1ConnectionFull *connf);
 void p1_conn_stop(P1ConnectionFull *connf);

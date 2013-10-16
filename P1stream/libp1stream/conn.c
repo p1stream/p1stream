@@ -113,12 +113,15 @@ void p1_conn_destroy(P1ConnectionFull *connf)
     p1_object_destroy(connobj);
 }
 
-bool p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
+void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
 {
+    P1Object *connobj = (P1Object *) connf;
     x264_param_t *vp = &connf->video_params;
     char s_tmp[128];
     int i_tmp;
     float f_tmp;
+
+    p1_object_reset_config_flags(connobj);
 
     x264_param_default(&connf->video_params);
 
@@ -153,8 +156,7 @@ bool p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
     if (cfg->get_string(cfg, "x264-profile", s_tmp, sizeof(s_tmp)))
         x264_param_apply_profile(vp, s_tmp);
 
-    // FIXME
-    return true;
+    p1_object_notify(connobj);
 }
 
 static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, const char *val, void *data)
@@ -174,7 +176,7 @@ static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, const char 
     return true;
 }
 
-bool p1_conn_notify(P1ConnectionFull *connf, P1Notification *n)
+void p1_conn_notify(P1ConnectionFull *connf, P1Notification *n)
 {
     P1Object *connobj = (P1Object *) connf;
     P1Context *ctx = connobj->ctx;
@@ -182,16 +184,19 @@ bool p1_conn_notify(P1ConnectionFull *connf, P1Notification *n)
     P1Object *videoobj = (P1Object *) ctx->video;
     P1Object *vclockobj = (P1Object *) ctx->video->clock;
 
-    bool deps_ok =
-        audioobj->state.current  == P1_STATE_RUNNING &&
-        videoobj->state.current  == P1_STATE_RUNNING &&
-        vclockobj->state.current == P1_STATE_RUNNING;
+    p1_object_reset_notify_flags(connobj);
 
-    if (!deps_ok && (connobj->state.current == P1_STATE_STARTING ||
-                     connobj->state.current == P1_STATE_RUNNING))
-        p1_conn_stop(connf);
+    if (audioobj->state.current  != P1_STATE_RUNNING ||
+        videoobj->state.current  != P1_STATE_RUNNING ||
+        vclockobj->state.current != P1_STATE_RUNNING) {
+        p1_object_clear_flag(connobj, P1_FLAG_CAN_START);
 
-    return deps_ok;
+        if (connobj->state.current == P1_STATE_STARTING ||
+            connobj->state.current == P1_STATE_RUNNING)
+            p1_conn_stop(connf);
+    }
+
+    p1_object_notify(connobj);
 }
 
 void p1_conn_start(P1ConnectionFull *connf)

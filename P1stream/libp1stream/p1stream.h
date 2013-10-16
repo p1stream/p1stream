@@ -370,11 +370,15 @@ struct _P1Plugin {
     P1Object super;
 
     // Read configuration. Implementation is optional.
-    // The return value sets P1_FLAG_CONFIG_VALID, and defaults to true.
-    bool (*config)(P1Plugin *pel, P1Config *cfg);
+    // Before this method, P1_FLAG_CONFIG_VALID will be set and
+    // P1_FLAG_NEEDS_RESTART will be cleared. This method is responsible for
+    // setting their final state before a notification is sent.
+    void (*config)(P1Plugin *pel, P1Config *cfg);
+
     // Another object changed state. Implementation is optional.
-    // The return value sets P1_FLAG_CAN_START, and defaults to true.
-    bool (*notify)(P1Plugin *pel, P1Notification *n);
+    // Before this method, P1_FLAG_CAN_START will be set. This method is
+    // responsible for setting its final state before a notification is sent.
+    void (*notify)(P1Plugin *pel, P1Notification *n);
 
     // Free the object and associated resources. (Assume idle.)
     // Implementation is optional. If NULL, a regular free() is used instead.
