@@ -4,8 +4,6 @@
 #include <string.h>
 #include <sys/socket.h>
 
-static const char *default_url = "rtmp://localhost/app/test";
-
 // This is used for RTMP logging.
 static P1Object *current_conn = NULL;
 
@@ -125,16 +123,24 @@ void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
 
     x264_param_default(&connf->video_params);
 
-    if (!cfg->get_string(cfg, "url", connf->url, sizeof(connf->url)))
-        strcpy(connf->url, default_url);
+    if (!cfg->get_string(cfg, "url", connf->url, sizeof(connf->url))) {
+        p1_log(connobj, P1_LOG_ERROR, "Missing stream URL");
+        p1_object_clear_flag(connobj, P1_FLAG_CONFIG_VALID);
+    }
 
     // x264 already logs errors, except for x264_param_parse.
 
-    // Apply presets.
-    if (cfg->get_string(cfg, "x264-preset", s_tmp, sizeof(s_tmp)))
-        x264_param_default_preset(vp, s_tmp, NULL);
-    if (cfg->get_string(cfg, "x264-tune", s_tmp, sizeof(s_tmp)))
-        x264_param_default_preset(vp, NULL, s_tmp);
+    // Apply preset.
+    if (cfg->get_string(cfg, "x264-preset", s_tmp, sizeof(s_tmp))) {
+        if (x264_param_default_preset(vp, s_tmp, NULL) != 0)
+            p1_object_clear_flag(connobj, P1_FLAG_CONFIG_VALID);
+    }
+
+    // Apply tune.
+    if (cfg->get_string(cfg, "x264-tune", s_tmp, sizeof(s_tmp))) {
+        if (x264_param_default_preset(vp, NULL, s_tmp) != 0)
+            p1_object_clear_flag(connobj, P1_FLAG_CONFIG_VALID);
+    }
 
     // For convenience, we provide some short-hands.
     if (cfg->get_int(cfg, "x264-bitrate", &i_tmp)) {
@@ -153,8 +159,10 @@ void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
 
     // Apply presets.
     x264_param_apply_fastfirstpass(vp);
-    if (cfg->get_string(cfg, "x264-profile", s_tmp, sizeof(s_tmp)))
-        x264_param_apply_profile(vp, s_tmp);
+    if (cfg->get_string(cfg, "x264-profile", s_tmp, sizeof(s_tmp))) {
+        if (x264_param_apply_profile(vp, s_tmp) != 0)
+            p1_object_clear_flag(connobj, P1_FLAG_CONFIG_VALID);
+    }
 
     p1_object_notify(connobj);
 }
@@ -167,10 +175,14 @@ static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, const char 
 
     ret = x264_param_parse(&connf->video_params, key + 7, val);
     if (ret != 0) {
-        if (ret == X264_PARAM_BAD_NAME)
+        if (ret == X264_PARAM_BAD_NAME) {
             p1_log(connobj, P1_LOG_ERROR, "Invalid x264 parameter name '%s'", key);
-        else if (ret == X264_PARAM_BAD_VALUE)
+            p1_object_clear_flag(connobj, P1_FLAG_CONFIG_VALID);
+        }
+        else if (ret == X264_PARAM_BAD_VALUE) {
             p1_log(connobj, P1_LOG_ERROR, "Invalid value for x264 parameter '%s'", key);
+            p1_object_clear_flag(connobj, P1_FLAG_CONFIG_VALID);
+        }
     }
 
     return true;

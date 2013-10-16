@@ -56,11 +56,15 @@ static NSObject *p1_plist_config_get(P1Config *cfg, const char *key, Class type)
 
     NSString *ns_key = [NSString stringWithUTF8String:key];
     NSObject *val = dict[ns_key];
-
-    if ([val isKindOfClass:type])
-        return val;
-    else
+    if (!val)
         return nil;
+
+    if (![val isKindOfClass:type]) {
+        p1_log(NULL, P1_LOG_ERROR, "Invalid type for '%s', treating as undefined", key);
+        return nil;
+    }
+
+    return val;
 }
 
 static bool p1_plist_config_get_string(P1Config *cfg, const char *key, char *buf, size_t bufsize)
