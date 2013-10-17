@@ -114,21 +114,22 @@ void p1_conn_destroy(P1ConnectionFull *connf)
 void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
 {
     P1Object *connobj = (P1Object *) connf;
-    x264_param_t *vp = &connf->video_params;
+    x264_param_t *vp = &connf->cfg_video_params;
     char s_tmp[128];
     int i_tmp;
     float f_tmp;
 
     p1_object_reset_config_flags(connobj);
 
-    x264_param_default(&connf->video_params);
-
-    if (!cfg->get_string(cfg, "url", connf->url, sizeof(connf->url))) {
+    // Grab URL.
+    if (!cfg->get_string(cfg, "url", connf->cfg_url, sizeof(connf->cfg_url))) {
         p1_log(connobj, P1_LOG_ERROR, "Missing stream URL");
         p1_object_clear_flag(connobj, P1_FLAG_CONFIG_VALID);
     }
 
     // x264 already logs errors, except for x264_param_parse.
+
+    x264_param_default(vp);
 
     // Apply preset.
     if (cfg->get_string(cfg, "x264-preset", s_tmp, sizeof(s_tmp))) {
@@ -164,6 +165,15 @@ void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
             p1_object_clear_flag(connobj, P1_FLAG_CONFIG_VALID);
     }
 
+    // Check if something changed while running.
+    if ((connobj->state.flags & P1_FLAG_CONFIG_VALID) &&
+        connobj->state.current != P1_STATE_IDLE) {
+        if (strcmp(connf->cfg_url, connf->url) != 0)
+            p1_object_set_flag(connobj, P1_FLAG_NEEDS_RESTART);
+        if (memcmp(vp, &connf->video_params, sizeof(x264_param_t)) != 0)
+            p1_object_set_flag(connobj, P1_FLAG_NEEDS_RESTART);
+    }
+
     p1_object_notify(connobj);
 }
 
@@ -173,7 +183,7 @@ static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, const char 
     P1ConnectionFull *connf = (P1ConnectionFull *) data;
     int ret;
 
-    ret = x264_param_parse(&connf->video_params, key + 7, val);
+    ret = x264_param_parse(&connf->cfg_video_params, key + 7, val);
     if (ret != 0) {
         if (ret == X264_PARAM_BAD_NAME) {
             p1_log(connobj, P1_LOG_ERROR, "Invalid x264 parameter name '%s'", key);
@@ -644,6 +654,7 @@ static void *p1_conn_main(void *data)
 
     RTMP_Init(r);
 
+    strcpy(connf->url, connf->cfg_url);
     strcpy(url_copy, connf->url);
     ret = RTMP_SetupURL(r, url_copy);
     if (!ret) {
@@ -879,30 +890,33 @@ static bool p1_conn_start_video(P1ConnectionFull *connf)
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
     P1Video *video = ctx->video;
     P1VideoClock *vclock = video->clock;
-    x264_param_t *vp = &connf->video_params;
+    x264_param_t vp;
 
-    vp->pf_log = p1_conn_x264_log_callback;
-    vp->p_log_private = connobj;
-    vp->i_log_level = X264_LOG_DEBUG;
+    memcpy(&connf->video_params, &connf->cfg_video_params, sizeof(x264_param_t));
+    memcpy(&vp, &connf->video_params, sizeof(x264_param_t));
 
-    vp->i_timebase_num = ctxf->timebase_num;
-    vp->i_timebase_den = ctxf->timebase_den * 1000000000;
+    vp.pf_log = p1_conn_x264_log_callback;
+    vp.p_log_private = connobj;
+    vp.i_log_level = X264_LOG_DEBUG;
 
-    vp->b_aud = 1;
-    vp->b_annexb = 0;
+    vp.i_timebase_num = ctxf->timebase_num;
+    vp.i_timebase_den = ctxf->timebase_den * 1000000000;
 
-    vp->i_width = video->width;
-    vp->i_height = video->height;
+    vp.b_aud = 1;
+    vp.b_annexb = 0;
 
-    vp->i_fps_num = vclock->fps_num;
-    vp->i_fps_den = vclock->fps_den;
+    vp.i_width = video->width;
+    vp.i_height = video->height;
+
+    vp.i_fps_num = vclock->fps_num;
+    vp.i_fps_den = vclock->fps_den;
 
     if (connf->keyint_sec) {
         double keyint = vclock->fps_num * connf->keyint_sec / vclock->fps_den;
-        vp->i_keyint_max = (int) round(keyint);
+        vp.i_keyint_max = (int) round(keyint);
     }
 
-    connf->video_enc = x264_encoder_open(vp);
+    connf->video_enc = x264_encoder_open(&vp);
     if (connf->video_enc == NULL) {
         p1_log(connobj, P1_LOG_ERROR, "Failed to open x264 encoder");
         return false;

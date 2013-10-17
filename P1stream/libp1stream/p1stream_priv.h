@@ -161,6 +161,10 @@ void p1_audio_source_notify(P1AudioSource *asrc, P1Notification *n);
 struct _P1ConnectionFull {
     P1Connection super;
 
+    // Config
+    char cfg_url[2048];
+    x264_param_t cfg_video_params;
+
     // RTMP state
     char url[2048];
     RTMP rtmp;
