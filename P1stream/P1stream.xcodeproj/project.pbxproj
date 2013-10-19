@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F61627AC18107C8300104254 /* P1AudioInputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F61627AB18107C8300104254 /* P1AudioInputViewController.m */; };
+		F61627AE18107D7F00104254 /* AudioInputView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F61627AD18107D7F00104254 /* AudioInputView.xib */; };
+		F61627B018108CEC00104254 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F61627AF18108CEC00104254 /* CoreAudio.framework */; };
 		F62471ED17F6B42B003428F6 /* P1IsRunningTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */; };
 		F6383C051804683B0026BF67 /* P1ConnectionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F6383C041804683B0026BF67 /* P1ConnectionModel.m */; };
 		F643655917E5A08800314053 /* P1MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F643655817E5A08800314053 /* P1MainWindowController.m */; };
@@ -89,6 +92,10 @@
 		F607452517B637E8004EA730 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		F607452717B637EE004EA730 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		F607452917B637F2004EA730 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
+		F61627AA18107C8300104254 /* P1AudioInputViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1AudioInputViewController.h; sourceTree = "<group>"; };
+		F61627AB18107C8300104254 /* P1AudioInputViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1AudioInputViewController.m; sourceTree = "<group>"; };
+		F61627AD18107D7F00104254 /* AudioInputView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AudioInputView.xib; sourceTree = "<group>"; };
+		F61627AF18108CEC00104254 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		F62471EB17F6B42B003428F6 /* P1IsRunningTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1IsRunningTarget.h; sourceTree = "<group>"; };
 		F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1IsRunningTarget.m; sourceTree = "<group>"; };
 		F627211617BC330700A889B4 /* libFraunhoferAAC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFraunhoferAAC.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -201,6 +208,7 @@
 				F682AC3D17E4C960007DC0CF /* libp1stream.dylib in Frameworks */,
 				F682AC2017E4C91C007DC0CF /* Cocoa.framework in Frameworks */,
 				F6768A1B17E65CD20088D1F9 /* QuartzCore.framework in Frameworks */,
+				F61627B018108CEC00104254 /* CoreAudio.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,6 +229,7 @@
 				F6F6077817B64CC4009E6155 /* IOSurface.framework */,
 				F6F6077417B64C28009E6155 /* OpenGL.framework */,
 				F6F6077A17B65F1F009E6155 /* OpenCL.framework */,
+				F61627AF18108CEC00104254 /* CoreAudio.framework */,
 				F6F6076D17B6426F009E6155 /* CoreGraphics.framework */,
 				F653422817BFAF5C00769680 /* CoreMedia.framework */,
 				F653422A17BFAF6200769680 /* CoreVideo.framework */,
@@ -356,6 +365,8 @@
 				F6E161FC17FA158E00167048 /* P1LogWindowController.m */,
 				F6BDDD9C17FE08DF0078016F /* P1PrefsWindowController.h */,
 				F6BDDD9D17FE08DF0078016F /* P1PrefsWindowController.m */,
+				F61627AA18107C8300104254 /* P1AudioInputViewController.h */,
+				F61627AB18107C8300104254 /* P1AudioInputViewController.m */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -368,6 +379,7 @@
 				F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */,
 				F6E161F617FA061A00167048 /* LogWindow.xib */,
 				F6BDDD9A17FE08AA0078016F /* PrefsWindow.xib */,
+				F61627AD18107D7F00104254 /* AudioInputView.xib */,
 				F643655A17E5ADB900314053 /* P1PreviewView.h */,
 				F643655B17E5ADB900314053 /* P1PreviewView.m */,
 			);
@@ -464,6 +476,7 @@
 				F6BDDD9B17FE08AA0078016F /* PrefsWindow.xib in Resources */,
 				F6BDDD9917FDF1140078016F /* MainMenu.xib in Resources */,
 				F6E161F717FA061A00167048 /* LogWindow.xib in Resources */,
+				F61627AE18107D7F00104254 /* AudioInputView.xib in Resources */,
 				F68E3E0717E5E6DB00EAA38E /* MainWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -501,6 +514,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6AEC258180AE5CE00EAAD43 /* P1VideoModel.m in Sources */,
+				F61627AC18107C8300104254 /* P1AudioInputViewController.m in Sources */,
 				F6BDDD9E17FE08DF0078016F /* P1PrefsWindowController.m in Sources */,
 				F682AC2C17E4C91C007DC0CF /* main.m in Sources */,
 				F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */,
