@@ -94,18 +94,18 @@ static NSArray *arrayWithX264Names(char const * const *names)
     P1PrefsDictionary *prefs;
     NSMutableArray *mutArr;
 
-    [ud setObject:[_generalConfig.dictionary copy] forKey:@"general"];
+    [ud setObject:[_generalConfig copy] forKey:@"general"];
 
     mutArr = [NSMutableArray arrayWithCapacity:_audioSourceConfigs.count];
     for (prefs in _audioSourceConfigs)
-        [mutArr addObject:[prefs.dictionary copy]];
+        [mutArr addObject:[prefs copy]];
     [ud setObject:[mutArr copy] forKey:@"audio-sources"];
 
-    [ud setObject:[_videoClockConfig.dictionary copy] forKey:@"video-clock"];
+    [ud setObject:[_videoClockConfig copy] forKey:@"video-clock"];
 
     mutArr = [NSMutableArray arrayWithCapacity:_videoSourceConfigs.count];
     for (prefs in _videoSourceConfigs)
-        [mutArr addObject:[prefs.dictionary copy]];
+        [mutArr addObject:[prefs copy]];
     [ud setObject:[mutArr copy] forKey:@"video-sources"];
 
     [_contextModel reconfigure];

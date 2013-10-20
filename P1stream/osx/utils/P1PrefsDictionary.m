@@ -6,10 +6,24 @@
 + (id)prefsWithDictionary:(NSDictionary *)dictionary
                  delegate:(id<P1PrefsDictionaryDelegate>)delegate
 {
-    P1PrefsDictionary *prefs = [[P1PrefsDictionary alloc] init];
-    prefs.dictionary = [dictionary mutableCopy];
-    prefs.delegate = delegate;
-    return prefs;
+    return [[P1PrefsDictionary alloc] initWithDictionary:dictionary
+                                                delegate:delegate];
+}
+
+- (id)initWithDictionary:(NSDictionary *)dictionary
+                delegate:(id<P1PrefsDictionaryDelegate>)delegate
+{
+    self = [super init];
+    if (self) {
+        _dictionary = [dictionary mutableCopy];
+        _delegate = delegate;
+    }
+    return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone;
+{
+    return [_dictionary copyWithZone:zone];
 }
 
 // NSDictionary
