@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F60484D118146BE60062F513 /* P1PrefsDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = F60484D018146BE60062F513 /* P1PrefsDictionary.m */; };
 		F61627AC18107C8300104254 /* P1AudioInputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F61627AB18107C8300104254 /* P1AudioInputViewController.m */; };
 		F61627AE18107D7F00104254 /* AudioInputView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F61627AD18107D7F00104254 /* AudioInputView.xib */; };
 		F61627B018108CEC00104254 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F61627AF18108CEC00104254 /* CoreAudio.framework */; };
@@ -89,6 +90,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F60484CF18146BE60062F513 /* P1PrefsDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1PrefsDictionary.h; sourceTree = "<group>"; };
+		F60484D018146BE60062F513 /* P1PrefsDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1PrefsDictionary.m; sourceTree = "<group>"; };
 		F607452517B637E8004EA730 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		F607452717B637EE004EA730 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		F607452917B637F2004EA730 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
@@ -215,6 +218,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F60484CB181444990062F513 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				F62471EB17F6B42B003428F6 /* P1IsRunningTarget.h */,
+				F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */,
+				F60484CF18146BE60062F513 /* P1PrefsDictionary.h */,
+				F60484D018146BE60062F513 /* P1PrefsDictionary.m */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
 		F607450E17B6303F004EA730 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -239,15 +253,6 @@
 				F6768A1917E65CC20088D1F9 /* QuartzCore.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		F62471E717F6B0E7003428F6 /* transformers */ = {
-			isa = PBXGroup;
-			children = (
-				F62471EB17F6B42B003428F6 /* P1IsRunningTarget.h */,
-				F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */,
-			);
-			path = transformers;
 			sourceTree = "<group>";
 		};
 		F62DBA4117C53360004DDFD6 /* osx */ = {
@@ -347,6 +352,7 @@
 				F65CD73417F4C7AD00CD3FBC /* models */,
 				F6BDDD9617FDF02A0078016F /* controllers */,
 				F6BDDD9717FDF0380078016F /* views */,
+				F60484CB181444990062F513 /* utils */,
 				F682AC2717E4C91C007DC0CF /* P1stream-Info.plist */,
 				F682AC2D17E4C91C007DC0CF /* P1stream-Prefix.pch */,
 				F682AC2B17E4C91C007DC0CF /* main.m */,
@@ -374,7 +380,6 @@
 		F6BDDD9717FDF0380078016F /* views */ = {
 			isa = PBXGroup;
 			children = (
-				F62471E717F6B0E7003428F6 /* transformers */,
 				F6BDDD9817FDF1140078016F /* MainMenu.xib */,
 				F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */,
 				F6E161F617FA061A00167048 /* LogWindow.xib */,
@@ -518,6 +523,7 @@
 				F6BDDD9E17FE08DF0078016F /* P1PrefsWindowController.m in Sources */,
 				F682AC2C17E4C91C007DC0CF /* main.m in Sources */,
 				F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */,
+				F60484D118146BE60062F513 /* P1PrefsDictionary.m in Sources */,
 				F643655917E5A08800314053 /* P1MainWindowController.m in Sources */,
 				F6E161FD17FA158E00167048 /* P1LogWindowController.m in Sources */,
 				F6AEC25B180AEB5D00EAAD43 /* P1ListUtils.m in Sources */,

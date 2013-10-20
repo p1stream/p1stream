@@ -8,7 +8,6 @@
         <customObject id="-2" userLabel="File's Owner" customClass="P1PrefsWindowController">
             <connections>
                 <outlet property="audioSourceViewBox" destination="RZc-25-TuG" id="vql-bY-rKD"/>
-                <outlet property="audioSourcesTable" destination="cbp-yc-TQl" id="2gk-Ux-he0"/>
                 <outlet property="tabView" destination="X47-uQ-wiY" id="HFd-yP-j1B"/>
                 <outlet property="toolbar" destination="FzX-5z-Au1" id="lSe-bY-xbL"/>
                 <outlet property="window" destination="1" id="z93-ZD-cJu"/>
@@ -50,7 +49,7 @@
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nG8-4p-DyG">
                                             <rect key="frame" x="148" y="308" width="532" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="mSB-H1-r5e">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="mSB-H1-r5e">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -88,7 +87,7 @@
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="96" id="2Yj-db-8Gb"/>
                                             </constraints>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="GeF-bj-3Vg">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="GeF-bj-3Vg">
                                                 <numberFormatter key="formatter" formatterBehavior="default10_4" positiveFormat="#,##0.###" negativeFormat="#,##0.###" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="309" minimumFractionDigits="0" maximumFractionDigits="3" id="CT3-Xp-MMS">
                                                     <real key="roundingIncrement" value="0.0"/>
                                                     <metadata>
@@ -131,12 +130,12 @@
                                                 <menu key="menu" title="H.264 profiles" id="27E-WR-WGf"/>
                                             </popUpButtonCell>
                                             <connections>
+                                                <binding destination="-2" name="selectedValue" keyPath="generalConfig.x264-profile" previousBinding="nfk-zn-WYj" id="XV2-2y-oL1"/>
                                                 <binding destination="-2" name="contentValues" keyPath="profileNames" id="nfk-zn-WYj">
                                                     <dictionary key="options">
                                                         <bool key="NSInsertsNullPlaceholder" value="YES"/>
                                                     </dictionary>
                                                 </binding>
-                                                <binding destination="-2" name="selectedValue" keyPath="generalConfig.x264-profile" previousBinding="nfk-zn-WYj" id="XV2-2y-oL1"/>
                                             </connections>
                                         </popUpButton>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Tf8-He-iRF">
@@ -163,12 +162,12 @@
                                                 <menu key="menu" title="OtherViews" id="l58-1e-2LA"/>
                                             </popUpButtonCell>
                                             <connections>
+                                                <binding destination="-2" name="selectedValue" keyPath="generalConfig.x264-preset" previousBinding="JAs-AV-eZP" id="9Dp-u7-lwG"/>
                                                 <binding destination="-2" name="contentValues" keyPath="presetNames" id="JAs-AV-eZP">
                                                     <dictionary key="options">
                                                         <bool key="NSInsertsNullPlaceholder" value="YES"/>
                                                     </dictionary>
                                                 </binding>
-                                                <binding destination="-2" name="selectedValue" keyPath="generalConfig.x264-preset" previousBinding="JAs-AV-eZP" id="9Dp-u7-lwG"/>
                                             </connections>
                                         </popUpButton>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cKG-LJ-n1x">
@@ -235,7 +234,7 @@
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="72" id="wrv-rU-brA"/>
                                             </constraints>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="NRj-zP-F6t">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="NRj-zP-F6t">
                                                 <numberFormatter key="formatter" formatterBehavior="default10_4" positiveFormat="#,##0.###" negativeFormat="#,##0.###" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="309" minimumFractionDigits="0" maximumFractionDigits="3" id="AtR-f3-B1p">
                                                     <real key="roundingIncrement" value="0.0"/>
                                                     <metadata>
@@ -260,7 +259,7 @@
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="72" id="YDA-4l-lNS"/>
                                             </constraints>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="scZ-ai-iya">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="scZ-ai-iya">
                                                 <numberFormatter key="formatter" formatterBehavior="default10_4" positiveFormat="#,##0.###" negativeFormat="#,##0.###" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="309" minimumFractionDigits="0" maximumFractionDigits="3" id="SlC-Cw-z09">
                                                     <real key="roundingIncrement" value="0.0"/>
                                                     <metadata>
@@ -391,7 +390,7 @@
                                                             </tableColumn>
                                                         </tableColumns>
                                                         <connections>
-                                                            <action selector="audioSourceSelected:" target="-2" id="hB0-bI-bHI"/>
+                                                            <action selector="selectedAudioSourceDidChange:" target="-2" id="KUz-Sf-Tb2"/>
                                                             <binding destination="-2" name="content" keyPath="audioSourceConfigs" id="WTG-nS-SDM"/>
                                                         </connections>
                                                     </tableView>
@@ -485,7 +484,8 @@
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
-                            <action selector="applySettings:" target="-2" id="zok-vF-FOy"/>
+                            <action selector="applyPrefs:" target="-2" id="KDL-we-Can"/>
+                            <binding destination="-2" name="enabled" keyPath="isDirty" id="Rwe-N8-wXD"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DCh-nM-B7A">
@@ -496,7 +496,8 @@
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
-                            <action selector="revertSettings:" target="-2" id="x3l-55-f6y"/>
+                            <action selector="revertPrefs:" target="-2" id="1Sd-r6-pPk"/>
+                            <binding destination="-2" name="enabled" keyPath="isDirty" id="0B3-Qy-NXt"/>
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qIJ-wM-G4c">

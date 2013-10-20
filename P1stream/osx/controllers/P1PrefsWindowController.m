@@ -39,13 +39,20 @@ static NSArray *arrayWithX264Names(char const * const *names)
 
 - (void)windowDidLoad
 {
+    [self revertPrefs:nil];
+
     _toolbar.selectedItemIdentifier = @"P1GeneralPage";
 }
 
-- (void)showWindow:(id)sender
+- (void)windowWillClose:(NSNotification *)notification
 {
-    [self revertSettings:nil];
-    [super showWindow:sender];
+    if (_isDirty)
+        [self revertPrefs:nil];
+}
+
+- (void)prefsDidChange:(P1PrefsDictionary *)prefs
+{
+    self.isDirty = TRUE;
 }
 
 - (IBAction)dummy:(id)sender
@@ -53,7 +60,7 @@ static NSArray *arrayWithX264Names(char const * const *names)
     // This is apparently needed to make toolbar items clickable.
 }
 
-- (IBAction)revertSettings:(id)sender
+- (IBAction)revertPrefs:(id)sender
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     NSDictionary *dict;
@@ -61,51 +68,55 @@ static NSArray *arrayWithX264Names(char const * const *names)
     NSMutableArray *mutArr;
 
     dict = [ud dictionaryForKey:@"general"];
-    self.generalConfig = [dict mutableCopy];
+    self.generalConfig = [P1PrefsDictionary prefsWithDictionary:dict delegate:self];
 
     arr = [ud arrayForKey:@"audio-sources"];
     mutArr = [NSMutableArray arrayWithCapacity:arr.count];
     for (dict in arr)
-        [mutArr addObject:[dict mutableCopy]];
+        [mutArr addObject:[P1PrefsDictionary prefsWithDictionary:dict delegate:self]];
     self.audioSourceConfigs = mutArr;
 
     dict = [ud dictionaryForKey:@"video-clock"];
-    self.videoClockConfig = [dict mutableCopy];
+    self.videoClockConfig = [P1PrefsDictionary prefsWithDictionary:dict delegate:self];
 
     arr = [ud arrayForKey:@"video-sources"];
     mutArr = [NSMutableArray arrayWithCapacity:arr.count];
     for (dict in arr)
-        [mutArr addObject:[dict mutableCopy]];
+        [mutArr addObject:[P1PrefsDictionary prefsWithDictionary:dict delegate:self]];
     self.videoSourceConfigs = mutArr;
+
+    self.isDirty = FALSE;
 }
 
-- (IBAction)applySettings:(id)sender
+- (IBAction)applyPrefs:(id)sender
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSDictionary *dict;
+    P1PrefsDictionary *prefs;
     NSMutableArray *mutArr;
 
-    [ud setObject:[_generalConfig copy] forKey:@"general"];
+    [ud setObject:[_generalConfig.dictionary copy] forKey:@"general"];
 
     mutArr = [NSMutableArray arrayWithCapacity:_audioSourceConfigs.count];
-    for (dict in _audioSourceConfigs)
-        [mutArr addObject:[dict copy]];
+    for (prefs in _audioSourceConfigs)
+        [mutArr addObject:[prefs.dictionary copy]];
     [ud setObject:[mutArr copy] forKey:@"audio-sources"];
 
-    [ud setObject:[_videoClockConfig copy] forKey:@"video-clock"];
+    [ud setObject:[_videoClockConfig.dictionary copy] forKey:@"video-clock"];
 
     mutArr = [NSMutableArray arrayWithCapacity:_videoSourceConfigs.count];
-    for (dict in _videoSourceConfigs)
-        [mutArr addObject:[dict copy]];
+    for (prefs in _videoSourceConfigs)
+        [mutArr addObject:[prefs.dictionary copy]];
     [ud setObject:[mutArr copy] forKey:@"video-sources"];
 
     [_contextModel reconfigure];
+
+    self.isDirty = FALSE;
 }
 
-- (IBAction)audioSourceSelected:(id)sender
+- (IBAction)selectedAudioSourceDidChange:(NSTableView *)sender
 {
     NSDictionary *audioSourceConfig = nil;
-    NSIndexSet *indexSet = _audioSourcesTable.selectedRowIndexes;
+    NSIndexSet *indexSet = sender.selectedRowIndexes;
     if (indexSet.count == 1)
         audioSourceConfig = _audioSourceConfigs[[indexSet firstIndex]];
 
