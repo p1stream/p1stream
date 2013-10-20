@@ -26,10 +26,9 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         [self reconfigure];
 
         // FIXME: Move this to reconfigure, compare objects.
-        NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
-        if (![self createVideoClock:dict]) return nil;
-        if (![self createVideoSources:dict]) return nil;
-        if (![self createAudioSources:dict]) return nil;
+        if (![self createVideoClock]) return nil;
+        if (![self createVideoSources]) return nil;
+        if (![self createAudioSources]) return nil;
 
         if (![self listenForNotifications]) return nil;
     }
@@ -57,9 +56,10 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
 - (void)reconfigure
 {
-    NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    NSDictionary *generalConfig = [ud dictionaryForKey:@"general"];
 
-    P1Config *config = p1_plist_config_create(dict);
+    P1Config *config = p1_plist_config_create(generalConfig);
     if (config == NULL)
         abort();
 
@@ -113,9 +113,10 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 }
 
 
-- (BOOL)createVideoClock:(NSDictionary *)dict
+- (BOOL)createVideoClock
 {
-    NSDictionary *clockDict = dict[@"video-clock"];
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    NSDictionary *clockDict = [ud dictionaryForKey:@"video-clock"];
     NSString *type = clockDict[@"type"];
 
     P1VideoClockFactory *factory = NULL;
@@ -152,11 +153,13 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
     return TRUE;
 }
 
-- (BOOL)createVideoSources:(NSDictionary *)dict
+- (BOOL)createVideoSources
 {
-    NSArray *sourcesArray = dict[@"video-sources"];
-    for (NSDictionary *sourceDict in sourcesArray) {
-        NSString *type = sourceDict[@"type"];
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    NSArray *videoSourceConfigs = [ud arrayForKey:@"video-sources"];
+
+    for (NSDictionary *videoSourceConfig in videoSourceConfigs) {
+        NSString *type = videoSourceConfig[@"type"];
 
         P1VideoSourceFactory *factory = NULL;
         if ([type isEqualToString:@"display"])
@@ -166,7 +169,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         if (factory == NULL)
             return FALSE;
 
-        P1Config *config = p1_plist_config_create(sourceDict);
+        P1Config *config = p1_plist_config_create(videoSourceConfig);
         if (config == NULL)
             return FALSE;
 
@@ -185,7 +188,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
             return FALSE;
         }
 
-        NSString *name = sourceDict[@"name"];
+        NSString *name = videoSourceConfig[@"name"];
         if (name)
             model.name = name;
 
@@ -196,11 +199,13 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
     return TRUE;
 }
 
-- (BOOL)createAudioSources:(NSDictionary *)dict
+- (BOOL)createAudioSources
 {
-    NSArray *sourcesArray = dict[@"audio-sources"];
-    for (NSDictionary *sourceDict in sourcesArray) {
-        NSString *type = sourceDict[@"type"];
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    NSArray *audioSourceConfigs = [ud arrayForKey:@"audio-sources"];
+
+    for (NSDictionary *audioSourceConfig in audioSourceConfigs) {
+        NSString *type = audioSourceConfig[@"type"];
 
         P1AudioSourceFactory *factory = NULL;
         if ([type isEqualToString:@"input"])
@@ -208,7 +213,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
         if (factory == NULL)
             return FALSE;
 
-        P1Config *config = p1_plist_config_create(sourceDict);
+        P1Config *config = p1_plist_config_create(audioSourceConfig);
         if (config == NULL)
             return FALSE;
 
@@ -227,7 +232,7 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
             return FALSE;
         }
 
-        NSString *name = sourceDict[@"name"];
+        NSString *name = audioSourceConfig[@"name"];
         if (name)
             model.name = name;
 

@@ -8,10 +8,9 @@
         <customObject id="-2" userLabel="File's Owner" customClass="P1PrefsWindowController">
             <connections>
                 <outlet property="audioSourceViewBox" destination="RZc-25-TuG" id="vql-bY-rKD"/>
-                <outlet property="audioSourcesController" destination="J9Q-Ni-a3y" id="tub-wl-J1D"/>
+                <outlet property="audioSourcesTable" destination="cbp-yc-TQl" id="2gk-Ux-he0"/>
                 <outlet property="tabView" destination="X47-uQ-wiY" id="HFd-yP-j1B"/>
                 <outlet property="toolbar" destination="FzX-5z-Au1" id="lSe-bY-xbL"/>
-                <outlet property="userDefaultsController" destination="Caf-v7-l2A" id="u8u-LX-Wzh"/>
                 <outlet property="window" destination="1" id="z93-ZD-cJu"/>
             </connections>
         </customObject>
@@ -57,7 +56,11 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Caf-v7-l2A" name="value" keyPath="values.url" id="gRJ-Vz-fP2"/>
+                                                <binding destination="-2" name="value" keyPath="generalConfig.url" id="LVT-Pw-wCM">
+                                                    <dictionary key="options">
+                                                        <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                    </dictionary>
+                                                </binding>
                                             </connections>
                                         </textField>
                                         <box autoresizesSubviews="NO" verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Ce8-gS-2o5">
@@ -97,7 +100,11 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Caf-v7-l2A" name="value" keyPath="values.x264-bitrate" id="9XU-Af-5SQ"/>
+                                                <binding destination="-2" name="value" keyPath="generalConfig.x264-bitrate" id="Qnv-7U-fNJ">
+                                                    <dictionary key="options">
+                                                        <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                    </dictionary>
+                                                </binding>
                                             </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sWG-pt-N9l">
@@ -129,7 +136,7 @@
                                                         <bool key="NSInsertsNullPlaceholder" value="YES"/>
                                                     </dictionary>
                                                 </binding>
-                                                <binding destination="Caf-v7-l2A" name="selectedValue" keyPath="values.x264-profile" previousBinding="nfk-zn-WYj" id="pxv-va-qje"/>
+                                                <binding destination="-2" name="selectedValue" keyPath="generalConfig.x264-profile" previousBinding="nfk-zn-WYj" id="XV2-2y-oL1"/>
                                             </connections>
                                         </popUpButton>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Tf8-He-iRF">
@@ -161,7 +168,7 @@
                                                         <bool key="NSInsertsNullPlaceholder" value="YES"/>
                                                     </dictionary>
                                                 </binding>
-                                                <binding destination="Caf-v7-l2A" name="selectedValue" keyPath="values.x264-preset" previousBinding="JAs-AV-eZP" id="eFk-uy-vnf"/>
+                                                <binding destination="-2" name="selectedValue" keyPath="generalConfig.x264-preset" previousBinding="JAs-AV-eZP" id="9Dp-u7-lwG"/>
                                             </connections>
                                         </popUpButton>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cKG-LJ-n1x">
@@ -188,12 +195,12 @@
                                                 <menu key="menu" title="OtherViews" id="q5O-b9-9FM"/>
                                             </popUpButtonCell>
                                             <connections>
+                                                <binding destination="-2" name="selectedValue" keyPath="generalConfig.x264-tune" previousBinding="JOe-vQ-T7M" id="AAb-ex-gvo"/>
                                                 <binding destination="-2" name="contentValues" keyPath="tuneNames" id="JOe-vQ-T7M">
                                                     <dictionary key="options">
                                                         <bool key="NSInsertsNullPlaceholder" value="YES"/>
                                                     </dictionary>
                                                 </binding>
-                                                <binding destination="Caf-v7-l2A" name="selectedValue" keyPath="values.x264-tune" previousBinding="JOe-vQ-T7M" id="2SH-b7-URj"/>
                                             </connections>
                                         </popUpButton>
                                         <box autoresizesSubviews="NO" verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="FSH-Aq-D2Z">
@@ -240,7 +247,11 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Caf-v7-l2A" name="value" keyPath="values.video-width" id="ztz-2y-6P2"/>
+                                                <binding destination="-2" name="value" keyPath="generalConfig.video-width" id="OPP-FL-j7Q">
+                                                    <dictionary key="options">
+                                                        <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                    </dictionary>
+                                                </binding>
                                             </connections>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hbQ-MM-1HL">
@@ -261,7 +272,11 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Caf-v7-l2A" name="value" keyPath="values.video-height" id="OIh-RP-cTV"/>
+                                                <binding destination="-2" name="value" keyPath="generalConfig.video-height" id="Aum-gx-5m2">
+                                                    <dictionary key="options">
+                                                        <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                    </dictionary>
+                                                </binding>
                                             </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LeE-zb-E0v">
@@ -376,8 +391,8 @@
                                                             </tableColumn>
                                                         </tableColumns>
                                                         <connections>
-                                                            <binding destination="J9Q-Ni-a3y" name="content" keyPath="arrangedObjects" id="udZ-tN-fuI"/>
-                                                            <binding destination="J9Q-Ni-a3y" name="selectionIndexes" keyPath="selectionIndexes" previousBinding="udZ-tN-fuI" id="QA3-mQ-AQF"/>
+                                                            <action selector="audioSourceSelected:" target="-2" id="hB0-bI-bHI"/>
+                                                            <binding destination="-2" name="content" keyPath="audioSourceConfigs" id="WTG-nS-SDM"/>
                                                         </connections>
                                                     </tableView>
                                                 </subviews>
@@ -406,9 +421,6 @@
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                            <connections>
-                                                <binding destination="J9Q-Ni-a3y" name="enabled" keyPath="canAdd" id="bUz-8Q-6Ee"/>
-                                            </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="94v-U8-St9" userLabel="Remove Button">
                                             <rect key="frame" x="45" y="19" width="26" height="23"/>
@@ -421,10 +433,6 @@
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                            <connections>
-                                                <action selector="remove:" target="J9Q-Ni-a3y" id="iFh-am-APt"/>
-                                                <binding destination="J9Q-Ni-a3y" name="enabled" keyPath="canRemove" id="D1j-de-sgd"/>
-                                            </connections>
                                         </button>
                                         <box autoresizesSubviews="NO" title="Box" borderType="line" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="RZc-25-TuG">
                                             <rect key="frame" x="225" y="45" width="458" height="287"/>
@@ -478,7 +486,6 @@
                         </buttonCell>
                         <connections>
                             <action selector="applySettings:" target="-2" id="zok-vF-FOy"/>
-                            <binding destination="Caf-v7-l2A" name="enabled" keyPath="hasUnappliedChanges" id="lnL-hl-Xep"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DCh-nM-B7A">
@@ -489,8 +496,7 @@
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
-                            <action selector="revert:" target="Caf-v7-l2A" id="xvC-Tb-Dhx"/>
-                            <binding destination="Caf-v7-l2A" name="enabled" keyPath="hasUnappliedChanges" id="HvL-YM-ILy"/>
+                            <action selector="revertSettings:" target="-2" id="x3l-55-f6y"/>
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qIJ-wM-G4c">
@@ -575,34 +581,6 @@
                 <outlet property="delegate" destination="-2" id="jY5-0z-3H2"/>
             </connections>
         </window>
-        <userDefaultsController representsSharedInstance="YES" id="Caf-v7-l2A"/>
-        <arrayController avoidsEmptySelection="NO" id="J9Q-Ni-a3y" userLabel="Audio Sources Controller">
-            <connections>
-                <binding destination="Caf-v7-l2A" name="contentArray" keyPath="values.audio-sources" id="11f-eV-hzi">
-                    <dictionary key="options">
-                        <bool key="NSHandlesContentAsCompoundValue" value="YES"/>
-                    </dictionary>
-                </binding>
-            </connections>
-        </arrayController>
-        <objectController id="BIL-QI-M0g" userLabel="Video Clock Controller">
-            <connections>
-                <binding destination="Caf-v7-l2A" name="contentObject" keyPath="values.video-clock" id="qJv-tl-Kqo">
-                    <dictionary key="options">
-                        <bool key="NSHandlesContentAsCompoundValue" value="YES"/>
-                    </dictionary>
-                </binding>
-            </connections>
-        </objectController>
-        <arrayController id="3iF-ai-XG6" userLabel="Video Sources Controller">
-            <connections>
-                <binding destination="Caf-v7-l2A" name="contentArray" keyPath="values.video-sources" id="8ny-Ga-8Ff">
-                    <dictionary key="options">
-                        <bool key="NSHandlesContentAsCompoundValue" value="YES"/>
-                    </dictionary>
-                </binding>
-            </connections>
-        </arrayController>
     </objects>
     <resources>
         <image name="NSAddTemplate" width="8" height="8"/>

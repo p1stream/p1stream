@@ -8,14 +8,16 @@
     // Register config defaults
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults registerDefaults:@{
-        @"url": @"rtmp://localhost/app/test",
-        @"video-width": @1280,
-        @"video-height": @720,
-        @"x264-bitrate": @4096,
-        @"x264-keyint-sec": @2,
-        @"x264-profile": @"baseline",
-        @"x264-preset": @"veryfast",
-        @"x264-x-nal-hrd": @"cbr",
+        @"general": @{
+            @"url": @"rtmp://localhost/app/test",
+            @"video-width": @1280,
+            @"video-height": @720,
+            @"x264-bitrate": @4096,
+            @"x264-keyint-sec": @2,
+            @"x264-profile": @"baseline",
+            @"x264-preset": @"veryfast",
+            @"x264-x-nal-hrd": @"cbr",
+        },
         @"audio-sources": @[
             @{
                 @"name": @"Audio input source",
