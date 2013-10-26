@@ -1,18 +1,19 @@
-#import "P1ObjectModel.h"
+#import "P1PluginModel.h"
 
 
 @interface P1VideoModel : P1ObjectModel
 {
-    P1ObjectModel *_clockModel;
-    NSMutableArray *_sourceModels;
+    P1PluginModel *_newClock;
 }
 
-@property (readonly) P1Video *video;
+- (id)initWithContext:(P1Context *)context;
 
-@property (retain) P1ObjectModel *clockModel;
+- (P1PluginModel *)clockModel;
+- (void)enumerateSourceModels:(void (^)(P1PluginModel *sourceModel))block;
 
-@property (readonly, retain) NSArray *sourceModels;
-- (void)insertObject:(P1ObjectModel *)objectModel inSourceModelsAtIndex:(NSUInteger)index;
-- (void)removeObjectFromSourceModelsAtIndex:(NSUInteger)index;
+- (void)reconfigurePlugins;
+
+- (BOOL)hasNewClockPending;
+- (void)swapNewClock;
 
 @end

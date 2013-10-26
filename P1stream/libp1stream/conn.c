@@ -210,7 +210,7 @@ void p1_conn_notify(P1ConnectionFull *connf, P1Notification *n)
 
     if (audioobj->state.current  != P1_STATE_RUNNING ||
         videoobj->state.current  != P1_STATE_RUNNING ||
-        vclockobj->state.current != P1_STATE_RUNNING) {
+        !vclockobj || vclockobj->state.current != P1_STATE_RUNNING) {
         p1_object_clear_flag(connobj, P1_FLAG_CAN_START);
 
         if (connobj->state.current == P1_STATE_STARTING ||

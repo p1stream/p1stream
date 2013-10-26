@@ -4,40 +4,33 @@
 @implementation P1ObjectModel
 
 - (id)initWithObject:(P1Object *)object
+                name:(NSString *)name
 {
     self = [super init];
     if (self) {
         _object = object;
+        _name = name;
+
         _object->user_data = (__bridge void *)self;
-
-        P1Object *ctxobj = (P1Object *)_object->ctx;
-        _contextModel = (__bridge P1ContextModel *)ctxobj->user_data;
-
-        switch (_object->type) {
-            case P1_OTYPE_CONTEXT:
-                _name = @"Context";
-                break;
-            case P1_OTYPE_AUDIO:
-                _name = @"Audio mixer";
-                break;
-            case P1_OTYPE_VIDEO:
-                _name = @"Video mixer";
-                break;
-            case P1_OTYPE_CONNECTION:
-                _name = @"Connection";
-                break;
-            case P1_OTYPE_AUDIO_SOURCE:
-                _name = [NSString stringWithFormat:@"Audio source %p", _object];
-                break;
-            case P1_OTYPE_VIDEO_CLOCK:
-                _name = @"Video clock";
-                break;
-            case P1_OTYPE_VIDEO_SOURCE:
-                _name = [NSString stringWithFormat:@"Video source %p", _object];
-                break;
-        }
     }
     return self;
+}
+
++ (id)modelForObject:(P1Object *)object
+{
+    if (object) {
+        void *ptr = object->user_data;
+        if (ptr)
+            return (__bridge P1ObjectModel *)ptr;
+    }
+    return nil;
+}
+
+
+- (P1ContextModel *)contextModel
+{
+    P1Object *ctxobj = (P1Object *)_object->ctx;
+    return (__bridge P1ContextModel *)ctxobj->user_data;
 }
 
 
@@ -52,32 +45,6 @@
 }
 
 
-// We handle these using notifications.
-+ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
-{
-    if ([key isEqualToString:@"state"])
-        return NO;
-    else if ([key isEqualToString:@"currentState"])
-        return NO;
-    else if ([key isEqualToString:@"target"])
-        return NO;
-    else if ([key isEqualToString:@"error"])
-        return NO;
-    else
-        return [super automaticallyNotifiesObserversForKey:key];
-}
-
-
-- (P1State)state
-{
-    P1State state;
-
-    [self lock];
-    state = _state;
-    [self unlock];
-
-    return state;
-}
 - (void)handleNotification:(P1Notification *)n
 {
     [self willChangeValueForKey:@"state"];
@@ -100,15 +67,24 @@
 {
     return _state.target;
 }
++ (NSSet *)keyPathsForValuesAffectingTarget
+{
+    return [NSSet setWithObjects:@"state", nil];
+}
+
+
 - (void)setTarget:(P1TargetState)target
 {
     [self lock];
     p1_object_target(_object, target);
     [self unlock];
 }
-+ (NSSet *)keyPathsForValuesAffectingTarget
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
 {
-    return [NSSet setWithObjects:@"state", nil];
+    if ([key isEqualToString:@"target"])
+        return NO;
+    else
+        return [super automaticallyNotifiesObserversForKey:key];
 }
 
 

@@ -1,4 +1,4 @@
-@interface P1AudioInputViewController : NSViewController
+@interface P1CaptureVideoSourceViewController : NSViewController
 
 @property (retain) NSArray *devices;
 

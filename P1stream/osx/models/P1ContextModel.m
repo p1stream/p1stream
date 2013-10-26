@@ -11,26 +11,20 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
     if (context == NULL)
         return nil;
 
-    self = [super initWithObject:(P1Object *) context];
+    self = [super initWithObject:(P1Object *)context name:@"Context"];
     if (self) {
         _logMessages = [NSMutableArray new];
         context->log_fn = logCallback;
         context->log_user_data = (__bridge void *)self;
 
-        _audioModel = [[P1AudioModel alloc] initWithObject:(P1Object *)context->audio];
-        _videoModel = [[P1VideoModel alloc] initWithObject:(P1Object *)context->video];
-        _connectionModel = [[P1ConnectionModel alloc] initWithObject:(P1Object *)context->conn];
+        _audioModel = [[P1AudioModel alloc] initWithContext:context];
+        _videoModel = [[P1VideoModel alloc] initWithContext:context];
+        _connectionModel = [[P1ConnectionModel alloc] initWithContext:context];
 
         if (!_logMessages || !_audioModel || !_videoModel || !_connectionModel) return nil;
 
         [self reconfigure];
-
-        // FIXME: Move this to reconfigure, compare objects.
-        if (![self createVideoClock]) return nil;
-        if (![self createVideoSources]) return nil;
-        if (![self createAudioSources]) return nil;
-
-        if (![self listenForNotifications]) return nil;
+        [self listenForNotifications];
     }
     else {
         p1_free(context, P1_FREE_EVERYTHING);
@@ -57,22 +51,23 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 - (void)reconfigure
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSDictionary *generalConfig = [ud dictionaryForKey:@"general"];
+    NSDictionary *dict = [ud dictionaryForKey:@"general"];
 
-    P1Config *config = p1_plist_config_create(generalConfig);
+    P1Config *config = p1_plist_config_create(dict);
     if (config == NULL)
         abort();
 
     p1_config(self.context, config);
 
     p1_config_free(config);
+
+    [self.audioModel reconfigurePlugins];
+    [self.videoModel reconfigurePlugins];
 }
 
 
 - (void)start
 {
-    _restart = FALSE;
-
     bool ret = p1_start(self.context);
     if (!ret)
         abort();
@@ -80,186 +75,29 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
 
 - (void)stop
 {
-    _restart = FALSE;
-
     p1_stop(self.context, P1_STOP_ASYNC);
 }
 
-// Context needs some special logic to restart.
-- (void)restart
+- (void)setTarget:(P1TargetState)target;
 {
-    if (self.currentState == P1_STATE_IDLE) {
-        [self start];
-    }
-    else {
-        [self stop];
-        _restart = TRUE;
-    }
+    [NSException raise:@"Cannot set context target"
+                format:@"Context should be controlled with start and stop messages."];
 }
 
 
-// We handle this using notifications.
-+ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
-{
-    if ([key isEqualToString:@"needsConnectionRestart"])
-        return NO;
-    else
-        return [super automaticallyNotifiesObserversForKey:key];
-}
-
-- (BOOL)needsConnectionRestart
-{
-    return _needsConnectionRestart;
-}
-
-
-- (BOOL)createVideoClock
-{
-    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSDictionary *clockDict = [ud dictionaryForKey:@"video-clock"];
-    NSString *type = clockDict[@"type"];
-
-    P1VideoClockFactory *factory = NULL;
-    if ([type isEqualToString:@"display"])
-        factory = p1_display_video_clock_create;
-    if (factory == NULL)
-        return FALSE;
-
-    P1Config *config = p1_plist_config_create(clockDict);
-    if (config == NULL)
-        return FALSE;
-
-    P1VideoClock *videoClock = factory(self.context);
-    if (videoClock == NULL) {
-        p1_config_free(config);
-        return FALSE;
-    }
-
-    p1_video_clock_config(videoClock, config);
-    p1_config_free(config);
-
-    P1ObjectModel *model = [[P1ObjectModel alloc] initWithObject:(P1Object *)videoClock];
-    if (!model) {
-        p1_plugin_free((P1Plugin *)videoClock);
-        return FALSE;
-    }
-
-    NSString *name = clockDict[@"name"];
-    if (name)
-        model.name = name;
-
-    self.videoModel.clockModel = model;
-
-    return TRUE;
-}
-
-- (BOOL)createVideoSources
-{
-    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSArray *videoSourceConfigs = [ud arrayForKey:@"video-sources"];
-
-    for (NSDictionary *videoSourceConfig in videoSourceConfigs) {
-        NSString *type = videoSourceConfig[@"type"];
-
-        P1VideoSourceFactory *factory = NULL;
-        if ([type isEqualToString:@"display"])
-            factory = p1_display_video_source_create;
-        else if ([type isEqualToString:@"capture"])
-            factory = p1_capture_video_source_create;
-        if (factory == NULL)
-            return FALSE;
-
-        P1Config *config = p1_plist_config_create(videoSourceConfig);
-        if (config == NULL)
-            return FALSE;
-
-        P1VideoSource *videoSource = factory(self.context);
-        if (videoSource == NULL) {
-            p1_config_free(config);
-            return FALSE;
-        }
-
-        p1_video_source_config(videoSource, config);
-        p1_config_free(config);
-
-        P1ObjectModel *model = [[P1ObjectModel alloc] initWithObject:(P1Object *)videoSource];
-        if (!model) {
-            p1_plugin_free((P1Plugin *)videoSource);
-            return FALSE;
-        }
-
-        NSString *name = videoSourceConfig[@"name"];
-        if (name)
-            model.name = name;
-
-        [self.videoModel insertObject:model
-                inSourceModelsAtIndex:[self.videoModel.sourceModels count]];
-    }
-
-    return TRUE;
-}
-
-- (BOOL)createAudioSources
-{
-    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSArray *audioSourceConfigs = [ud arrayForKey:@"audio-sources"];
-
-    for (NSDictionary *audioSourceConfig in audioSourceConfigs) {
-        NSString *type = audioSourceConfig[@"type"];
-
-        P1AudioSourceFactory *factory = NULL;
-        if ([type isEqualToString:@"input"])
-            factory = p1_input_audio_source_create;
-        if (factory == NULL)
-            return FALSE;
-
-        P1Config *config = p1_plist_config_create(audioSourceConfig);
-        if (config == NULL)
-            return FALSE;
-
-        P1AudioSource *audioSource = factory(self.context);
-        if (audioSource == NULL) {
-            p1_config_free(config);
-            return FALSE;
-        }
-
-        p1_audio_source_config(audioSource, config);
-        p1_config_free(config);
-
-        P1ObjectModel *model = [[P1ObjectModel alloc] initWithObject:(P1Object *)audioSource];
-        if (!model) {
-            p1_plugin_free((P1Plugin *)audioSource);
-            return FALSE;
-        }
-
-        NSString *name = audioSourceConfig[@"name"];
-        if (name)
-            model.name = name;
-
-        [self.audioModel insertObject:model
-                inSourceModelsAtIndex:[self.audioModel.sourceModels count]];
-    }
-
-    return TRUE;
-}
-
-- (BOOL)listenForNotifications
+- (void)listenForNotifications
 {
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     P1Context *context = self.context;
 
     _contextFileHandle = [[NSFileHandle alloc] initWithFileDescriptor:p1_fd(context)];
-    if (!_contextFileHandle)
-        return FALSE;
-
     _contextFileHandle.readabilityHandler = ^(NSFileHandle *fh) {
         P1Notification n;
         p1_read(context, &n);
         if (n.object != NULL) {
-            P1ObjectModel *obj = (__bridge P1ObjectModel *) n.object->user_data;
-            [obj handleNotification:&n];
+            P1ObjectModel *obj = [P1ObjectModel modelForObject:n.object];
 
-            [obj.contextModel checkNeedsRestart];
+            [obj handleNotification:&n];
 
             NSValue *box = [NSValue valueWithPointer:&n];
             [nc postNotificationName:@"P1Notification"
@@ -267,26 +105,6 @@ static void (^P1ContextModelNotificationHandler)(NSFileHandle *fh);
                             userInfo:@{ @"notification": box }];
         }
     };
-
-    return TRUE;
-}
-
-- (void)handleNotification:(P1Notification *)n
-{
-    [super handleNotification:n];
-
-    if (_restart && n->state.current == P1_STATE_IDLE)
-        [self start];
-}
-
-- (void)checkNeedsRestart
-{
-    [self willChangeValueForKey:@"needsConnectionRestart"];
-    _needsConnectionRestart = _audioModel.needsRestart ||
-                              _videoModel.needsRestart ||
-                              _videoModel.clockModel.needsRestart ||
-                              _connectionModel.needsRestart;
-    [self didChangeValueForKey:@"needsConnectionRestart"];
 }
 
 
@@ -315,7 +133,7 @@ static void logCallback(P1Object *object, P1LogLevel level, const char *format, 
         vsnprintf(buffer, sizeof(buffer), format, args);
         NSString *message = [NSString stringWithUTF8String:buffer];
 
-        P1ObjectModel *objectModel = (__bridge P1ObjectModel *)object->user_data;
+        P1ObjectModel *objectModel = [P1ObjectModel modelForObject:object];
         P1LogMessage *logMessage = [[P1LogMessage alloc] initWithModel:objectModel
                                                               andLevel:level
                                                             andMessage:message];

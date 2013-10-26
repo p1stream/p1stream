@@ -21,8 +21,7 @@ enum _P1Action {
     P1_ACTION_NONE      = 0,
     P1_ACTION_WAIT      = 1,    // Same as none, but don't exit yet if stopping.
     P1_ACTION_START     = 2,
-    P1_ACTION_STOP      = 3,
-    P1_ACTION_REMOVE    = 4
+    P1_ACTION_STOP      = 3
 };
 
 
@@ -250,13 +249,14 @@ void p1_free(P1Context *ctx, P1FreeOptions options)
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
     P1ListNode *head;
     P1ListNode *node;
+    P1ListNode *next;
 
     if ((options & P1_FREE_VIDEO_CLOCK) && ctx->video->clock != NULL)
         p1_plugin_free((P1Plugin *) ctx->video->clock);
 
     if (options & P1_FREE_VIDEO_SOURCES) {
         head = &ctx->video->sources;
-        while ((node = head->next) != head) {
+        p1_list_iterate_for_removal(head, node, next) {
             P1Source *src = p1_list_get_container(node, P1Source, link);
             p1_list_remove(node);
             p1_plugin_free((P1Plugin *) src);
@@ -265,7 +265,7 @@ void p1_free(P1Context *ctx, P1FreeOptions options)
 
     if (options & P1_FREE_AUDIO_SOURCES) {
         head = &ctx->audio->sources;
-        while ((node = head->next) != head) {
+        p1_list_iterate_for_removal(head, node, next) {
             P1Source *src = p1_list_get_container(node, P1Source, link);
             p1_list_remove(node);
             p1_plugin_free((P1Plugin *) src);
@@ -623,7 +623,8 @@ static void p1_ctrl_notify_objects(P1Context *ctx, P1Notification *n)
     p1_video_notify(videof, n);
 
     // Notify video clock.
-    P1_NOTIFY_PLUGIN(video->clock, P1VideoClock, p1_video_clock_notify);
+    if (video->clock)
+        P1_NOTIFY_PLUGIN(video->clock, P1VideoClock, p1_video_clock_notify);
 
     // Notify video sources.
     head = &video->sources;
@@ -656,6 +657,7 @@ static bool p1_ctrl_progress_objects(P1Context *ctx)
     P1Connection *conn = ctx->conn;
     P1ConnectionFull *connf = (P1ConnectionFull *) conn;
     P1Object *connobj = (P1Object *) conn;
+    P1VideoClock *vclock;
     P1ListNode *head;
     P1ListNode *node;
     bool wait = false;
@@ -705,12 +707,6 @@ static bool p1_ctrl_progress_objects(P1Context *ctx)
         P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
 
         p1_object_unlock(obj);
-
-        if (action == P1_ACTION_REMOVE) {
-            node = node->prev;
-            p1_list_remove(&src->link);
-            p1_plugin_free(pel);
-        }
     }
 
     p1_object_unlock(audioobj);
@@ -724,8 +720,7 @@ static bool p1_ctrl_progress_objects(P1Context *ctx)
     }
 
     // Progress clock.
-    {
-        P1VideoClock *vclock = ctx->video->clock;
+    if ((vclock = video->clock)) {
         P1Plugin *pel = (P1Plugin *) vclock;
         P1Object *obj = (P1Object *) vclock;
 
@@ -750,12 +745,6 @@ static bool p1_ctrl_progress_objects(P1Context *ctx)
         P1_RUN_ACTION(action, obj, pel, pel->start, pel->stop);
 
         p1_object_unlock(obj);
-
-        if (action == P1_ACTION_REMOVE) {
-            node = node->prev;
-            p1_list_remove(&src->link);
-            p1_plugin_free(pel);
-        }
     }
 
     p1_object_unlock(videoobj);
@@ -814,10 +803,6 @@ static P1Action p1_ctrl_determine_action(P1Object *obj, bool can_interrupt)
                 return P1_ACTION_WAIT;
         }
 
-        if (state.target == P1_TARGET_REMOVE &&
-            state.current == P1_TARGET_IDLE)
-            return P1_ACTION_REMOVE;
-
         return P1_ACTION_NONE;
     }
 }
@@ -845,7 +830,6 @@ static void p1_ctrl_log_notification(P1Notification *n)
             case P1_TARGET_RUNNING: target = "running"; break;
             case P1_TARGET_IDLE:    target = "idle";    break;
             case P1_TARGET_RESTART: target = "restart"; break;
-            case P1_TARGET_REMOVE:  target = "remove";  break;
             default: return;
         }
         p1_log(obj, P1_LOG_INFO, "target -> %s", target);

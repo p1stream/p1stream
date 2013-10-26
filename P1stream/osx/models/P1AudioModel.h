@@ -1,15 +1,12 @@
-#import "P1ObjectModel.h"
+#import "P1PluginModel.h"
 
 
 @interface P1AudioModel : P1ObjectModel
-{
-    NSMutableArray *_sourceModels;
-}
 
-@property (readonly) P1Audio *audio;
+- (id)initWithContext:(P1Context *)context;
 
-@property (readonly, retain) NSArray *sourceModels;
-- (void)insertObject:(P1ObjectModel *)objectModel inSourceModelsAtIndex:(NSUInteger)index;
-- (void)removeObjectFromSourceModelsAtIndex:(NSUInteger)index;
+- (void)enumerateSourceModels:(void (^)(P1PluginModel *sourceModel))block;
+
+- (void)reconfigurePlugins;
 
 @end

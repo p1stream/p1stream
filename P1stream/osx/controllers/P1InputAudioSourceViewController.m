@@ -1,13 +1,13 @@
-#import "P1AudioInputViewController.h"
+#import "P1InputAudioSourceViewController.h"
 
 #include <CoreAudio/CoreAudio.h>
 
 
-@implementation P1AudioInputViewController
+@implementation P1InputAudioSourceViewController
 
 - (id)init
 {
-    return [super initWithNibName:@"AudioInputView" bundle:nil];
+    return [super initWithNibName:@"InputAudioSourceView" bundle:nil];
 }
 
 - (void)loadView
@@ -18,6 +18,7 @@
 
 - (IBAction)refreshDevices:(id)sender
 {
+    OSStatus ret;
     UInt32 size;
     AudioObjectPropertyAddress addr = {
         kAudioHardwarePropertyDevices,
@@ -26,7 +27,7 @@
     };
 
     // Get a list of devices.
-    OSStatus ret = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &addr, 0, NULL, &size);
+    ret = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &addr, 0, NULL, &size);
     if (ret != kAudioHardwareNoError) {
         NSLog(@"Failed to get number of audio devices: Core Audio error %d", ret);
         return;
@@ -57,7 +58,7 @@
         AudioBufferList *bufferList = (AudioBufferList *)dataForBufferList;
         ret = AudioObjectGetPropertyData(deviceIds[i], &addr, 0, NULL, &size, bufferList);
         if (ret != kAudioHardwareNoError) {
-            NSLog(@"Failed to get number of audio device configuration: Core Audio error %d", ret);
+            NSLog(@"Failed to get audio device configuration: Core Audio error %d", ret);
             return;
         }
 

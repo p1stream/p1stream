@@ -9,9 +9,6 @@
 {
     NSFileHandle *_contextFileHandle;
     NSMutableArray *_logMessages;
-
-    BOOL _restart;
-    BOOL _needsConnectionRestart;
 }
 
 @property (readonly) P1Context *context;
@@ -21,8 +18,6 @@
 @property (readonly, retain) P1AudioModel* audioModel;
 @property (readonly, retain) P1VideoModel* videoModel;
 @property (readonly, retain) P1ConnectionModel* connectionModel;
-
-@property (readonly) BOOL needsConnectionRestart;
 
 - (void)reconfigure;
 

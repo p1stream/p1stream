@@ -2,14 +2,9 @@
 
 
 @interface P1ObjectModel : NSObject
-{
-    P1State _state;
-}
 
 @property (readonly) P1Object *object;
-
-@property (readonly, weak) P1ContextModel *contextModel;
-
+@property (readonly) P1ContextModel *contextModel;
 @property (readonly) P1State state;
 
 @property (readonly) P1CurrentState currentState;
@@ -19,11 +14,13 @@
 @property (readonly) BOOL canStart;
 @property (readonly) BOOL error;
 
-@property (retain) NSString *name;
-
 @property (readonly) NSImage *availabilityImage;
 
-- (id)initWithObject:(P1Object *)object;
+@property (retain) NSString *name;
+
+- (id)initWithObject:(P1Object *)object
+                name:(NSString *)name;
++ (id)modelForObject:(P1Object *)object;
 
 - (void)lock;
 - (void)unlock;

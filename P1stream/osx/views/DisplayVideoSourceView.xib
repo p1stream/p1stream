@@ -5,110 +5,110 @@
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4514"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="P1AudioInputViewController">
+        <customObject id="-2" userLabel="File's Owner" customClass="P1DisplayVideoSourceViewController">
             <connections>
-                <outlet property="view" destination="vm6-vw-eDg" id="6r0-Gl-o8h"/>
+                <outlet property="view" destination="hFw-Bc-7i2" id="Obt-eJ-XJG"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application"/>
-        <box autoresizesSubviews="NO" title="Box" borderType="none" titlePosition="noTitle" id="vm6-vw-eDg">
+        <box autoresizesSubviews="NO" title="Box" borderType="none" titlePosition="noTitle" id="hFw-Bc-7i2">
             <rect key="frame" x="0.0" y="0.0" width="469" height="325"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <view key="contentView">
                 <rect key="frame" x="0.0" y="0.0" width="469" height="325"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lpm-Eg-Vom">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zjp-le-Uh6">
                         <rect key="frame" x="21" y="286" width="124" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="120" id="Yfr-Eg-mKd"/>
+                            <constraint firstAttribute="width" constant="120" id="SCp-DQ-o2h"/>
                         </constraints>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Type:" id="cZh-cx-Oxe">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Type:" id="RMk-A9-Ag7">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wzB-F1-A4N">
-                        <rect key="frame" x="149" y="286" width="81" height="17"/>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IO5-MZ-wca">
+                        <rect key="frame" x="149" y="286" width="95" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Input device" id="EyJ-GS-dxU">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Display source" id="Ir2-yo-Gst">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="627-we-fAl">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fZ1-8y-Bgu">
                         <rect key="frame" x="21" y="261" width="124" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="120" id="0S6-E6-3yc"/>
+                            <constraint firstAttribute="width" constant="120" id="Gfo-iT-qGI"/>
                         </constraints>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Device:" id="DT0-Z7-fnd">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Display:" id="nNg-uU-B68">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gWl-ky-Dbf" userLabel="Device Popup Button">
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="I4X-48-1h1" userLabel="Display Popup Button">
                         <rect key="frame" x="149" y="254" width="276" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="1yo-l5-jlg">
+                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Op8-Bm-HHw">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
-                            <menu key="menu" title="OtherViews" id="HhF-PL-utb"/>
+                            <menu key="menu" title="OtherViews" id="jU0-iN-51a"/>
                         </popUpButtonCell>
                         <connections>
-                            <binding destination="-2" name="content" keyPath="devices" id="oXk-Vj-4Sy">
+                            <binding destination="-2" name="content" keyPath="displays" id="JWR-0V-yOc">
                                 <dictionary key="options">
                                     <bool key="NSInsertsNullPlaceholder" value="YES"/>
                                 </dictionary>
                             </binding>
-                            <binding destination="-2" name="contentValues" keyPath="devices.name" previousBinding="cs6-5P-FYW" id="Fyg-g7-d4f">
-                                <dictionary key="options">
-                                    <string key="NSNullPlaceholder">Default input device</string>
-                                    <bool key="NSInsertsNullPlaceholder" value="YES"/>
-                                </dictionary>
-                            </binding>
-                            <binding destination="-2" name="contentObjects" keyPath="devices.uid" previousBinding="oXk-Vj-4Sy" id="cs6-5P-FYW">
+                            <binding destination="-2" name="contentObjects" keyPath="displays.uid" previousBinding="JWR-0V-yOc" id="1T2-1D-WTU">
                                 <dictionary key="options">
                                     <bool key="NSInsertsNullPlaceholder" value="YES"/>
                                 </dictionary>
                             </binding>
-                            <binding destination="-2" name="selectedObject" keyPath="representedObject.device" previousBinding="Fyg-g7-d4f" id="JNo-0q-L8D"/>
+                            <binding destination="-2" name="contentValues" keyPath="displays.name" previousBinding="1T2-1D-WTU" id="nyC-Kq-WX1">
+                                <dictionary key="options">
+                                    <string key="NSNullPlaceholder">Default display</string>
+                                    <bool key="NSInsertsNullPlaceholder" value="YES"/>
+                                </dictionary>
+                            </binding>
+                            <binding destination="-2" name="selectedObject" keyPath="representedObject.display" previousBinding="nyC-Kq-WX1" id="o0n-xw-fcJ"/>
                         </connections>
                     </popUpButton>
-                    <button translatesAutoresizingMaskIntoConstraints="NO" id="XSZ-n0-qWS">
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="T9P-3O-Fzx">
                         <rect key="frame" x="430" y="260" width="16" height="16"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="16" id="U9T-r5-P18"/>
-                            <constraint firstAttribute="height" constant="16" id="pPV-0p-Jvd"/>
+                            <constraint firstAttribute="width" constant="16" id="Vva-ee-UaS"/>
+                            <constraint firstAttribute="height" constant="16" id="xjV-aQ-hUA"/>
                         </constraints>
-                        <buttonCell key="cell" type="bevel" bezelStyle="circular" image="NSRefreshTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" id="d1s-jg-uHM">
+                        <buttonCell key="cell" type="bevel" bezelStyle="circular" image="NSRefreshTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" id="vfa-Ry-kYv">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
-                            <action selector="refreshDevices:" target="-2" id="bGE-YN-Ezc"/>
+                            <action selector="refreshDisplays:" target="-2" id="il3-KM-ETb"/>
                         </connections>
                     </button>
                 </subviews>
             </view>
             <constraints>
-                <constraint firstItem="wzB-F1-A4N" firstAttribute="leading" secondItem="lpm-Eg-Vom" secondAttribute="trailing" constant="8" symbolic="YES" id="15h-bz-nGa"/>
-                <constraint firstItem="lpm-Eg-Vom" firstAttribute="leading" secondItem="vm6-vw-eDg" secondAttribute="leading" constant="20" id="3us-G7-3pJ"/>
-                <constraint firstItem="gWl-ky-Dbf" firstAttribute="centerY" secondItem="XSZ-n0-qWS" secondAttribute="centerY" id="64D-Tw-L8o"/>
-                <constraint firstItem="wzB-F1-A4N" firstAttribute="top" secondItem="vm6-vw-eDg" secondAttribute="top" constant="20" id="8EK-hs-YoV"/>
-                <constraint firstItem="wzB-F1-A4N" firstAttribute="baseline" secondItem="lpm-Eg-Vom" secondAttribute="baseline" id="ANU-Sg-m5p"/>
-                <constraint firstItem="627-we-fAl" firstAttribute="baseline" secondItem="gWl-ky-Dbf" secondAttribute="baseline" id="Dkv-7U-XnX"/>
-                <constraint firstAttribute="trailing" secondItem="XSZ-n0-qWS" secondAttribute="trailing" constant="20" id="IxA-nT-akZ"/>
-                <constraint firstItem="XSZ-n0-qWS" firstAttribute="leading" secondItem="gWl-ky-Dbf" secondAttribute="trailing" constant="8" symbolic="YES" id="a2i-nd-xe2"/>
-                <constraint firstItem="gWl-ky-Dbf" firstAttribute="leading" secondItem="627-we-fAl" secondAttribute="trailing" constant="8" symbolic="YES" id="c3W-rH-Nag"/>
-                <constraint firstItem="627-we-fAl" firstAttribute="leading" secondItem="vm6-vw-eDg" secondAttribute="leading" constant="20" id="cob-Xe-ubF"/>
-                <constraint firstItem="gWl-ky-Dbf" firstAttribute="top" secondItem="wzB-F1-A4N" secondAttribute="bottom" constant="8" id="per-qL-NRC"/>
+                <constraint firstItem="IO5-MZ-wca" firstAttribute="leading" secondItem="zjp-le-Uh6" secondAttribute="trailing" constant="8" symbolic="YES" id="3OE-sh-MBF"/>
+                <constraint firstItem="fZ1-8y-Bgu" firstAttribute="baseline" secondItem="I4X-48-1h1" secondAttribute="baseline" id="DtN-ZL-h8W"/>
+                <constraint firstItem="T9P-3O-Fzx" firstAttribute="leading" secondItem="I4X-48-1h1" secondAttribute="trailing" constant="8" symbolic="YES" id="J2C-Ic-tSn"/>
+                <constraint firstItem="I4X-48-1h1" firstAttribute="leading" secondItem="fZ1-8y-Bgu" secondAttribute="trailing" constant="8" symbolic="YES" id="U0e-La-clC"/>
+                <constraint firstItem="I4X-48-1h1" firstAttribute="top" secondItem="IO5-MZ-wca" secondAttribute="bottom" constant="8" id="Xb8-hL-CPC"/>
+                <constraint firstItem="IO5-MZ-wca" firstAttribute="top" secondItem="hFw-Bc-7i2" secondAttribute="top" constant="20" id="d3Q-LI-poA"/>
+                <constraint firstItem="IO5-MZ-wca" firstAttribute="baseline" secondItem="zjp-le-Uh6" secondAttribute="baseline" id="eTe-6E-PzE"/>
+                <constraint firstAttribute="trailing" secondItem="T9P-3O-Fzx" secondAttribute="trailing" constant="20" id="hHj-nk-Hgt"/>
+                <constraint firstItem="I4X-48-1h1" firstAttribute="centerY" secondItem="T9P-3O-Fzx" secondAttribute="centerY" id="iJ6-lI-ngU"/>
+                <constraint firstItem="zjp-le-Uh6" firstAttribute="leading" secondItem="hFw-Bc-7i2" secondAttribute="leading" constant="20" id="luW-WM-RvJ"/>
+                <constraint firstItem="fZ1-8y-Bgu" firstAttribute="leading" secondItem="hFw-Bc-7i2" secondAttribute="leading" constant="20" id="nLA-B2-OmA"/>
             </constraints>
             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>

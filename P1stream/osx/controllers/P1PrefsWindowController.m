@@ -1,6 +1,9 @@
 #import "P1PrefsWindowController.h"
 
-#import "P1AudioInputViewController.h"
+#import "P1InputAudioSourceViewController.h"
+#import "P1DisplayVideoClockViewController.h"
+#import "P1DisplayVideoSourceViewController.h"
+#import "P1CaptureVideoSourceViewController.h"
 
 #include <x264.h>
 
@@ -37,6 +40,7 @@ static NSArray *arrayWithX264Names(char const * const *names)
     return [NSArray arrayWithObjects:nsNames count:i];
 }
 
+
 - (void)windowDidLoad
 {
     [self revertPrefs:nil];
@@ -55,10 +59,12 @@ static NSArray *arrayWithX264Names(char const * const *names)
     self.isDirty = TRUE;
 }
 
+
 - (IBAction)dummy:(id)sender
 {
     // This is apparently needed to make toolbar items clickable.
 }
+
 
 - (IBAction)revertPrefs:(id)sender
 {
@@ -86,6 +92,8 @@ static NSArray *arrayWithX264Names(char const * const *names)
     self.videoSourceConfigs = mutArr;
 
     self.isDirty = FALSE;
+
+    [self videoClockDidChange];
 }
 
 - (IBAction)applyPrefs:(id)sender
@@ -99,24 +107,25 @@ static NSArray *arrayWithX264Names(char const * const *names)
     mutArr = [NSMutableArray arrayWithCapacity:_audioSourceConfigs.count];
     for (prefs in _audioSourceConfigs)
         [mutArr addObject:[prefs copy]];
-    [ud setObject:[mutArr copy] forKey:@"audio-sources"];
+    [ud setObject:mutArr forKey:@"audio-sources"];
 
     [ud setObject:[_videoClockConfig copy] forKey:@"video-clock"];
 
     mutArr = [NSMutableArray arrayWithCapacity:_videoSourceConfigs.count];
     for (prefs in _videoSourceConfigs)
         [mutArr addObject:[prefs copy]];
-    [ud setObject:[mutArr copy] forKey:@"video-sources"];
+    [ud setObject:mutArr forKey:@"video-sources"];
 
     [_contextModel reconfigure];
 
     self.isDirty = FALSE;
 }
 
-- (IBAction)selectedAudioSourceDidChange:(NSTableView *)sender
+
+- (IBAction)selectedAudioSourceDidChange:(id)sender
 {
-    NSDictionary *audioSourceConfig = nil;
-    NSIndexSet *indexSet = sender.selectedRowIndexes;
+    P1PrefsDictionary *audioSourceConfig = nil;
+    NSIndexSet *indexSet = _audioSourcesTableView.selectedRowIndexes;
     if (indexSet.count == 1)
         audioSourceConfig = _audioSourceConfigs[[indexSet firstIndex]];
 
@@ -125,7 +134,7 @@ static NSArray *arrayWithX264Names(char const * const *names)
 
     Class viewClass = nil;
     if ([type isEqualToString:@"input"])
-        viewClass = [P1AudioInputViewController class];
+        viewClass = [P1InputAudioSourceViewController class];
 
     if (viewClass) {
         self.audioSourceViewController = [viewClass new];
@@ -141,6 +150,197 @@ static NSArray *arrayWithX264Names(char const * const *names)
         self.audioSourceViewController = nil;
         container.subviews = @[];
     }
+}
+
+- (IBAction)removeSelectedAudioSource:(id)sender
+{
+    NSIndexSet *indexSet = _audioSourcesTableView.selectedRowIndexes;
+    if (indexSet.count == 0)
+        return;
+
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"audioSourceConfigs"];
+    [_audioSourceConfigs removeObjectsAtIndexes:indexSet];
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"audioSourceConfigs"];
+
+    self.isDirty = TRUE;
+
+    [self selectedAudioSourceDidChange:sender];
+}
+
+- (void)addAudioSource:(NSDictionary *)dict sender:(id)sender
+{
+    P1PrefsDictionary *audioSourceConfig = [P1PrefsDictionary prefsWithDictionary:dict delegate:nil];
+
+    CFUUIDRef cfUuid = CFUUIDCreate(NULL);
+    audioSourceConfig[@"uuid"] = CFBridgingRelease(CFUUIDCreateString(NULL, cfUuid));
+    CFRelease(cfUuid);
+
+    audioSourceConfig.delegate = self;
+
+    NSUInteger count = _audioSourceConfigs.count;
+    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:count];
+
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"audioSourceConfigs"];
+    [_audioSourceConfigs insertObject:audioSourceConfig atIndex:count];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"audioSourceConfigs"];
+
+    self.isDirty = TRUE;
+
+    [_audioSourcesTableView selectRowIndexes:indexSet byExtendingSelection:FALSE];
+    [self selectedAudioSourceDidChange:sender];
+}
+
+- (IBAction)addInputAudioSource:(id)sender
+{
+    [self addAudioSource:@{
+        @"name": @"Input device source",
+        @"type": @"input"
+    } sender:sender];
+}
+
+
+- (void)videoClockDidChange
+{
+    NSString *type = _videoClockConfig[@"type"];
+    NSView *container = _videoClockViewBox.contentView;
+
+    Class viewClass = nil;
+    NSNumber *menuIndex = @-1;
+    if ([type isEqualToString:@"display"]) {
+        viewClass = [P1DisplayVideoClockViewController class];
+        menuIndex = @0;
+    }
+
+    _videoClockPopUpButton.objectValue = menuIndex;
+
+    if (viewClass) {
+        self.videoClockViewController = [viewClass new];
+        _videoClockViewController.representedObject = _videoClockConfig;
+
+        [_videoClockViewController loadView];
+        NSView *view = _videoClockViewController.view;
+
+        container.subviews = @[view];
+        view.frame = container.bounds;
+    }
+    else {
+        self.videoClockViewController = nil;
+        container.subviews = @[];
+    }
+}
+
+- (void)setVideoClockType:(NSDictionary *)dict
+{
+    if ([_videoClockConfig[@"type"] isEqualToString:dict[@"type"]])
+        return;
+
+    P1PrefsDictionary *videoClockConfig = [P1PrefsDictionary prefsWithDictionary:dict delegate:nil];
+
+    CFUUIDRef cfUuid = CFUUIDCreate(NULL);
+    videoClockConfig[@"uuid"] = CFBridgingRelease(CFUUIDCreateString(NULL, cfUuid));
+    CFRelease(cfUuid);
+
+    videoClockConfig.delegate = self;
+
+    self.videoClockConfig = videoClockConfig;
+
+    self.isDirty = TRUE;
+
+    [self videoClockDidChange];
+}
+
+- (IBAction)createDisplayVideoClock:(id)sender
+{
+    [self setVideoClockType:@{
+        @"type": @"display"
+    }];
+}
+
+
+- (IBAction)selectedVideoSourceDidChange:(id)sender
+{
+    P1PrefsDictionary *videoSourceConfig = nil;
+    NSIndexSet *indexSet = _videoSourcesTableView.selectedRowIndexes;
+    if (indexSet.count == 1)
+        videoSourceConfig = _videoSourceConfigs[[indexSet firstIndex]];
+
+    NSString *type = videoSourceConfig[@"type"];
+    NSView *container = _videoSourceViewBox.contentView;
+
+    Class viewClass = nil;
+    if ([type isEqualToString:@"display"])
+        viewClass = [P1DisplayVideoSourceViewController class];
+    else if ([type isEqualToString:@"capture"])
+        viewClass = [P1CaptureVideoSourceViewController class];
+
+    if (viewClass) {
+        self.videoSourceViewController = [viewClass new];
+        _videoSourceViewController.representedObject = videoSourceConfig;
+
+        [_videoSourceViewController loadView];
+        NSView *view = _videoSourceViewController.view;
+
+        container.subviews = @[view];
+        view.frame = container.bounds;
+    }
+    else {
+        self.videoSourceViewController = nil;
+        container.subviews = @[];
+    }
+}
+
+- (IBAction)removeSelectedVideoSource:(id)sender
+{
+    NSIndexSet *indexSet = _videoSourcesTableView.selectedRowIndexes;
+    if (indexSet.count == 0)
+        return;
+
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"videoSourceConfigs"];
+    [_videoSourceConfigs removeObjectsAtIndexes:indexSet];
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"videoSourceConfigs"];
+
+    self.isDirty = TRUE;
+
+    [self selectedVideoSourceDidChange:sender];
+}
+
+- (void)addVideoSource:(NSDictionary *)dict sender:(id)sender
+{
+    P1PrefsDictionary *videoSourceConfig = [P1PrefsDictionary prefsWithDictionary:dict delegate:nil];
+
+    CFUUIDRef cfUuid = CFUUIDCreate(NULL);
+    videoSourceConfig[@"uuid"] = CFBridgingRelease(CFUUIDCreateString(NULL, cfUuid));
+    CFRelease(cfUuid);
+
+    videoSourceConfig.delegate = self;
+
+    NSUInteger count = _videoSourceConfigs.count;
+    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:count];
+
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"videoSourceConfigs"];
+    [_videoSourceConfigs insertObject:videoSourceConfig atIndex:count];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"videoSourceConfigs"];
+
+    self.isDirty = TRUE;
+
+    [_videoSourcesTableView selectRowIndexes:indexSet byExtendingSelection:FALSE];
+    [self selectedVideoSourceDidChange:sender];
+}
+
+- (IBAction)addDisplayVideoSource:(id)sender
+{
+    [self addVideoSource:@{
+        @"name": @"Display source",
+        @"type": @"display"
+    } sender:sender];
+}
+
+- (IBAction)addCaptureVideoSource:(id)sender
+{
+    [self addVideoSource:@{
+        @"name": @"Capture device source",
+        @"type": @"capture"
+    } sender:sender];
 }
 
 @end

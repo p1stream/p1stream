@@ -3,6 +3,11 @@
 
 @implementation P1ConnectionModel
 
+- (id)initWithContext:(P1Context *)context
+{
+    return [super initWithObject:(P1Object *)context->conn name:@"Connection"];
+}
+
 - (NSString *)stateMessage
 {
     if (self.error) {

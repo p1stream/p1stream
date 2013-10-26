@@ -115,11 +115,7 @@ enum _P1TargetState {
 
     // This is the same as idle, but will automatically switch to the running
     // target once the object becomes idle.
-    P1_TARGET_RESTART   = 2,
-
-    // Only valid for sources. This is the same as idle, but will in addition
-    // remove the source from the list and free it, once idle.
-    P1_TARGET_REMOVE    = 3
+    P1_TARGET_RESTART   = 2
 };
 
 
@@ -297,6 +293,11 @@ struct _P1ListNode {
 // Iterate list items. Both arguments must be local variables.
 #define p1_list_iterate(_head, _node)  \
     for (_node = _head->next; _node != _head; _node = _node->next)
+
+// Iterate list items where some iterations may remove the current item.
+#define p1_list_iterate_for_removal(_head, _node, _next)    \
+    _next = _head->next;                                    \
+    while (_node = _next, _next = _node->next, _next != _head)
 
 // List manipulation helper.
 #define _p1_list_between(_prev, _next, _src) {      \

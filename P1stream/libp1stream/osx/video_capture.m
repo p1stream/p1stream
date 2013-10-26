@@ -3,7 +3,7 @@
 #include <pthread.h>
 #include <CoreVideo/CoreVideo.h>
 #include <CoreMedia/CoreMedia.h>
-#include <AVFoundation/AVFoundation.h>
+#import <AVFoundation/AVFoundation.h>
 
 typedef struct _P1CaptureVideoSource P1CaptureVideoSource;
 

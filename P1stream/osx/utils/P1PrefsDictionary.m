@@ -45,9 +45,16 @@
     [_delegate prefsDidChange:self];
 }
 
-- (void)setObject:(id)anObject forKey:(id <NSCopying>)aKey
+- (void)setObject:(id)anObject forKey:(id<NSCopying>)aKey
 {
     [_dictionary setObject:anObject forKey:aKey];
+    [_delegate prefsDidChange:self];
+}
+
+// NSMutableDictionary (NSExtendedMutableDictionary)
+- (void)setObject:(id)object forKeyedSubscript:(id<NSCopying>)aKey
+{
+    [_dictionary setObject:object forKeyedSubscript:aKey];
     [_delegate prefsDidChange:self];
 }
 

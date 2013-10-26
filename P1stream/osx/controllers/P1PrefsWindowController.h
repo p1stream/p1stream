@@ -17,16 +17,32 @@
 @property (assign) BOOL isDirty;
 
 @property (retain) NSViewController *audioSourceViewController;
+@property (retain) NSViewController *videoClockViewController;
 @property (retain) NSViewController *videoSourceViewController;
 
 @property (weak) IBOutlet NSToolbar *toolbar;
 @property (weak) IBOutlet NSTabView *tabView;
 
+@property (weak) IBOutlet NSTableView *audioSourcesTableView;
+@property (weak) IBOutlet NSPopUpButton *videoClockPopUpButton;
+@property (weak) IBOutlet NSTableView *videoSourcesTableView;
+
 @property (weak) IBOutlet NSBox *audioSourceViewBox;
+@property (weak) IBOutlet NSBox *videoClockViewBox;
+@property (weak) IBOutlet NSBox *videoSourceViewBox;
 
 - (IBAction)revertPrefs:(id)sender;
 - (IBAction)applyPrefs:(id)sender;
 
-- (IBAction)selectedAudioSourceDidChange:(NSTableView *)sender;
+- (IBAction)selectedAudioSourceDidChange:(id)sender;
+- (IBAction)removeSelectedAudioSource:(id)sender;
+- (IBAction)addInputAudioSource:(id)sender;
+
+- (IBAction)createDisplayVideoClock:(id)sender;
+
+- (IBAction)selectedVideoSourceDidChange:(id)sender;
+- (IBAction)removeSelectedVideoSource:(id)sender;
+- (IBAction)addDisplayVideoSource:(id)sender;
+- (IBAction)addCaptureVideoSource:(id)sender;
 
 @end

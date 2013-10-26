@@ -5,6 +5,8 @@
 
 @property (readonly) NSString *stateMessage;
 
+- (id)initWithContext:(P1Context *)context;
+
 + (NSSet *)keyPathsForValuesAffectingStateMessage;
 
 @end
