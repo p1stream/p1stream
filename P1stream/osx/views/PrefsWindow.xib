@@ -23,14 +23,14 @@
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" wantsToBeColor="NO" visibleAtLaunch="NO" animationBehavior="default" id="1">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="700" height="460"/>
+            <rect key="contentRect" x="196" y="240" width="700" height="450"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
             <view key="contentView" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="700" height="460"/>
+                <rect key="frame" x="0.0" y="0.0" width="700" height="450"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView drawsBackground="NO" type="noTabsNoBorder" translatesAutoresizingMaskIntoConstraints="NO" id="X47-uQ-wiY">
-                        <rect key="frame" x="0.0" y="50" width="700" height="410"/>
+                        <rect key="frame" x="0.0" y="40" width="700" height="410"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
@@ -325,7 +325,7 @@
                                             </constraints>
                                             <popUpButtonCell key="cell" type="push" title="Display clock" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="sNG-Iy-VMg" id="SoC-wd-zTc">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system"/>
+                                                <font key="font" metaFont="menu"/>
                                                 <menu key="menu" title="OtherViews" id="44s-mY-rbU">
                                                     <items>
                                                         <menuItem title="Display clock" state="on" id="sNG-Iy-VMg">
@@ -390,18 +390,18 @@
                             </tabViewItem>
                             <tabViewItem label="Audio" identifier="P1AudioPage" id="X4s-OP-HmT">
                                 <view key="view" id="azm-ah-LSj">
-                                    <rect key="frame" x="0.0" y="0.0" width="700" height="350"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="700" height="410"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IsN-lP-ING">
-                                            <rect key="frame" x="20" y="49" width="200" height="281"/>
+                                            <rect key="frame" x="20" y="49" width="200" height="341"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" id="Ocn-zv-gDd">
-                                                <rect key="frame" x="1" y="1" width="198" height="279"/>
+                                                <rect key="frame" x="1" y="1" width="198" height="339"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="cbp-yc-TQl">
-                                                        <rect key="frame" x="0.0" y="0.0" width="198" height="279"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="198" height="339"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -480,10 +480,10 @@
                                             </connections>
                                         </button>
                                         <box autoresizesSubviews="NO" title="Box" borderType="line" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="RZc-25-TuG">
-                                            <rect key="frame" x="225" y="45" width="458" height="287"/>
+                                            <rect key="frame" x="225" y="45" width="458" height="347"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView">
-                                                <rect key="frame" x="1" y="1" width="456" height="285"/>
+                                                <rect key="frame" x="1" y="1" width="456" height="345"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
@@ -498,7 +498,7 @@
                                             </constraints>
                                             <popUpButtonCell key="cell" type="smallSquare" bezelStyle="smallSquare" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" arrowPosition="noArrow" selectedItem="V0A-uH-DkG" id="XkR-rB-8G7">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system"/>
+                                                <font key="font" metaFont="menu"/>
                                                 <menu key="menu" title="Add video source" id="82i-z1-jjc">
                                                     <items>
                                                         <menuItem image="NSAddTemplate" hidden="YES" id="h1j-FC-8Xa"/>
@@ -637,7 +637,7 @@
                                             </constraints>
                                             <popUpButtonCell key="cell" type="smallSquare" bezelStyle="smallSquare" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" arrowPosition="noArrow" selectedItem="dby-Pp-3ZG" id="gfB-0f-DLM">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system"/>
+                                                <font key="font" metaFont="menu"/>
                                                 <menu key="menu" title="Add video source" id="XCt-lW-xyQ">
                                                     <items>
                                                         <menuItem image="NSAddTemplate" hidden="YES" id="1dg-Zf-GAJ"/>
@@ -677,7 +677,7 @@
                         </connections>
                     </tabView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4U5-fC-Aes">
-                        <rect key="frame" x="610" y="13" width="76" height="32"/>
+                        <rect key="frame" x="610" y="3" width="76" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FOv-OG-4Pl">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -689,7 +689,7 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DCh-nM-B7A">
-                        <rect key="frame" x="530" y="13" width="80" height="32"/>
+                        <rect key="frame" x="530" y="3" width="80" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Revert" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hug-3r-PsV">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -701,7 +701,7 @@
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qIJ-wM-G4c">
-                        <rect key="frame" x="42" y="23" width="388" height="17"/>
+                        <rect key="frame" x="42" y="13" width="388" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Certain changes cannot be applied until you stop the stream." id="UZD-vr-LYe">
                             <font key="font" metaFont="system"/>
@@ -717,7 +717,7 @@
                         </connections>
                     </textField>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="S1Z-X0-qEm">
-                        <rect key="frame" x="20" y="24" width="16" height="16"/>
+                        <rect key="frame" x="20" y="14" width="16" height="16"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="16" id="8ME-ED-KPU"/>
@@ -743,8 +743,8 @@
                     <constraint firstItem="4U5-fC-Aes" firstAttribute="baseline" secondItem="DCh-nM-B7A" secondAttribute="baseline" id="dMC-Fp-xhz"/>
                     <constraint firstItem="qIJ-wM-G4c" firstAttribute="baseline" secondItem="DCh-nM-B7A" secondAttribute="baseline" id="eof-7A-e8T"/>
                     <constraint firstItem="4U5-fC-Aes" firstAttribute="leading" secondItem="DCh-nM-B7A" secondAttribute="trailing" constant="12" symbolic="YES" id="lQV-An-IUj"/>
-                    <constraint firstAttribute="bottom" secondItem="X47-uQ-wiY" secondAttribute="bottom" constant="50" id="ni3-QS-rmD"/>
-                    <constraint firstAttribute="bottom" secondItem="4U5-fC-Aes" secondAttribute="bottom" constant="20" symbolic="YES" id="rQo-gh-QPC"/>
+                    <constraint firstAttribute="bottom" secondItem="X47-uQ-wiY" secondAttribute="bottom" constant="40" id="ni3-QS-rmD"/>
+                    <constraint firstAttribute="bottom" secondItem="4U5-fC-Aes" secondAttribute="bottom" constant="10" id="rQo-gh-QPC"/>
                     <constraint firstItem="qIJ-wM-G4c" firstAttribute="leading" secondItem="S1Z-X0-qEm" secondAttribute="trailing" constant="8" symbolic="YES" id="tW0-v5-UYQ"/>
                 </constraints>
             </view>
