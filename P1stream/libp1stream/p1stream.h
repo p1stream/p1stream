@@ -50,15 +50,18 @@ typedef enum _P1StopOptions P1StopOptions;
 typedef enum _P1FreeOptions P1FreeOptions;
 typedef enum _P1CurrentState P1CurrentState;
 typedef enum _P1TargetState P1TargetState;
+typedef uint8_t P1Flags;
 typedef struct _P1State P1State;
 typedef enum _P1ObjectType P1ObjectType;
 typedef struct _P1ListNode P1ListNode;
 typedef struct _P1Notification P1Notification;
+typedef uint8_t P1VideoPreviewType;
+typedef struct _P1PreviewRawData P1PreviewRawData;
 
 // Callback signatures.
 typedef bool (*P1ConfigIterString)(P1Config *cfg, const char *key, const char *val, void *data);
 typedef void (*P1LogCallback)(P1Object *obj, P1LogLevel level, const char *fmt, va_list args, void *user_data);
-typedef void (*P1VideoPreviewCallback)(size_t width, size_t height, uint8_t *data, void *user_data);
+typedef void (*P1VideoPreviewCallback)(void *data, void *user_data);
 
 // These types are for convenience. Sources usually want to have a function
 // following one of these signatures to instantiate them.
@@ -120,8 +123,6 @@ enum _P1TargetState {
 
 
 // Additional bit flags used in object state handling.
-
-typedef uint8_t P1Flags;
 
 // A flag that is immediately unset, but will force a notification. Used to
 // signal something other than state has changed.
@@ -511,14 +512,24 @@ struct _P1Video {
     // held. Use the p1_list_* functions for convenience.
     P1ListNode sources;
 
-    // Function that will be called for each frame with raw RGBA data.
+    // Function that will be called for each frame.
     // Note that this function is called on the clock thread.
     P1VideoPreviewCallback preview_fn;
     void *preview_user_data;
+    P1VideoPreviewType preview_type;
 };
 
 // Notify that the clock or sources have changed.
 #define p1_video_resync(_video) p1_object_resync((P1Object *) (_video))
+
+// The default preview type, where data is the below struct, allowing access to
+// the raw pixel data. It's not guaranteed the data is valid after the callback.
+#define P1_PREVIEW_RAW_DATA 0
+struct _P1PreviewRawData {
+    size_t width;
+    size_t height;
+    const uint8_t *data;
+};
 
 
 // Fixed stream connection element.

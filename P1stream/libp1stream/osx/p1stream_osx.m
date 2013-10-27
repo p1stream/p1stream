@@ -165,18 +165,34 @@ bool p1_video_preview(P1VideoFull *videof)
     uint32_t seed;
     IOReturn ret;
 
-    ret = IOSurfaceLock(videof->gl.surface, kIOSurfaceLockReadOnly, &seed);
-    if (ret != kIOReturnSuccess) {
-        p1_log(videoobj, P1_LOG_DEBUG, "Failed to lock IOSurface: IOKit error %d", ret);
-        return false;
+    if (video->preview_type == P1_PREVIEW_IOSURFACE) {
+        video->preview_fn((void *)videof->gl.surface, video->preview_user_data);
+        return true;
     }
 
-    uint8_t *data = IOSurfaceGetBaseAddress(videof->gl.surface);
-    video->preview_fn(video->width, video->height, data, video->preview_user_data);
+    if (video->preview_type == P1_PREVIEW_RAW_DATA) {
+        ret = IOSurfaceLock(videof->gl.surface, kIOSurfaceLockReadOnly, &seed);
+        if (ret != kIOReturnSuccess) {
+            p1_log(videoobj, P1_LOG_DEBUG, "Failed to lock IOSurface: IOKit error %d", ret);
+            return false;
+        }
 
-    ret = IOSurfaceUnlock(videof->gl.surface, kIOSurfaceLockReadOnly, &seed);
-    if (ret != kIOReturnSuccess)
-        p1_log(videoobj, P1_LOG_DEBUG, "Failed to unlock IOSurface: IOKit error %d", ret);
+        uint8_t *ptr = IOSurfaceGetBaseAddress(videof->gl.surface);
+        P1PreviewRawData info = {
+            .width = video->width,
+            .height = video->height,
+            .data = ptr
+        };
+        video->preview_fn(&info, video->preview_user_data);
+
+        ret = IOSurfaceUnlock(videof->gl.surface, kIOSurfaceLockReadOnly, &seed);
+        if (ret != kIOReturnSuccess) {
+            p1_log(videoobj, P1_LOG_DEBUG, "Failed to unlock IOSurface: IOKit error %d", ret);
+            return false;
+        }
+
+        return true;
+    }
 
     return true;
 }

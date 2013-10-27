@@ -76,18 +76,21 @@ static void setVideoPreviewCallback(P1Video *video, P1VideoPreviewCallback fn, v
 
     video->preview_fn = fn;
     video->preview_user_data = user_data;
+    video->preview_type = P1_PREVIEW_RAW_DATA;
 
     p1_object_unlock(videoobj);
 }
 
-static void videoPreviewCallback(size_t width, size_t height, uint8_t *data, void *user_data)
+static void videoPreviewCallback(void *ptr, void *user_data)
 {
+    P1PreviewRawData *info = (P1PreviewRawData *)ptr;
+
     @autoreleasepool {
         P1PreviewView *self = (__bridge P1PreviewView *)user_data;
 
-        self.aspect = (float)width / (float)height;
+        self.aspect = (float)info->width / (float)info->height;
 
-        [self updatePreviewWithData:data width:width height:height];
+        [self updatePreviewWithData:info->data width:info->width height:info->height];
     }
 }
 
@@ -115,7 +118,7 @@ static void videoPreviewCallback(size_t width, size_t height, uint8_t *data, voi
     }
 }
 
-- (void)updatePreviewWithData:(uint8_t *)data width:(size_t)width height:(size_t)height
+- (void)updatePreviewWithData:(const uint8_t *)data width:(size_t)width height:(size_t)height
 {
     size_t stride = width * 4;
     size_t size = stride * height;

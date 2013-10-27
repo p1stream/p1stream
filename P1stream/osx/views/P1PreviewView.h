@@ -5,7 +5,7 @@
     float _aspect;
     NSLayoutConstraint *_constraint;
 
-    uint8_t *_lastData;
+    const uint8_t *_lastData;
     CGDataProviderRef _dataProvider;
     CGColorSpaceRef _colorSpace;
 }

@@ -21,6 +21,10 @@ void p1_log_os_status(P1Object *obj, P1LogLevel level, OSStatus status);
 // Fast path for OS X video sources that can provide an IOSurface.
 bool p1_video_source_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer);
 
+// Preview type where data is an IOSurfaceRef. The surface is not guaranteed
+// available after the callback, and has likely changed.
+#define P1_PREVIEW_IOSURFACE 1
+
 
 // Configuration backed by a property list. Uses Core Foundation.
 #ifdef __OBJC__
