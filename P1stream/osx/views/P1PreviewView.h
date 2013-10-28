@@ -1,13 +1,11 @@
-@interface P1PreviewView : NSView
+@interface P1PreviewView : NSOpenGLView
 {
     P1Context *_context;
 
     float _aspect;
     NSLayoutConstraint *_constraint;
 
-    const uint8_t *_lastData;
-    CGDataProviderRef _dataProvider;
-    CGColorSpaceRef _colorSpace;
+    GLuint _tex;
 }
 
 @property (assign) P1Context *context;

@@ -67,6 +67,8 @@
 		F6BDDD9917FDF1140078016F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6BDDD9817FDF1140078016F /* MainMenu.xib */; };
 		F6BDDD9B17FE08AA0078016F /* PrefsWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6BDDD9A17FE08AA0078016F /* PrefsWindow.xib */; };
 		F6BDDD9E17FE08DF0078016F /* P1PrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6BDDD9D17FE08DF0078016F /* P1PrefsWindowController.m */; };
+		F6D3151B181F19C800BE9D9D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077417B64C28009E6155 /* OpenGL.framework */; };
+		F6D3151C181F19D900BE9D9D /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077817B64CC4009E6155 /* IOSurface.framework */; };
 		F6E161F717FA061A00167048 /* LogWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6E161F617FA061A00167048 /* LogWindow.xib */; };
 		F6E161FA17FA13DB00167048 /* P1LogMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161F917FA13DB00167048 /* P1LogMessage.m */; };
 		F6E161FD17FA158E00167048 /* P1LogWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161FC17FA158E00167048 /* P1LogWindowController.m */; };
@@ -229,8 +231,10 @@
 			files = (
 				F682AC3D17E4C960007DC0CF /* libp1stream.dylib in Frameworks */,
 				F682AC2017E4C91C007DC0CF /* Cocoa.framework in Frameworks */,
+				F6D3151C181F19D900BE9D9D /* IOSurface.framework in Frameworks */,
 				F6768A1B17E65CD20088D1F9 /* QuartzCore.framework in Frameworks */,
 				F61627B018108CEC00104254 /* CoreAudio.framework in Frameworks */,
+				F6D3151B181F19C800BE9D9D /* OpenGL.framework in Frameworks */,
 				F61A7746181BC62700549921 /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
