@@ -677,7 +677,7 @@
                         </connections>
                     </tabView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4U5-fC-Aes">
-                        <rect key="frame" x="610" y="3" width="76" height="32"/>
+                        <rect key="frame" x="610" y="13" width="76" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FOv-OG-4Pl">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -689,7 +689,7 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DCh-nM-B7A">
-                        <rect key="frame" x="530" y="3" width="80" height="32"/>
+                        <rect key="frame" x="530" y="13" width="80" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Revert" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hug-3r-PsV">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -701,7 +701,7 @@
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qIJ-wM-G4c">
-                        <rect key="frame" x="42" y="13" width="388" height="17"/>
+                        <rect key="frame" x="42" y="23" width="388" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Certain changes cannot be applied until you stop the stream." id="UZD-vr-LYe">
                             <font key="font" metaFont="system"/>
@@ -717,7 +717,7 @@
                         </connections>
                     </textField>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="S1Z-X0-qEm">
-                        <rect key="frame" x="20" y="14" width="16" height="16"/>
+                        <rect key="frame" x="20" y="24" width="16" height="16"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="16" id="8ME-ED-KPU"/>
@@ -744,7 +744,7 @@
                     <constraint firstItem="qIJ-wM-G4c" firstAttribute="baseline" secondItem="DCh-nM-B7A" secondAttribute="baseline" id="eof-7A-e8T"/>
                     <constraint firstItem="4U5-fC-Aes" firstAttribute="leading" secondItem="DCh-nM-B7A" secondAttribute="trailing" constant="12" symbolic="YES" id="lQV-An-IUj"/>
                     <constraint firstAttribute="bottom" secondItem="X47-uQ-wiY" secondAttribute="bottom" constant="40" id="ni3-QS-rmD"/>
-                    <constraint firstAttribute="bottom" secondItem="4U5-fC-Aes" secondAttribute="bottom" constant="10" id="rQo-gh-QPC"/>
+                    <constraint firstAttribute="bottom" secondItem="4U5-fC-Aes" secondAttribute="bottom" constant="20" symbolic="YES" id="rQo-gh-QPC"/>
                     <constraint firstItem="qIJ-wM-G4c" firstAttribute="leading" secondItem="S1Z-X0-qEm" secondAttribute="trailing" constant="8" symbolic="YES" id="tW0-v5-UYQ"/>
                 </constraints>
             </view>
