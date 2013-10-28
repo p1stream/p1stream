@@ -62,6 +62,7 @@ bool p1_video_init_platform(P1VideoFull *videof)
     CGLPixelFormatObj pixel_format;
     const CGLPixelFormatAttribute attribs[] = {
         kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute) kCGLOGLPVersion_3_2_Core,
+        kCGLPFAAcceleratedCompute,
         0
     };
     GLint npix;
