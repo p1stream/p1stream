@@ -99,22 +99,9 @@ halt:
 static void p1_display_video_clock_stop(P1Plugin *pel)
 {
     P1Object *obj = (P1Object *) pel;
-    P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
-    CVReturn ret;
 
-    // Stop the display link. This apparently blocks.
-    p1_object_unlock(obj);
-    ret = CVDisplayLinkStop(dvclock->display_link);
-    p1_object_lock(obj);
-
-    if (ret != kCVReturnSuccess) {
-        p1_log(obj, P1_LOG_ERROR, "Failed to stop display link: Core Video error %d", ret);
-        obj->state.flags |= P1_FLAG_ERROR;
-    }
-
-    p1_display_video_clock_kill_session(dvclock);
-
-    obj->state.current = P1_STATE_IDLE;
+    // Just set to stopping, the thread will do the rest.
+    obj->state.current = P1_STATE_STOPPING;
     p1_object_notify(obj);
 }
 
@@ -137,8 +124,23 @@ static CVReturn p1_display_video_clock_callback(
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) displayLinkContext;
     P1VideoClock *vclock = (P1VideoClock *) displayLinkContext;
     P1Object *obj = (P1Object *) displayLinkContext;
+    CVReturn ret;
 
     p1_object_lock(obj);
+
+    if (obj->state.current == P1_STATE_STOPPING) {
+        ret = CVDisplayLinkStop(dvclock->display_link);
+        if (ret != kCVReturnSuccess) {
+            p1_log(obj, P1_LOG_ERROR, "Failed to stop display link: Core Video error %d", ret);
+            obj->state.flags |= P1_FLAG_ERROR;
+        }
+        p1_display_video_clock_kill_session(dvclock);
+
+        obj->state.current = P1_STATE_IDLE;
+        p1_object_notify(obj);
+
+        goto end;
+    }
 
     if (obj->state.current == P1_STATE_STARTING) {
         // Get the display refresh period.
