@@ -2,25 +2,30 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>url</key>
-	<string>rtmp://localhost/app/test</string>
-	<key>x264-bitrate</key>
-	<integer>4096</integer>
-	<key>x264-keyint-sec</key>
-	<integer>2</integer>
-	<key>x264-profile</key>
-	<string>baseline</string>
-	<key>x264-preset</key>
-	<string>veryfast</string>
-	<key>x264-x-nal-hrd</key>
-	<string>cbr</string>
+	<key>general</key>
+	<dict>
+		<key>url</key>
+		<string>rtmp://localhost/app/test</string>
+		<key>video-width</key>
+		<integer>1280</integer>
+		<key>video-height</key>
+		<integer>720</integer>
+		<key>x264-bitrate</key>
+		<real>4096</real>
+		<key>x264-keyint-sec</key>
+		<integer>2</integer>
+		<key>x264-profile</key>
+		<string>baseline</string>
+		<key>x264-preset</key>
+		<string>veryfast</string>
+		<key>x264-x-nal-hrd</key>
+		<string>cbr</string>
+	</dict>
 	<key>audio-sources</key>
 	<array>
 		<dict>
 			<key>type</key>
 			<string>input</string>
-			<key>master</key>
-			<true/>
 			<key>volume</key>
 			<integer>1</integer>
 		</dict>
@@ -29,6 +34,8 @@
 	<dict>
 		<key>type</key>
 		<string>display</string>
+		<key>divisor</key>
+		<integer>2</integer>
 	</dict>
 	<key>video-sources</key>
 	<array>

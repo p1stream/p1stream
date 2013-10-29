@@ -40,8 +40,14 @@ static void setup(const char *file) {
         exit(EX_DATAERR);
     }
 
+    NSDictionary *general_dict = dict[@"general"];
+    if (!general_dict) {
+        fprintf(stderr, "Missing general section.\n");
+        exit(EX_DATAERR);
+    }
+
     // Context.
-    P1Config *cfg = p1_plist_config_create(dict);
+    P1Config *cfg = p1_plist_config_create(general_dict);
     if (cfg == NULL)
         exit(EX_SOFTWARE);
 
