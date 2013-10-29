@@ -198,7 +198,7 @@ static void create_video_clock(P1Context *ctx, NSDictionary *dict)
         exit(EX_DATAERR);
     }
 
-    P1Config *cfg = p1_plist_config_create(dict);
+    P1Config *cfg = p1_plist_config_create(clock_dict);
     if (cfg == NULL)
         exit(EX_SOFTWARE);
 

@@ -66,13 +66,13 @@ static void p1_display_video_clock_config(P1Plugin *pel, P1Config *cfg)
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
     P1Object *obj = (P1Object *) pel;
 
-    if (cfg->get_uint32(cfg, "display", &dvclock->cfg_display_id))
-        dvclock->display_id = kCGDirectMainDisplay;
-    if (cfg->get_int(cfg, "divisor", &dvclock->cfg_divisor))
-        dvclock->divisor = 1;
+    if (!cfg->get_uint32(cfg, "display", &dvclock->cfg_display_id))
+        dvclock->cfg_display_id = kCGDirectMainDisplay;
+    if (!cfg->get_int(cfg, "divisor", &dvclock->cfg_divisor))
+        dvclock->cfg_divisor = 1;
 
     if (dvclock->cfg_display_id != dvclock->display_id ||
-        dvclock->cfg_divisor != dvclock->cfg_divisor)
+        dvclock->cfg_divisor != dvclock->divisor)
         p1_object_set_flag(obj, P1_FLAG_NEEDS_RESTART);
 }
 

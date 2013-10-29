@@ -68,7 +68,7 @@ static void p1_display_video_source_config(P1Plugin *pel, P1Config *cfg)
     P1Object *obj = (P1Object *) pel;
 
     if (cfg->get_uint32(cfg, "display", &dvsrc->cfg_display_id))
-        dvsrc->display_id = kCGDirectMainDisplay;
+        dvsrc->cfg_display_id = kCGDirectMainDisplay;
 
     if (dvsrc->cfg_display_id != dvsrc->display_id)
         p1_object_set_flag(obj, P1_FLAG_NEEDS_RESTART);
