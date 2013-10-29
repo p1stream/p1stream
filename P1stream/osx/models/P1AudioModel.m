@@ -83,7 +83,7 @@
             // Create a model. Its initializer hooks into user data.
             model = [[P1PluginModel alloc] initWithObject:(P1Object *)source
                                                      name:dict[@"name"]
-                                                     uuid:dict[@"uuid"]];
+                                                     uuid:uuid];
         }
 
         [model lock];
@@ -121,7 +121,7 @@
         }
 
         // Check if we need to restart this source.
-        [self restartIfNeeded];
+        [model restartIfNeeded];
     }];
 }
 

@@ -90,7 +90,7 @@
 
 - (BOOL)needsRestart
 {
-    return (_state.flags & P1_FLAG_NEEDS_RESTART);
+    return (_state.flags & P1_FLAG_NEEDS_RESTART) != 0;
 }
 + (NSSet *)keyPathsForValuesAffectingNeedsRestart
 {
@@ -100,7 +100,7 @@
 
 - (BOOL)configValid
 {
-    return (_state.flags & P1_FLAG_CONFIG_VALID);
+    return (_state.flags & P1_FLAG_CONFIG_VALID) != 0;
 }
 + (NSSet *)keyPathsForValuesAffectingConfigValid
 {
@@ -110,7 +110,7 @@
 
 - (BOOL)canStart
 {
-    return (_state.flags & P1_FLAG_CAN_START);
+    return (_state.flags & P1_FLAG_CAN_START) != 0;
 }
 + (NSSet *)keyPathsForValuesAffectingCanStart
 {
@@ -120,7 +120,7 @@
 
 - (BOOL)error
 {
-    return (_state.flags & P1_FLAG_ERROR);
+    return (_state.flags & P1_FLAG_ERROR) != 0;
 }
 + (NSSet *)keyPathsForValuesAffectingError
 {

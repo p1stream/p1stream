@@ -298,7 +298,7 @@ struct _P1ListNode {
 // Iterate list items where some iterations may remove the current item.
 #define p1_list_iterate_for_removal(_head, _node, _next)    \
     _next = _head->next;                                    \
-    while (_node = _next, _next = _node->next, _next != _head)
+    while (_node = _next, _next = _node->next, _node != _head)
 
 // List manipulation helper.
 #define _p1_list_between(_prev, _next, _src) {      \

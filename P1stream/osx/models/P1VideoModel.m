@@ -23,7 +23,8 @@
 
     P1ListNode *head = &video->sources;
     P1ListNode *node;
-    p1_list_iterate(head, node) {
+    P1ListNode *next;
+    p1_list_iterate_for_removal(head, node, next) {
         P1Source *source = p1_list_get_container(node, P1Source, link);
         P1PluginModel *model = [P1ObjectModel modelForObject:(P1Object *)source];
         if (model)
@@ -140,7 +141,7 @@
             // Create a model. Its initializer hooks into user data.
             model = [[P1PluginModel alloc] initWithObject:(P1Object *)source
                                                      name:dict[@"name"]
-                                                     uuid:dict[@"uuid"]];
+                                                     uuid:uuid];
         }
 
         [model lock];
@@ -178,7 +179,7 @@
         }
 
         // Check if we need to restart this source.
-        [self restartIfNeeded];
+        [model restartIfNeeded];
     }];
 }
 
