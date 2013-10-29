@@ -74,7 +74,7 @@
 
         // Create a model. Its initializer hooks into user data.
         P1PluginModel *model = [[P1PluginModel alloc] initWithObject:(P1Object *)videoClock
-                                                                name:dict[@"name"]
+                                                                name:@"Video clock"
                                                                 uuid:dict[@"uuid"]];
 
         // Set the new clock.
