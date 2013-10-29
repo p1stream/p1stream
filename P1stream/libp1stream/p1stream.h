@@ -353,7 +353,7 @@ void p1_object_notify(P1Object *obj);
     P1TargetState _p1_target = (_target);                       \
     _p1_obj->state.target = _p1_target;                         \
     if (_p1_target == P1_TARGET_RUNNING)                        \
-        p1_object_clear_flag(_p1_obj, ~P1_FLAG_ERROR);          \
+        p1_object_clear_flag(_p1_obj, P1_FLAG_ERROR);           \
     p1_object_notify(_p1_obj);                                  \
 })
 
