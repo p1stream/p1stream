@@ -9,6 +9,8 @@ typedef struct _P1DisplayVideoSource P1DisplayVideoSource;
 struct _P1DisplayVideoSource {
     P1VideoSource super;
 
+    CGDirectDisplayID cfg_display_id;
+
     CGDirectDisplayID display_id;
 
     dispatch_queue_t dispatch;
@@ -18,6 +20,7 @@ struct _P1DisplayVideoSource {
 };
 
 static bool p1_display_video_source_init(P1DisplayVideoSource *dvsrc, P1Context *ctx);
+static void p1_display_video_source_config(P1Plugin *pel, P1Config *cfg);
 static void p1_display_video_source_start(P1Plugin *pel);
 static void p1_display_video_source_stop(P1Plugin *pel);
 static void p1_display_video_source_kill_session(P1DisplayVideoSource *dvsrc);
@@ -51,14 +54,24 @@ static bool p1_display_video_source_init(P1DisplayVideoSource *dvsrc, P1Context 
     if (!p1_video_source_init(vsrc, ctx))
         return false;
 
+    pel->config = p1_display_video_source_config;
     pel->start = p1_display_video_source_start;
     pel->stop = p1_display_video_source_stop;
     vsrc->frame = p1_display_video_source_frame;
 
-    // FIXME: configurable
-    dvsrc->display_id = kCGDirectMainDisplay;
-
     return true;
+}
+
+static void p1_display_video_source_config(P1Plugin *pel, P1Config *cfg)
+{
+    P1DisplayVideoSource *dvsrc = (P1DisplayVideoSource *) pel;
+    P1Object *obj = (P1Object *) pel;
+
+    if (cfg->get_uint32(cfg, "display", &dvsrc->cfg_display_id))
+        dvsrc->display_id = kCGDirectMainDisplay;
+
+    if (dvsrc->cfg_display_id != dvsrc->display_id)
+        p1_object_set_flag(obj, P1_FLAG_NEEDS_RESTART);
 }
 
 static void p1_display_video_source_start(P1Plugin *pel)
@@ -76,6 +89,7 @@ static void p1_display_video_source_start(P1Plugin *pel)
         return;
     }
 
+    dvsrc->display_id = dvsrc->cfg_display_id;
     dvsrc->display_stream = CGDisplayStreamCreateWithDispatchQueue(
         dvsrc->display_id, width, height, 'BGRA', NULL, dvsrc->dispatch, ^(
             CGDisplayStreamFrameStatus status,

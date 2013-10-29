@@ -15,6 +15,7 @@ static void p1_plist_config_free(P1Config *_cfg);
 static NSObject *p1_plist_config_resolve(P1Config *cfg, const char *key, Class type);
 static bool p1_plist_config_get_string(P1Config *cfg, const char *key, char *buf, size_t bufsize);
 static bool p1_plist_config_get_int(P1Config *cfg, const char *key, int *out);
+static bool p1_plist_config_get_uint32(P1Config *cfg, const char *key, uint32_t *out);
 static bool p1_plist_config_get_float(P1Config *cfg, const char *key, float *out);
 static bool p1_plist_config_get_bool(P1Config *cfg, const char *key, bool *out);
 static bool p1_plist_config_each_string(P1Config *cfg, const char *prefix, P1ConfigIterString iter, void *data);
@@ -34,6 +35,7 @@ P1Config *p1_plist_config_create(NSDictionary *dict)
     cfg->free        = p1_plist_config_free;
     cfg->get_string  = p1_plist_config_get_string;
     cfg->get_int     = p1_plist_config_get_int;
+    cfg->get_uint32  = p1_plist_config_get_uint32;
     cfg->get_float   = p1_plist_config_get_float;
     cfg->get_bool    = p1_plist_config_get_bool;
     cfg->each_string = p1_plist_config_each_string;
@@ -84,6 +86,20 @@ static bool p1_plist_config_get_int(P1Config *cfg, const char *key, int *out)
         NSNumber *val = (NSNumber *) p1_plist_config_get(cfg, key, [NSNumber class]);
         if (val) {
             *out = [val intValue];
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}
+
+static bool p1_plist_config_get_uint32(P1Config *cfg, const char *key, uint32_t *out)
+{
+    @autoreleasepool {
+        NSNumber *val = (NSNumber *) p1_plist_config_get(cfg, key, [NSNumber class]);
+        if (val) {
+            *out = [val unsignedIntValue];
             return true;
         }
         else {

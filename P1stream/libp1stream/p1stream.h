@@ -205,16 +205,12 @@ struct _P1Config {
     // Free resources.
     void (*free)(P1Config *cfg);
 
-    // The following methods return true if successful and false if undefined.
-    // Unexpected types should also be treated as undefined.
-
-    // Copy a string value to the output buffer.
+    // The following methods read values, and return true if successful and
+    // false if undefined. Unexpected types should also be treated as undefined.
     bool (*get_string)(P1Config *cfg, const char *key, char *buf, size_t bufsize);
-    // Read an integer value.
     bool (*get_int)(P1Config *cfg, const char *key, int *out);
-    // Read a float value.
+    bool (*get_uint32)(P1Config *cfg, const char *key, uint32_t *out);
     bool (*get_float)(P1Config *cfg, const char *key, float *out);
-    // Read a boolean value.
     bool (*get_bool)(P1Config *cfg, const char *key, bool *out);
 
     // Iterate keys and string values with the given prefix.
@@ -346,22 +342,26 @@ struct _P1Object {
 // thread, and should be called after every change to the state field.
 void p1_object_notify(P1Object *obj);
 
+// Helpers to set or clear a specific flag.
+#define p1_object_set_flag(_obj, _flag)   ((_obj)->state.flags |= (_flag))
+#define p1_object_clear_flag(_obj, _flag) ((_obj)->state.flags &= ~(_flag))
+
 // Convenience method that sets an objects target.
 // If set to running, the error state is cleared as well.
 #define p1_object_target(_obj, _target) ({                      \
-    P1Object *_p1_objx = (_obj);                                \
+    P1Object *_p1_obj = (_obj);                                 \
     P1TargetState _p1_target = (_target);                       \
-    _p1_objx->state.target = _p1_target;                        \
+    _p1_obj->state.target = _p1_target;                         \
     if (_p1_target == P1_TARGET_RUNNING)                        \
-        _p1_objx->state.flags &= ~P1_FLAG_ERROR;                \
-    p1_object_notify(_p1_objx);                                 \
+        p1_object_clear_flag(_p1_obj, ~P1_FLAG_ERROR);          \
+    p1_object_notify(_p1_obj);                                  \
 })
 
 // Signal something other than state has changed.
 #define p1_object_resync(_obj) ({                               \
-    P1Object *_p1_objx = (_obj);                                \
-    _p1_objx->state.flags |= P1_FLAG_RESYNC;                    \
-    p1_object_notify(_p1_objx);                                 \
+    P1Object *_p1_obj = (_obj);                                 \
+    p1_object_set_flag(_p1_obj, P1_FLAG_RESYNC);                \
+    p1_object_notify(_p1_obj);                                  \
 })
 
 

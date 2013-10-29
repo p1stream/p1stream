@@ -11,6 +11,10 @@ typedef struct _P1CaptureVideoSource P1CaptureVideoSource;
 struct _P1CaptureVideoSource {
     P1VideoSource super;
 
+    char cfg_device[128];
+
+    char device[128];
+
     CFTypeRef delegate;
     CFTypeRef session;
 
@@ -18,6 +22,7 @@ struct _P1CaptureVideoSource {
 };
 
 static bool p1_capture_video_source_init(P1CaptureVideoSource *cvsrc, P1Context *ctx);
+static void p1_capture_video_source_config(P1Plugin *pel, P1Config *cfg);
 static void p1_capture_video_source_start(P1Plugin *pel);
 static void p1_capture_video_source_stop(P1Plugin *pel);
 static bool p1_capture_video_source_frame(P1VideoSource *vsrc);
@@ -64,6 +69,7 @@ static bool p1_capture_video_source_init(P1CaptureVideoSource *cvsrc, P1Context 
     if (!p1_video_source_init(vsrc, ctx))
         return false;
 
+    pel->config = p1_capture_video_source_config;
     pel->start = p1_capture_video_source_start;
     pel->stop = p1_capture_video_source_stop;
     vsrc->frame = p1_capture_video_source_frame;
@@ -71,10 +77,22 @@ static bool p1_capture_video_source_init(P1CaptureVideoSource *cvsrc, P1Context 
     return true;
 }
 
+static void p1_capture_video_source_config(P1Plugin *pel, P1Config *cfg)
+{
+    P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
+    P1Object *obj = (P1Object *) pel;
+
+    if (!cfg->get_string(cfg, "device", cvsrc->cfg_device, sizeof(cvsrc->cfg_device)))
+        cvsrc->cfg_device[0] = '\0';
+
+    if (strcmp(cvsrc->cfg_device, cvsrc->device) != 0)
+        p1_object_set_flag(obj, P1_FLAG_NEEDS_RESTART);
+}
+
 static void p1_capture_video_source_start(P1Plugin *pel)
 {
-    P1Object *obj = (P1Object *) pel;
     P1CaptureVideoSource *cvsrc = (P1CaptureVideoSource *) pel;
+    P1Object *obj = (P1Object *) pel;
 
 #define P1_CVSRC_ERROR {                            \
     obj->state.current = P1_STATE_IDLE;             \
@@ -101,9 +119,25 @@ static void p1_capture_video_source_start(P1Plugin *pel)
             P1_CVSRC_ERROR;
         }
 
+        // Get the right device.
+        AVCaptureDevice *device;
+        strcpy(cvsrc->device, cvsrc->cfg_device);
+        if (cvsrc->device[0]) {
+            NSString *uniqueID = [NSString stringWithCString:cvsrc->device encoding:NSUTF8StringEncoding];
+            device = [AVCaptureDevice deviceWithUniqueID:uniqueID];
+            if (![device hasMediaType:AVMediaTypeVideo])
+                device = nil;
+        }
+        else {
+            device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+        }
+        if (!device) {
+            p1_log(obj, P1_LOG_ERROR, "Could not find the configured video capture device");
+            P1_CVSRC_ERROR;
+        }
+
         // Open the default video capture device.
         NSError *error;
-        AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
         AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:device error:&error];
         if (!input || ![session canAddInput:input]) {
             p1_log(obj, P1_LOG_ERROR, "Failed to open capture device");

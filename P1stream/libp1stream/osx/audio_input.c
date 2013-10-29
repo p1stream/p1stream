@@ -14,6 +14,8 @@ typedef struct _P1InputAudioSource P1InputAudioSource;
 struct _P1InputAudioSource {
     P1AudioSource super;
 
+    char cfg_device[128];
+
     char device[128];
 
     AudioQueueRef queue;
@@ -70,8 +72,13 @@ static bool p1_input_audio_source_init(P1InputAudioSource *iasrc, P1Context *ctx
 static void p1_input_audio_source_config(P1Plugin *pel, P1Config *cfg)
 {
     P1InputAudioSource *iasrc = (P1InputAudioSource *) pel;
+    P1Object *obj = (P1Object *) pel;
 
-    cfg->get_string(cfg, "device", iasrc->device, sizeof(iasrc->device));
+    if (!cfg->get_string(cfg, "device", iasrc->cfg_device, sizeof(iasrc->cfg_device)))
+        iasrc->cfg_device[0] = '\0';
+
+    if (strcmp(iasrc->cfg_device, iasrc->device) != 0)
+        p1_object_set_flag(obj, P1_FLAG_NEEDS_RESTART);
 }
 
 static void p1_input_audio_source_start(P1Plugin *pel)
@@ -100,6 +107,7 @@ static void p1_input_audio_source_start(P1Plugin *pel)
     if (ret != noErr)
          goto fail;
 
+    strcpy(iasrc->device, iasrc->cfg_device);
     if (iasrc->device[0]) {
         CFStringRef str = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, iasrc->device, kCFStringEncodingUTF8, kCFAllocatorNull);
         if (str) {

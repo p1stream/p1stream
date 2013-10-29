@@ -63,9 +63,6 @@ typedef struct _P1ContextFull P1ContextFull;
 bool p1_object_init(P1Object *obj, P1ObjectType type, P1Context *ctx);
 void p1_object_destroy(P1Object *obj);
 
-#define p1_object_set_flag(_obj, _flag) ((_obj)->state.flags |= (_flag))
-#define p1_object_clear_flag(_obj, _flag) ((_obj)->state.flags &= ~(_flag))
-
 
 // This is a ringbuffer of RMTPPacket pointers.
 

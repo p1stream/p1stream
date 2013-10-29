@@ -8,14 +8,18 @@ typedef struct _P1DisplayVideoClock P1DisplayVideoClock;
 struct _P1DisplayVideoClock {
     P1VideoClock super;
 
+    CGDirectDisplayID cfg_display_id;
+    int cfg_divisor;
+
     CGDirectDisplayID display_id;
-    uint8_t divisor;
+    int divisor;
 
     CVDisplayLinkRef display_link;
-    uint8_t skip_counter;
+    int skip_counter;
 };
 
 static bool p1_display_video_clock_init(P1DisplayVideoClock *dvclock, P1Context *ctx);
+static void p1_display_video_clock_config(P1Plugin *pel, P1Config *cfg);
 static void p1_display_video_clock_start(P1Plugin *pel);
 static void p1_display_video_clock_stop(P1Plugin *pel);
 static void p1_display_video_clock_kill_session(P1DisplayVideoClock *dvclock);
@@ -50,14 +54,26 @@ static bool p1_display_video_clock_init(P1DisplayVideoClock *dvclock, P1Context 
     if (!p1_video_clock_init(vclock, ctx))
         return false;
 
+    pel->config = p1_display_video_clock_config;
     pel->start = p1_display_video_clock_start;
     pel->stop = p1_display_video_clock_stop;
 
-    // FIXME: configurable
-    dvclock->display_id = kCGDirectMainDisplay;
-    dvclock->divisor = 2;
-
     return true;
+}
+
+static void p1_display_video_clock_config(P1Plugin *pel, P1Config *cfg)
+{
+    P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
+    P1Object *obj = (P1Object *) pel;
+
+    if (cfg->get_uint32(cfg, "display", &dvclock->cfg_display_id))
+        dvclock->display_id = kCGDirectMainDisplay;
+    if (cfg->get_int(cfg, "divisor", &dvclock->cfg_divisor))
+        dvclock->divisor = 1;
+
+    if (dvclock->cfg_display_id != dvclock->display_id ||
+        dvclock->cfg_divisor != dvclock->cfg_divisor)
+        p1_object_set_flag(obj, P1_FLAG_NEEDS_RESTART);
 }
 
 static void p1_display_video_clock_start(P1Plugin *pel)
@@ -66,6 +82,8 @@ static void p1_display_video_clock_start(P1Plugin *pel)
     P1DisplayVideoClock *dvclock = (P1DisplayVideoClock *) pel;
     CVReturn ret;
 
+    dvclock->display_id = dvclock->cfg_display_id;
+    dvclock->divisor = dvclock->cfg_divisor;
     dvclock->skip_counter = 0;
 
     ret = CVDisplayLinkCreateWithCGDisplay(dvclock->display_id, &dvclock->display_link);
