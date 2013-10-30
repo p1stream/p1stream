@@ -22,8 +22,8 @@ static bool p1_conn_parse_x264_param(P1Config *cfg, const char *key, const char 
 static bool p1_conn_stream_video_config(P1ConnectionFull *connf);
 static bool p1_conn_stream_audio_config(P1ConnectionFull *connf);
 
-static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, uint32_t body_size);
-static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time);
+static P1Packet *p1_conn_create_packet(P1ConnectionFull *connf, uint8_t type, uint32_t body_size);
+static bool p1_conn_submit_packet(P1ConnectionFull *connf, P1Packet *pkt, int64_t time);
 
 static void *p1_conn_main(void *data);
 static bool p1_conn_flush(P1ConnectionFull *connf);
@@ -35,7 +35,7 @@ static bool p1_conn_start_video(P1ConnectionFull *connf);
 static void p1_conn_stop_video(P1ConnectionFull *connf);
 
 static void p1_conn_signal(P1ConnectionFull *connf);
-static void p1_conn_clear(P1PacketQueue *q);
+static void p1_conn_clear(P1ListNode *head);
 
 static void p1_conn_x264_log_callback(void *data, int level, const char *fmt, va_list args);
 static void p1_conn_rtmp_log_callback(int level, const char *fmt, va_list);
@@ -127,6 +127,9 @@ void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
         p1_object_clear_flag(connobj, P1_FLAG_CONFIG_VALID);
     }
 
+    if (!cfg->get_int(cfg, "buffer-size", &connf->cfg_buffer_size))
+        connf->cfg_buffer_size = 8 * 1024 * 1024;   // 8 MiB
+
     // x264 already logs errors, except for x264_param_parse.
 
     x264_param_default(vp);
@@ -165,12 +168,13 @@ void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
             p1_object_clear_flag(connobj, P1_FLAG_CONFIG_VALID);
     }
 
-    // Check if something changed while running.
-    if ((connobj->state.flags & P1_FLAG_CONFIG_VALID) &&
-        connobj->state.current != P1_STATE_IDLE) {
+    // Check if something changed.
+    if ((connobj->state.flags & P1_FLAG_CONFIG_VALID)) {
         if (strcmp(connf->cfg_url, connf->url) != 0)
             p1_object_set_flag(connobj, P1_FLAG_NEEDS_RESTART);
         if (memcmp(vp, &connf->video_params, sizeof(x264_param_t)) != 0)
+            p1_object_set_flag(connobj, P1_FLAG_NEEDS_RESTART);
+        if (connf->cfg_buffer_size != connf->buffer_size)
             p1_object_set_flag(connobj, P1_FLAG_NEEDS_RESTART);
     }
 
@@ -294,10 +298,10 @@ static bool p1_conn_stream_video_config(P1ConnectionFull *connf)
     int pps_size = nal_pps->i_payload-4;
     uint32_t tag_size = 16 + sps_size + pps_size;
 
-    RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_VIDEO, tag_size);
+    P1Packet *pkt = p1_conn_create_packet(connf, RTMP_PACKET_TYPE_VIDEO, tag_size);
     if (pkt == NULL)
         return false;
-    char * const body = pkt->m_body;
+    char *body = pkt->meta.m_body;
 
     body[0] = 0x10 | 0x07; // keyframe, AVC
     body[1] = 0; // AVC header
@@ -362,10 +366,10 @@ void p1_conn_stream_video(P1ConnectionFull *connf, int64_t time, x264_picture_t 
     }
 
     const uint32_t tag_size = size + 5;
-    RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_VIDEO, tag_size);
+    P1Packet *pkt = p1_conn_create_packet(connf, RTMP_PACKET_TYPE_VIDEO, tag_size);
     if (pkt == NULL)
         goto fail;
-    char * const body = pkt->m_body;
+    char *body = pkt->meta.m_body;
 
     body[0] = (out_pic.b_keyframe ? 0x10 : 0x20) | 0x07; // keyframe/IDR, AVC
     body[1] = 1; // AVC NALU
@@ -408,10 +412,10 @@ static bool p1_conn_stream_audio_config(P1ConnectionFull *connf)
 {
     const uint32_t tag_size = 2 + 2;
 
-    RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_AUDIO, tag_size);
+    P1Packet *pkt = p1_conn_create_packet(connf, RTMP_PACKET_TYPE_AUDIO, tag_size);
     if (pkt == NULL)
         return false;
-    char * const body = pkt->m_body;
+    char *body = pkt->meta.m_body;
 
     body[0] = 0xa0 | 0x0c | 0x02 | 0x01; // AAC, 44.1kHz, 16-bit, Stereo
     body[1] = 0; // AAC config
@@ -471,10 +475,10 @@ size_t p1_conn_stream_audio(P1ConnectionFull *connf, int64_t time, int16_t *buf,
 
     // Build the packet.
     const uint32_t tag_size = (uint32_t) (2 + out_args.numOutBytes);
-    RTMPPacket *pkt = p1_conn_new_packet(connf, RTMP_PACKET_TYPE_AUDIO, tag_size);
+    P1Packet *pkt = p1_conn_create_packet(connf, RTMP_PACKET_TYPE_AUDIO, tag_size);
     if (pkt == NULL)
         goto fail;
-    char * const body = pkt->m_body;
+    char *body = pkt->meta.m_body;
 
     body[0] = 0xa0 | 0x0c | 0x02 | 0x01; // AAC, 44.1kHz, 16-bit, Stereo
     body[1] = 1; // AAC raw
@@ -519,56 +523,48 @@ fail:
 
 
 // Allocate a new packet and set header fields.
-static RTMPPacket *p1_conn_new_packet(P1ConnectionFull *connf, uint8_t type, uint32_t body_size)
+static P1Packet *p1_conn_create_packet(P1ConnectionFull *connf, uint8_t type, uint32_t body_size)
 {
     P1Object *connobj = (P1Object *) connf;
-    const size_t prelude_size = sizeof(RTMPPacket) + RTMP_MAX_HEADER_SIZE;
+    int prelude_size = sizeof(P1Packet) + RTMP_MAX_HEADER_SIZE;
+    int alloc_size = prelude_size + body_size;
 
     // Allocate packet memory.
-    RTMPPacket *pkt = calloc(1, prelude_size + body_size);
+    P1Packet *pkt = calloc(1, alloc_size);
     if (pkt == NULL) {
         p1_log(connobj, P1_LOG_ERROR, "Packet allocation failed, dropping packet!");
         return NULL;
     }
 
     // Fill basic fields.
-    pkt->m_packetType = type;
-    pkt->m_nChannel = 0x04;
-    pkt->m_nBodySize = body_size;
-    pkt->m_body = (char *)pkt + prelude_size;
+    pkt->size = alloc_size;
+    pkt->meta.m_packetType = type;
+    pkt->meta.m_nChannel = 0x04;
+    pkt->meta.m_nBodySize = body_size;
+    pkt->meta.m_body = (char *)pkt + prelude_size;
 
     return pkt;
 }
 
 // Submit a packet to the queue. Caller must ensure proper locking.
-static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int64_t time)
+static bool p1_conn_submit_packet(P1ConnectionFull *connf, P1Packet *pkt, int64_t time)
 {
     P1Object *connobj = (P1Object *) connf;
     P1Context *ctx = connobj->ctx;
     P1ContextFull *ctxf = (P1ContextFull *) ctx;
 
-    // Determine which queue to use.
-    P1PacketQueue *q;
-    switch (pkt->m_packetType) {
-        case RTMP_PACKET_TYPE_AUDIO:
-            q = &connf->audio_queue;
-            if (q->length == UINT8_MAX) {
-                if (connf->video_queue.length == 0)
-                    goto fail_video_lag;
-                else
-                    goto fail_conn_lag;
-            }
-            break;
-        case RTMP_PACKET_TYPE_VIDEO:
-            q = &connf->video_queue;
-            if (q->length == UINT8_MAX) {
-                if (connf->audio_queue.length == 0)
-                    goto fail_audio_lag;
-                else
-                    goto fail_conn_lag;
-            }
-            break;
-        default: abort();
+    // Check buffer bounds.
+    int new_used = connf->buffer_used + pkt->size;
+    if (new_used > connf->buffer_size) {
+        if (p1_list_is_empty(&connf->audio_queue))
+            p1_log(connobj, P1_LOG_WARNING, "Audio stream lagging, dropping packet!");
+        else if (p1_list_is_empty(&connf->video_queue))
+            p1_log(connobj, P1_LOG_WARNING, "Video stream lagging, dropping packet!");
+        else
+            p1_log(connobj, P1_LOG_WARNING, "Connection lagging, dropping packet!");
+
+        free(pkt);
+        return false;
     }
 
     // Set timestamp, if one was given.
@@ -580,35 +576,30 @@ static bool p1_conn_submit_packet(P1ConnectionFull *connf, RTMPPacket *pkt, int6
         // x264 may have a couple of frames with negative time.
         if (time < 0) time = 0;
         // Wrap when we exceed 32-bits.
-        pkt->m_nTimeStamp = (uint32_t) (time & 0x7fffffff);
+        pkt->meta.m_nTimeStamp = (uint32_t) (time & 0x7fffffff);
     }
 
     // Start stream with a large header.
-    pkt->m_headerType = time ? RTMP_PACKET_SIZE_MEDIUM : RTMP_PACKET_SIZE_LARGE;
-    pkt->m_hasAbsTimestamp = pkt->m_headerType == RTMP_PACKET_SIZE_LARGE;
+    pkt->meta.m_headerType = time ? RTMP_PACKET_SIZE_MEDIUM : RTMP_PACKET_SIZE_LARGE;
+    pkt->meta.m_hasAbsTimestamp = pkt->meta.m_headerType == RTMP_PACKET_SIZE_LARGE;
+    pkt->meta.m_nInfoField2 = connf->rtmp.m_stream_id;
 
     // Queue the packet.
-    q->head[q->write++] = pkt;  // Deliberate overflow of q->write.
-    q->length++;
+    switch (pkt->meta.m_packetType) {
+        case RTMP_PACKET_TYPE_AUDIO:
+            p1_list_before(&connf->audio_queue, &pkt->link);
+            break;
+        case RTMP_PACKET_TYPE_VIDEO:
+            p1_list_before(&connf->video_queue, &pkt->link);
+            break;
+        default:
+            abort();
+    }
+
+    connf->buffer_used = new_used;
     p1_conn_signal(connf);
 
     return true;
-
-fail_audio_lag:
-    p1_log(connobj, P1_LOG_WARNING, "Audio stream lagging, dropping packet!");
-    goto fail;
-
-fail_video_lag:
-    p1_log(connobj, P1_LOG_WARNING, "Video stream lagging, dropping packet!");
-    goto fail;
-
-fail_conn_lag:
-    p1_log(connobj, P1_LOG_WARNING, "Connection lagging, dropping packet!");
-    goto fail;
-
-fail:
-    free(pkt);
-    return false;
 }
 
 
@@ -623,6 +614,10 @@ static void *p1_conn_main(void *data)
 
     p1_object_lock(connobj);
     r = &connf->rtmp;
+
+    connf->buffer_size = connf->cfg_buffer_size;
+    p1_list_init(&connf->audio_queue);
+    p1_list_init(&connf->video_queue);
 
     // This locking is to make cleanup easier; we can assume locked at the
     // fail_* labels, but not at the cleanup label.
@@ -757,8 +752,13 @@ fail_audio:
 static bool p1_conn_flush(P1ConnectionFull *connf)
 {
     P1Object *connobj = (P1Object *) connf;
-    P1PacketQueue *aq = &connf->audio_queue;
-    P1PacketQueue *vq = &connf->video_queue;
+    P1ListNode *aq = &connf->audio_queue;
+    P1ListNode *vq = &connf->video_queue;
+    RTMP *r = &connf->rtmp;
+    P1ListNode list;
+    P1ListNode *head = &list;
+    P1ListNode *node;
+    P1ListNode *next;
     int ret;
 
     // We release the lock while writing, but that means another thread may
@@ -772,39 +772,34 @@ static bool p1_conn_flush(P1ConnectionFull *connf)
         // (In other words, if we don't have one of either, it's possible the
         // other stream will generate a packet with an earlier timestamp.)
 
-        RTMPPacket *list[UINT8_MAX * 2];
-        RTMPPacket **i = list;
-        while (aq->length != 0 && vq->length != 0) {
-            RTMPPacket *ap = aq->head[aq->read];
-            RTMPPacket *vp = vq->head[vq->read];
-            if (ap->m_nTimeStamp < vp->m_nTimeStamp) {
-                *(i++) = ap;
-                aq->read++;
-                aq->length--;
+        p1_list_init(&list);
+        while (!p1_list_is_empty(aq) && !p1_list_is_empty(vq)) {
+            P1Packet *ap = p1_list_get_container(aq->next, P1Packet, link);
+            P1Packet *vp = p1_list_get_container(vq->next, P1Packet, link);
+            if (ap->meta.m_nTimeStamp < vp->meta.m_nTimeStamp) {
+                p1_list_remove(&ap->link);
+                p1_list_before(&list, &ap->link);
+                connf->buffer_used -= ap->size;
             }
             else {
-                *(i++) = vp;
-                vq->read++;
-                vq->length--;
+                p1_list_remove(&vp->link);
+                p1_list_before(&list, &vp->link);
+                connf->buffer_used -= vp->size;
             }
         };
 
         // Now write out the list. Release the lock so blocking doesn't affect
         // other threads queuing new packets.
 
-        if (i == list)
+        if (p1_list_is_empty(&list))
             break;
 
         p1_object_unlock(connobj);
 
-        RTMP *r = &connf->rtmp;
-        RTMPPacket **end = i;
-        for (i = list; i != end; i++) {
-            RTMPPacket *pkt = *i;
+        p1_list_iterate_for_removal(head, node, next) {
+            P1Packet *pkt = p1_list_get_container(node, P1Packet, link);
 
-            pkt->m_nInfoField2 = r->m_stream_id;
-
-            ret = RTMP_SendPacket(r, pkt, FALSE);
+            ret = RTMP_SendPacket(r, &pkt->meta, FALSE);
             free(pkt);
             if (!ret) {
                 p1_log(connobj, P1_LOG_ERROR, "Failed to send packet.");
@@ -943,13 +938,14 @@ static void p1_conn_signal(P1ConnectionFull *connf)
 }
 
 // Clear a packet queue.
-static void p1_conn_clear(P1PacketQueue *q)
+static void p1_conn_clear(P1ListNode *head)
 {
-    while (q->length--) {
-        RTMPPacket *pkt = q->head[q->read++];
+    P1ListNode *node;
+    P1ListNode *next;
+    p1_list_iterate_for_removal(head, node, next) {
+        P1Packet *pkt = p1_list_get_container(node, P1Packet, link);
         free(pkt);
     }
-    q->read = q->write = q->length = 0;
 }
 
 

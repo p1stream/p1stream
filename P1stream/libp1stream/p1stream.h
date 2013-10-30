@@ -266,17 +266,19 @@ struct _P1ListNode {
 
 // Insert a source node before the reference node.
 // Inserting before the head node is basically an append.
-#define p1_list_before(_ref, _node)                 \
+#define p1_list_before(_ref, _node) {               \
     P1ListNode *_p1_ref = (_ref);                   \
     P1ListNode *_p1_node = (_node);                 \
-    _p1_list_between(_p1_ref->prev, _p1_ref, _p1_node)
+    _p1_list_between(_p1_ref->prev, _p1_ref, _p1_node)  \
+}
 
 // Insert a source node after the reference node.
 // Inserting after the head node is basically a prepend.
-#define p1_list_after(_ref, _node)                  \
+#define p1_list_after(_ref, _node) {                \
     P1ListNode *_p1_ref = (_ref);                   \
     P1ListNode *_p1_node = (_node);                 \
-    _p1_list_between(_p1_ref, _p1_ref->next, _p1_node)
+    _p1_list_between(_p1_ref, _p1_ref->next, _p1_node)  \
+}
 
 // Remove a node from the list.
 #define p1_list_remove(_node) {                     \
@@ -286,6 +288,11 @@ struct _P1ListNode {
     _p1_prev->next = _p1_next;                      \
     _p1_next->prev = _p1_prev;                      \
 }
+
+#define p1_list_is_empty(_head) ({                  \
+    P1ListNode *_p1_head = (_head);                 \
+    _p1_head->next == _p1_head;                     \
+})
 
 // Iterate list items. Both arguments must be local variables.
 #define p1_list_iterate(_head, _node)  \

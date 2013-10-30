@@ -8,7 +8,7 @@
 #include <librtmp/rtmp.h>
 #include <librtmp/log.h>
 
-typedef struct _P1PacketQueue P1PacketQueue;
+typedef struct _P1Packet P1Packet;
 typedef struct _P1VideoFull P1VideoFull;
 typedef struct _P1AudioFull P1AudioFull;
 typedef struct _P1ConnectionFull P1ConnectionFull;
@@ -66,11 +66,11 @@ void p1_object_destroy(P1Object *obj);
 
 // This is a ringbuffer of RMTPPacket pointers.
 
-struct _P1PacketQueue {
-    RTMPPacket *head[UINT8_MAX + 1];
-    uint8_t read;
-    uint8_t write;
-    uint8_t length;
+struct _P1Packet {
+    int size;
+    P1ListNode link;
+    RTMPPacket meta;
+    // Followed by data.
 };
 
 
@@ -161,6 +161,7 @@ struct _P1ConnectionFull {
     // Config
     char cfg_url[2048];
     x264_param_t cfg_video_params;
+    int cfg_buffer_size;
 
     // RTMP state
     char url[2048];
@@ -169,13 +170,17 @@ struct _P1ConnectionFull {
     // Start time, used as the zero point for RTMP timestamps
     uint64_t start;
 
+    // Buffer size, and amount in use.
+    int buffer_size;
+    int buffer_used;
+
     // Connection thread
     pthread_t thread;
     pthread_cond_t cond;
 
     // Packet queue
-    P1PacketQueue video_queue;
-    P1PacketQueue audio_queue;
+    P1ListNode video_queue;
+    P1ListNode audio_queue;
 
     // Video encoding
     pthread_mutex_t video_lock;
