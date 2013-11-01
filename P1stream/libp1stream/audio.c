@@ -380,7 +380,7 @@ static void p1_audio_flush_out_buffer(P1AudioFull *audiof)
     size_t total_samples = 0;
     size_t samples;
     do {
-        samples = p1_conn_stream_audio(connf, audiof->out_time, out, out_available);
+        samples = p1_conn_stream_audio(connf, out_time, out, out_available);
         if (samples == 0)
             break;
 
