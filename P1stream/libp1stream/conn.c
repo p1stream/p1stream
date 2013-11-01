@@ -128,7 +128,7 @@ void p1_conn_config(P1ConnectionFull *connf, P1Config *cfg)
     }
 
     if (!cfg->get_int(cfg, "buffer-size", &connf->cfg_buffer_size))
-        connf->cfg_buffer_size = 8 * 1024 * 1024;   // 8 MiB
+        connf->cfg_buffer_size = 32 * 1024 * 1024;  // 32 MiB
 
     // x264 already logs errors, except for x264_param_parse.
 
