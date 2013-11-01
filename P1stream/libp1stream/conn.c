@@ -373,7 +373,17 @@ void p1_conn_stream_video(P1ConnectionFull *connf, int64_t time, x264_picture_t 
 
     body[0] = (out_pic.b_keyframe ? 0x10 : 0x20) | 0x07; // keyframe/IDR, AVC
     body[1] = 1; // AVC NALU
-    // skip composition time
+
+    // Calculate composition time.
+    int64_t cts = out_pic.i_pts - out_pic.i_dts;
+    if (cts < 0) {
+        p1_log(connobj, P1_LOG_ERROR, "Negative CTS: %lld", cts);
+        cts = 0;
+    }
+    // Encode.
+    body[2] = (cts & 0xFF0000) >> 16;
+    body[3] = (cts & 0x00FF00) >>  8;
+    body[4] = (cts & 0x0000FF);
 
     memcpy(body + 5, nals[0].p_payload, size);
 
