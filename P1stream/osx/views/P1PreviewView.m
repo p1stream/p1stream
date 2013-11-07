@@ -202,16 +202,7 @@ static GLuint buildProgram()
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    NSOpenGLContext *ctx = self.openGLContext;
-    CGLContextObj cglCtx = ctx.CGLContextObj;
-
-    CGLLockContext(cglCtx);
-    [ctx makeCurrentContext];
-
-    glClear(GL_COLOR_BUFFER_BIT);
-    glFinish();
-
-    CGLUnlockContext(cglCtx);
+    [self render];
 }
 
 
@@ -229,7 +220,7 @@ static GLuint buildProgram()
         setVideoPreviewCallback(_context->video, NULL, NULL);
 
     _context = context;
-    self.aspect = 0;
+    self.surface = NULL;
 
     if (_context)
         setVideoPreviewCallback(_context->video, videoPreviewCallback, (__bridge void *)self);
@@ -253,7 +244,9 @@ static void videoPreviewCallback(void *ptr, void *user_data)
 {
     @autoreleasepool {
         P1PreviewView *self = (__bridge P1PreviewView *)user_data;
-        [self updatePreview:(IOSurfaceRef)ptr];
+
+        self.surface = ptr;
+        [self render];
     }
 }
 
@@ -281,37 +274,57 @@ static void videoPreviewCallback(void *ptr, void *user_data)
     }
 }
 
-- (void)updatePreview:(IOSurfaceRef)surface
+- (void)setSurface:(IOSurfaceRef)surface
 {
-    NSOpenGLContext *ctx = self.openGLContext;
-    CGLContextObj cglCtx = ctx.CGLContextObj;
+    if (_surface == surface)
+        return;
 
-    GLsizei width = (GLsizei)IOSurfaceGetWidth(surface);
-    GLsizei height = (GLsizei)IOSurfaceGetHeight(surface);
+    if (_surface) {
+        IOSurfaceDecrementUseCount(_surface);
+        CFRelease(_surface);
+    }
 
-    float aspect = (float)width / (float)height;
+    _surface = surface;
+
+    float aspect = 0;
+    if (surface) {
+        CFRetain(surface);
+        IOSurfaceIncrementUseCount(surface);
+
+        _width = (GLsizei)IOSurfaceGetWidth(surface);
+        _height = (GLsizei)IOSurfaceGetHeight(surface);
+        aspect = (float)_width / (float)_height;
+    }
+
     if (aspect != _aspect) {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.aspect = aspect;
         });
     }
-    else {
-        CGLLockContext(cglCtx);
-        [ctx makeCurrentContext];
+}
 
+- (void)render
+{
+    NSOpenGLContext *ctx = self.openGLContext;
+    CGLContextObj cglCtx = ctx.CGLContextObj;
+
+    CGLLockContext(cglCtx);
+    [ctx makeCurrentContext];
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    if (_surface) {
         glBindTexture(GL_TEXTURE_RECTANGLE, _tex);
-        CGLError cgl_err = CGLTexImageIOSurface2D(cglCtx, GL_TEXTURE_RECTANGLE, GL_RGBA8, width, height,
-                                                  GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface, 0);
-        if (cgl_err != kCGLNoError) {
+        CGLError cgl_err = CGLTexImageIOSurface2D(cglCtx, GL_TEXTURE_RECTANGLE, GL_RGBA8, _width, _height,
+                                                  GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, _surface, 0);
+        if (cgl_err != kCGLNoError)
             NSLog(@"Failed to bind IOSurface to GL texture: Core Graphics error %d", cgl_err);
-        }
-        else {
+        else
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-            glFinish();
-        }
-
-        CGLUnlockContext(cglCtx);
     }
+
+    glFinish();
+    CGLUnlockContext(cglCtx);
 }
 
 @end

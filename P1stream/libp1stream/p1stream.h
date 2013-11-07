@@ -56,7 +56,6 @@ typedef enum _P1ObjectType P1ObjectType;
 typedef struct _P1ListNode P1ListNode;
 typedef struct _P1Notification P1Notification;
 typedef uint8_t P1VideoPreviewType;
-typedef struct _P1PreviewRawData P1PreviewRawData;
 
 // Callback signatures.
 typedef bool (*P1ConfigIterString)(P1Config *cfg, const char *key, const char *val, void *data);
@@ -519,8 +518,9 @@ struct _P1Video {
     // held. Use the p1_list_* functions for convenience.
     P1ListNode sources;
 
-    // Function that will be called for each frame.
-    // Note that this function is called on the clock thread.
+    // Function that will be called for each frame. The type of the data
+    // parameter depends on the (platform specific) preview callback type.
+    // Note that this function is called from a thread.
     P1VideoPreviewCallback preview_fn;
     void *preview_user_data;
     P1VideoPreviewType preview_type;
@@ -528,15 +528,6 @@ struct _P1Video {
 
 // Notify that the clock or sources have changed.
 #define p1_video_resync(_video) p1_object_resync((P1Object *) (_video))
-
-// The default preview type, where data is the below struct, allowing access to
-// the raw pixel data. It's not guaranteed the data is valid after the callback.
-#define P1_PREVIEW_RAW_DATA 0
-struct _P1PreviewRawData {
-    size_t width;
-    size_t height;
-    const uint8_t *data;
-};
 
 
 // Fixed stream connection element.

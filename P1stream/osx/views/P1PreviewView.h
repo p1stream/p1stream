@@ -6,6 +6,9 @@
     NSLayoutConstraint *_constraint;
 
     GLuint _tex;
+    GLsizei _width;
+    GLsizei _height;
+    IOSurfaceRef _surface;
 }
 
 @property (assign) P1Context *context;

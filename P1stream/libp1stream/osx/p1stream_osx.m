@@ -147,9 +147,12 @@ fail:
 
 void p1_video_destroy_platform(P1VideoFull *videof)
 {
+    P1Video *video = (P1Video *) videof;
     P1Object *videoobj = (P1Object *) videof;
     cl_int cl_err;
 
+    if (video->preview_fn && video->preview_type == P1_PREVIEW_IOSURFACE)
+        video->preview_fn(NULL, video->preview_user_data);
     CFRelease(videof->gl.surface);
 
     cl_err = clReleaseContext(videof->cl);

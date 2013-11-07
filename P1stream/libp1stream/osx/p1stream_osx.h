@@ -9,6 +9,9 @@
 #include <IOSurface/IOSurface.h>
 
 
+typedef struct _P1PreviewRawData P1PreviewRawData;
+
+
 // Convenience logging methods that build on p1_log.
 #ifdef __OBJC__
 void p1_log_ns_string(P1Object *obj, P1LogLevel level, NSString *str);
@@ -21,8 +24,18 @@ void p1_log_os_status(P1Object *obj, P1LogLevel level, OSStatus status);
 // Fast path for OS X video sources that can provide an IOSurface.
 bool p1_video_source_frame_iosurface(P1VideoSource *vsrc, IOSurfaceRef buffer);
 
-// Preview type where data is an IOSurfaceRef. The surface is not guaranteed
-// available after the callback, and has likely changed.
+// Preview callback type where data is the below struct, allowing access to
+// raw pixel data. Pixel data is in little-endian BGRA format. Data is not
+// should not be accessed after the callback returns.
+#define P1_PREVIEW_RAW_DATA 0
+struct _P1PreviewRawData {
+    size_t width;
+    size_t height;
+    const uint8_t *data;
+};
+
+// Preview callback type where data is an IOSurfaceRef. An additional callback
+// is made before the IOSurface is released, with data set to NULL.
 #define P1_PREVIEW_IOSURFACE 1
 
 
