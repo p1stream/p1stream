@@ -1,7 +1,7 @@
 ## P1stream
 
 This is early work on a utility to livestream your desktop and camera sources
-on a Mac. It will target OS X 10.8 (Mountain Lion) and later.
+on a Mac. It's compatible with 10.8 (Mountain Lion) and 10.9 (Mavericks).
 
 There's [a Trello board][todo] with a rough to-do list.
 
@@ -9,37 +9,30 @@ There's [a Trello board][todo] with a rough to-do list.
 
 ### Build
 
-The only requirements are Xcode 4 and OS X 10.8. If the project fails to
-build, please file an issue.
+The only requirement is Xcode 5. If the project fails to build, file an issue.
 
-Check out the code as follows:
+Check out the code and submodules, then build and run the ‘P1stream’ scheme.
 
+### CLI
+
+There's also a command-line interface. The steps to get it running are:
+
+    # Check out the code and submodules.
     git clone https://github.com/stephank/P1stream.git
     cd P1stream
     git submodule update --init
 
-When updating an existing clone, don't forget about submodules:
+    # Build the ‘P1stream-cli’ scheme.
+    xcodebuild -workspace P1stream.xcworkspace -scheme P1stream-cli
 
-    git pull
-    git submodule update
+    # Create a configuration, based on the sample.
+    cp ./P1stream/cli/sample_config.plist ./config.plist
+    $EDITOR ./config.plist
 
-Open the workspace, and build the ‘P1stream’ scheme. Or from the command line:
-
-    xcodebuild -workspace P1stream.xcworkspace -scheme P1stream
-
-The binary can be found in the ‘Products’ group of the project navigator. The
-filesystem location for this is somewhere in `~/Library/Developer/Xcode/DerivedData`.
-
-### Running
-
-Create a configuration using the sample plist file. The ‘P1stream’ scheme
-looks for a `config.plist` in the toplevel directory, so:
-
-    cp ./P1stream/osx/sample_config.plist ./config.plist
-
-Now simply run from the ‘P1stream’ scheme, or from the command-line:
-
+    # Run!
     path/to/P1stream ./config.plist
+
+### Testing
 
 You can get an excellent local test setup going with [nginx-rtmp-module].
 
