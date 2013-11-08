@@ -130,6 +130,7 @@ static GLuint buildProgram()
 {
     NSOpenGLPixelFormatAttribute attrs[] = {
         NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
+        NSOpenGLPFADoubleBuffer,
         0
     };
     NSOpenGLPixelFormat *pf = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
@@ -323,7 +324,7 @@ static void videoPreviewCallback(void *ptr, void *user_data)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
 
-    glFinish();
+    [ctx flushBuffer];
     CGLUnlockContext(cglCtx);
 }
 
