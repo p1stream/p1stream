@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0500"
+   LastUpgradeVersion = "0510"
    version = "1.3">
    <BuildAction
-      parallelizeBuildables = "NO"
+      parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
@@ -14,23 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F65C5AB2175952C800903D49"
-               BuildableName = "yasm"
-               BlueprintName = "yasm"
-               ReferencedContainer = "container:../yasm/yasm.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F644CB9417B6291D007934C3"
-               BuildableName = "P1stream-cli"
-               BlueprintName = "P1stream-cli"
+               BlueprintIdentifier = "F6EF13C31930E4EB00F6201E"
+               BuildableName = "P1stream.app"
+               BlueprintName = "P1stream"
                ReferencedContainer = "container:P1stream.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -42,13 +28,23 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F6EF13E21930E4EB00F6201E"
+               BuildableName = "P1streamTests.xctest"
+               BlueprintName = "P1streamTests"
+               ReferencedContainer = "container:P1stream.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F644CB9417B6291D007934C3"
-            BuildableName = "P1stream-cli"
-            BlueprintName = "P1stream-cli"
+            BlueprintIdentifier = "F6EF13C31930E4EB00F6201E"
+            BuildableName = "P1stream.app"
+            BlueprintName = "P1stream"
             ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,18 +61,12 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F644CB9417B6291D007934C3"
-            BuildableName = "P1stream-cli"
-            BlueprintName = "P1stream-cli"
+            BlueprintIdentifier = "F6EF13C31930E4EB00F6201E"
+            BuildableName = "P1stream.app"
+            BlueprintName = "P1stream"
             ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "$(PROJECT_DIR)/../config.plist"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -89,9 +79,9 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F644CB9417B6291D007934C3"
-            BuildableName = "P1stream-cli"
-            BlueprintName = "P1stream-cli"
+            BlueprintIdentifier = "F6EF13C31930E4EB00F6201E"
+            BuildableName = "P1stream.app"
+            BlueprintName = "P1stream"
             ReferencedContainer = "container:P1stream.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

@@ -5,6 +5,9 @@
       location = "container:"
       name = "Dependencies">
       <FileRef
+         location = "group:node/generated/node.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:yasm/yasm.xcodeproj">
       </FileRef>
       <FileRef
