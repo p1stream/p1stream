@@ -7,26 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F60484D118146BE60062F513 /* P1PrefsDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = F60484D018146BE60062F513 /* P1PrefsDictionary.m */; };
-		F61627AC18107C8300104254 /* P1InputAudioSourceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F61627AB18107C8300104254 /* P1InputAudioSourceViewController.m */; };
-		F61627AE18107D7F00104254 /* InputAudioSourceView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F61627AD18107D7F00104254 /* InputAudioSourceView.xib */; };
-		F61627B018108CEC00104254 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F61627AF18108CEC00104254 /* CoreAudio.framework */; };
-		F61A7746181BC62700549921 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F653422C17BFAF6600769680 /* AVFoundation.framework */; };
-		F61A7748181BCD0D00549921 /* DisplayVideoClockView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F61A7747181BCD0D00549921 /* DisplayVideoClockView.xib */; };
-		F61A774B181BCE2000549921 /* P1DisplayVideoClockViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F61A774A181BCE2000549921 /* P1DisplayVideoClockViewController.m */; };
-		F61A774E181BCEE500549921 /* P1Graphics.m in Sources */ = {isa = PBXBuildFile; fileRef = F61A774D181BCEE500549921 /* P1Graphics.m */; };
-		F61EC9DE1819BF5500FA6556 /* P1PluginModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F61EC9DD1819BF5500FA6556 /* P1PluginModel.m */; };
-		F62471ED17F6B42B003428F6 /* P1IsRunningTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */; };
-		F6357E0A181ACDA000B7E161 /* P1DisplayVideoSourceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6357E09181ACDA000B7E161 /* P1DisplayVideoSourceViewController.m */; };
-		F6357E0D181ACDAF00B7E161 /* P1CaptureVideoSourceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6357E0C181ACDAF00B7E161 /* P1CaptureVideoSourceViewController.m */; };
-		F6357E0F181ACEA300B7E161 /* DisplayVideoSourceView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6357E0E181ACEA300B7E161 /* DisplayVideoSourceView.xib */; };
-		F6357E11181ACEB900B7E161 /* CaptureVideoSourceView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6357E10181ACEB900B7E161 /* CaptureVideoSourceView.xib */; };
-		F6383C051804683B0026BF67 /* P1ConnectionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F6383C041804683B0026BF67 /* P1ConnectionModel.m */; };
-		F643655917E5A08800314053 /* P1MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F643655817E5A08800314053 /* P1MainWindowController.m */; };
-		F643655C17E5ADB900314053 /* P1PreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = F643655B17E5ADB900314053 /* P1PreviewView.m */; };
-		F65CD73317F4BEE100CD3FBC /* P1ContextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F65CD73217F4BEE100CD3FBC /* P1ContextModel.m */; };
-		F65CD73717F4C84D00CD3FBC /* P1ObjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F65CD73617F4C84D00CD3FBC /* P1ObjectModel.m */; };
-		F6768A1B17E65CD20088D1F9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6768A1917E65CC20088D1F9 /* QuartzCore.framework */; };
 		F682ABE717E4A616007DC0CF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F682ABE617E4A610007DC0CF /* main.m */; };
 		F682ABF217E4A68A007DC0CF /* p1stream.c in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA3B17C52DC1004DDFD6 /* p1stream.c */; };
 		F682ABF317E4A68A007DC0CF /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD417B6FE31002FE99E /* audio.c */; };
@@ -55,23 +35,6 @@
 		F682AC1117E4A79A007DC0CF /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F653422C17BFAF6600769680 /* AVFoundation.framework */; };
 		F682AC1217E4A79A007DC0CF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */; };
 		F682AC1817E4A87E007DC0CF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F682AC1617E4A875007DC0CF /* Foundation.framework */; };
-		F682AC2017E4C91C007DC0CF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F682AC1F17E4C91C007DC0CF /* Cocoa.framework */; };
-		F682AC2C17E4C91C007DC0CF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F682AC2B17E4C91C007DC0CF /* main.m */; };
-		F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */; };
-		F682AC3B17E4C942007DC0CF /* libp1stream.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */; };
-		F682AC3C17E4C94C007DC0CF /* P1stream-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = F644CB9517B6291D007934C3 /* P1stream-cli */; };
-		F682AC3D17E4C960007DC0CF /* libp1stream.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */; };
-		F68E3E0717E5E6DB00EAA38E /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */; };
-		F6AEC255180AE5C300EAAD43 /* P1AudioModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F6AEC254180AE5C300EAAD43 /* P1AudioModel.m */; };
-		F6AEC258180AE5CE00EAAD43 /* P1VideoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F6AEC257180AE5CE00EAAD43 /* P1VideoModel.m */; };
-		F6BDDD9917FDF1140078016F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6BDDD9817FDF1140078016F /* MainMenu.xib */; };
-		F6BDDD9B17FE08AA0078016F /* PrefsWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6BDDD9A17FE08AA0078016F /* PrefsWindow.xib */; };
-		F6BDDD9E17FE08DF0078016F /* P1PrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6BDDD9D17FE08DF0078016F /* P1PrefsWindowController.m */; };
-		F6D3151B181F19C800BE9D9D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077417B64C28009E6155 /* OpenGL.framework */; };
-		F6D3151C181F19D900BE9D9D /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077817B64CC4009E6155 /* IOSurface.framework */; };
-		F6E161F717FA061A00167048 /* LogWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6E161F617FA061A00167048 /* LogWindow.xib */; };
-		F6E161FA17FA13DB00167048 /* P1LogMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161F917FA13DB00167048 /* P1LogMessage.m */; };
-		F6E161FD17FA158E00167048 /* P1LogWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E161FC17FA158E00167048 /* P1LogWindowController.m */; };
 		F6F6077717B64C34009E6155 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077617B64C34009E6155 /* CoreFoundation.framework */; };
 /* End PBXBuildFile section */
 
@@ -85,39 +48,10 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		F682AC3A17E4C936007DC0CF /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 6;
-			files = (
-				F682AC3C17E4C94C007DC0CF /* P1stream-cli in CopyFiles */,
-				F682AC3B17E4C942007DC0CF /* libp1stream.dylib in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		F60484CF18146BE60062F513 /* P1PrefsDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1PrefsDictionary.h; sourceTree = "<group>"; };
-		F60484D018146BE60062F513 /* P1PrefsDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1PrefsDictionary.m; sourceTree = "<group>"; };
 		F607452517B637E8004EA730 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		F607452717B637EE004EA730 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		F607452917B637F2004EA730 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
-		F61627AA18107C8300104254 /* P1InputAudioSourceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1InputAudioSourceViewController.h; sourceTree = "<group>"; };
-		F61627AB18107C8300104254 /* P1InputAudioSourceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1InputAudioSourceViewController.m; sourceTree = "<group>"; };
-		F61627AD18107D7F00104254 /* InputAudioSourceView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InputAudioSourceView.xib; sourceTree = "<group>"; };
-		F61627AF18108CEC00104254 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
-		F61A7747181BCD0D00549921 /* DisplayVideoClockView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DisplayVideoClockView.xib; sourceTree = "<group>"; };
-		F61A7749181BCE2000549921 /* P1DisplayVideoClockViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1DisplayVideoClockViewController.h; sourceTree = "<group>"; };
-		F61A774A181BCE2000549921 /* P1DisplayVideoClockViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1DisplayVideoClockViewController.m; sourceTree = "<group>"; };
-		F61A774C181BCEE500549921 /* P1Graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1Graphics.h; sourceTree = "<group>"; };
-		F61A774D181BCEE500549921 /* P1Graphics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1Graphics.m; sourceTree = "<group>"; };
-		F61EC9DC1819BF5500FA6556 /* P1PluginModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1PluginModel.h; sourceTree = "<group>"; };
-		F61EC9DD1819BF5500FA6556 /* P1PluginModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1PluginModel.m; sourceTree = "<group>"; };
-		F62471EB17F6B42B003428F6 /* P1IsRunningTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1IsRunningTarget.h; sourceTree = "<group>"; };
-		F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1IsRunningTarget.m; sourceTree = "<group>"; };
 		F627211617BC330700A889B4 /* libFraunhoferAAC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFraunhoferAAC.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F62DBA2D17C52833004DDFD6 /* p1stream_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream_priv.h; sourceTree = "<group>"; };
 		F62DBA3B17C52DC1004DDFD6 /* p1stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p1stream.c; sourceTree = "<group>"; };
@@ -129,18 +63,6 @@
 		F62DBA4717C53360004DDFD6 /* sample_config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sample_config.plist; sourceTree = "<group>"; };
 		F62DBA4817C53360004DDFD6 /* video_capture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = video_capture.m; sourceTree = "<group>"; };
 		F62DBA4917C53360004DDFD6 /* video_display.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video_display.c; sourceTree = "<group>"; };
-		F6357E08181ACDA000B7E161 /* P1DisplayVideoSourceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1DisplayVideoSourceViewController.h; sourceTree = "<group>"; };
-		F6357E09181ACDA000B7E161 /* P1DisplayVideoSourceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1DisplayVideoSourceViewController.m; sourceTree = "<group>"; };
-		F6357E0B181ACDAF00B7E161 /* P1CaptureVideoSourceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1CaptureVideoSourceViewController.h; sourceTree = "<group>"; };
-		F6357E0C181ACDAF00B7E161 /* P1CaptureVideoSourceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1CaptureVideoSourceViewController.m; sourceTree = "<group>"; };
-		F6357E0E181ACEA300B7E161 /* DisplayVideoSourceView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DisplayVideoSourceView.xib; sourceTree = "<group>"; };
-		F6357E10181ACEB900B7E161 /* CaptureVideoSourceView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CaptureVideoSourceView.xib; sourceTree = "<group>"; };
-		F6383C031804683B0026BF67 /* P1ConnectionModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1ConnectionModel.h; sourceTree = "<group>"; };
-		F6383C041804683B0026BF67 /* P1ConnectionModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1ConnectionModel.m; sourceTree = "<group>"; };
-		F643655717E5A08800314053 /* P1MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1MainWindowController.h; sourceTree = "<group>"; };
-		F643655817E5A08800314053 /* P1MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1MainWindowController.m; sourceTree = "<group>"; };
-		F643655A17E5ADB900314053 /* P1PreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1PreviewView.h; sourceTree = "<group>"; };
-		F643655B17E5ADB900314053 /* P1PreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1PreviewView.m; sourceTree = "<group>"; };
 		F644CB9517B6291D007934C3 /* P1stream-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "P1stream-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F644CBA217B62C03007934C3 /* common-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
 		F644CBA317B62C03007934C3 /* common-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
@@ -148,41 +70,15 @@
 		F653422817BFAF5C00769680 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		F653422A17BFAF6200769680 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		F653422C17BFAF6600769680 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		F65CD73117F4BEE100CD3FBC /* P1ContextModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1ContextModel.h; sourceTree = "<group>"; };
-		F65CD73217F4BEE100CD3FBC /* P1ContextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1ContextModel.m; sourceTree = "<group>"; };
-		F65CD73517F4C84D00CD3FBC /* P1ObjectModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1ObjectModel.h; sourceTree = "<group>"; };
-		F65CD73617F4C84D00CD3FBC /* P1ObjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1ObjectModel.m; sourceTree = "<group>"; };
-		F6768A1917E65CC20088D1F9 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		F682ABE617E4A610007DC0CF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libp1stream.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F682AC0117E4A6DA007DC0CF /* librtmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = librtmp.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F682AC0217E4A6DA007DC0CF /* libx264.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libx264.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F682AC1617E4A875007DC0CF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		F682AC1E17E4C91C007DC0CF /* P1stream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = P1stream.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F682AC1F17E4C91C007DC0CF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		F682AC2717E4C91C007DC0CF /* P1stream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "P1stream-Info.plist"; sourceTree = "<group>"; };
-		F682AC2B17E4C91C007DC0CF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		F682AC2D17E4C91C007DC0CF /* P1stream-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "P1stream-Prefix.pch"; sourceTree = "<group>"; };
-		F682AC3117E4C91C007DC0CF /* P1AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = P1AppDelegate.h; sourceTree = "<group>"; };
-		F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = P1AppDelegate.m; sourceTree = "<group>"; };
-		F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		F6931F6817E6F75000B6B113 /* p1stream_osx_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream_osx_priv.h; sourceTree = "<group>"; };
 		F69E0C7817C423A3000EA1CD /* p1stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1stream.h; sourceTree = "<group>"; };
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
-		F6AEC253180AE5C300EAAD43 /* P1AudioModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1AudioModel.h; sourceTree = "<group>"; };
-		F6AEC254180AE5C300EAAD43 /* P1AudioModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1AudioModel.m; sourceTree = "<group>"; };
-		F6AEC256180AE5CE00EAAD43 /* P1VideoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1VideoModel.h; sourceTree = "<group>"; };
-		F6AEC257180AE5CE00EAAD43 /* P1VideoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1VideoModel.m; sourceTree = "<group>"; };
-		F6BDDD9817FDF1140078016F /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
-		F6BDDD9A17FE08AA0078016F /* PrefsWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PrefsWindow.xib; sourceTree = "<group>"; };
-		F6BDDD9C17FE08DF0078016F /* P1PrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1PrefsWindowController.h; sourceTree = "<group>"; };
-		F6BDDD9D17FE08DF0078016F /* P1PrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1PrefsWindowController.m; sourceTree = "<group>"; };
-		F6E161F617FA061A00167048 /* LogWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LogWindow.xib; sourceTree = "<group>"; };
-		F6E161F817FA13DB00167048 /* P1LogMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1LogMessage.h; sourceTree = "<group>"; };
-		F6E161F917FA13DB00167048 /* P1LogMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1LogMessage.m; sourceTree = "<group>"; };
-		F6E161FB17FA158E00167048 /* P1LogWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = P1LogWindowController.h; sourceTree = "<group>"; };
-		F6E161FC17FA158E00167048 /* P1LogWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = P1LogWindowController.m; sourceTree = "<group>"; };
 		F6F6076D17B6426F009E6155 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F6F6077117B6488C009E6155 /* video.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video.c; sourceTree = "<group>"; };
 		F6F6077417B64C28009E6155 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -225,36 +121,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F682AC1B17E4C91C007DC0CF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F682AC3D17E4C960007DC0CF /* libp1stream.dylib in Frameworks */,
-				F682AC2017E4C91C007DC0CF /* Cocoa.framework in Frameworks */,
-				F6D3151C181F19D900BE9D9D /* IOSurface.framework in Frameworks */,
-				F6768A1B17E65CD20088D1F9 /* QuartzCore.framework in Frameworks */,
-				F61627B018108CEC00104254 /* CoreAudio.framework in Frameworks */,
-				F6D3151B181F19C800BE9D9D /* OpenGL.framework in Frameworks */,
-				F61A7746181BC62700549921 /* AVFoundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		F60484CB181444990062F513 /* utils */ = {
-			isa = PBXGroup;
-			children = (
-				F62471EB17F6B42B003428F6 /* P1IsRunningTarget.h */,
-				F62471EC17F6B42B003428F6 /* P1IsRunningTarget.m */,
-				F60484CF18146BE60062F513 /* P1PrefsDictionary.h */,
-				F60484D018146BE60062F513 /* P1PrefsDictionary.m */,
-				F61A774C181BCEE500549921 /* P1Graphics.h */,
-				F61A774D181BCEE500549921 /* P1Graphics.m */,
-			);
-			path = utils;
-			sourceTree = "<group>";
-		};
 		F607450E17B6303F004EA730 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -269,14 +138,11 @@
 				F6F6077817B64CC4009E6155 /* IOSurface.framework */,
 				F6F6077417B64C28009E6155 /* OpenGL.framework */,
 				F6F6077A17B65F1F009E6155 /* OpenCL.framework */,
-				F61627AF18108CEC00104254 /* CoreAudio.framework */,
 				F6F6076D17B6426F009E6155 /* CoreGraphics.framework */,
 				F653422817BFAF5C00769680 /* CoreMedia.framework */,
 				F653422A17BFAF6200769680 /* CoreVideo.framework */,
 				F653422C17BFAF6600769680 /* AVFoundation.framework */,
 				F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */,
-				F682AC1F17E4C91C007DC0CF /* Cocoa.framework */,
-				F6768A1917E65CC20088D1F9 /* QuartzCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -301,7 +167,6 @@
 			children = (
 				F682ABE217E4A426007DC0CF /* libp1stream */,
 				F682ABE517E4A610007DC0CF /* cli */,
-				F682AC2517E4C91C007DC0CF /* osx */,
 				F607450E17B6303F004EA730 /* Frameworks */,
 				F644CB9617B6291D007934C3 /* Products */,
 				F644CBA117B62BE6007934C3 /* xcconfig */,
@@ -313,7 +178,6 @@
 			children = (
 				F644CB9517B6291D007934C3 /* P1stream-cli */,
 				F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */,
-				F682AC1E17E4C91C007DC0CF /* P1stream.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -326,27 +190,6 @@
 				F644CBA417B62C03007934C3 /* common.xcconfig */,
 			);
 			name = xcconfig;
-			sourceTree = "<group>";
-		};
-		F65CD73417F4C7AD00CD3FBC /* models */ = {
-			isa = PBXGroup;
-			children = (
-				F6E161F817FA13DB00167048 /* P1LogMessage.h */,
-				F6E161F917FA13DB00167048 /* P1LogMessage.m */,
-				F65CD73517F4C84D00CD3FBC /* P1ObjectModel.h */,
-				F65CD73617F4C84D00CD3FBC /* P1ObjectModel.m */,
-				F65CD73117F4BEE100CD3FBC /* P1ContextModel.h */,
-				F65CD73217F4BEE100CD3FBC /* P1ContextModel.m */,
-				F6AEC253180AE5C300EAAD43 /* P1AudioModel.h */,
-				F6AEC254180AE5C300EAAD43 /* P1AudioModel.m */,
-				F6AEC256180AE5CE00EAAD43 /* P1VideoModel.h */,
-				F6AEC257180AE5CE00EAAD43 /* P1VideoModel.m */,
-				F6383C031804683B0026BF67 /* P1ConnectionModel.h */,
-				F6383C041804683B0026BF67 /* P1ConnectionModel.m */,
-				F61EC9DC1819BF5500FA6556 /* P1PluginModel.h */,
-				F61EC9DD1819BF5500FA6556 /* P1PluginModel.m */,
-			);
-			path = models;
 			sourceTree = "<group>";
 		};
 		F682ABE217E4A426007DC0CF /* libp1stream */ = {
@@ -370,60 +213,6 @@
 				F62DBA4717C53360004DDFD6 /* sample_config.plist */,
 			);
 			path = cli;
-			sourceTree = "<group>";
-		};
-		F682AC2517E4C91C007DC0CF /* osx */ = {
-			isa = PBXGroup;
-			children = (
-				F65CD73417F4C7AD00CD3FBC /* models */,
-				F6BDDD9617FDF02A0078016F /* controllers */,
-				F6BDDD9717FDF0380078016F /* views */,
-				F60484CB181444990062F513 /* utils */,
-				F682AC2717E4C91C007DC0CF /* P1stream-Info.plist */,
-				F682AC2D17E4C91C007DC0CF /* P1stream-Prefix.pch */,
-				F682AC2B17E4C91C007DC0CF /* main.m */,
-			);
-			path = osx;
-			sourceTree = "<group>";
-		};
-		F6BDDD9617FDF02A0078016F /* controllers */ = {
-			isa = PBXGroup;
-			children = (
-				F682AC3117E4C91C007DC0CF /* P1AppDelegate.h */,
-				F682AC3217E4C91C007DC0CF /* P1AppDelegate.m */,
-				F643655717E5A08800314053 /* P1MainWindowController.h */,
-				F643655817E5A08800314053 /* P1MainWindowController.m */,
-				F6E161FB17FA158E00167048 /* P1LogWindowController.h */,
-				F6E161FC17FA158E00167048 /* P1LogWindowController.m */,
-				F6BDDD9C17FE08DF0078016F /* P1PrefsWindowController.h */,
-				F6BDDD9D17FE08DF0078016F /* P1PrefsWindowController.m */,
-				F61627AA18107C8300104254 /* P1InputAudioSourceViewController.h */,
-				F61627AB18107C8300104254 /* P1InputAudioSourceViewController.m */,
-				F61A7749181BCE2000549921 /* P1DisplayVideoClockViewController.h */,
-				F61A774A181BCE2000549921 /* P1DisplayVideoClockViewController.m */,
-				F6357E08181ACDA000B7E161 /* P1DisplayVideoSourceViewController.h */,
-				F6357E09181ACDA000B7E161 /* P1DisplayVideoSourceViewController.m */,
-				F6357E0B181ACDAF00B7E161 /* P1CaptureVideoSourceViewController.h */,
-				F6357E0C181ACDAF00B7E161 /* P1CaptureVideoSourceViewController.m */,
-			);
-			path = controllers;
-			sourceTree = "<group>";
-		};
-		F6BDDD9717FDF0380078016F /* views */ = {
-			isa = PBXGroup;
-			children = (
-				F6BDDD9817FDF1140078016F /* MainMenu.xib */,
-				F68E3E0617E5E6DB00EAA38E /* MainWindow.xib */,
-				F6E161F617FA061A00167048 /* LogWindow.xib */,
-				F6BDDD9A17FE08AA0078016F /* PrefsWindow.xib */,
-				F61627AD18107D7F00104254 /* InputAudioSourceView.xib */,
-				F61A7747181BCD0D00549921 /* DisplayVideoClockView.xib */,
-				F6357E0E181ACEA300B7E161 /* DisplayVideoSourceView.xib */,
-				F6357E10181ACEB900B7E161 /* CaptureVideoSourceView.xib */,
-				F643655A17E5ADB900314053 /* P1PreviewView.h */,
-				F643655B17E5ADB900314053 /* P1PreviewView.m */,
-			);
-			path = views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -462,24 +251,6 @@
 			productReference = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F682AC1D17E4C91C007DC0CF /* P1stream */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F682AC3717E4C91C007DC0CF /* Build configuration list for PBXNativeTarget "P1stream" */;
-			buildPhases = (
-				F682AC1A17E4C91C007DC0CF /* Sources */,
-				F682AC1B17E4C91C007DC0CF /* Frameworks */,
-				F682AC1C17E4C91C007DC0CF /* Resources */,
-				F682AC3A17E4C936007DC0CF /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = P1stream;
-			productName = P1stream;
-			productReference = F682AC1E17E4C91C007DC0CF /* P1stream.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -503,28 +274,9 @@
 			targets = (
 				F682ABEB17E4A65F007DC0CF /* p1stream */,
 				F644CB9417B6291D007934C3 /* P1stream-cli */,
-				F682AC1D17E4C91C007DC0CF /* P1stream */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		F682AC1C17E4C91C007DC0CF /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F6357E11181ACEB900B7E161 /* CaptureVideoSourceView.xib in Resources */,
-				F6BDDD9B17FE08AA0078016F /* PrefsWindow.xib in Resources */,
-				F6BDDD9917FDF1140078016F /* MainMenu.xib in Resources */,
-				F6E161F717FA061A00167048 /* LogWindow.xib in Resources */,
-				F61627AE18107D7F00104254 /* InputAudioSourceView.xib in Resources */,
-				F6357E0F181ACEA300B7E161 /* DisplayVideoSourceView.xib in Resources */,
-				F61A7748181BCD0D00549921 /* DisplayVideoClockView.xib in Resources */,
-				F68E3E0717E5E6DB00EAA38E /* MainWindow.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F644CB9117B6291D007934C3 /* Sources */ = {
@@ -549,33 +301,6 @@
 				F682ABFA17E4A68A007DC0CF /* clock_display.c in Sources */,
 				F682ABFB17E4A68A007DC0CF /* video_display.c in Sources */,
 				F682ABFC17E4A68A007DC0CF /* video_capture.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F682AC1A17E4C91C007DC0CF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F6AEC258180AE5CE00EAAD43 /* P1VideoModel.m in Sources */,
-				F61627AC18107C8300104254 /* P1InputAudioSourceViewController.m in Sources */,
-				F6357E0A181ACDA000B7E161 /* P1DisplayVideoSourceViewController.m in Sources */,
-				F6BDDD9E17FE08DF0078016F /* P1PrefsWindowController.m in Sources */,
-				F682AC2C17E4C91C007DC0CF /* main.m in Sources */,
-				F682AC3317E4C91C007DC0CF /* P1AppDelegate.m in Sources */,
-				F60484D118146BE60062F513 /* P1PrefsDictionary.m in Sources */,
-				F643655917E5A08800314053 /* P1MainWindowController.m in Sources */,
-				F6E161FD17FA158E00167048 /* P1LogWindowController.m in Sources */,
-				F61A774E181BCEE500549921 /* P1Graphics.m in Sources */,
-				F65CD73317F4BEE100CD3FBC /* P1ContextModel.m in Sources */,
-				F61EC9DE1819BF5500FA6556 /* P1PluginModel.m in Sources */,
-				F6E161FA17FA13DB00167048 /* P1LogMessage.m in Sources */,
-				F6383C051804683B0026BF67 /* P1ConnectionModel.m in Sources */,
-				F643655C17E5ADB900314053 /* P1PreviewView.m in Sources */,
-				F6357E0D181ACDAF00B7E161 /* P1CaptureVideoSourceViewController.m in Sources */,
-				F61A774B181BCE2000549921 /* P1DisplayVideoClockViewController.m in Sources */,
-				F6AEC255180AE5C300EAAD43 /* P1AudioModel.m in Sources */,
-				F62471ED17F6B42B003428F6 /* P1IsRunningTarget.m in Sources */,
-				F65CD73717F4C84D00CD3FBC /* P1ObjectModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -671,30 +396,6 @@
 			};
 			name = Release;
 		};
-		F682AC3817E4C91C007DC0CF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "osx/P1stream-Prefix.pch";
-				INFOPLIST_FILE = "osx/P1stream-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Debug;
-		};
-		F682AC3917E4C91C007DC0CF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "osx/P1stream-Prefix.pch";
-				INFOPLIST_FILE = "osx/P1stream-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -721,15 +422,6 @@
 			buildConfigurations = (
 				F682ABEE17E4A65F007DC0CF /* Debug */,
 				F682ABEF17E4A65F007DC0CF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F682AC3717E4C91C007DC0CF /* Build configuration list for PBXNativeTarget "P1stream" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F682AC3817E4C91C007DC0CF /* Debug */,
-				F682AC3917E4C91C007DC0CF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

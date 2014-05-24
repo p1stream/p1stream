@@ -1,1 +1,0 @@
-NSArray *P1GraphicsGetDisplays();
