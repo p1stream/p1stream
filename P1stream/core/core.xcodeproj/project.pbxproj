@@ -13,6 +13,9 @@
 /* Begin PBXFileReference section */
 		A7D90F40A89D8420F33A4C85 /* core.node */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = core.node; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC271AEC1683577742CC4C60 /* core.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = core.cc; sourceTree = "<group>"; };
+		F6C2F8CA19313E3500446578 /* common-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
+		F6C2F8CB19313E3500446578 /* common-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
+		F6C2F8CC19313E3500446578 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,7 +42,19 @@
 			children = (
 				594F59374BA7374059664625 /* Source */,
 				F72EAEAB0C276EA2CD970ABC /* Products */,
+				F6C2F8CD19313E3500446578 /* xcconfig */,
 			);
+			sourceTree = "<group>";
+		};
+		F6C2F8CD19313E3500446578 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				F6C2F8CA19313E3500446578 /* common-debug.xcconfig */,
+				F6C2F8CB19313E3500446578 /* common-release.xcconfig */,
+				F6C2F8CC19313E3500446578 /* common.xcconfig */,
+			);
+			name = xcconfig;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		F72EAEAB0C276EA2CD970ABC /* Products */ = {
@@ -76,6 +91,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = 4C650493AFEDDCC6E69C8CC5 /* Build configuration list for PBXProject "core" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -107,6 +123,7 @@
 /* Begin XCBuildConfiguration section */
 		6E6920ED8E0647812495A381 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6C2F8CA19313E3500446578 /* common-debug.xcconfig */;
 			buildSettings = {
 				INTERMEDIATE_DIR = "$(PROJECT_DERIVED_FILE_DIR)/$(CONFIGURATION)";
 				SHARED_INTERMEDIATE_DIR = "$(SYMROOT)/DerivedSources/$(CONFIGURATION)";
@@ -116,8 +133,6 @@
 		8EBF182685CD740E2DECB447 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
 				DYLIB_COMPATIBILITY_VERSION = "";
 				DYLIB_CURRENT_VERSION = "";
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -128,7 +143,6 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_PASCAL_STRINGS = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_DARWIN_USE_64_BIT_INODE=1",
 					_LARGEFILE_SOURCE,
@@ -143,13 +157,10 @@
 					../../node/node/deps/uv/include,
 					../../node/node/deps/v8/include,
 				);
-				LIBRARY_SEARCH_PATHS = "";
 				MACH_O_TYPE = mh_bundle;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "-fno-strict-aliasing";
 				OTHER_LDFLAGS = "-Wl,-search_paths_first";
 				PREBINDING = NO;
-				PRODUCT_NAME = core;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -162,6 +173,7 @@
 		};
 		F0FE067650554857AB1E411A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6C2F8CB19313E3500446578 /* common-release.xcconfig */;
 			buildSettings = {
 				INTERMEDIATE_DIR = "$(PROJECT_DERIVED_FILE_DIR)/$(CONFIGURATION)";
 				SHARED_INTERMEDIATE_DIR = "$(SYMROOT)/DerivedSources/$(CONFIGURATION)";
@@ -171,8 +183,6 @@
 		F70FA5B544CFB1F1F7485641 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
 				DYLIB_COMPATIBILITY_VERSION = "";
 				DYLIB_CURRENT_VERSION = "";
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -195,13 +205,10 @@
 					../../node/node/deps/uv/include,
 					../../node/node/deps/v8/include,
 				);
-				LIBRARY_SEARCH_PATHS = "";
 				MACH_O_TYPE = mh_bundle;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "-fno-strict-aliasing";
 				OTHER_LDFLAGS = "-Wl,-search_paths_first";
 				PREBINDING = NO;
-				PRODUCT_NAME = core;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
