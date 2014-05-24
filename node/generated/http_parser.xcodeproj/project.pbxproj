@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -160,12 +160,17 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = 2A732909C2A39816BD6A582A /* Build configuration list for PBXProject "http_parser" */;
 			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = FF4C8BF05B76FEDD45AF2F2A;
-			projectDirPath = "../node/deps/http_parser";
+			projectDirPath = ../node/deps/http_parser;
 			projectRoot = "";
 			targets = (
 				BE5B788D75C6141F22FC2EA7 /* All */,

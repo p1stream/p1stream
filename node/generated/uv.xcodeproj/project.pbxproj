@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -746,12 +746,17 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = 8C5C4470AE99DE5DE330356A /* Build configuration list for PBXProject "uv" */;
 			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 9441FFEF004DB5FD3E72FDB0;
-			projectDirPath = "../node/deps/uv";
+			projectDirPath = ../node/deps/uv;
 			projectRoot = "";
 			targets = (
 				1BF323A2B02F1EC68832C2CB /* All */,
@@ -993,10 +998,7 @@
 				);
 				GCC_THREADSAFE_STATICS = NO;
 				HEADER_SEARCH_PATHS = include;
-				LIBRARY_SEARCH_PATHS = (
-					"",
-					"$(SDKROOT)/System/Library/Frameworks",
-				);
+				LIBRARY_SEARCH_PATHS = " $(SDKROOT)/System/Library/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "-fno-strict-aliasing";
 				OTHER_LDFLAGS = "-Wl,-search_paths_first";
@@ -1034,10 +1036,7 @@
 				);
 				GCC_THREADSAFE_STATICS = NO;
 				HEADER_SEARCH_PATHS = include;
-				LIBRARY_SEARCH_PATHS = (
-					"",
-					"$(SDKROOT)/System/Library/Frameworks",
-				);
+				LIBRARY_SEARCH_PATHS = " $(SDKROOT)/System/Library/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "-fno-strict-aliasing";
 				OTHER_LDFLAGS = "-Wl,-search_paths_first";
@@ -1116,10 +1115,7 @@
 				);
 				GCC_THREADSAFE_STATICS = NO;
 				HEADER_SEARCH_PATHS = include;
-				LIBRARY_SEARCH_PATHS = (
-					"",
-					"$(SDKROOT)/System/Library/Frameworks",
-				);
+				LIBRARY_SEARCH_PATHS = " $(SDKROOT)/System/Library/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "-fno-strict-aliasing";
 				OTHER_LDFLAGS = "-Wl,-search_paths_first";
@@ -1161,10 +1157,7 @@
 				);
 				GCC_THREADSAFE_STATICS = NO;
 				HEADER_SEARCH_PATHS = include;
-				LIBRARY_SEARCH_PATHS = (
-					"",
-					"$(SDKROOT)/System/Library/Frameworks",
-				);
+				LIBRARY_SEARCH_PATHS = " $(SDKROOT)/System/Library/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "-fno-strict-aliasing";
 				OTHER_LDFLAGS = "-Wl,-search_paths_first";

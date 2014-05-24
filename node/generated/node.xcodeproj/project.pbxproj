@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -444,7 +444,7 @@
 		3D17D70DA25B9278175B4B6D /* zlib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = zlib.xcodeproj; path = ../generated/zlib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		3DC0E8F9BA80C311E52A535B /* -lm */ = {isa = PBXFileReference; lastKnownFileType = text; path = "-lm"; sourceTree = "<group>"; };
 		400EA1C975C2B8BAC2816691 /* node_dtrace.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = node_dtrace.cc; sourceTree = "<group>"; };
-		41A50CAA7D446DB8BF990F5E /* config.gypi */ = {isa = PBXFileReference; explicitFileType = sourcecode; path = ../generated/config.gypi; sourceTree = "<group>"; };
+		41A50CAA7D446DB8BF990F5E /* ../generated/config.gypi */ = {isa = PBXFileReference; explicitFileType = sourcecode; path = ../generated/config.gypi; sourceTree = "<group>"; };
 		42A3A7054EE38AC404297714 /* dns.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = dns.js; sourceTree = "<group>"; };
 		44D56DB8FEFF9B17C64633D2 /* v8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = v8.h; sourceTree = "<group>"; };
 		488CA38A57E4F166787884FA /* v8_typed_array.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = v8_typed_array.cc; sourceTree = "<group>"; };
@@ -478,7 +478,7 @@
 		91FA85BB34BE12FF0564A0A2 /* node_os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = node_os.h; sourceTree = "<group>"; };
 		922EE7AC19FB1872049D8894 /* url.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = url.js; sourceTree = "<group>"; };
 		9481A05119DE34DB0F947435 /* node_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = node_constants.h; sourceTree = "<group>"; };
-		97707446A3F2229D38775FAC /* config.gypi */ = {isa = PBXFileReference; explicitFileType = sourcecode; path = ../generated/config.gypi; sourceTree = "<group>"; };
+		97707446A3F2229D38775FAC /* ../generated/config.gypi */ = {isa = PBXFileReference; explicitFileType = sourcecode; path = ../generated/config.gypi; sourceTree = "<group>"; };
 		992DF01904CDA5F8D6141D3B /* -framework Carbon */ = {isa = PBXFileReference; lastKnownFileType = text; path = "-framework Carbon"; sourceTree = "<group>"; };
 		99B5685DF83C8A553461C91E /* node_string.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = node_string.cc; sourceTree = "<group>"; };
 		9A59C8413046BCCFAB1DE720 /* string_bytes.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = string_bytes.cc; sourceTree = "<group>"; };
@@ -565,7 +565,7 @@
 				6DD6F468F57071542E467990 /* lib */,
 				DCBCFB0ED6DEBAFB93261F60 /* src */,
 				C0774FC6B0265CA7475D10A3 /* common.gypi */,
-				41A50CAA7D446DB8BF990F5E /* config.gypi */,
+				41A50CAA7D446DB8BF990F5E /* ../generated/config.gypi */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -748,7 +748,7 @@
 			isa = PBXGroup;
 			children = (
 				F44B98ED0EEDF6AAD9DB30F3 /* common.gypi */,
-				97707446A3F2229D38775FAC /* config.gypi */,
+				97707446A3F2229D38775FAC /* ../generated/config.gypi */,
 				4F110DBDCC82EDE8B1977B54 /* node.gyp */,
 			);
 			name = Build;
@@ -875,12 +875,17 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = F084DB91829698CEF3A01CF6 /* Build configuration list for PBXProject "node" */;
 			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = A947C754231A50257B0E990C;
-			projectDirPath = "../node";
+			projectDirPath = ../node;
 			projectReferences = (
 				{
 					ProductGroup = 23D05744DF8C969252A6B218 /* Products */;
@@ -1372,10 +1377,7 @@
 					deps/cares/include,
 					deps/uv/include,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"",
-					"$(SDKROOT)/System/Library/Frameworks",
-				);
+				LIBRARY_SEARCH_PATHS = " $(SDKROOT)/System/Library/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "-fno-strict-aliasing";
 				OTHER_LDFLAGS = "-Wl,-search_paths_first";
@@ -1744,10 +1746,7 @@
 					deps/cares/include,
 					deps/uv/include,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"",
-					"$(SDKROOT)/System/Library/Frameworks",
-				);
+				LIBRARY_SEARCH_PATHS = " $(SDKROOT)/System/Library/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "-fno-strict-aliasing";
 				OTHER_LDFLAGS = "-Wl,-search_paths_first";

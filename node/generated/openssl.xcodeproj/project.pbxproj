@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -2588,12 +2588,17 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = B123F66A58A8DA3F19C2C034 /* Build configuration list for PBXProject "openssl" */;
 			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = DA9C07F6C49F45D436242DC2;
-			projectDirPath = "../node/deps/openssl";
+			projectDirPath = ../node/deps/openssl;
 			projectRoot = "";
 			targets = (
 				E53F90E6C0DABF34DAEBCE16 /* openssl */,

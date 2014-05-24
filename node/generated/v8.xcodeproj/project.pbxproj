@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -1467,12 +1467,17 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = EA7F4D171C484EB6F7E07684 /* Build configuration list for PBXProject "v8" */;
 			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 7C739ABB92EB0593B7300AD9;
-			projectDirPath = "../node/deps/v8/tools/gyp";
+			projectDirPath = ../node/deps/v8/tools/gyp;
 			projectRoot = "";
 			targets = (
 				CF5581986C050302BDF6DFD0 /* All */,

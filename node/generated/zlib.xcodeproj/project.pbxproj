@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -172,12 +172,17 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = ABFE510C7338BF4D880CA374 /* Build configuration list for PBXProject "zlib" */;
 			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 5087E363AC3B2E39AB4943B8;
-			projectDirPath = "../node/deps/zlib";
+			projectDirPath = ../node/deps/zlib;
 			projectRoot = "";
 			targets = (
 				CFE557433A4D2EFFDC01DBB4 /* zlib */,

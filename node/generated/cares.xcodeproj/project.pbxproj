@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -297,12 +297,17 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = 86D9F5A6832CD23A83178C21 /* Build configuration list for PBXProject "cares" */;
 			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = D4087EF953E7B1533458FF3F;
-			projectDirPath = "../node/deps/cares";
+			projectDirPath = ../node/deps/cares;
 			projectRoot = "";
 			targets = (
 				0A70FF350669B5C5B49C4871 /* cares */,
