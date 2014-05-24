@@ -2153,9 +2153,9 @@ static const x86_insn_info pclmulqdq_fixed_insn[] = {
 };
 
 static const x86_insn_info rdrand_insn[] = {
-   { SUF_Z, 0, CPU_RDRAND, 0, 0, {0, 0, 0}, 16, 0, 0, 2, {0x0F, 0xC7, 0}, 6, 1, 395 },
-    { SUF_Z, 0, CPU_386, CPU_RDRAND, 0, {0, 0, 0}, 32, 0, 0, 2, {0x0F, 0xC7, 0}, 6, 1, 26 },
-    { SUF_Z, ONLY_64, CPU_RDRAND, 0, 0, {0, 0, 0}, 64, 0, 0, 2, {0x0F, 0xC7, 0}, 6, 1, 30 }
+   { SUF_Z, 0, 0, 0, 0, {MOD_SpAdd, 0, 0}, 16, 0, 0, 2, {0x0F, 0xC7, 0}, 0, 1, 395 },
+    { SUF_Z, 0, CPU_386, 0, 0, {MOD_SpAdd, 0, 0}, 32, 0, 0, 2, {0x0F, 0xC7, 0}, 0, 1, 26 },
+    { SUF_Z, ONLY_64, 0, 0, 0, {MOD_SpAdd, 0, 0}, 64, 0, 0, 2, {0x0F, 0xC7, 0}, 0, 1, 30 }
 };
 
 static const x86_insn_info fs_gs_base_insn[] = {
@@ -2282,13 +2282,13 @@ static const x86_insn_info movbe_insn[] = {
 };
 
 static const x86_insn_info vex_gpr_ndd_rm_0F38_regext_insn[] = {
-   { SUF_W|SUF_Z, ONLY_AVX, CPU_386, 0, 0, {MOD_PreAdd, MOD_Op2Add, MOD_SpAdd}, 32, 0, 0xC0, 3, {0x0F, 0x38, 0x00}, 0, 2, 255 },
-    { SUF_L|SUF_Z, ONLY_64|ONLY_AVX, 0, 0, 0, {MOD_PreAdd, MOD_Op2Add, MOD_SpAdd}, 64, 0, 0xC0, 3, {0x0F, 0x38, 0x00}, 0, 2, 258 }
+   { SUF_L|SUF_Z, ONLY_AVX, CPU_386, 0, 0, {MOD_PreAdd, MOD_Op2Add, MOD_SpAdd}, 32, 0, 0xC0, 3, {0x0F, 0x38, 0x00}, 0, 2, 255 },
+    { SUF_Q|SUF_Z, ONLY_64|ONLY_AVX, 0, 0, 0, {MOD_PreAdd, MOD_Op2Add, MOD_SpAdd}, 64, 0, 0xC0, 3, {0x0F, 0x38, 0x00}, 0, 2, 258 }
 };
 
 static const x86_insn_info vex_gpr_reg_rm_0F_imm8_insn[] = {
-   { SUF_W|SUF_Z, ONLY_AVX, CPU_386, 0, 0, {MOD_PreAdd, MOD_Op1Add, MOD_Op2Add}, 32, 0, 0xC0, 3, {0x0F, 0x00, 0x00}, 0, 3, 134 },
-    { SUF_L|SUF_Z, ONLY_64|ONLY_AVX, 0, 0, 0, {MOD_PreAdd, MOD_Op1Add, MOD_Op2Add}, 64, 0, 0xC0, 3, {0x0F, 0x00, 0x00}, 0, 3, 137 }
+   { SUF_L|SUF_Z, ONLY_AVX, CPU_386, 0, 0, {MOD_PreAdd, MOD_Op1Add, MOD_Op2Add}, 32, 0, 0xC0, 3, {0x0F, 0x00, 0x00}, 0, 3, 134 },
+    { SUF_Q|SUF_Z, ONLY_64|ONLY_AVX, 0, 0, 0, {MOD_PreAdd, MOD_Op1Add, MOD_Op2Add}, 64, 0, 0xC0, 3, {0x0F, 0x00, 0x00}, 0, 3, 137 }
 };
 
 static const x86_insn_info vex_gpr_reg_nds_rm_0F_insn[] = {
@@ -2311,6 +2311,39 @@ static const x86_insn_info bextr_insn[] = {
 static const x86_insn_info invpcid_insn[] = {
    { SUF_Z, NOT_64, CPU_386, CPU_INVPCID, CPU_Priv, {0, 0, 0}, 0, 0, 0x66, 3, {0x0F, 0x38, 0x82}, 0, 2, 611 },
     { SUF_Z, ONLY_64, CPU_INVPCID, CPU_Priv, 0, {0, 0, 0}, 0, 64, 0x66, 3, {0x0F, 0x38, 0x82}, 0, 2, 613 }
+};
+
+static const x86_insn_info intel_SHA1MSG1_insn[] = {
+   { SUF_Z, 0, CPU_SHA, 0, 0, {0, 0, 0}, 0, 0, 0, 3, {0x0F, 0x38, 0xC9}, 0, 2, 155 }
+};
+
+static const x86_insn_info intel_SHA1MSG2_insn[] = {
+   { SUF_Z, 0, CPU_SHA, 0, 0, {0, 0, 0}, 0, 0, 0, 3, {0x0F, 0x38, 0xCA}, 0, 2, 155 }
+};
+
+static const x86_insn_info intel_SHA1NEXTE_insn[] = {
+   { SUF_Z, 0, CPU_SHA, 0, 0, {0, 0, 0}, 0, 0, 0, 3, {0x0F, 0x38, 0xC8}, 0, 2, 155 }
+};
+
+static const x86_insn_info intel_SHA1RNDS4_insn[] = {
+   { SUF_Z, 0, CPU_SHA, 0, 0, {0, 0, 0}, 0, 0, 0, 3, {0x0F, 0x3A, 0xCC}, 0, 3, 185 }
+};
+
+static const x86_insn_info intel_SHA256MSG1_insn[] = {
+   { SUF_Z, 0, CPU_SHA, 0, 0, {0, 0, 0}, 0, 0, 0, 3, {0x0F, 0x38, 0xCC}, 0, 2, 155 }
+};
+
+static const x86_insn_info intel_SHA256MSG2_insn[] = {
+   { SUF_Z, 0, CPU_SHA, 0, 0, {0, 0, 0}, 0, 0, 0, 3, {0x0F, 0x38, 0xCD}, 0, 2, 155 }
+};
+
+static const x86_insn_info intel_SHA256RNDS2_insn[] = {
+   { SUF_Z, 0, CPU_SHA, 0, 0, {0, 0, 0}, 0, 0, 0, 3, {0x0F, 0x38, 0xCB}, 0, 2, 64 }
+};
+
+static const x86_insn_info vex_gpr_ndd_rm_0F38_insn[] = {
+   { SUF_L|SUF_Z, 0, CPU_386, 0, 0, {MOD_PreAdd, MOD_Op2Add, 0}, 32, 0, 0x00, 3, {0x0F, 0x38, 0x00}, 0, 2, 101 },
+    { SUF_Q|SUF_Z, ONLY_64, 0, 0, 0, {MOD_PreAdd, MOD_Op2Add, 0}, 64, 0, 0x00, 3, {0x0F, 0x38, 0x00}, 0, 2, 104 }
 };
 
 static const x86_insn_info xop_gpr_reg_rm_09_insn[] = {
