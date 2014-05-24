@@ -112,47 +112,47 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		02B9DE07D742C4263D3D69B9 /* node_string.cc in Sources */ = {isa = PBXBuildFile; fileRef = 99B5685DF83C8A553461C91E /* node_string.cc */; };
+		0076883FE34A75FC84784F05 /* tty_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 34CB3787F5C8C935D98C7512 /* tty_wrap.cc */; };
+		04F2474B2BAE04B99877E764 /* node_crypto.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7B7A8A8D008192986A1F8BEA /* node_crypto.cc */; };
+		0795824194701D7F44656CD1 /* node_constants.cc in Sources */ = {isa = PBXBuildFile; fileRef = BECFFF560A2CCA85000AAD7D /* node_constants.cc */; };
+		0AC92D928240F50B3CCF595E /* node_http_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = C657CC6910AFAE983F4D5E24 /* node_http_parser.cc */; };
 		0D11B2B5A5495BB3CE22651C /* -framework Carbon in Frameworks */ = {isa = PBXBuildFile; fileRef = 992DF01904CDA5F8D6141D3B /* -framework Carbon */; };
-		15BE22AF74C69C755A23EB65 /* node_http_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = C657CC6910AFAE983F4D5E24 /* node_http_parser.cc */; };
-		1ACDFD793319DC923081CE7E /* v8_typed_array.cc in Sources */ = {isa = PBXBuildFile; fileRef = 488CA38A57E4F166787884FA /* v8_typed_array.cc */; };
+		1961409F6FD082F5A1610D48 /* cares_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = CC927FBEE5D666472B7C625D /* cares_wrap.cc */; };
 		1CCDEDF10633D5493AAA350B /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8B789191B6D4B173A55FC9C /* libcares.a */; };
-		231675EBCECBC2537E8B3EB0 /* string_bytes.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9A59C8413046BCCFAB1DE720 /* string_bytes.cc */; };
-		292DD5650FA845C7BFF6905A /* node_extensions.cc in Sources */ = {isa = PBXBuildFile; fileRef = 49C0E011B014FB4009003A92 /* node_extensions.cc */; };
+		24AE46B9D0FEC1D46B523798 /* string_bytes.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9A59C8413046BCCFAB1DE720 /* string_bytes.cc */; };
 		2CE37358BBC2AA90B5B2F3A9 /* libchrome_zlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DFD37406CF84D1EDDEB45DA /* libchrome_zlib.a */; };
-		2D677E73A5B2AF2AA362089D /* process_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 90FE910F3A458D51C0CBBF41 /* process_wrap.cc */; };
-		2FD0DD2E71B081E554354CE3 /* slab_allocator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1BF69CFD363156AD884F150E /* slab_allocator.cc */; };
 		3099A1AAEBFEB1D152FB01AD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74102FA263EBEAEC427069DB /* Foundation.framework */; };
-		35B7C45D01B71AD5D7596C43 /* pipe_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = D0531C1B3E5180EF2CC30835 /* pipe_wrap.cc */; };
-		37C18D76476BD02ABC910463 /* node_constants.cc in Sources */ = {isa = PBXBuildFile; fileRef = BECFFF560A2CCA85000AAD7D /* node_constants.cc */; };
-		419B2BA950D3EEB8B79A6F8C /* node_crypto.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7B7A8A8D008192986A1F8BEA /* node_crypto.cc */; };
-		4C6E99548FDA332E0EF015AA /* cares_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = CC927FBEE5D666472B7C625D /* cares_wrap.cc */; };
-		4CF1525086BB86E96AC820AF /* node.cc in Sources */ = {isa = PBXBuildFile; fileRef = 29CCF30303C7FB6B086BAA5F /* node.cc */; };
-		522CFBA00CAD4ACA17063B37 /* tty_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 34CB3787F5C8C935D98C7512 /* tty_wrap.cc */; };
-		5C62EA2B658FCC4247627D22 /* handle_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9CAE276D6FEE43A22C0E1BD8 /* handle_wrap.cc */; };
-		61D6EA891DAD3F2997E75425 /* node_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = D254193CAD1A70A2127275D3 /* node_main.cc */; };
+		58BA96E7ED7870322320EFD5 /* slab_allocator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1BF69CFD363156AD884F150E /* slab_allocator.cc */; };
+		62DA47A79490F7DADA047D4C /* signal_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 593FEF578405BE8E81862E63 /* signal_wrap.cc */; };
 		694D87FF438323E8B72DD73E /* libv8_snapshot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A753D4094CE350995B20B974 /* libv8_snapshot.a */; };
-		6B30058D19AFFFE47DBC2631 /* node_stat_watcher.cc in Sources */ = {isa = PBXBuildFile; fileRef = AD71E7F373EFE8D4BB76FF45 /* node_stat_watcher.cc */; };
-		74151B9829466B57DBDF9E9F /* node_zlib.cc in Sources */ = {isa = PBXBuildFile; fileRef = 28977CE1D902C5D60245C3FF /* node_zlib.cc */; };
-		834734E5A20BF0E4646C797A /* node_dtrace.cc in Sources */ = {isa = PBXBuildFile; fileRef = 400EA1C975C2B8BAC2816691 /* node_dtrace.cc */; };
-		858ED2DD607A669E106C9746 /* node_file.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3457D08AAE416743425BE76F /* node_file.cc */; };
+		6E2AC907F23AD79E8C0880D5 /* node_file.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3457D08AAE416743425BE76F /* node_file.cc */; };
+		74FA2BF928A7FCE0C5C4F832 /* udp_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 70654087EECAD45DC51A69BD /* udp_wrap.cc */; };
+		8284C901C8DD51CA6371FDAA /* node_extensions.cc in Sources */ = {isa = PBXBuildFile; fileRef = 49C0E011B014FB4009003A92 /* node_extensions.cc */; };
+		887D704A2086C9D7EE0808B7 /* tcp_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6C1491C5EF3F9208F38943AC /* tcp_wrap.cc */; };
+		89F6452CBFFDCDF67859F1F1 /* node_stat_watcher.cc in Sources */ = {isa = PBXBuildFile; fileRef = AD71E7F373EFE8D4BB76FF45 /* node_stat_watcher.cc */; };
 		8D2E62F10E34B4C4FF2C5C72 /* libuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA84780EAD83454EFF0FC852 /* libuv.a */; };
 		9074837F9B9C6B1264D2F6B6 /* libopenssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 781CA0292D7F4358F81D5B91 /* libopenssl.a */; };
 		9171ADC3D4492F2A38B2C42C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68E4A3041D77D119C1194D3E /* CoreServices.framework */; };
-		9513E35946ADC2B8E0B803D7 /* timer_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = C2E5BD30C9371C75469E674F /* timer_wrap.cc */; };
+		922C41FE4029E9E6F85B5015 /* pipe_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = D0531C1B3E5180EF2CC30835 /* pipe_wrap.cc */; };
+		95B8E3394FCA722FCD8044ED /* fs_event_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2AB26DB44816C515A21DF0EE /* fs_event_wrap.cc */; };
+		98E0450A9B8C3617BC228ED7 /* timer_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = C2E5BD30C9371C75469E674F /* timer_wrap.cc */; };
+		98E48219F8CD46FFA61A044C /* node_os.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0D266F621DC8A35AEA74FA2F /* node_os.cc */; };
 		A169F68F53D54937BCC18F08 /* -lm in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DC0E8F9BA80C311E52A535B /* -lm */; };
-		A70C6E9B329127509B4D6F3D /* fs_event_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2AB26DB44816C515A21DF0EE /* fs_event_wrap.cc */; };
-		A8666EF4B787E508252FD47C /* tcp_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6C1491C5EF3F9208F38943AC /* tcp_wrap.cc */; };
-		B1A42B634849CCF77CBC8D82 /* node_buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = BE58C97001AC871BCBAFE0E7 /* node_buffer.cc */; };
-		B29A81B6F731B7193FF6D48D /* stream_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1B2C055868A1421B53AFF59A /* stream_wrap.cc */; };
+		A7B230D6100D1BE4721662CD /* node_string.cc in Sources */ = {isa = PBXBuildFile; fileRef = 99B5685DF83C8A553461C91E /* node_string.cc */; };
 		B47D87C3F42C3149964AC6E0 /* libv8_base.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EE38BDE8E72C0E5A73DE9BF /* libv8_base.a */; };
-		C93B6289F8844C3CFFDFC483 /* udp_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 70654087EECAD45DC51A69BD /* udp_wrap.cc */; };
+		B903B4E9C9C3B346AA36261E /* v8_typed_array.cc in Sources */ = {isa = PBXBuildFile; fileRef = 488CA38A57E4F166787884FA /* v8_typed_array.cc */; };
+		BF110C7980F06147D38C5448 /* stream_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1B2C055868A1421B53AFF59A /* stream_wrap.cc */; };
+		C7F681080FE630026719E2DD /* node_dtrace.cc in Sources */ = {isa = PBXBuildFile; fileRef = 400EA1C975C2B8BAC2816691 /* node_dtrace.cc */; };
+		CF65E7EDBB5EA456B50E1F30 /* node_javascript.cc in Sources */ = {isa = PBXBuildFile; fileRef = C79C6B1AE4ABA126CCCEC84A /* node_javascript.cc */; };
 		DB113DC4E07B86F6BB8D2003 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32904F7AA9BA1D6B7F9AB2A /* ApplicationServices.framework */; };
-		E2EF104D56F4AFB6B23ADABB /* node_script.cc in Sources */ = {isa = PBXBuildFile; fileRef = CB5576395BA5E9ED50D6CCE3 /* node_script.cc */; };
+		DF5FBB988C6E251861E29EE7 /* node.cc in Sources */ = {isa = PBXBuildFile; fileRef = 29CCF30303C7FB6B086BAA5F /* node.cc */; };
+		E838E1CB8124B2C4BFE160BD /* node_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = D254193CAD1A70A2127275D3 /* node_main.cc */; };
 		ED8D2B9D26AD5358E087253A /* libhttp_parser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 292ED1CACE0785CC35BDF5F8 /* libhttp_parser.a */; };
-		EE800BA4E4D2ED057A09844F /* node_os.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0D266F621DC8A35AEA74FA2F /* node_os.cc */; };
-		F76E48D3F69F81B7DB39551D /* signal_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 593FEF578405BE8E81862E63 /* signal_wrap.cc */; };
-		FE299E00ED505086864FAA85 /* node_javascript.cc in Sources */ = {isa = PBXBuildFile; fileRef = C79C6B1AE4ABA126CCCEC84A /* node_javascript.cc */; };
+		EECA46A7F0B15AC8E99C7754 /* process_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 90FE910F3A458D51C0CBBF41 /* process_wrap.cc */; };
+		F509F82B30BB99D7E758699F /* handle_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9CAE276D6FEE43A22C0E1BD8 /* handle_wrap.cc */; };
+		F5ACA38379E4C62669AC63C6 /* node_zlib.cc in Sources */ = {isa = PBXBuildFile; fileRef = 28977CE1D902C5D60245C3FF /* node_zlib.cc */; };
+		FE0EF7307936B9C6210365DE /* node_script.cc in Sources */ = {isa = PBXBuildFile; fileRef = CB5576395BA5E9ED50D6CCE3 /* node_script.cc */; };
+		FFC78995A33774A4E1235BA5 /* node_buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = BE58C97001AC871BCBAFE0E7 /* node_buffer.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -482,6 +482,7 @@
 		992DF01904CDA5F8D6141D3B /* -framework Carbon */ = {isa = PBXFileReference; lastKnownFileType = text; path = "-framework Carbon"; sourceTree = "<group>"; };
 		99B5685DF83C8A553461C91E /* node_string.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = node_string.cc; sourceTree = "<group>"; };
 		9A59C8413046BCCFAB1DE720 /* string_bytes.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = string_bytes.cc; sourceTree = "<group>"; };
+		9BF5B97D6AD01F8BCB6E00DB /* _third_party_main.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = _third_party_main.js; sourceTree = "<group>"; };
 		9CAE276D6FEE43A22C0E1BD8 /* handle_wrap.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = handle_wrap.cc; sourceTree = "<group>"; };
 		A311C0337F19D971464E5822 /* path.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = path.js; sourceTree = "<group>"; };
 		A546A3BDD8D4CEB693B4A8F4 /* fs.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = fs.js; sourceTree = "<group>"; };
@@ -556,6 +557,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		007B3F17F42A484F74F81D85 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				76C32E0DFB5C627230CE2080 /* ../../P1stream/osx */,
+				87280AC8C2B4625790CCA092 /* deps */,
+				6DD6F468F57071542E467990 /* lib */,
+				DCBCFB0ED6DEBAFB93261F60 /* src */,
+				C0774FC6B0265CA7475D10A3 /* common.gypi */,
+				41A50CAA7D446DB8BF990F5E /* config.gypi */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
 		031358C5DAD8C400FFBC2529 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -588,18 +602,6 @@
 				C8B789191B6D4B173A55FC9C /* libcares.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		3131F7FA52CC9A2319AF73D2 /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				87280AC8C2B4625790CCA092 /* deps */,
-				6DD6F468F57071542E467990 /* lib */,
-				DCBCFB0ED6DEBAFB93261F60 /* src */,
-				C0774FC6B0265CA7475D10A3 /* common.gypi */,
-				41A50CAA7D446DB8BF990F5E /* config.gypi */,
-			);
-			name = Source;
 			sourceTree = "<group>";
 		};
 		6DD6F468F57071542E467990 /* lib */ = {
@@ -649,6 +651,14 @@
 			path = lib;
 			sourceTree = "<group>";
 		};
+		76C32E0DFB5C627230CE2080 /* ../../P1stream/osx */ = {
+			isa = PBXGroup;
+			children = (
+				9BF5B97D6AD01F8BCB6E00DB /* _third_party_main.js */,
+			);
+			path = ../../P1stream/osx;
+			sourceTree = "<group>";
+		};
 		85BB2770B382F1DFBA30C502 /* Projects */ = {
 			isa = PBXGroup;
 			children = (
@@ -694,7 +704,7 @@
 		A947C754231A50257B0E990C = {
 			isa = PBXGroup;
 			children = (
-				3131F7FA52CC9A2319AF73D2 /* Source */,
+				007B3F17F42A484F74F81D85 /* Source */,
 				AC3647CDB0BC24DE90E99F18 /* Intermediates */,
 				85BB2770B382F1DFBA30C502 /* Projects */,
 				8C08688C4E3F0F9AA7FC3960 /* Frameworks */,
@@ -1064,6 +1074,7 @@
 				lib/zlib.js,
 				../generated/config.gypi,
 				src/perfctr_macros.py,
+				../../P1stream/osx/_third_party_main.js,
 			);
 			name = "Action \"node_js2c\"";
 			outputPaths = (
@@ -1071,7 +1082,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "exec /usr/bin/python tools/js2c.py \"${SHARED_INTERMEDIATE_DIR}/node_natives.h\" src/node.js lib/_debugger.js lib/_linklist.js lib/assert.js lib/buffer.js lib/child_process.js lib/console.js lib/constants.js lib/crypto.js lib/cluster.js lib/dgram.js lib/dns.js lib/domain.js lib/events.js lib/freelist.js lib/fs.js lib/http.js lib/https.js lib/module.js lib/net.js lib/os.js lib/path.js lib/punycode.js lib/querystring.js lib/readline.js lib/repl.js lib/stream.js lib/_stream_readable.js lib/_stream_writable.js lib/_stream_duplex.js lib/_stream_transform.js lib/_stream_passthrough.js lib/string_decoder.js lib/sys.js lib/timers.js lib/tls.js lib/tty.js lib/url.js lib/util.js lib/vm.js lib/zlib.js ../generated/config.gypi src/perfctr_macros.py\nexit 1\n";
+			shellScript = "exec /usr/bin/python tools/js2c.py \"${SHARED_INTERMEDIATE_DIR}/node_natives.h\" src/node.js lib/_debugger.js lib/_linklist.js lib/assert.js lib/buffer.js lib/child_process.js lib/console.js lib/constants.js lib/crypto.js lib/cluster.js lib/dgram.js lib/dns.js lib/domain.js lib/events.js lib/freelist.js lib/fs.js lib/http.js lib/https.js lib/module.js lib/net.js lib/os.js lib/path.js lib/punycode.js lib/querystring.js lib/readline.js lib/repl.js lib/stream.js lib/_stream_readable.js lib/_stream_writable.js lib/_stream_duplex.js lib/_stream_transform.js lib/_stream_passthrough.js lib/string_decoder.js lib/sys.js lib/timers.js lib/tls.js lib/tty.js lib/url.js lib/util.js lib/vm.js lib/zlib.js ../generated/config.gypi src/perfctr_macros.py ../../P1stream/osx/_third_party_main.js\nexit 1\n";
 			showEnvVarsInLog = 0;
 		};
 		C30630C17EC75548B5890C79 /* Action "node_dtrace_header" */ = {
@@ -1115,35 +1126,35 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A70C6E9B329127509B4D6F3D /* fs_event_wrap.cc in Sources */,
-				4C6E99548FDA332E0EF015AA /* cares_wrap.cc in Sources */,
-				5C62EA2B658FCC4247627D22 /* handle_wrap.cc in Sources */,
-				4CF1525086BB86E96AC820AF /* node.cc in Sources */,
-				B1A42B634849CCF77CBC8D82 /* node_buffer.cc in Sources */,
-				37C18D76476BD02ABC910463 /* node_constants.cc in Sources */,
-				292DD5650FA845C7BFF6905A /* node_extensions.cc in Sources */,
-				858ED2DD607A669E106C9746 /* node_file.cc in Sources */,
-				15BE22AF74C69C755A23EB65 /* node_http_parser.cc in Sources */,
-				FE299E00ED505086864FAA85 /* node_javascript.cc in Sources */,
-				61D6EA891DAD3F2997E75425 /* node_main.cc in Sources */,
-				EE800BA4E4D2ED057A09844F /* node_os.cc in Sources */,
-				E2EF104D56F4AFB6B23ADABB /* node_script.cc in Sources */,
-				6B30058D19AFFFE47DBC2631 /* node_stat_watcher.cc in Sources */,
-				02B9DE07D742C4263D3D69B9 /* node_string.cc in Sources */,
-				74151B9829466B57DBDF9E9F /* node_zlib.cc in Sources */,
-				35B7C45D01B71AD5D7596C43 /* pipe_wrap.cc in Sources */,
-				F76E48D3F69F81B7DB39551D /* signal_wrap.cc in Sources */,
-				231675EBCECBC2537E8B3EB0 /* string_bytes.cc in Sources */,
-				B29A81B6F731B7193FF6D48D /* stream_wrap.cc in Sources */,
-				2FD0DD2E71B081E554354CE3 /* slab_allocator.cc in Sources */,
-				A8666EF4B787E508252FD47C /* tcp_wrap.cc in Sources */,
-				9513E35946ADC2B8E0B803D7 /* timer_wrap.cc in Sources */,
-				522CFBA00CAD4ACA17063B37 /* tty_wrap.cc in Sources */,
-				2D677E73A5B2AF2AA362089D /* process_wrap.cc in Sources */,
-				1ACDFD793319DC923081CE7E /* v8_typed_array.cc in Sources */,
-				C93B6289F8844C3CFFDFC483 /* udp_wrap.cc in Sources */,
-				419B2BA950D3EEB8B79A6F8C /* node_crypto.cc in Sources */,
-				834734E5A20BF0E4646C797A /* node_dtrace.cc in Sources */,
+				95B8E3394FCA722FCD8044ED /* fs_event_wrap.cc in Sources */,
+				1961409F6FD082F5A1610D48 /* cares_wrap.cc in Sources */,
+				F509F82B30BB99D7E758699F /* handle_wrap.cc in Sources */,
+				DF5FBB988C6E251861E29EE7 /* node.cc in Sources */,
+				FFC78995A33774A4E1235BA5 /* node_buffer.cc in Sources */,
+				0795824194701D7F44656CD1 /* node_constants.cc in Sources */,
+				8284C901C8DD51CA6371FDAA /* node_extensions.cc in Sources */,
+				6E2AC907F23AD79E8C0880D5 /* node_file.cc in Sources */,
+				0AC92D928240F50B3CCF595E /* node_http_parser.cc in Sources */,
+				CF65E7EDBB5EA456B50E1F30 /* node_javascript.cc in Sources */,
+				E838E1CB8124B2C4BFE160BD /* node_main.cc in Sources */,
+				98E48219F8CD46FFA61A044C /* node_os.cc in Sources */,
+				FE0EF7307936B9C6210365DE /* node_script.cc in Sources */,
+				89F6452CBFFDCDF67859F1F1 /* node_stat_watcher.cc in Sources */,
+				A7B230D6100D1BE4721662CD /* node_string.cc in Sources */,
+				F5ACA38379E4C62669AC63C6 /* node_zlib.cc in Sources */,
+				922C41FE4029E9E6F85B5015 /* pipe_wrap.cc in Sources */,
+				62DA47A79490F7DADA047D4C /* signal_wrap.cc in Sources */,
+				24AE46B9D0FEC1D46B523798 /* string_bytes.cc in Sources */,
+				BF110C7980F06147D38C5448 /* stream_wrap.cc in Sources */,
+				58BA96E7ED7870322320EFD5 /* slab_allocator.cc in Sources */,
+				887D704A2086C9D7EE0808B7 /* tcp_wrap.cc in Sources */,
+				98E0450A9B8C3617BC228ED7 /* timer_wrap.cc in Sources */,
+				0076883FE34A75FC84784F05 /* tty_wrap.cc in Sources */,
+				EECA46A7F0B15AC8E99C7754 /* process_wrap.cc in Sources */,
+				B903B4E9C9C3B346AA36261E /* v8_typed_array.cc in Sources */,
+				74FA2BF928A7FCE0C5C4F832 /* udp_wrap.cc in Sources */,
+				04F2474B2BAE04B99877E764 /* node_crypto.cc in Sources */,
+				C7F681080FE630026719E2DD /* node_dtrace.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

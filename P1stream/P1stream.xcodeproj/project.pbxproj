@@ -96,6 +96,7 @@
 		F6EF13C41930E4EB00F6201E /* P1stream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = P1stream.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6EF13CD1930E4EB00F6201E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F6EF14001930EA2F00F6201E /* node */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = node; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/node"; sourceTree = "<absolute>"; };
+		F6EF14021930EBB000F6201E /* _third_party_main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = _third_party_main.js; sourceTree = "<group>"; };
 		F6F6076D17B6426F009E6155 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F6F6077117B6488C009E6155 /* video.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video.c; sourceTree = "<group>"; };
 		F6F6077417B64C28009E6155 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -238,6 +239,7 @@
 			isa = PBXGroup;
 			children = (
 				F6EF13CD1930E4EB00F6201E /* Info.plist */,
+				F6EF14021930EBB000F6201E /* _third_party_main.js */,
 			);
 			path = osx;
 			sourceTree = "<group>";

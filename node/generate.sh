@@ -23,6 +23,24 @@ rm -fr node
 git clone --shared ../node/node
 cd node
 
+# Add our entry point to the node binary.
+patch -p1 <<EOF
+diff --git a/node.gyp b/node.gyp
+index f6586c4..d50ace7 100644
+--- a/node.gyp
++++ b/node.gyp
+@@ -373,6 +373,9 @@
+               ],
+             [ 'node_use_perfctr=="false"', {
+               'inputs': [ 'src/perfctr_macros.py' ]
++            }],
++            [ 'OS=="mac"', {
++              'inputs': [ '../../P1stream/osx/_third_party_main.js' ]
+             }]
+           ],
+               'action': [
+EOF
+
 # Fix build dependency problem in V8.
 patch -p1 <<EOF
 diff --git a/deps/v8/tools/gyp/v8.gyp b/deps/v8/tools/gyp/v8.gyp
