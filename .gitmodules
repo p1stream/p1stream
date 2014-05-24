@@ -10,3 +10,7 @@
 [submodule "aac/aac"]
 	path = aac/aac
 	url = https://android.googlesource.com/platform/external/aac
+[submodule "node/node"]
+	path = node/node
+	url = https://github.com/joyent/node.git
+	branch = v0.10.28-release
