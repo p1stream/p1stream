@@ -35,6 +35,7 @@
 		F682AC1117E4A79A007DC0CF /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F653422C17BFAF6600769680 /* AVFoundation.framework */; };
 		F682AC1217E4A79A007DC0CF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */; };
 		F6C2F8A61931096D00446578 /* index.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6C2F8A41931094E00446578 /* index.js */; };
+		F6C2F8C119313B3600446578 /* core.node in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6C2F8BF1931395000446578 /* core.node */; };
 		F6EF14011930EA2F00F6201E /* node in Copy Files */ = {isa = PBXBuildFile; fileRef = F6EF14001930EA2F00F6201E /* node */; };
 		F6F6077717B64C34009E6155 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077617B64C34009E6155 /* CoreFoundation.framework */; };
 /* End PBXBuildFile section */
@@ -47,6 +48,13 @@
 			remoteGlobalIDString = F682ABEB17E4A65F007DC0CF;
 			remoteInfo = p1stream;
 		};
+		F6C2F8BE1931395000446578 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F6C2F8BA1931395000446578 /* core.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7D90F40A89D8420F33A4C85;
+			remoteInfo = core;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -57,6 +65,16 @@
 			dstSubfolderSpec = 7;
 			files = (
 				F6C2F8A61931096D00446578 /* index.js in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6C2F8C019313AFB00446578 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = modules;
+			dstSubfolderSpec = 6;
+			files = (
+				F6C2F8C119313B3600446578 /* core.node in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +123,7 @@
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 		F6C2F8A41931094E00446578 /* index.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = index.js; sourceTree = "<group>"; };
+		F6C2F8BA1931395000446578 /* core.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = core.xcodeproj; path = core/core.xcodeproj; sourceTree = "<group>"; };
 		F6EF13C41930E4EB00F6201E /* P1stream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = P1stream.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6EF13CD1930E4EB00F6201E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F6EF14001930EA2F00F6201E /* node */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = node; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/node"; sourceTree = "<absolute>"; };
@@ -200,6 +219,7 @@
 				F682ABE517E4A610007DC0CF /* cli */,
 				F6EF13CB1930E4EB00F6201E /* osx */,
 				F607450E17B6303F004EA730 /* Frameworks */,
+				F6C2F8B91931392600446578 /* Native Modules */,
 				F644CB9617B6291D007934C3 /* Products */,
 				F644CBA117B62BE6007934C3 /* xcconfig */,
 			);
@@ -256,6 +276,22 @@
 			path = lib;
 			sourceTree = "<group>";
 		};
+		F6C2F8B91931392600446578 /* Native Modules */ = {
+			isa = PBXGroup;
+			children = (
+				F6C2F8BA1931395000446578 /* core.xcodeproj */,
+			);
+			name = "Native Modules";
+			sourceTree = "<group>";
+		};
+		F6C2F8BB1931395000446578 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F6C2F8BF1931395000446578 /* core.node */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F6EF13CB1930E4EB00F6201E /* osx */ = {
 			isa = PBXGroup;
 			children = (
@@ -307,6 +343,7 @@
 			buildPhases = (
 				F6EF13F71930E67000F6201E /* Copy Files */,
 				F6C2F8A51931096400446578 /* CopyFiles */,
+				F6C2F8C019313AFB00446578 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -337,6 +374,12 @@
 			mainGroup = F644CB8C17B6291D007934C3;
 			productRefGroup = F644CB9617B6291D007934C3 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F6C2F8BB1931395000446578 /* Products */;
+					ProjectRef = F6C2F8BA1931395000446578 /* core.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				F682ABEB17E4A65F007DC0CF /* p1stream */,
@@ -345,6 +388,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F6C2F8BF1931395000446578 /* core.node */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = core.node;
+			remoteRef = F6C2F8BE1931395000446578 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F644CB9117B6291D007934C3 /* Sources */ = {
