@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B4360BABDBA241F5BE5756E8 /* core.cc in Sources */ = {isa = PBXBuildFile; fileRef = CC271AEC1683577742CC4C60 /* core.cc */; };
+		B4360BABDBA241F5BE5756E8 /* video.cc in Sources */ = {isa = PBXBuildFile; fileRef = CC271AEC1683577742CC4C60 /* video.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A7D90F40A89D8420F33A4C85 /* core.node */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = core.node; sourceTree = BUILT_PRODUCTS_DIR; };
-		CC271AEC1683577742CC4C60 /* core.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = core.cc; sourceTree = "<group>"; };
+		A7D90F40A89D8420F33A4C85 /* video.node */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = video.node; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC271AEC1683577742CC4C60 /* video.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = video.cc; sourceTree = "<group>"; };
 		F6C2F8CA19313E3500446578 /* common-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
 		F6C2F8CB19313E3500446578 /* common-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
 		F6C2F8CC19313E3500446578 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
@@ -32,7 +32,7 @@
 		594F59374BA7374059664625 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CC271AEC1683577742CC4C60 /* core.cc */,
+				CC271AEC1683577742CC4C60 /* video.cc */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -60,7 +60,7 @@
 		F72EAEAB0C276EA2CD970ABC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A7D90F40A89D8420F33A4C85 /* core.node */,
+				A7D90F40A89D8420F33A4C85 /* video.node */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -68,9 +68,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1A1F63A1CA98ABA03DBFBA0F /* core */ = {
+		1A1F63A1CA98ABA03DBFBA0F /* video */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 480E35171CEA25066FA7109D /* Build configuration list for PBXNativeTarget "core" */;
+			buildConfigurationList = 480E35171CEA25066FA7109D /* Build configuration list for PBXNativeTarget "video" */;
 			buildPhases = (
 				9ED9BBC445EFFA15CE5780F8 /* Sources */,
 				2CB2C8872A8F2B36411DA774 /* Frameworks */,
@@ -79,9 +79,9 @@
 			);
 			dependencies = (
 			);
-			name = core;
-			productName = core;
-			productReference = A7D90F40A89D8420F33A4C85 /* core.node */;
+			name = video;
+			productName = video;
+			productReference = A7D90F40A89D8420F33A4C85 /* video.node */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -93,7 +93,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 0510;
 			};
-			buildConfigurationList = 4C650493AFEDDCC6E69C8CC5 /* Build configuration list for PBXProject "core" */;
+			buildConfigurationList = 4C650493AFEDDCC6E69C8CC5 /* Build configuration list for PBXProject "video" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
@@ -104,7 +104,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1A1F63A1CA98ABA03DBFBA0F /* core */,
+				1A1F63A1CA98ABA03DBFBA0F /* video */,
 			);
 		};
 /* End PBXProject section */
@@ -114,7 +114,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B4360BABDBA241F5BE5756E8 /* core.cc in Sources */,
+				B4360BABDBA241F5BE5756E8 /* video.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,7 +222,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		480E35171CEA25066FA7109D /* Build configuration list for PBXNativeTarget "core" */ = {
+		480E35171CEA25066FA7109D /* Build configuration list for PBXNativeTarget "video" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F70FA5B544CFB1F1F7485641 /* Release */,
@@ -231,7 +231,7 @@
 			defaultConfigurationIsVisible = 1;
 			defaultConfigurationName = Release;
 		};
-		4C650493AFEDDCC6E69C8CC5 /* Build configuration list for PBXProject "core" */ = {
+		4C650493AFEDDCC6E69C8CC5 /* Build configuration list for PBXProject "video" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F0FE067650554857AB1E411A /* Release */,

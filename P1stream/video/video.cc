@@ -9,4 +9,4 @@ init(Handle<Object> target)
 {
 }
 
-NODE_MODULE(core, init)
+NODE_MODULE(video, init)
