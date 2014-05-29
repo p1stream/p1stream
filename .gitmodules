@@ -1,13 +1,13 @@
-[submodule "yasm/yasm"]
-	path = yasm/yasm
+[submodule "deps/yasm/yasm"]
+	path = deps/yasm/yasm
 	url = git://github.com/yasm/yasm.git
-[submodule "x264/x264"]
-	path = x264/x264
+[submodule "deps/x264/x264"]
+	path = deps/x264/x264
 	url = git://git.videolan.org/x264.git
-[submodule "aac/aac"]
-	path = aac/aac
+[submodule "deps/aac/aac"]
+	path = deps/aac/aac
 	url = https://android.googlesource.com/platform/external/aac
-[submodule "node/node"]
-	path = node/node
+[submodule "deps/node/node"]
+	path = deps/node/node
 	url = https://github.com/joyent/node.git
 	branch = v0.10.28-release

@@ -1,11 +1,12 @@
-#ifndef p1_video_osx_h
-#define p1_video_osx_h
+#ifndef p1_video_mac_h
+#define p1_video_mac_h
 
 #include "video_base.h"
 
 namespace p1stream {
 
-class video_mixer_osx : public video_mixer_base {
+
+class video_mixer_mac : public video_mixer_base {
     CGLContextObj cglContext;
     IOSurfaceRef surface;
 
@@ -18,6 +19,7 @@ public:
     virtual void render_iosurface(IOSurfaceRef surface) final;
 };
 
+
 }  // namespace p1stream
 
-#endif  // p1_video_osx_h
+#endif  // p1_video_mac_h

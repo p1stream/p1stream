@@ -1,5 +1,5 @@
-#ifndef p1_video_types_h
-#define p1_video_types_h
+#ifndef p1_types_h
+#define p1_types_h
 
 #include <node.h>
 #include <functional>
@@ -141,4 +141,4 @@ inline lock_handle::~lock_handle()
 
 }  // namespace p1stream
 
-#endif  // p1_video_base_h
+#endif  // p1_types_h

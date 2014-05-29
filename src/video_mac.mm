@@ -1,10 +1,11 @@
-#include "video_osx.h"
+#include "video_mac.h"
 
 #include <Foundation/Foundation.h>
 
 namespace p1stream {
 
-Handle<Value> video_mixer_osx::platform_init(Handle<Object> params)
+
+Handle<Value> video_mixer_mac::platform_init(Handle<Object> params)
 {
     bool ok;
     CGLError cgl_err;
@@ -81,7 +82,7 @@ Handle<Value> video_mixer_osx::platform_init(Handle<Object> params)
     return ok ? Handle<Value>() : pop_last_error();
 }
 
-void video_mixer_osx::platform_destroy()
+void video_mixer_mac::platform_destroy()
 {
     if (surface != nullptr) {
         CFRelease(surface);
@@ -101,7 +102,7 @@ void video_mixer_osx::platform_destroy()
     }
 }
 
-bool video_mixer_osx::activate_gl()
+bool video_mixer_mac::activate_gl()
 {
     CGLError cgl_err = CGLSetCurrentContext(cglContext);
     if (cgl_err != kCGLNoError) {
@@ -111,7 +112,7 @@ bool video_mixer_osx::activate_gl()
     return true;
 }
 
-void video_mixer_osx::render_iosurface(IOSurfaceRef surface)
+void video_mixer_mac::render_iosurface(IOSurfaceRef surface)
 {
     GLsizei width = (GLsizei) IOSurfaceGetWidth(surface);
     GLsizei height = (GLsizei) IOSurfaceGetHeight(surface);
@@ -124,5 +125,6 @@ void video_mixer_osx::render_iosurface(IOSurfaceRef surface)
     else
         render_texture();
 }
+
 
 }  // namespace p1stream

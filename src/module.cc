@@ -1,8 +1,8 @@
 #if __APPLE__
 #   include <TargetConditionals.h>
 #   if TARGET_OS_MAC
-#       include "video_osx.h"
-#       define video_mixer_platform video_mixer_osx
+#       include "video_mac.h"
+#       define video_mixer_platform video_mixer_mac
 #   endif
 #endif
 #ifndef video_mixer_platform
