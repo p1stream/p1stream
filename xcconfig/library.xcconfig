@@ -1,2 +1,0 @@
-EXECUTABLE_PREFIX = lib;
-INSTALL_PATH = @executable_path;

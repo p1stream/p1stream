@@ -58,50 +58,8 @@ index 71cf366..0927b18 100644
 EOF
 
 # Run configure and make on specific files.
-./configure \
-    --without-npm \
-    --xcode
+./configure
 
 # Copy generated files.
 OUT="../../node/generated"
 cp config.gypi "$OUT/"
-find . -name '*.xcodeproj' -exec cp -r "{}" "$OUT/" \;
-cd "$OUT"
-
-# Rewrite paths in project files.
-sed -i '' \
-    -e 's|projectDirPath = ""|projectDirPath = "../node/deps/cares"|' \
-    -e 's|path = \(.*\)config.gypi|path = \1../generated/config.gypi|' \
-    "cares.xcodeproj/project.pbxproj"
-
-sed -i '' \
-    -e 's|projectDirPath = ""|projectDirPath = "../node/deps/http_parser"|' \
-    -e 's|path = \(.*\)config.gypi|path = \1../generated/config.gypi|' \
-    "http_parser.xcodeproj/project.pbxproj"
-
-sed -i '' \
-    -e 's|projectDirPath = ""|projectDirPath = "../node/deps/openssl"|' \
-    -e 's|path = \(.*\)config.gypi|path = \1../generated/config.gypi|' \
-    "openssl.xcodeproj/project.pbxproj"
-
-sed -i '' \
-    -e 's|projectDirPath = ""|projectDirPath = "../node/deps/uv"|' \
-    -e 's|path = \(.*\)config.gypi|path = \1../generated/config.gypi|' \
-    "uv.xcodeproj/project.pbxproj"
-
-sed -i '' \
-    -e 's|projectDirPath = ""|projectDirPath = "../node/deps/v8/tools/gyp"|' \
-    -e 's|path = \(.*\)config.gypi|path = \1../generated/config.gypi|' \
-    "v8.xcodeproj/project.pbxproj"
-
-sed -i '' \
-    -e 's|projectDirPath = ""|projectDirPath = "../node/deps/zlib"|' \
-    -e 's|path = \(.*\)config.gypi|path = \1../generated/config.gypi|' \
-    "zlib.xcodeproj/project.pbxproj"
-
-sed -i '' \
-    -e 's|projectDirPath = ""|projectDirPath = "../node"|' \
-    -e 's|path = \(.*\)config.gypi|path = \1../generated/config.gypi|' \
-    -e 's|\./config.gypi|../generated/config.gypi|g' \
-    -e 's|deps/.*/\(.*\.xcodeproj\)|../generated/\1|g' \
-    "node.xcodeproj/project.pbxproj"
