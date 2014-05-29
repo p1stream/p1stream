@@ -4,9 +4,6 @@
 [submodule "x264/x264"]
 	path = x264/x264
 	url = git://git.videolan.org/x264.git
-[submodule "rtmpdump/rtmpdump"]
-	path = rtmpdump/rtmpdump
-	url = git://git.ffmpeg.org/rtmpdump
 [submodule "aac/aac"]
 	path = aac/aac
 	url = https://android.googlesource.com/platform/external/aac
