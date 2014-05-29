@@ -7,53 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F682ABE717E4A616007DC0CF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F682ABE617E4A610007DC0CF /* main.m */; };
-		F682ABF217E4A68A007DC0CF /* p1stream.c in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA3B17C52DC1004DDFD6 /* p1stream.c */; };
-		F682ABF317E4A68A007DC0CF /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = F6A76AD417B6FE31002FE99E /* audio.c */; };
-		F682ABF417E4A68A007DC0CF /* video.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6077117B6488C009E6155 /* video.c */; };
-		F682ABF517E4A68A007DC0CF /* conn.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F6077E17B68E0B009E6155 /* conn.c */; };
-		F682ABF717E4A68A007DC0CF /* p1stream_osx.m in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA4517C53360004DDFD6 /* p1stream_osx.m */; };
-		F682ABF817E4A68A007DC0CF /* conf_plist.m in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA4417C53360004DDFD6 /* conf_plist.m */; };
-		F682ABF917E4A68A007DC0CF /* audio_input.c in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA4217C53360004DDFD6 /* audio_input.c */; };
-		F682ABFA17E4A68A007DC0CF /* clock_display.c in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA4317C53360004DDFD6 /* clock_display.c */; };
-		F682ABFB17E4A68A007DC0CF /* video_display.c in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA4917C53360004DDFD6 /* video_display.c */; };
-		F682ABFC17E4A68A007DC0CF /* video_capture.m in Sources */ = {isa = PBXBuildFile; fileRef = F62DBA4817C53360004DDFD6 /* video_capture.m */; };
-		F682ABFF17E4A6BB007DC0CF /* libp1stream.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */; };
-		F682AC0017E4A6DA007DC0CF /* libFraunhoferAAC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F627211617BC330700A889B4 /* libFraunhoferAAC.a */; };
-		F682AC0517E4A6F3007DC0CF /* librtmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F682AC0117E4A6DA007DC0CF /* librtmp.a */; };
-		F682AC0617E4A6F5007DC0CF /* libx264.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F682AC0217E4A6DA007DC0CF /* libx264.a */; };
-		F682AC0717E4A79A007DC0CF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F607452517B637E8004EA730 /* libz.dylib */; };
-		F682AC0817E4A79A007DC0CF /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F607452717B637EE004EA730 /* libcrypto.dylib */; };
-		F682AC0917E4A79A007DC0CF /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F607452917B637F2004EA730 /* libssl.dylib */; };
-		F682AC0A17E4A79A007DC0CF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077617B64C34009E6155 /* CoreFoundation.framework */; };
-		F682AC0B17E4A79A007DC0CF /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077817B64CC4009E6155 /* IOSurface.framework */; };
-		F682AC0C17E4A79A007DC0CF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077417B64C28009E6155 /* OpenGL.framework */; };
-		F682AC0D17E4A79A007DC0CF /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077A17B65F1F009E6155 /* OpenCL.framework */; };
-		F682AC0E17E4A79A007DC0CF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6076D17B6426F009E6155 /* CoreGraphics.framework */; };
-		F682AC0F17E4A79A007DC0CF /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F653422817BFAF5C00769680 /* CoreMedia.framework */; };
-		F682AC1017E4A79A007DC0CF /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F653422A17BFAF6200769680 /* CoreVideo.framework */; };
-		F682AC1117E4A79A007DC0CF /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F653422C17BFAF6600769680 /* AVFoundation.framework */; };
-		F682AC1217E4A79A007DC0CF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */; };
 		F6C2F8A61931096D00446578 /* index.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6C2F8A41931094E00446578 /* index.js */; };
-		F6C2F8C119313B3600446578 /* video.node in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6C2F8BF1931395000446578 /* video.node */; };
+		F6C2F8C119313B3600446578 /* native.node in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6C2F8BF1931395000446578 /* native.node */; };
 		F6EF14011930EA2F00F6201E /* node in Copy Files */ = {isa = PBXBuildFile; fileRef = F6EF14001930EA2F00F6201E /* node */; };
-		F6F6077717B64C34009E6155 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F6077617B64C34009E6155 /* CoreFoundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		F682ABFD17E4A6AC007DC0CF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F644CB8D17B6291D007934C3 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F682ABEB17E4A65F007DC0CF;
-			remoteInfo = p1stream;
-		};
 		F6C2F8BE1931395000446578 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = F6C2F8BA1931395000446578 /* video.xcodeproj */;
+			containerPortal = F6C2F8BA1931395000446578 /* native.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = A7D90F40A89D8420F33A4C85;
-			remoteInfo = video;
+			remoteInfo = native;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -74,7 +39,7 @@
 			dstPath = modules;
 			dstSubfolderSpec = 6;
 			files = (
-				F6C2F8C119313B3600446578 /* video.node in CopyFiles */,
+				F6C2F8C119313B3600446578 /* native.node in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,7 +71,6 @@
 		F62DBA4717C53360004DDFD6 /* sample_config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sample_config.plist; sourceTree = "<group>"; };
 		F62DBA4817C53360004DDFD6 /* video_capture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = video_capture.m; sourceTree = "<group>"; };
 		F62DBA4917C53360004DDFD6 /* video_display.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video_display.c; sourceTree = "<group>"; };
-		F644CB9517B6291D007934C3 /* P1stream-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "P1stream-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F644CBA217B62C03007934C3 /* common-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../xcconfig/common-debug.xcconfig"; sourceTree = "<group>"; };
 		F644CBA317B62C03007934C3 /* common-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../xcconfig/common-release.xcconfig"; sourceTree = "<group>"; };
 		F644CBA417B62C03007934C3 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../xcconfig/common.xcconfig; sourceTree = "<group>"; };
@@ -114,7 +78,6 @@
 		F653422A17BFAF6200769680 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		F653422C17BFAF6600769680 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		F682ABE617E4A610007DC0CF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libp1stream.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F682AC0117E4A6DA007DC0CF /* librtmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = librtmp.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F682AC0217E4A6DA007DC0CF /* libx264.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libx264.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F682AC1617E4A875007DC0CF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -123,7 +86,7 @@
 		F6A76ACE17B6F8D6002FE99E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F6A76AD417B6FE31002FE99E /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 		F6C2F8A41931094E00446578 /* index.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = index.js; sourceTree = "<group>"; };
-		F6C2F8BA1931395000446578 /* video.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = video.xcodeproj; path = video/video.xcodeproj; sourceTree = "<group>"; };
+		F6C2F8BA1931395000446578 /* native.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = native.xcodeproj; path = src/native.xcodeproj; sourceTree = "<group>"; };
 		F6EF13C41930E4EB00F6201E /* P1stream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = P1stream.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6EF13CD1930E4EB00F6201E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F6EF14001930EA2F00F6201E /* node */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = node; path = "/Users/shteef/Library/Developer/Xcode/DerivedData/P1stream-emicpmyxxprhrcbnzsnmdekevowb/Build/Products/Debug/node"; sourceTree = "<absolute>"; };
@@ -136,40 +99,6 @@
 		F6F6077A17B65F1F009E6155 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		F6F6077E17B68E0B009E6155 /* conn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conn.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		F644CB9217B6291D007934C3 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F682ABFF17E4A6BB007DC0CF /* libp1stream.dylib in Frameworks */,
-				F6F6077717B64C34009E6155 /* CoreFoundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F682ABE917E4A65F007DC0CF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F682AC0717E4A79A007DC0CF /* libz.dylib in Frameworks */,
-				F682AC0817E4A79A007DC0CF /* libcrypto.dylib in Frameworks */,
-				F682AC0917E4A79A007DC0CF /* libssl.dylib in Frameworks */,
-				F682AC0517E4A6F3007DC0CF /* librtmp.a in Frameworks */,
-				F682AC0017E4A6DA007DC0CF /* libFraunhoferAAC.a in Frameworks */,
-				F682AC0617E4A6F5007DC0CF /* libx264.a in Frameworks */,
-				F682AC0A17E4A79A007DC0CF /* CoreFoundation.framework in Frameworks */,
-				F682AC0B17E4A79A007DC0CF /* IOSurface.framework in Frameworks */,
-				F682AC0C17E4A79A007DC0CF /* OpenGL.framework in Frameworks */,
-				F682AC0D17E4A79A007DC0CF /* OpenCL.framework in Frameworks */,
-				F682AC0E17E4A79A007DC0CF /* CoreGraphics.framework in Frameworks */,
-				F682AC0F17E4A79A007DC0CF /* CoreMedia.framework in Frameworks */,
-				F682AC1017E4A79A007DC0CF /* CoreVideo.framework in Frameworks */,
-				F682AC1117E4A79A007DC0CF /* AVFoundation.framework in Frameworks */,
-				F682AC1217E4A79A007DC0CF /* AudioToolbox.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		F607450E17B6303F004EA730 /* Frameworks */ = {
@@ -214,12 +143,12 @@
 		F644CB8C17B6291D007934C3 = {
 			isa = PBXGroup;
 			children = (
+				F6C2F8BA1931395000446578 /* native.xcodeproj */,
 				F6C2F8A31931094000446578 /* lib */,
 				F682ABE217E4A426007DC0CF /* libp1stream */,
 				F682ABE517E4A610007DC0CF /* cli */,
 				F6EF13CB1930E4EB00F6201E /* osx */,
 				F607450E17B6303F004EA730 /* Frameworks */,
-				F6C2F8B91931392600446578 /* Native Modules */,
 				F644CB9617B6291D007934C3 /* Products */,
 				F644CBA117B62BE6007934C3 /* xcconfig */,
 			);
@@ -228,8 +157,6 @@
 		F644CB9617B6291D007934C3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F644CB9517B6291D007934C3 /* P1stream-cli */,
-				F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */,
 				F6EF13C41930E4EB00F6201E /* P1stream.app */,
 			);
 			name = Products;
@@ -276,18 +203,10 @@
 			path = lib;
 			sourceTree = "<group>";
 		};
-		F6C2F8B91931392600446578 /* Native Modules */ = {
-			isa = PBXGroup;
-			children = (
-				F6C2F8BA1931395000446578 /* video.xcodeproj */,
-			);
-			name = "Native Modules";
-			sourceTree = "<group>";
-		};
 		F6C2F8BB1931395000446578 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F6C2F8BF1931395000446578 /* video.node */,
+				F6C2F8BF1931395000446578 /* native.node */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -304,39 +223,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		F644CB9417B6291D007934C3 /* P1stream-cli */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F644CB9E17B6291D007934C3 /* Build configuration list for PBXNativeTarget "P1stream-cli" */;
-			buildPhases = (
-				F644CB9117B6291D007934C3 /* Sources */,
-				F644CB9217B6291D007934C3 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				F682ABFE17E4A6AC007DC0CF /* PBXTargetDependency */,
-			);
-			name = "P1stream-cli";
-			productName = P1stream;
-			productReference = F644CB9517B6291D007934C3 /* P1stream-cli */;
-			productType = "com.apple.product-type.tool";
-		};
-		F682ABEB17E4A65F007DC0CF /* p1stream */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F682ABED17E4A65F007DC0CF /* Build configuration list for PBXNativeTarget "p1stream" */;
-			buildPhases = (
-				F682ABE817E4A65F007DC0CF /* Sources */,
-				F682ABE917E4A65F007DC0CF /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = p1stream;
-			productName = p1stream;
-			productReference = F682ABEC17E4A65F007DC0CF /* libp1stream.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		F6EF13C31930E4EB00F6201E /* P1stream */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F6EF13F51930E4EB00F6201E /* Build configuration list for PBXNativeTarget "P1stream" */;
@@ -377,63 +263,25 @@
 			projectReferences = (
 				{
 					ProductGroup = F6C2F8BB1931395000446578 /* Products */;
-					ProjectRef = F6C2F8BA1931395000446578 /* video.xcodeproj */;
+					ProjectRef = F6C2F8BA1931395000446578 /* native.xcodeproj */;
 				},
 			);
 			projectRoot = "";
 			targets = (
-				F682ABEB17E4A65F007DC0CF /* p1stream */,
-				F644CB9417B6291D007934C3 /* P1stream-cli */,
 				F6EF13C31930E4EB00F6201E /* P1stream */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		F6C2F8BF1931395000446578 /* video.node */ = {
+		F6C2F8BF1931395000446578 /* native.node */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
-			path = video.node;
+			path = native.node;
 			remoteRef = F6C2F8BE1931395000446578 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
-
-/* Begin PBXSourcesBuildPhase section */
-		F644CB9117B6291D007934C3 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F682ABE717E4A616007DC0CF /* main.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F682ABE817E4A65F007DC0CF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F682ABF217E4A68A007DC0CF /* p1stream.c in Sources */,
-				F682ABF317E4A68A007DC0CF /* audio.c in Sources */,
-				F682ABF417E4A68A007DC0CF /* video.c in Sources */,
-				F682ABF517E4A68A007DC0CF /* conn.c in Sources */,
-				F682ABF717E4A68A007DC0CF /* p1stream_osx.m in Sources */,
-				F682ABF817E4A68A007DC0CF /* conf_plist.m in Sources */,
-				F682ABF917E4A68A007DC0CF /* audio_input.c in Sources */,
-				F682ABFA17E4A68A007DC0CF /* clock_display.c in Sources */,
-				F682ABFB17E4A68A007DC0CF /* video_display.c in Sources */,
-				F682ABFC17E4A68A007DC0CF /* video_capture.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		F682ABFE17E4A6AC007DC0CF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F682ABEB17E4A65F007DC0CF /* p1stream */;
-			targetProxy = F682ABFD17E4A6AC007DC0CF /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		F644CB9C17B6291D007934C3 /* Debug */ = {
@@ -485,38 +333,6 @@
 			};
 			name = Release;
 		};
-		F644CB9F17B6291D007934C3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		F644CBA017B6291D007934C3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		F682ABEE17E4A65F007DC0CF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@executable_path";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		F682ABEF17E4A65F007DC0CF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@executable_path";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		F6EF13F11930E4EB00F6201E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -545,24 +361,6 @@
 			buildConfigurations = (
 				F644CB9C17B6291D007934C3 /* Debug */,
 				F644CB9D17B6291D007934C3 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F644CB9E17B6291D007934C3 /* Build configuration list for PBXNativeTarget "P1stream-cli" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F644CB9F17B6291D007934C3 /* Debug */,
-				F644CBA017B6291D007934C3 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F682ABED17E4A65F007DC0CF /* Build configuration list for PBXNativeTarget "p1stream" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F682ABEE17E4A65F007DC0CF /* Debug */,
-				F682ABEF17E4A65F007DC0CF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
