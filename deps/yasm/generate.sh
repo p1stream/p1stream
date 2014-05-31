@@ -23,21 +23,10 @@ rm -fr yasm
 git clone --shared ../yasm/yasm
 cd yasm
 
-# Run configure and make on specific files.
-TOMAKE="
-    gas-token.c license.c module.c nasm-macros.c nasm-token.c nasm-version.c
-    x86cpu.c x86insn_gas.c x86insn_nasm.c x86insns.c x86regtmod.c"
-./autogen.sh \
-    --disable-nls
-make $TOMAKE
-
-# Strip modules we don't build.
-awk '! /yasm_(lc3b|cv8|stabs|dbg|bin|dosexe|elf|elf32|elf64|elfx32|coff|rdf|win32|win64|x64|xdf)_LTX/ { print $0 }' \
-    < module.c > _module.c
-mv _module.c module.c
+# Run configure.
+./autogen.sh --disable-nls
 
 # Copy generated files.
 OUT="../../yasm/generated"
 mkdir -p "${OUT}/"
 cp config.h libyasm-stdint.h "${OUT}/"
-cp $TOMAKE "${OUT}/"
