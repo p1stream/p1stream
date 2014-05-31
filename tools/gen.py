@@ -27,7 +27,7 @@ def outof(paths, ext='.o', outdir=None):
 
 # FraunhoferAAC
 aac_cflags = ' '.join(['-I %s' % d for d in glob('deps/aac/aac/*/include')])
-n.rule('aac_cc', 'clang -ansi -w %s -c -MMD -MF $out.d -o $out $in' % aac_cflags,
+n.rule('aac_cc', 'clang -std=c++98 -w %s -c -MMD -MF $out.d -o $out $in' % aac_cflags,
         deps='gcc', depfile='$out.d')
 
 aac_in = glob('deps/aac/aac/*/src/*.cpp')
@@ -37,7 +37,7 @@ for (i, o) in zip(aac_in, aac_out):
 
 
 # YASM
-n.rule('yasm_cc', 'clang -ansi -w -c -DHAVE_CONFIG_H -MMD -MF $out.d'
+n.rule('yasm_cc', 'clang -std=c89 -w -c -DHAVE_CONFIG_H -MMD -MF $out.d'
                        ' -I deps/yasm/generated'
                        ' -I deps/yasm/yasm'
                        ' -I out/deps/yasm'
@@ -222,4 +222,90 @@ yasm_implicit_x86id = indir('out/deps/yasm', [
 for (i, o) in zip(yasm_in_x86id, yasm_out_x86id):
     n.build(o, 'yasm_cc', i, implicit=yasm_implicit_x86id)
 
-n.build('out/yasm', 'link', yasm_out + yasm_out_x86id)
+yasm = 'out/yasm'
+n.build(yasm, 'link', yasm_out + yasm_out_x86id)
+
+
+# x264
+x264_cflags = '-I deps/x264/generated -I out/deps/x264/x264 -I deps/x264/x264'
+n.rule('x264_cc', 'clang -std=c99 -w %s -c -MMD -MF $out.d -o $out $in' % x264_cflags,
+        deps='gcc', depfile='$out.d')
+n.rule('x264_yasm', '%s -f macho64 -m amd64 -DPIC -DPREFIX'
+                      ' -DHAVE_ALIGNED_STACK=1 -DPIC -DHIGH_BIT_DEPTH=0'
+                      ' -DBIT_DEPTH=8 -DARCH_X86_64=1 -Ix264/common/x86'
+                      ' -o $out $in' % yasm)
+
+x264_cltostr = 'deps/x264/x264/tools/cltostr.pl'
+n.rule('x264_cltostr', 'cat $in | perl %s $var > $out' % x264_cltostr)
+
+x264_in_cl = glob('deps/x264/x264/common/opencl/*.cl')
+x264_out_cl = ['out/deps/x264/x264/common/oclobj.h']
+n.build(x264_out_cl, 'x264_cltostr', x264_in_cl,
+        implicit=x264_cltostr, variables={ 'var': 'x264_opencl_source' })
+
+x264_in_c = indir('deps/x264/x264', [
+    'common/mc.c',
+    'common/predict.c',
+    'common/pixel.c',
+    'common/macroblock.c',
+    'common/frame.c',
+    'common/dct.c',
+    'common/cpu.c',
+    'common/cabac.c',
+    'common/common.c',
+    'common/osdep.c',
+    'common/rectangle.c',
+    'common/set.c',
+    'common/quant.c',
+    'common/deblock.c',
+    'common/vlc.c',
+    'common/mvpred.c',
+    'common/bitstream.c',
+    'common/threadpool.c',
+    'common/x86/mc-c.c',
+    'common/x86/predict-c.c',
+    'encoder/analyse.c',
+    'encoder/me.c',
+    'encoder/ratecontrol.c',
+    'encoder/set.c',
+    'encoder/macroblock.c',
+    'encoder/cabac.c',
+    'encoder/cavlc.c',
+    'encoder/encoder.c',
+    'encoder/lookahead.c',
+    'encoder/slicetype-cl.c'
+])
+x264_out_c = outof(x264_in_c)
+for (i, o) in zip(x264_in_c, x264_out_c):
+    n.build(o, 'x264_cc', i)
+
+x264_in_opencl = [
+    'deps/x264/x264/common/opencl.c'
+]
+x264_out_opencl = outof(x264_in_opencl, '.h')
+for (i, o) in zip(x264_in_opencl, x264_out_opencl):
+    n.build(o, 'x264_cc', i, implicit=x264_out_cl)
+
+x264_in_asm = indir('deps/x264/x264/common/x86', [
+    'bitstream-a.asm',
+    'cabac-a.asm',
+    'const-a.asm',
+    'cpu-a.asm',
+    'dct-64.asm',
+    'dct-a.asm',
+    'deblock-a.asm',
+    'mc-a.asm',
+    'mc-a2.asm',
+    'pixel-a.asm',
+    'predict-a.asm',
+    'quant-a.asm',
+    'sad-a.asm',
+    'trellis-64.asm',
+    'x86inc.asm',
+    'x86util.asm',
+])
+x264_out_asm = outof(x264_in_asm)
+for (i, o) in zip(x264_in_asm, x264_out_asm):
+    n.build(o, 'x264_yasm', i, implicit=yasm)
+
+x264_out = x264_out_c + x264_out_opencl + x264_out_asm
