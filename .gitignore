@@ -1,5 +1,9 @@
-# User data.
-xcuserdata
+# Configure output
+/build.ninja
+*.pyc
+
+# Build output.
+/out
 
 # Scratch for generate.sh scripts.
 /_scratch
