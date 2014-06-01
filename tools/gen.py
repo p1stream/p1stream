@@ -8,7 +8,8 @@ n = Writer(sys.stdout)
 n.variable('builddir', 'out')
 n.rule('link', 'clang -arch x86_64 -mmacosx-version-min=10.8 -o $out $in')
 clang = 'clang -arch x86_64 -mmacosx-version-min=10.8 ' \
-        '-D__POSIX__ -D_DARWIN_USE_64_BIT_INODE=1 ' \
+        '-D__POSIX__ -D_GNU_SOURCE -D_LARGEFILE_SOURCE ' \
+        '-D_DARWIN_USE_64_BIT_INODE=1 -D_FILE_OFFSET_BITS=64 ' \
         '-fno-exceptions -fno-rtti -fno-threadsafe-statics ' \
         '-fno-strict-aliasing'
 
@@ -331,8 +332,23 @@ for (i, o) in zip(zlib_in, zlib_out):
     n.build(o, 'zlib_cc', i)
 
 
-# node.js
+# c-ares
 cares_cflags = '-I deps/node/node/deps/cares/include'
+n.rule('cares_cc', '%s -std=gnu89 -w %s -DCARES_STATICLIB -DHAVE_CONFIG_H '
+                   '-I deps/node/node/deps/cares/config/darwin '
+                   '-c -MMD -MF $out.d -o $out $in' % (clang, cares_cflags),
+        deps='gcc', depfile='$out.d')
+
+cares_in = glob('deps/node/node/deps/cares/src/*.c')
+cares_in.remove('deps/node/node/deps/cares/src/windows_port.c')
+cares_in.remove('deps/node/node/deps/cares/src/ares_getenv.c')
+cares_in.remove('deps/node/node/deps/cares/src/ares_platform.c')
+cares_out = outof(cares_in)
+for (i, o) in zip(cares_in, cares_out):
+    n.build(o, 'cares_cc', i)
+
+
+# node.js
 uv_cflags = '-I deps/node/node/deps/uv/include'
 v8_cflags = '-I deps/node/node/deps/v8/include'
 openssl_cflags = '-I deps/node/node/deps/openssl/openssl/include'
@@ -393,4 +409,4 @@ node_in = indir('deps/node/node/src', [
 node_out = outof(node_in)
 for (i, o) in zip(node_in, node_out):
     n.build(o, 'node_cc', i)
-n.build('out/node', 'link', node_out + node_out_js + zlib_out)
+n.build('out/node', 'link', node_out + node_out_js + zlib_out + cares_out)
