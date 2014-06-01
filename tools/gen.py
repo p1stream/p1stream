@@ -6,7 +6,11 @@ from ninja_syntax import Writer
 n = Writer(sys.stdout)
 
 n.variable('builddir', 'out')
-n.rule('link', 'clang -o $out $in')
+n.rule('link', 'clang -arch x86_64 -mmacosx-version-min=10.8 -o $out $in')
+clang = 'clang -arch x86_64 -mmacosx-version-min=10.8 ' \
+        '-D__POSIX__ -D_DARWIN_USE_64_BIT_INODE=1 ' \
+        '-fno-exceptions -fno-rtti -fno-threadsafe-statics ' \
+        '-fno-strict-aliasing'
 
 def indir(name, paths):
     return ['%s/%s' % (name, path) for path in paths]
@@ -27,7 +31,7 @@ def outof(paths, ext='.o', outdir=None):
 
 # FraunhoferAAC
 aac_cflags = ' '.join(['-I %s' % d for d in glob('deps/aac/aac/*/include')])
-n.rule('aac_cc', 'clang -std=c++98 -w %s -c -MMD -MF $out.d -o $out $in' % aac_cflags,
+n.rule('aac_cc', '%s -std=c++98 -w %s -c -MMD -MF $out.d -o $out $in' % (clang, aac_cflags),
         deps='gcc', depfile='$out.d')
 
 aac_in = glob('deps/aac/aac/*/src/*.cpp')
@@ -37,11 +41,9 @@ for (i, o) in zip(aac_in, aac_out):
 
 
 # YASM
-n.rule('yasm_cc', 'clang -std=c89 -w -c -DHAVE_CONFIG_H -MMD -MF $out.d'
-                       ' -I deps/yasm/generated'
-                       ' -I deps/yasm/yasm'
-                       ' -I out/deps/yasm'
-                       ' -o $out $in',
+n.rule('yasm_cc', '%s -std=c89 -w -c -DHAVE_CONFIG_H -MMD -MF $out.d'
+                  ' -I deps/yasm/generated -I deps/yasm/yasm'
+                  ' -I out/deps/yasm -o $out $in' % clang,
         deps='gcc', depfile='$out.d')
 
 yasm_genmodule = 'deps/yasm/genmodule.py'
@@ -228,8 +230,8 @@ n.build(yasm, 'link', yasm_out + yasm_out_x86id)
 
 # x264
 x264_cflags = '-I deps/x264/generated -I out/deps/x264/x264 -I deps/x264/x264'
-n.rule('x264_cc', 'clang -std=c99 -w %s -c -MMD -MF $out.d -o $out $in' % x264_cflags,
-        deps='gcc', depfile='$out.d')
+n.rule('x264_cc', '%s -std=c99 -w %s -c -MMD -MF $out.d -o $out $in' % \
+        (clang, x264_cflags), deps='gcc', depfile='$out.d')
 n.rule('x264_yasm', '%s -f macho64 -m amd64 -DPIC -DPREFIX'
                       ' -DHAVE_ALIGNED_STACK=1 -DPIC -DHIGH_BIT_DEPTH=0'
                       ' -DBIT_DEPTH=8 -DARCH_X86_64=1 -Ix264/common/x86'
@@ -309,3 +311,69 @@ for (i, o) in zip(x264_in_asm, x264_out_asm):
     n.build(o, 'x264_yasm', i, implicit=yasm)
 
 x264_out = x264_out_c + x264_out_opencl + x264_out_asm
+
+
+# node.js
+cares_cflags = '-I deps/node/node/deps/cares/include'
+uv_cflags = '-I deps/node/node/deps/uv/include'
+v8_cflags = '-I deps/node/node/deps/v8/include'
+openssl_cflags = '-I deps/node/node/deps/openssl/openssl/include'
+http_parser_cflags = '-I deps/node/node/deps/http_parser'
+zlib_cflags = '-I deps/node/node/deps/zlib'
+node_cflags = '-I deps/node/node/src %s %s %s %s %s %s' % \
+    (cares_cflags, uv_cflags, v8_cflags, openssl_cflags, http_parser_cflags, zlib_cflags)
+n.rule('node_cc', '%s -std=c++11 -w %s -I out/deps/node '
+                  '-DNODE_WANT_INTERNALS=1 -DARCH=\\"x64\\" -DNODE_TAG=\\"\\" '
+                  '-DHAVE_OPENSSL=1 -DPLATFORM=\\"darwin\\" '
+                  '-c -MMD -MF $out.d -o $out $in' % (clang, node_cflags),
+        deps='gcc', depfile='$out.d')
+
+node_js2c = 'deps/node/node/tools/js2c.py'
+n.rule('node_js2c', '%s $out $in' % node_js2c)
+
+node_in_lib = glob('deps/node/node/lib/*.js') + \
+             glob('deps/node/node/src/*.js') + \
+             ['deps/node/config.gypi'] + \
+             glob('mac/*.js')
+node_out_lib = ['out/deps/node/node_natives.h']
+n.build(node_out_lib, 'node_js2c', node_in_lib, implicit=node_js2c)
+
+node_in_js = [
+    'deps/node/node/src/node_javascript.cc'
+]
+node_out_js = outof(node_in_js)
+n.build(node_out_js, 'node_cc', node_in_js, implicit=node_out_lib)
+
+node_in = indir('deps/node/node/src', [
+    'fs_event_wrap.cc',
+    'cares_wrap.cc',
+    'handle_wrap.cc',
+    'node.cc',
+    'node_buffer.cc',
+    'node_constants.cc',
+    'node_extensions.cc',
+    'node_file.cc',
+    'node_http_parser.cc',
+    'node_main.cc',
+    'node_os.cc',
+    'node_script.cc',
+    'node_stat_watcher.cc',
+    'node_string.cc',
+    'node_zlib.cc',
+    'pipe_wrap.cc',
+    'signal_wrap.cc',
+    'string_bytes.cc',
+    'stream_wrap.cc',
+    'slab_allocator.cc',
+    'tcp_wrap.cc',
+    'timer_wrap.cc',
+    'tty_wrap.cc',
+    'process_wrap.cc',
+    'v8_typed_array.cc',
+    'udp_wrap.cc',
+    'node_crypto.cc'
+])
+node_out = outof(node_in)
+for (i, o) in zip(node_in, node_out):
+    n.build(o, 'node_cc', i)
+n.build('out/node', 'link', node_out + node_out_js)
