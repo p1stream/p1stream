@@ -13,6 +13,11 @@ clang = 'clang -arch x86_64 -mmacosx-version-min=10.8 -O2 ' \
         '-fno-exceptions -fno-rtti -fno-threadsafe-statics ' \
         '-fno-strict-aliasing'
 
+def removeMany(paths, remove):
+    for x in remove:
+        if x in paths:
+            paths.remove(x)
+
 def indir(name, paths):
     return ['%s/%s' % (name, path) for path in paths]
 
@@ -340,9 +345,11 @@ n.rule('cares_cc', '%s -std=gnu89 -w %s -DCARES_STATICLIB -DHAVE_CONFIG_H '
         deps='gcc', depfile='$out.d')
 
 cares_in = glob('deps/node/node/deps/cares/src/*.c')
-cares_in.remove('deps/node/node/deps/cares/src/windows_port.c')
-cares_in.remove('deps/node/node/deps/cares/src/ares_getenv.c')
-cares_in.remove('deps/node/node/deps/cares/src/ares_platform.c')
+removeMany(cares_in, indir('deps/node/node/deps/cares/src', [
+    'windows_port.c',
+    'ares_getenv.c',
+    'ares_platform.c'
+]))
 cares_out = outof(cares_in)
 for (i, o) in zip(cares_in, cares_out):
     n.build(o, 'cares_cc', i)
