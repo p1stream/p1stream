@@ -7,8 +7,8 @@ n = Writer(sys.stdout)
 
 n.variable('builddir', 'out')
 n.rule('link', 'clang++ $ldflags -mmacosx-version-min=10.8'
-                      ' -arch x86_64 -o $out $in')
-clang = 'clang -arch x86_64 -mmacosx-version-min=10.8 -O3 ' \
+                      ' -stdlib=libc++ -arch x86_64 -o $out $in')
+clang = 'clang -mmacosx-version-min=10.8 -stdlib=libc++ -arch x86_64 -O3 ' \
         '-DNDEBUG -D__POSIX__ -D_GNU_SOURCE -D_LARGEFILE_SOURCE ' \
         '-D_DARWIN_USE_64_BIT_INODE=1 -D_FILE_OFFSET_BITS=64 ' \
         '-fno-exceptions -fno-rtti -fno-threadsafe-statics ' \
@@ -291,7 +291,7 @@ for (i, o) in zip(x264_in_c, x264_out_c):
 x264_in_opencl = [
     'deps/x264/x264/common/opencl.c'
 ]
-x264_out_opencl = outof(x264_in_opencl, '.h')
+x264_out_opencl = outof(x264_in_opencl)
 for (i, o) in zip(x264_in_opencl, x264_out_opencl):
     n.build(o, 'x264_cc', i, implicit=x264_out_cl)
 
@@ -631,12 +631,12 @@ v8_out += v8_out_base
 
 
 # node.js
-node_cflags = '-I deps/node/node/src %s %s %s %s %s' % \
-    (cares_cflags, uv_cflags, v8_cflags, http_cflags, zlib_cflags)
-n.rule('node_cc', '%s -std=c++11 -w %s -I out/deps/node '
+node_cflags = '-I deps/node/node/src %s %s' % (uv_cflags, v8_cflags)
+n.rule('node_cc', '%s -std=c++11 -w %s -I out/deps/node %s %s %s '
                   '-DNODE_WANT_INTERNALS=1 -DARCH=\\"x64\\" '
                   '-DNODE_TAG=\\"\\" -DPLATFORM=\\"darwin\\" '
-                  '-c -MMD -MF $out.d -o $out $in' % (clang, node_cflags),
+                  '-c -MMD -MF $out.d -o $out $in' %
+                  (clang, node_cflags, cares_cflags, http_cflags, zlib_cflags),
         deps='gcc', depfile='$out.d')
 
 node_js2c = 'deps/node/node/tools/js2c.py'
@@ -691,4 +691,26 @@ n.build('out/node', 'link',
         cares_out + http_out + uv_out + v8_out,
         variables={
             'ldflags': '-framework CoreFoundation -framework Carbon'
+        })
+
+
+# P1stream
+n.rule('mod_cc', '%s -std=c++11 -Wall -DBUILDING_NODE_EXTENSION '
+                 '-I mac -I src %s -c -MMD -MF $out.d -o $out $in' %
+                 (clang, node_cflags),
+        deps='gcc', depfile='$out.d')
+
+mod_core = 'out/core.node'
+mod_core_in = glob('src/*.cc') + glob('mac/*.mm')
+mod_core_out = outof(mod_core_in)
+for (i, o) in zip(mod_core_in, mod_core_out):
+    n.build(o, 'mod_cc', i)
+n.build(mod_core, 'link', mod_core_out + aac_out + x264_out,
+        variables={ 'ldflags':
+            '-dynamiclib '
+            '-undefined dynamic_lookup '
+            '-framework Cocoa '
+            '-framework IOSurface '
+            '-framework OpenGL '
+            '-framework OpenCL'
         })

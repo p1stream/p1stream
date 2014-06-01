@@ -1,5 +1,5 @@
-#ifndef p1_util_h
-#define p1_util_h
+#ifndef p1_core_util_h
+#define p1_core_util_h
 
 #include <node.h>
 
@@ -16,4 +16,4 @@ inline Handle<Value> syscall_error(const char *name, int code)
 
 }  // namespace p1stream
 
-#endif  // p1_util_h
+#endif  // p1_core_util_h

@@ -1,8 +1,8 @@
 #ifndef p1_video_base_h
 #define p1_video_base_h
 
-#include "types.h"
-#include "util.h"
+#include "core_types.h"
+#include "core_util.h"
 
 #include <vector>
 
