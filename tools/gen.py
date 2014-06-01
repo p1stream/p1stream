@@ -411,12 +411,11 @@ for (i, o) in zip(uv_in, uv_out):
 
 # node.js
 v8_cflags = '-I deps/node/node/deps/v8/include'
-openssl_cflags = '-I deps/node/node/deps/openssl/openssl/include'
-node_cflags = '-I deps/node/node/src %s %s %s %s %s %s' % \
-    (cares_cflags, uv_cflags, v8_cflags, openssl_cflags, http_cflags, zlib_cflags)
+node_cflags = '-I deps/node/node/src %s %s %s %s %s' % \
+    (cares_cflags, uv_cflags, v8_cflags, http_cflags, zlib_cflags)
 n.rule('node_cc', '%s -std=c++11 -w %s -I out/deps/node '
-                  '-DNODE_WANT_INTERNALS=1 -DARCH=\\"x64\\" -DNODE_TAG=\\"\\" '
-                  '-DHAVE_OPENSSL=1 -DPLATFORM=\\"darwin\\" '
+                  '-DNODE_WANT_INTERNALS=1 -DARCH=\\"x64\\" '
+                  '-DNODE_TAG=\\"\\" -DPLATFORM=\\"darwin\\" '
                   '-c -MMD -MF $out.d -o $out $in' % (clang, node_cflags),
         deps='gcc', depfile='$out.d')
 
@@ -462,8 +461,7 @@ node_in = indir('deps/node/node/src', [
     'tty_wrap.cc',
     'process_wrap.cc',
     'v8_typed_array.cc',
-    'udp_wrap.cc',
-    'node_crypto.cc'
+    'udp_wrap.cc'
 ])
 node_out = outof(node_in)
 for (i, o) in zip(node_in, node_out):
