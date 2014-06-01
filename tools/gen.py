@@ -7,8 +7,8 @@ n = Writer(sys.stdout)
 
 n.variable('builddir', 'out')
 n.rule('link', 'clang -arch x86_64 -mmacosx-version-min=10.8 -o $out $in')
-clang = 'clang -arch x86_64 -mmacosx-version-min=10.8 ' \
-        '-D__POSIX__ -D_GNU_SOURCE -D_LARGEFILE_SOURCE ' \
+clang = 'clang -arch x86_64 -mmacosx-version-min=10.8 -O2 ' \
+        '-DNDEBUG -D__POSIX__ -D_GNU_SOURCE -D_LARGEFILE_SOURCE ' \
         '-D_DARWIN_USE_64_BIT_INODE=1 -D_FILE_OFFSET_BITS=64 ' \
         '-fno-exceptions -fno-rtti -fno-threadsafe-statics ' \
         '-fno-strict-aliasing'
@@ -348,13 +348,23 @@ for (i, o) in zip(cares_in, cares_out):
     n.build(o, 'cares_cc', i)
 
 
+# http-parser
+http_cflags = '-I deps/node/node/deps/http_parser'
+n.rule('http_cc', '%s -std=c89 -w %s -c -MMD -MF $out.d -o $out $in' % \
+        (clang, http_cflags), deps='gcc', depfile='$out.d')
+
+http_in = ['deps/node/node/deps/http_parser/http_parser.c']
+http_out = outof(http_in)
+for (i, o) in zip(http_in, http_out):
+    n.build(o, 'http_cc', i)
+
+
 # node.js
 uv_cflags = '-I deps/node/node/deps/uv/include'
 v8_cflags = '-I deps/node/node/deps/v8/include'
 openssl_cflags = '-I deps/node/node/deps/openssl/openssl/include'
-http_parser_cflags = '-I deps/node/node/deps/http_parser'
 node_cflags = '-I deps/node/node/src %s %s %s %s %s %s' % \
-    (cares_cflags, uv_cflags, v8_cflags, openssl_cflags, http_parser_cflags, zlib_cflags)
+    (cares_cflags, uv_cflags, v8_cflags, openssl_cflags, http_cflags, zlib_cflags)
 n.rule('node_cc', '%s -std=c++11 -w %s -I out/deps/node '
                   '-DNODE_WANT_INTERNALS=1 -DARCH=\\"x64\\" -DNODE_TAG=\\"\\" '
                   '-DHAVE_OPENSSL=1 -DPLATFORM=\\"darwin\\" '
@@ -409,4 +419,4 @@ node_in = indir('deps/node/node/src', [
 node_out = outof(node_in)
 for (i, o) in zip(node_in, node_out):
     n.build(o, 'node_cc', i)
-n.build('out/node', 'link', node_out + node_out_js + zlib_out + cares_out)
+n.build('out/node', 'link', node_out + node_out_js + zlib_out + cares_out + http_out)
