@@ -6,8 +6,9 @@ from ninja_syntax import Writer
 n = Writer(sys.stdout)
 
 n.variable('builddir', 'out')
-n.rule('link', 'clang -arch x86_64 -mmacosx-version-min=10.8 -o $out $in')
-clang = 'clang -arch x86_64 -mmacosx-version-min=10.8 -O2 ' \
+n.rule('link', 'clang++ $ldflags -mmacosx-version-min=10.8'
+                      ' -arch x86_64 -o $out $in')
+clang = 'clang -arch x86_64 -mmacosx-version-min=10.8 -O3 ' \
         '-DNDEBUG -D__POSIX__ -D_GNU_SOURCE -D_LARGEFILE_SOURCE ' \
         '-D_DARWIN_USE_64_BIT_INODE=1 -D_FILE_OFFSET_BITS=64 ' \
         '-fno-exceptions -fno-rtti -fno-threadsafe-statics ' \
@@ -409,8 +410,227 @@ for (i, o) in zip(uv_in, uv_out):
     n.build(o, 'uv_cc', i)
 
 
-# node.js
+# V8
 v8_cflags = '-I deps/node/node/deps/v8/include'
+n.rule('v8_cc', '%s -std=c++11 -w -I deps/node/node/deps/v8/src %s '
+                '-DENABLE_DEBUGGER_SUPPORT -DENABLE_EXTRA_CHECKS '
+                '-DV8_TARGET_ARCH_X64 -fstrict-aliasing '
+                '-c -MMD -MF $out.d -o $out $in' % (clang, v8_cflags),
+        deps='gcc', depfile='$out.d')
+
+v8_js2c = 'deps/node/node/deps/v8/tools/js2c.py'
+n.rule('v8_js2c', 'python %s $out $type off $in' % v8_js2c)
+
+v8_postmortem = 'deps/node/node/deps/v8/tools/gen-postmortem-metadata.py'
+n.rule('v8_postmortem', 'python %s $out $in' % v8_postmortem)
+
+v8_in_lib = indir('deps/node/node/deps/v8/src', [
+    'runtime.js',
+    'v8natives.js',
+    'array.js',
+    'string.js',
+    'uri.js',
+    'math.js',
+    'messages.js',
+    'apinatives.js',
+    'debug-debugger.js',
+    'mirror-debugger.js',
+    'liveedit-debugger.js',
+    'date.js',
+    'json.js',
+    'regexp.js',
+    'macros.py'
+])
+v8_out_lib = ['out/deps/v8/libraries.cc']
+n.build(v8_out_lib, 'v8_js2c', v8_in_lib,
+        variables={ 'type': 'CORE' },
+        implicit=v8_js2c)
+
+v8_in_libx = indir('deps/node/node/deps/v8/src', [
+    'macros.py',
+    'proxy.js',
+    'collection.js'
+])
+v8_out_libx = ['out/deps/v8/experimental-libraries.cc']
+n.build(v8_out_libx, 'v8_js2c', v8_in_libx,
+        variables={ 'type': 'EXPERIMENTAL' },
+        implicit=v8_js2c)
+
+v8_in_postmortem = indir('deps/node/node/deps/v8/src', [
+    'objects.h',
+    'objects-inl.h'
+])
+v8_out_postmortem = 'out/deps/v8/debug-support.cc'
+n.build(v8_out_postmortem, 'v8_postmortem', v8_in_postmortem,
+        implicit=v8_postmortem)
+
+v8_in_base = indir('deps/node/node/deps/v8/src', [
+    'accessors.cc',
+    'allocation.cc',
+    'api.cc',
+    'assembler.cc',
+    'ast.cc',
+    'atomicops_internals_x86_gcc.cc',
+    'bignum-dtoa.cc',
+    'bignum.cc',
+    'bootstrapper.cc',
+    'builtins.cc',
+    'cached-powers.cc',
+    'checks.cc',
+    'circular-queue.cc',
+    'code-stubs.cc',
+    'codegen.cc',
+    'compilation-cache.cc',
+    'compiler.cc',
+    'contexts.cc',
+    'conversions.cc',
+    'counters.cc',
+    'cpu-profiler.cc',
+    'data-flow.cc',
+    'date.cc',
+    'dateparser.cc',
+    'debug-agent.cc',
+    'debug.cc',
+    'deoptimizer.cc',
+    'disassembler.cc',
+    'diy-fp.cc',
+    'dtoa.cc',
+    'elements-kind.cc',
+    'elements.cc',
+    'execution.cc',
+    'extensions/externalize-string-extension.cc',
+    'extensions/gc-extension.cc',
+    'extensions/statistics-extension.cc',
+    'factory.cc',
+    'fast-dtoa.cc',
+    'fixed-dtoa.cc',
+    'flags.cc',
+    'frames.cc',
+    'full-codegen.cc',
+    'func-name-inferrer.cc',
+    'gdb-jit.cc',
+    'global-handles.cc',
+    'handles.cc',
+    'heap-profiler.cc',
+    'heap.cc',
+    'hydrogen-instructions.cc',
+    'hydrogen.cc',
+    'ic.cc',
+    'incremental-marking.cc',
+    'inspector.cc',
+    'interface.cc',
+    'interpreter-irregexp.cc',
+    'isolate.cc',
+    'jsregexp.cc',
+    'lithium-allocator.cc',
+    'lithium.cc',
+    'liveedit.cc',
+    'liveobjectlist.cc',
+    'log-utils.cc',
+    'log.cc',
+    'mark-compact.cc',
+    'messages.cc',
+    'objects-debug.cc',
+    'objects-printer.cc',
+    'objects-visiting.cc',
+    'objects.cc',
+    'once.cc',
+    'optimizing-compiler-thread.cc',
+    'parser.cc',
+    'preparse-data.cc',
+    'preparser.cc',
+    'prettyprinter.cc',
+    'profile-generator.cc',
+    'property.cc',
+    'regexp-macro-assembler-irregexp.cc',
+    'regexp-macro-assembler-tracer.cc',
+    'regexp-macro-assembler.cc',
+    'regexp-stack.cc',
+    'rewriter.cc',
+    'runtime-profiler.cc',
+    'runtime.cc',
+    'safepoint-table.cc',
+    'scanner-character-streams.cc',
+    'scanner.cc',
+    'scopeinfo.cc',
+    'scopes.cc',
+    'serialize.cc',
+    'snapshot-common.cc',
+    'spaces.cc',
+    'store-buffer.cc',
+    'string-search.cc',
+    'string-stream.cc',
+    'strtod.cc',
+    'stub-cache.cc',
+    'token.cc',
+    'transitions.cc',
+    'type-info.cc',
+    'unicode.cc',
+    'utils.cc',
+    'v8-counters.cc',
+    'v8.cc',
+    'v8conversions.cc',
+    'v8threads.cc',
+    'v8utils.cc',
+    'variables.cc',
+    'version.cc',
+    'zone.cc',
+    'x64/assembler-x64.cc',
+    'x64/builtins-x64.cc',
+    'x64/code-stubs-x64.cc',
+    'x64/codegen-x64.cc',
+    'x64/cpu-x64.cc',
+    'x64/debug-x64.cc',
+    'x64/deoptimizer-x64.cc',
+    'x64/disasm-x64.cc',
+    'x64/frames-x64.cc',
+    'x64/full-codegen-x64.cc',
+    'x64/ic-x64.cc',
+    'x64/lithium-codegen-x64.cc',
+    'x64/lithium-gap-resolver-x64.cc',
+    'x64/lithium-x64.cc',
+    'x64/macro-assembler-x64.cc',
+    'x64/regexp-macro-assembler-x64.cc',
+    'x64/stub-cache-x64.cc',
+    'platform-macos.cc',
+    'platform-posix.cc'
+]) + indir('out/deps/v8', [
+    'libraries.cc',
+    'experimental-libraries.cc',
+    'debug-support.cc'
+])
+v8_out_base = outof(v8_in_base)
+for (i, o) in zip(v8_in_base, v8_out_base):
+    n.build(o, 'v8_cc', i)
+
+v8_mksnapshot = 'out/deps/v8/mksnapshot'
+v8_mksnapshot_in = indir('deps/node/node/deps/v8/src', [
+    'snapshot-empty.cc',
+    'mksnapshot.cc'
+])
+v8_mksnapshot_out = outof(v8_mksnapshot_in)
+for (i, o) in zip(v8_mksnapshot_in, v8_mksnapshot_out):
+    n.build(o, 'v8_cc', i)
+n.build(v8_mksnapshot, 'link', v8_out_base + v8_mksnapshot_out)
+n.rule('v8_mksnapshot', '%s --log-snapshot-positions'
+                          ' --logfile $out' % v8_mksnapshot)
+
+v8_snapshot_out = [
+    'out/snapshot.log',
+    'out/deps/v8/snapshot.cc'
+]
+n.build(v8_snapshot_out, 'v8_mksnapshot', implicit=v8_mksnapshot)
+
+v8_in = [
+    'out/deps/v8/snapshot.cc'
+]
+v8_out = outof(v8_in)
+for (i, o) in zip(v8_in, v8_out):
+    n.build(o, 'v8_cc', i)
+v8_out += v8_out_base
+
+
+# node.js
 node_cflags = '-I deps/node/node/src %s %s %s %s %s' % \
     (cares_cflags, uv_cflags, v8_cflags, http_cflags, zlib_cflags)
 n.rule('node_cc', '%s -std=c++11 -w %s -I out/deps/node '
@@ -467,4 +687,8 @@ node_out = outof(node_in)
 for (i, o) in zip(node_in, node_out):
     n.build(o, 'node_cc', i)
 n.build('out/node', 'link',
-        node_out + node_out_js + zlib_out + cares_out + http_out + uv_out)
+        node_out + node_out_js + zlib_out +
+        cares_out + http_out + uv_out + v8_out,
+        variables={
+            'ldflags': '-framework CoreFoundation -framework Carbon'
+        })
