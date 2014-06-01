@@ -313,13 +313,30 @@ for (i, o) in zip(x264_in_asm, x264_out_asm):
 x264_out = x264_out_c + x264_out_opencl + x264_out_asm
 
 
+# zlib
+zlib_cflags = '-I deps/node/node/deps/zlib'
+n.rule('zlib_cc', '%s -std=c89 -w %s '
+                  '-I out/deps/node/node/deps/zlib/contrib/minizip '
+                  '-c -MMD -MF $out.d -o $out $in' % (clang, zlib_cflags),
+        deps='gcc', depfile='$out.d')
+
+zlib_in = glob('deps/node/node/deps/zlib/*.c') +\
+          indir('deps/node/node/deps/zlib/contrib/minizip', [
+    'ioapi.c',
+    'unzip.c',
+    'zip.c',
+])
+zlib_out = outof(zlib_in)
+for (i, o) in zip(zlib_in, zlib_out):
+    n.build(o, 'zlib_cc', i)
+
+
 # node.js
 cares_cflags = '-I deps/node/node/deps/cares/include'
 uv_cflags = '-I deps/node/node/deps/uv/include'
 v8_cflags = '-I deps/node/node/deps/v8/include'
 openssl_cflags = '-I deps/node/node/deps/openssl/openssl/include'
 http_parser_cflags = '-I deps/node/node/deps/http_parser'
-zlib_cflags = '-I deps/node/node/deps/zlib'
 node_cflags = '-I deps/node/node/src %s %s %s %s %s %s' % \
     (cares_cflags, uv_cflags, v8_cflags, openssl_cflags, http_parser_cflags, zlib_cflags)
 n.rule('node_cc', '%s -std=c++11 -w %s -I out/deps/node '
@@ -376,4 +393,4 @@ node_in = indir('deps/node/node/src', [
 node_out = outof(node_in)
 for (i, o) in zip(node_in, node_out):
     n.build(o, 'node_cc', i)
-n.build('out/node', 'link', node_out + node_out_js)
+n.build('out/node', 'link', node_out + node_out_js + zlib_out)
