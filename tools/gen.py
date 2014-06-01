@@ -359,8 +359,50 @@ for (i, o) in zip(http_in, http_out):
     n.build(o, 'http_cc', i)
 
 
-# node.js
+# libuv
 uv_cflags = '-I deps/node/node/deps/uv/include'
+n.rule('uv_cc', '%s -std=c89 -w %s ' \
+                '-I deps/node/node/deps/uv/include/uv-private '
+                '-I deps/node/node/deps/uv/src '
+                '-c -MMD -MF $out.d -o $out $in' % (clang, uv_cflags),
+       deps='gcc', depfile='$out.d')
+
+uv_in = indir('deps/node/node/deps/uv/src', [
+    'fs-poll.c',
+    'inet.c',
+    'uv-common.c',
+    'version.c',
+    'unix/async.c',
+    'unix/core.c',
+    'unix/dl.c',
+    'unix/error.c',
+    'unix/fs.c',
+    'unix/getaddrinfo.c',
+    'unix/loop.c',
+    'unix/loop-watcher.c',
+    'unix/pipe.c',
+    'unix/poll.c',
+    'unix/process.c',
+    'unix/signal.c',
+    'unix/stream.c',
+    'unix/tcp.c',
+    'unix/thread.c',
+    'unix/threadpool.c',
+    'unix/timer.c',
+    'unix/tty.c',
+    'unix/udp.c',
+    'unix/proctitle.c',
+    'unix/darwin.c',
+    'unix/fsevents.c',
+    'unix/darwin-proctitle.c',
+    'unix/kqueue.c'
+])
+uv_out = outof(uv_in)
+for (i, o) in zip(uv_in, uv_out):
+    n.build(o, 'uv_cc', i)
+
+
+# node.js
 v8_cflags = '-I deps/node/node/deps/v8/include'
 openssl_cflags = '-I deps/node/node/deps/openssl/openssl/include'
 node_cflags = '-I deps/node/node/src %s %s %s %s %s %s' % \
@@ -419,4 +461,5 @@ node_in = indir('deps/node/node/src', [
 node_out = outof(node_in)
 for (i, o) in zip(node_in, node_out):
     n.build(o, 'node_cc', i)
-n.build('out/node', 'link', node_out + node_out_js + zlib_out + cares_out + http_out)
+n.build('out/node', 'link',
+        node_out + node_out_js + zlib_out + cares_out + http_out + uv_out)
