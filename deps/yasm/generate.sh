@@ -14,19 +14,19 @@ set -e -x
 
 
 # Create scratch directory.
-SCRATCH="`dirname $0`/../_scratch"
+SCRATCH="`dirname $0`/../../out/scratch"
 mkdir -p $SCRATCH
 cd $SCRATCH
 
 # Create a shared clone of the repo.
 rm -fr yasm
-git clone --shared ../yasm/yasm
+git clone --shared ../../deps/yasm/yasm
 cd yasm
 
 # Run configure.
 ./autogen.sh --disable-nls
 
 # Copy generated files.
-OUT="../../yasm/generated"
+OUT="../../../deps/yasm/generated"
 mkdir -p "${OUT}/"
 cp config.h libyasm-stdint.h "${OUT}/"

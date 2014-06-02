@@ -14,13 +14,13 @@ set -e -x
 
 
 # Create scratch directory.
-SCRATCH="`dirname $0`/../_scratch"
+SCRATCH="`dirname $0`/../../out/scratch"
 mkdir -p $SCRATCH
 cd $SCRATCH
 
 # Create a shared clone of the repo.
 rm -fr x264
-git clone --shared ../x264/x264
+git clone --shared ../../deps/x264/x264 x264
 cd x264
 
 # Run configure.
@@ -29,6 +29,6 @@ cd x264
     --enable-shared
 
 # Copy generated files.
-OUT="../../x264/generated"
+OUT="../../../deps/x264/generated"
 mkdir -p "${OUT}/common/"
 cp config.h x264_config.h "${OUT}/"
