@@ -11,3 +11,6 @@
 	path = deps/node/node
 	url = https://github.com/joyent/node.git
 	branch = v0.10.28-release
+[submodule "deps/ninja"]
+	path = deps/ninja
+	url = https://github.com/martine/ninja.git
