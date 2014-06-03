@@ -686,7 +686,9 @@ node_in = indir('deps/node/node/src', [
 node_out = outof(node_in)
 for (i, o) in zip(node_in, node_out):
     n.build(o, 'node_cc', i)
-n.build('out/node', 'link',
+
+node = 'out/node'
+n.build(node, 'link',
         node_out + node_out_js + zlib_out +
         cares_out + http_out + uv_out + v8_out,
         variables={
@@ -714,3 +716,10 @@ n.build(mod_core, 'link', mod_core_out + aac_out + x264_out,
             '-framework OpenGL '
             '-framework OpenCL'
         })
+
+build_app = 'tools/build_app.sh'
+n.rule('build_app', build_app)
+
+app = 'out/P1stream.app'
+app_info = 'mac/Info.plist'
+n.build(app, 'build_app', implicit=[build_app, node, mod_core, app_info])
