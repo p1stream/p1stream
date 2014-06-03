@@ -25,4 +25,4 @@ init(v8::Handle<v8::Object> exports)
     exports->Set(v8::String::NewSymbol("VideoMixer"), func->GetFunction());
 }
 
-NODE_MODULE(native, init)
+NODE_MODULE(core, init)
