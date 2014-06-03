@@ -2,9 +2,11 @@
 set -e
 
 if [ "$1" = "-h" ]; then
-    echo "Usage: $0 [ -f | -c ]"
-    echo " -f: regenerate ninja build file"
-    echo " -c: rebuild from scratch"
+    echo "Usage: $0 [ -h | -f | -c ]"
+    echo " -h: display usage"
+    echo " -f: regenerate build.ninja and build"
+    echo " -c: clean output and build from scratch"
+    exit 64
 fi
 
 cd "$(dirname $0)"
