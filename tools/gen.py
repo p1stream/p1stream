@@ -710,6 +710,7 @@ for (i, o) in zip(mod_core_in, mod_core_out):
 n.build(mod_core, 'link', mod_core_out + aac_out + x264_out,
         variables={ 'ldflags':
             '-dynamiclib '
+            '-install_name @rpath/core.node '
             '-undefined dynamic_lookup '
             '-framework Cocoa '
             '-framework IOSurface '
