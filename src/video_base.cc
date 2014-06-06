@@ -339,10 +339,11 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     if (ok) {
         handle_->Set(String::NewSymbol("headers"), nals_to_js());
 
+        Ref();
         return handle_;
     }
     else {
-        destroy();
+        destroy(false);
 
         if (ret.IsEmpty())
             ret = pop_last_error();
@@ -350,7 +351,7 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     }
 }
 
-void video_mixer_base::destroy()
+void video_mixer_base::destroy(bool unref)
 {
     lock_handle lock(clock);
     cl_int cl_err;
@@ -406,6 +407,9 @@ void video_mixer_base::destroy()
         on_error.Dispose();
         on_error.Clear();
     }
+
+    if (unref)
+        Unref();
 }
 
 Handle<Value> video_mixer_base::pop_last_error()
@@ -423,7 +427,6 @@ void video_mixer_base::clear_clock()
     if (clock != nullptr) {
         clock->unref_mixer(this);
         clock = nullptr;
-        Unref();
     }
 }
 
@@ -432,7 +435,6 @@ void video_mixer_base::clear_sources()
     for (auto &entry : sources) {
         entry.source->unref_mixer(this);
         glDeleteTextures(1, &entry.texture);
-        Unref();
     }
     sources.clear();
 }
@@ -459,7 +461,6 @@ Handle<Value> video_mixer_base::set_clock(const Arguments &args)
     clear_clock();
 
     if (new_clock) {
-        Ref();
         clock = new_clock;
         clock->ref_mixer(this);
     }
@@ -573,7 +574,6 @@ Handle<Value> video_mixer_base::set_sources(const Arguments &args)
 
         sources = new_sources;
         for (auto &entry : sources) {
-            Ref();
             entry.source->ref_mixer(this);
         }
 

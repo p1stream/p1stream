@@ -108,7 +108,7 @@ protected:
 
 public:
     Handle<Value> init(const Arguments &args);
-    void destroy();
+    void destroy(bool unref = true);
 
     Handle<Value> set_clock(const Arguments &args);
     Handle<Value> set_sources(const Arguments &args);
