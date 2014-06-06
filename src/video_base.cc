@@ -1,4 +1,5 @@
 #include "video_base.h"
+#include "module.h"
 
 #include <node_buffer.h>
 
@@ -100,20 +101,6 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
 
     Wrap(args.This());
 
-    source_sym = NODE_PSYMBOL("source");
-    x1_sym = NODE_PSYMBOL("x1");
-    y1_sym = NODE_PSYMBOL("y1");
-    x2_sym = NODE_PSYMBOL("x2");
-    y2_sym = NODE_PSYMBOL("y2");
-    u1_sym = NODE_PSYMBOL("u1");
-    v1_sym = NODE_PSYMBOL("v1");
-    u2_sym = NODE_PSYMBOL("u2");
-    v2_sym = NODE_PSYMBOL("v2");
-    data_sym = NODE_PSYMBOL("data");
-    type_sym = NODE_PSYMBOL("type");
-    offset_sym = NODE_PSYMBOL("offset");
-    size_sym = NODE_PSYMBOL("size");
-
     if (!(ok = (args.Length() == 1)))
         ret = ThrowException(Exception::TypeError(
             String::New("Expected one argument")));
@@ -127,7 +114,7 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     if (ok) {
         params = Local<Object>::Cast(args[0]);
 
-        val = params->Get(String::NewSymbol("width"));
+        val = params->Get(width_sym);
         if (!(ok = val->IsUint32()))
             ret = ThrowException(Exception::TypeError(
                 String::New("Invalid or missing width")));
@@ -136,7 +123,7 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     if (ok) {
         out_dimensions.width = val->Uint32Value();
 
-        val = params->Get(String::NewSymbol("height"));
+        val = params->Get(height_sym);
         if (!(ok = val->IsUint32()))
             ret = ThrowException(Exception::TypeError(
                 String::New("Invalid or missing height")));
@@ -145,7 +132,7 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     if (ok) {
         out_dimensions.height = val->Uint32Value();
 
-        val = params->Get(String::NewSymbol("onFrame"));
+        val = params->Get(on_frame_sym);
         if (!(ok = val->IsFunction()))
             ret = ThrowException(Exception::TypeError(
                 String::New("Invalid or missing onFrame handler")));
@@ -154,7 +141,7 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     if (ok) {
         on_frame = Persistent<Function>::New(Handle<Function>::Cast(val));
 
-        val = params->Get(String::NewSymbol("onError"));
+        val = params->Get(on_error_sym);
         if (!(ok = val->IsFunction()))
             ret = ThrowException(Exception::TypeError(
                 String::New("Invalid or missing onError handler")));
@@ -283,7 +270,7 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     if (ok) {
         x264_param_default(&enc_params);
 
-        val = params->Get(String::NewSymbol("x264Preset"));
+        val = params->Get(x264_preset_sym);
         if (val->IsString()) {
             String::AsciiValue v(val);
             if (!(ok = (*v != NULL &&
@@ -293,7 +280,7 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     }
 
     if (ok) {
-        val = params->Get(String::NewSymbol("x264Tuning"));
+        val = params->Get(x264_tuning_sym);
         if (val->IsString()) {
             String::AsciiValue v(val);
             if (!(ok = (*v != NULL &&
@@ -303,7 +290,7 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     }
 
     if (ok) {
-        val = params->Get(String::NewSymbol("x264Params"));
+        val = params->Get(x264_params_sym);
         if (val->IsObject()) {
             auto obj = Handle<Object>::Cast(val);
             auto arr = obj->GetPropertyNames();
@@ -325,7 +312,7 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
         x264_param_apply_fastfirstpass(&enc_params);
 
         // Apply profile.
-        val = params->Get(String::NewSymbol("x264Profile"));
+        val = params->Get(x264_profile_sym);
         if (val->IsString()) {
             String::AsciiValue v(val);
             if (!(ok = (*v != NULL &&
@@ -419,20 +406,6 @@ void video_mixer_base::destroy()
         on_error.Dispose();
         on_error.Clear();
     }
-
-    source_sym.Dispose();
-    x1_sym.Dispose();
-    y1_sym.Dispose();
-    x2_sym.Dispose();
-    y2_sym.Dispose();
-    u1_sym.Dispose();
-    v1_sym.Dispose();
-    u2_sym.Dispose();
-    v2_sym.Dispose();
-    data_sym.Dispose();
-    type_sym.Dispose();
-    offset_sym.Dispose();
-    size_sym.Dispose();
 }
 
 Handle<Value> video_mixer_base::pop_last_error()

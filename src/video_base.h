@@ -54,20 +54,6 @@ class video_mixer_base : public video_mixer {
     std::vector<video_source_entry> sources;
     video_source_entry *current_source;
 
-    Persistent<String> source_sym;
-    Persistent<String> x1_sym;
-    Persistent<String> y1_sym;
-    Persistent<String> x2_sym;
-    Persistent<String> y2_sym;
-    Persistent<String> u1_sym;
-    Persistent<String> v1_sym;
-    Persistent<String> u2_sym;
-    Persistent<String> v2_sym;
-    Persistent<String> data_sym;
-    Persistent<String> type_sym;
-    Persistent<String> offset_sym;
-    Persistent<String> size_sym;
-
     Persistent<Function> on_frame;
     Persistent<Function> on_error;
 
