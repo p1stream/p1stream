@@ -1,5 +1,4 @@
-#include "video_base.h"
-#include "module.h"
+#include "core_priv.h"
 
 #include <node_buffer.h>
 

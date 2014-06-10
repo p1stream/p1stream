@@ -1,7 +1,7 @@
-#ifndef p1_video_mac_h
-#define p1_video_mac_h
+#ifndef p1_core_priv_mac_h
+#define p1_core_priv_mac_h
 
-#include "video_base.h"
+#include "core_priv.h"
 
 namespace p1stream {
 
@@ -22,4 +22,4 @@ public:
 
 }  // namespace p1stream
 
-#endif  // p1_video_mac_h
+#endif  // p1_core_priv_mac_h

@@ -57,7 +57,7 @@ if [ "$BUILD" == "1" ]; then
     out/ninja -f out/build.ninja
 
     if [ "$RUN" == "1" ]; then
-        out/P1stream.app/Contents/MacOS/node
+        out/P1stream.app/Contents/MacOS/P1stream
     fi
 
 fi

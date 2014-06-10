@@ -1,4 +1,4 @@
-#include "video_mac.h"
+#include "core_priv_mac.h"
 
 #include <Foundation/Foundation.h>
 

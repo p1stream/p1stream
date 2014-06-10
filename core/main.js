@@ -1,4 +1,4 @@
-var core = require('../../MacOS/core.node');
+var core = require('./core.node');
 
 var videoMixer = new core.VideoMixer({
     bufferSize: 1 * 1024 * 1024,

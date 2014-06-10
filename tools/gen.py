@@ -6,6 +6,7 @@ from ninja_syntax import Writer
 n = Writer(sys.stdout)
 
 n.variable('builddir', 'out')
+n.rule('cp', 'cp $in $out')
 n.rule('link', 'clang++ $ldflags -mmacosx-version-min=10.8 -fcolor-diagnostics'
                       ' -stdlib=libc++ -arch x86_64 -o $out $in')
 clang = 'clang -mmacosx-version-min=10.8 -stdlib=libc++ -arch x86_64 -O3 ' \
@@ -25,15 +26,17 @@ def indir(name, paths):
 def setext(ext, paths):
     return ['%s%s' % (path.rsplit('.', 1)[0], ext) for path in paths]
 
-def outof(paths, ext='.o', outdir=None):
+def outof(paths, ext='.o', outdir='out', flatten=False):
     res = []
     for path in paths:
-        if outdir:
-            path = '%s/%s' % (outdir, path.rsplit('/', 1)[1])
-        elif not path.startswith('out/'):
-            path = 'out/%s' % path
+        if flatten:
+            path = path.rsplit('/', 1)[1]
+        if not path.startswith(outdir + '/'):
+            path = '%s/%s' % (outdir, path)
         res.append(path)
-    return setext(ext, res)
+    if ext:
+        res = setext(ext, res)
+    return res
 
 
 # FraunhoferAAC
@@ -58,7 +61,7 @@ n.rule('yasm_genmodule', '%s $in $out' % yasm_genmodule)
 
 def yasm_build_tool(name, sources, extra=None):
     binary = 'out/deps/yasm/%s' % name
-    objs = outof(sources, outdir='out/deps/yasm')
+    objs = outof(sources, outdir='out/deps/yasm', flatten=True)
     for (i, o) in zip(sources, objs):
         n.build(o, 'yasm_cc', i)
     if extra:
@@ -119,7 +122,7 @@ n.build(yasm_out_license, 'yasm_genstring', yasm_in_license,
         implicit=yasm_genstring)
 
 yasm_in_module = ['deps/yasm/yasm/libyasm/module.in']
-yasm_out_module = outof(yasm_in_module, ext='.c', outdir='out/deps/yasm')
+yasm_out_module = outof(yasm_in_module, ext='.c', outdir='out/deps/yasm', flatten=True)
 for (i, o) in zip(yasm_in_module, yasm_out_module):
     n.build(o, 'yasm_genmodule', i, implicit=yasm_genmodule)
 
@@ -139,7 +142,7 @@ yasm_in_re = indir('deps/yasm/yasm/modules/parsers', [
     'nasm/nasm-token.re',
     'gas/gas-token.re'
 ])
-yasm_out_re = outof(yasm_in_re, ext='.c', outdir='out/deps/yasm')
+yasm_out_re = outof(yasm_in_re, ext='.c', outdir='out/deps/yasm', flatten=True)
 for (i, o) in zip(yasm_in_re, yasm_out_re):
     n.build(o, 'yasm_re2c', i, implicit=yasm_re2c)
 
@@ -150,7 +153,7 @@ yasm_in_gperf = indir('deps/yasm/yasm/modules/arch/x86', [
     'x86insn_nasm.gperf',
     'x86insn_gas.gperf'
 ])
-yasm_out_gperf = outof(yasm_in_gperf, ext='.c', outdir='out/deps/yasm')
+yasm_out_gperf = outof(yasm_in_gperf, ext='.c', outdir='out/deps/yasm', flatten=True)
 for (i, o) in zip(yasm_in_gperf, yasm_out_gperf):
     n.build(o, 'yasm_genperf', i, implicit=yasm_genperf)
 
@@ -215,14 +218,14 @@ yasm_in = indir('deps/yasm/yasm', [
     'gas-token.c',
     'nasm-token.c'
 ]) + yasm_out_module
-yasm_out = outof(yasm_in, outdir='out/deps/yasm')
+yasm_out = outof(yasm_in, outdir='out/deps/yasm', flatten=True)
 for (i, o) in zip(yasm_in, yasm_out):
     n.build(o, 'yasm_cc', i)
 
 yasm_in_x86id = [
     'deps/yasm/yasm/modules/arch/x86/x86id.c'
 ]
-yasm_out_x86id = outof(yasm_in_x86id, outdir='out/deps/yasm')
+yasm_out_x86id = outof(yasm_in_x86id, outdir='out/deps/yasm', flatten=True)
 yasm_implicit_x86id = indir('out/deps/yasm', [
     'x86insn_nasm.c',
     'x86insn_gas.c',
@@ -643,9 +646,9 @@ node_js2c = 'deps/node/node/tools/js2c.py'
 n.rule('node_js2c', '%s $out $in' % node_js2c)
 
 node_in_lib = glob('deps/node/node/lib/*.js') + \
-             glob('deps/node/node/src/*.js') + \
-             ['deps/node/config.gypi'] + \
-             glob('mac/*.js')
+              glob('deps/node/node/src/*.js') + \
+              ['deps/node/config.gypi'] + \
+              ['core/native/mac/_third_party_main.js']
 node_out_lib = ['out/deps/node/node_natives.h']
 n.build(node_out_lib, 'node_js2c', node_in_lib, implicit=node_js2c)
 
@@ -687,7 +690,7 @@ node_out = outof(node_in)
 for (i, o) in zip(node_in, node_out):
     n.build(o, 'node_cc', i)
 
-node = 'out/node'
+node = 'out/P1stream.app/Contents/MacOS/P1stream'
 n.build(node, 'link',
         node_out + node_out_js + zlib_out +
         cares_out + http_out + uv_out + v8_out,
@@ -697,32 +700,46 @@ n.build(node, 'link',
 
 
 # P1stream
+mod_dir = 'out/P1stream.app/Contents/Modules'
 n.rule('mod_cc', '%s -std=c++11 -Wall -DBUILDING_NODE_EXTENSION '
-                 '-I mac -I src %s -c -MMD -MF $out.d -o $out $in' %
+                 '%s $cflags -c -MMD -MF $out.d -o $out $in' %
                  (clang, node_cflags),
         deps='gcc', depfile='$out.d')
 
-mod_core = 'out/core.node'
-mod_core_in = glob('src/*.cc') + glob('mac/*.mm')
-mod_core_out = outof(mod_core_in)
-for (i, o) in zip(mod_core_in, mod_core_out):
-    n.build(o, 'mod_cc', i)
-n.build(mod_core, 'link', mod_core_out + aac_out + x264_out,
-        variables={ 'ldflags':
-            '-dynamiclib '
-            '-install_name @rpath/core.node '
-            '-undefined dynamic_lookup '
-            '-framework Cocoa '
-            '-framework IOSurface '
-            '-framework OpenGL '
-            '-framework OpenCL'
-        })
+def build_mod(name, js=None, src=None, extra_obj=None, cflags='', ldflags=''):
+    mod = '%s/%s/%s.node' % (mod_dir, name, name)
 
-build_app = 'tools/build_app.sh'
-n.rule('build_app', build_app)
+    if not src:
+        src = glob('%s/native/*.cc' % name)
+    obj = outof(src)
+    for (i, o) in zip(src, obj):
+        n.build(o, 'mod_cc', i, variables={ 'cflags': cflags })
+    if extra_obj:
+        obj += extra_obj
 
-app = 'out/P1stream.app'
-app_info = 'mac/Info.plist'
-lib_js = glob('lib/*.js')
-n.build(app, 'build_app',
-        implicit=[build_app, node, mod_core, app_info] + lib_js)
+    ldflags = ('-dynamiclib -install_name @rpath/%s'
+              ' -undefined dynamic_lookup %s' % (mod, ldflags))
+    n.build(mod, 'link', obj, variables={ 'ldflags': ldflags })
+
+    if not js:
+        js = glob('%s/*.js' % name)
+    for (i, o) in zip(js, outof(js, ext=None, outdir=mod_dir)):
+        n.build(o, 'cp', i)
+
+build_mod('core',
+    src =
+        glob('core/native/*.cc') +
+        glob('core/native/mac/*.mm'),
+    extra_obj =
+        aac_out + x264_out,
+    cflags =
+        '-I core/native '
+        '-I core/native/mac ',
+    ldflags =
+        '-framework Cocoa '
+        '-framework IOSurface '
+        '-framework OpenGL '
+        '-framework OpenCL')
+
+n.build('out/P1stream.app/Contents/Resources/Info.plist',
+        'cp', 'core/native/mac/Info.plist')

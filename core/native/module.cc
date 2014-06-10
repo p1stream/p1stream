@@ -1,4 +1,4 @@
-#include "module.h"
+#include "core_priv.h"
 
 #include <mach/mach_time.h>
 #include <mach/mach_error.h>
@@ -6,7 +6,7 @@
 #if __APPLE__
 #   include <TargetConditionals.h>
 #   if TARGET_OS_MAC
-#       include "video_mac.h"
+#       include "core_priv_mac.h"
 #       define video_mixer_platform video_mixer_mac
 #   endif
 #endif
