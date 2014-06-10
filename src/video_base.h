@@ -49,20 +49,33 @@ struct video_mixer_callback {
     static void async_cb(uv_async_t* handle, int status);
 };
 
+// Data we pass between threads. One of these is created per
+// x264_encoder_{headers|encode} call.
+//
+// In memory, this struct lives in the mixer buffer, and is followed by
+// an array of x264_nals_t, and then the sequential payloads.
+struct video_mixer_frame {
+    int64_t pts;
+    int64_t dts;
+
+    int nals_len;
+    x264_nal_t nals[0];
+};
+
 // Video mixer.
 class video_mixer_base : public video_mixer {
     video_clock *clock;
     std::vector<video_source_entry> sources;
     video_source_entry *current_source;
 
-    Persistent<Function> on_frame;
+    Persistent<Function> on_data;
     Persistent<Function> on_error;
 
     void clear_clock();
     void clear_sources();
     GLuint build_shader(GLuint type, const char *source);
     bool build_program();
-    Handle<Object> nals_to_js();
+    bool buffer_nals(x264_nal_t *nals, int nals_len, x264_picture_t *pic);
 
 protected:
     // These are initialized by platform support.
@@ -89,16 +102,17 @@ protected:
     cl_kernel yuv_kernel;
 
     // Video encoding.
-    x264_t *video_enc;
-    x264_nal_t *nals;
-    int nals_len;
-    x264_picture_t enc_pic;
+    x264_param_t enc_params;
+    x264_t *enc;
 
     // Error handling.
     char last_error[128];
     Handle<Value> pop_last_error();
 
     // Callback.
+    uint8_t *buffer;
+    uint8_t *buffer_pos;
+    uint32_t buffer_size;
     video_mixer_callback callback;
     void emit_last();
 

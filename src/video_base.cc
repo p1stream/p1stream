@@ -96,28 +96,44 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     size_t size;
 
     Handle<Object> params;
-    x264_param_t enc_params;
     cl_program yuv_program;
 
     Wrap(args.This());
 
     if (!(ok = (args.Length() == 1)))
-        ret = ThrowException(Exception::TypeError(
-            String::New("Expected one argument")));
+        ret = Exception::TypeError(
+            String::New("Expected one argument"));
 
     if (ok) {
         if (!(ok = args[0]->IsObject()))
-            ret = ThrowException(Exception::TypeError(
-                String::New("Expected an object")));
+            ret = Exception::TypeError(
+                String::New("Expected an object"));
     }
 
     if (ok) {
         params = Local<Object>::Cast(args[0]);
 
+        val = params->Get(buffer_size_sym);
+        if (!(ok = val->IsUint32()))
+            ret = Exception::TypeError(
+                String::New("Invalid or missing buffer size"));
+    }
+
+    if (ok) {
+        buffer_size = val->Uint32Value();
+        if (!(ok = (buffer_size > 0)))
+            ret = Exception::TypeError(
+                String::New("Invalid or missing buffer size"));
+
+    }
+
+    if (ok) {
+        buffer = new uint8_t[buffer_size];
+
         val = params->Get(width_sym);
         if (!(ok = val->IsUint32()))
-            ret = ThrowException(Exception::TypeError(
-                String::New("Invalid or missing width")));
+            ret = Exception::TypeError(
+                String::New("Invalid or missing width"));
     }
 
     if (ok) {
@@ -125,26 +141,26 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
 
         val = params->Get(height_sym);
         if (!(ok = val->IsUint32()))
-            ret = ThrowException(Exception::TypeError(
-                String::New("Invalid or missing height")));
+            ret = Exception::TypeError(
+                String::New("Invalid or missing height"));
     }
 
     if (ok) {
         out_dimensions.height = val->Uint32Value();
 
-        val = params->Get(on_frame_sym);
+        val = params->Get(on_data_sym);
         if (!(ok = val->IsFunction()))
-            ret = ThrowException(Exception::TypeError(
-                String::New("Invalid or missing onFrame handler")));
+            ret = Exception::TypeError(
+                String::New("Invalid or missing onData handler"));
     }
 
     if (ok) {
-        on_frame = Persistent<Function>::New(Handle<Function>::Cast(val));
+        on_data = Persistent<Function>::New(Handle<Function>::Cast(val));
 
         val = params->Get(on_error_sym);
         if (!(ok = val->IsFunction()))
-            ret = ThrowException(Exception::TypeError(
-                String::New("Invalid or missing onError handler")));
+            ret = Exception::TypeError(
+                String::New("Invalid or missing onError handler"));
     }
 
     if (ok) {
@@ -323,21 +339,15 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
 
     if (ok) {
         enc_params.i_log_level = X264_LOG_DEBUG;
+
+        enc_params.i_timebase_num = mach_timebase.num;
+        enc_params.i_timebase_den = mach_timebase.den;
+
+        enc_params.b_aud = 1;
+        enc_params.b_annexb = 0;
+
         enc_params.i_width = out_dimensions.width;
         enc_params.i_height = out_dimensions.height;
-        video_enc = x264_encoder_open(&enc_params);
-        if (!(ok = (video_enc != NULL)))
-            strcpy(last_error, "x264_encoder_open error");
-    }
-
-    if (ok) {
-        i_ret = x264_encoder_headers(video_enc, &nals, &nals_len);
-        if (!(ok = (i_ret >= 0)))
-            strcpy(last_error, "x264_encoder_headers error");
-    }
-
-    if (ok) {
-        handle_->Set(String::NewSymbol("headers"), nals_to_js());
 
         Ref();
         return handle_;
@@ -361,9 +371,9 @@ void video_mixer_base::destroy(bool unref)
 
     callback.close();
 
-    if (video_enc != NULL) {
-        x264_encoder_close(video_enc);
-        video_enc = NULL;
+    if (enc != NULL) {
+        x264_encoder_close(enc);
+        enc = NULL;
     }
 
     if (yuv_kernel != NULL) {
@@ -398,14 +408,19 @@ void video_mixer_base::destroy(bool unref)
 
     platform_destroy();
 
-    if (!on_frame.IsEmpty()) {
-        on_frame.Dispose();
-        on_frame.Clear();
+    if (!on_data.IsEmpty()) {
+        on_data.Dispose();
+        on_data.Clear();
     }
 
     if (!on_error.IsEmpty()) {
         on_error.Dispose();
         on_error.Clear();
+    }
+
+    if (buffer != nullptr) {
+        delete[] buffer;
+        buffer = nullptr;
     }
 
     if (unref)
@@ -610,6 +625,10 @@ void video_mixer_base::tick(frame_time_t time)
 
     // Convert colorspace.
     cl_int cl_err;
+    int i_ret;
+    x264_nal_t *nals;
+    int nals_len;
+    x264_picture_t enc_pic;
 
     if (ok) {
         cl_err = clEnqueueAcquireGLObjects(clq, 1, &tex_mem, 0, NULL, NULL);
@@ -642,12 +661,34 @@ void video_mixer_base::tick(frame_time_t time)
     }
 
     // Encode.
+    if (ok && enc == NULL) {
+        fraction_t fps = clock->ticks_per_second();
+        enc_params.i_fps_num = fps.num;
+        enc_params.i_fps_den = fps.den;
+
+        enc = x264_encoder_open(&enc_params);
+        if (!(ok = (enc != NULL)))
+            strcpy(last_error, "x264_encoder_open error");
+
+        if (ok) {
+            i_ret = x264_encoder_headers(enc, &nals, &nals_len);
+            if (!(ok = (i_ret >= 0)))
+                strcpy(last_error, "x264_encoder_headers error");
+        }
+
+        if (ok)
+            ok = buffer_nals(nals, nals_len, NULL);
+    }
+
     if (ok) {
         out_pic.i_dts = out_pic.i_pts = time;
-        int i_ret = x264_encoder_encode(video_enc, &nals, &nals_len, &out_pic, &enc_pic);
+        i_ret = x264_encoder_encode(enc, &nals, &nals_len, &out_pic, &enc_pic);
         if (!(ok = (i_ret >= 0)))
             strcpy(last_error, "x264_encoder_encode error");
     }
+
+    if (ok)
+        ok = buffer_nals(nals, nals_len, &enc_pic);
 
     // Signal main thread.
     if (uv_async_send(&callback.async)) {
@@ -675,27 +716,107 @@ void video_mixer_base::render_buffer(dimensions_t dimensions, void *data)
     render_texture();
 }
 
+bool video_mixer_base::buffer_nals(x264_nal_t *nals, int nals_len, x264_picture_t *pic)
+{
+    x264_nal_t &last_nal = nals[nals_len - 1];
+    uint8_t *start = nals[0].p_payload;
+    uint8_t *end = last_nal.p_payload + last_nal.i_payload;
+    size_t nals_size = nals_len * sizeof(x264_nal_t);
+    size_t payload_size = end - start;
+    size_t claim = sizeof(video_mixer_frame) + nals_size + payload_size;
+    size_t available = buffer + buffer_size - buffer_pos;
+
+    if (claim > available) {
+        // FIXME: Better handle this scenario?
+        fprintf(stderr, "main thread stalled, dropping video frames");
+        return false;
+    }
+
+    auto *frame = (video_mixer_frame *) buffer_pos;
+    buffer_pos += claim;
+
+    if (pic != NULL) {
+        frame->pts = pic->i_pts;
+        frame->dts = pic->i_dts;
+    }
+    else {
+        frame->pts = 0;
+        frame->dts = 0;
+    }
+
+    frame->nals_len = nals_len;
+    memcpy(frame->nals, nals, nals_size);
+
+    uint8_t *p = (uint8_t *) (frame->nals + nals_len);
+    memcpy(p, nals[0].p_payload, payload_size);
+
+    return true;
+}
+
 void video_mixer_base::emit_last()
 {
     HandleScope scope;
-    Handle<Function> listener;
-    Handle<Value> arg;
+    Handle<Value> err;
+    Buffer *buf;
 
+    // With lock, extract a copy of buffer (or error).
     {
         lock_handle lock(clock);
-        arg = pop_last_error();
-        if (arg.IsEmpty()) {
-            listener = on_frame;
-            arg = nals_to_js();
-            if (arg.IsEmpty())
-                return;
-        }
-        else {
-            listener = on_error;
+        err = pop_last_error();
+        if (err.IsEmpty()) {
+            buf = Buffer::New((const char *) buffer, buffer_pos - buffer);
+            buffer_pos = buffer;
         }
     }
 
-    listener->Call(handle_, 1, &arg);
+    if (!err.IsEmpty()) {
+        on_error->Call(handle_, 1, &err);
+        return;
+    }
+
+    // Create meta structure from buffer.
+    auto obj = Object::New();
+
+    auto frames_arr = Array::New();
+    obj->Set(buf_sym, buf->handle_);
+    obj->Set(frames_sym, frames_arr);
+
+    size_t len = Buffer::Length(buf);
+    auto *start = Buffer::Data(buf);
+    auto *end = start + len;
+
+    auto *p = start;
+    uint32_t i_frame = 0;
+    while (p != end) {
+        auto *frame = (video_mixer_frame *) p;
+        auto frame_obj = Object::New();
+        frames_arr->Set(i_frame++, frame_obj);
+
+        auto nals_len = frame->nals_len;
+        auto nals_arr = Array::New(nals_len);
+        frame_obj->Set(pts_sym, Integer::New(frame->pts));
+        frame_obj->Set(dts_sym, Integer::New(frame->dts));
+        frame_obj->Set(nals_sym, nals_arr);
+
+        auto *nals = frame->nals;
+        size_t nals_size = nals_len * sizeof(x264_nal_t);
+        p = ((char *) nals) + nals_size;
+
+        for (uint32_t i_nal = 0; i_nal < nals_len; i_nal++) {
+            auto &nal = frame->nals[i_nal];
+            auto nal_obj = Object::New();
+            nals_arr->Set(i_nal, nal_obj);
+
+            nal_obj->Set(type_sym, Integer::New(nal.i_type));
+            nal_obj->Set(priority_sym, Integer::New(nal.i_ref_idc));
+            nal_obj->Set(offset_sym, Uint32::New(p - start));
+            nal_obj->Set(size_sym, Uint32::New(nal.i_payload));
+            p += nal.i_payload;
+        }
+    }
+
+    Handle<Value> arg = obj;
+    on_data->Call(handle_, 1, &arg);
 }
 
 GLuint video_mixer_base::build_shader(GLuint type, const char *source)
@@ -775,58 +896,8 @@ bool video_mixer_base::build_program()
     return true;
 }
 
-Handle<Object> video_mixer_base::nals_to_js()
-{
-    if (nals_len == 0)
-        return Handle<Object>();
-
-    auto &last_nal = nals[nals_len - 1];
-    auto start = nals[0].p_payload;
-    auto end = last_nal.p_payload + last_nal.i_payload;
-    size_t size = end - start;
-    if (size == 0)
-        return Handle<Object>();
-
-    auto ret = Object::New();
-    Handle<Value> val;
-
-    val = Buffer::New((const char *) start, size)->handle_;
-    ret->Set(data_sym, val);
-
-    auto array = Array::New(nals_len);
-    for (int i = 0; i < nals_len; i++) {
-        auto &nal = nals[i];
-        auto obj = Object::New();
-
-        val = Integer::New(nal.i_type);
-        obj->Set(type_sym, val);
-
-        val = Integer::NewFromUnsigned(nal.p_payload - start);
-        obj->Set(offset_sym, val);
-
-        val = Integer::New(nal.i_payload);
-        obj->Set(size_sym, val);
-
-        array->Set(i, obj);
-    }
-
-    return ret;
-}
-
 void video_mixer_base::init_prototype(Handle<FunctionTemplate> func)
 {
-    NODE_DEFINE_CONSTANT(func, NAL_UNKNOWN);
-    NODE_DEFINE_CONSTANT(func, NAL_SLICE);
-    NODE_DEFINE_CONSTANT(func, NAL_SLICE_DPA);
-    NODE_DEFINE_CONSTANT(func, NAL_SLICE_DPB);
-    NODE_DEFINE_CONSTANT(func, NAL_SLICE_DPC);
-    NODE_DEFINE_CONSTANT(func, NAL_SLICE_IDR);
-    NODE_DEFINE_CONSTANT(func, NAL_SEI);
-    NODE_DEFINE_CONSTANT(func, NAL_SPS);
-    NODE_DEFINE_CONSTANT(func, NAL_PPS);
-    NODE_DEFINE_CONSTANT(func, NAL_AUD);
-    NODE_DEFINE_CONSTANT(func, NAL_FILLER);
-
     SetPrototypeMethod(func, "destroy", [](const Arguments &args) -> Handle<Value> {
         auto mixer = ObjectWrap::Unwrap<video_mixer_base>(args.This());
         mixer->destroy();
