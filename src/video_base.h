@@ -26,7 +26,7 @@ namespace p1stream {
 struct video_source_entry {
     video_source *source;
 
-    // Texture name. The source need not touch this.
+    // Texture name.
     GLuint texture;
 
     // Top left and bottom right coordinates of where to place the image in the
@@ -38,6 +38,7 @@ struct video_source_entry {
     GLfloat u1, v1, u2, v2;
 };
 
+// Wrap uv_async with std::function.
 struct video_mixer_callback {
     uv_async_t async;
     std::function<void ()> fn;
@@ -64,40 +65,40 @@ class video_mixer_base : public video_mixer {
     Handle<Object> nals_to_js();
 
 protected:
-    // These are initialized by platform support
+    // These are initialized by platform support.
     cl_context cl;
     GLuint tex;
     GLuint fbo;
 
-    // Render output
+    // Render output.
     size_t out_size;
     dimensions_t out_dimensions;
     x264_picture_t out_pic;
 
-    // GL objects
+    // OpenGL objects.
     GLuint vao;
     GLuint vbo;
     GLuint program;
     GLuint tex_u;
 
-    // CL objects
+    // OpenCL objects.
     size_t yuv_work_size[2];
     cl_command_queue clq;
     cl_mem tex_mem;
     cl_mem out_mem;
     cl_kernel yuv_kernel;
 
-    // Video encoding
+    // Video encoding.
     x264_t *video_enc;
     x264_nal_t *nals;
     int nals_len;
     x264_picture_t enc_pic;
 
-    // Error handling
+    // Error handling.
     char last_error[128];
     Handle<Value> pop_last_error();
 
-    // Callback
+    // Callback.
     video_mixer_callback callback;
     void emit_last();
 
@@ -107,16 +108,19 @@ protected:
     virtual bool activate_gl() = 0;
 
 public:
+    // Public JavaScript methods.
     Handle<Value> init(const Arguments &args);
     void destroy(bool unref = true);
 
     Handle<Value> set_clock(const Arguments &args);
     Handle<Value> set_sources(const Arguments &args);
 
+    // Source callbacks.
     virtual void tick(frame_time_t time) final;
     virtual void render_texture() final;
     virtual void render_buffer(dimensions_t dimensions, void *data) final;
 
+    // Module init.
     static void init_prototype(Handle<FunctionTemplate> func);
 };
 
