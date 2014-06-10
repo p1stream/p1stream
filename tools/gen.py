@@ -723,4 +723,6 @@ n.rule('build_app', build_app)
 
 app = 'out/P1stream.app'
 app_info = 'mac/Info.plist'
-n.build(app, 'build_app', implicit=[build_app, node, mod_core, app_info])
+lib_js = glob('lib/*.js')
+n.build(app, 'build_app',
+        implicit=[build_app, node, mod_core, app_info] + lib_js)
