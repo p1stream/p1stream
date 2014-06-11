@@ -1,4 +1,5 @@
 var core = require('./core.node');
+var mac_sources = require('../mac_sources');
 
 var videoMixer = new core.VideoMixer({
     bufferSize: 1 * 1024 * 1024,
@@ -8,14 +9,20 @@ var videoMixer = new core.VideoMixer({
     onError: onError
 });
 
+var clock = new mac_sources.DisplayLink();
+videoMixer.setClock(clock);
+
 function onData(e) {
     console.log('data', e);
+    finish();
 }
 
 function onError(e) {
     console.log('error', e);
+    finish();
 }
 
-console.log('Hello world!', videoMixer);
-
-videoMixer.destroy();
+function finish() {
+    videoMixer.destroy();
+    clock.destroy();
+}

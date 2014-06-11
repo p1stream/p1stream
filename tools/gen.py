@@ -741,5 +741,12 @@ build_mod('core',
         '-framework OpenGL '
         '-framework OpenCL')
 
+build_mod('mac_sources',
+    cflags =
+        '-I core/native '
+        '-I mac-sources/native',
+    ldflags =
+        '-framework CoreVideo')
+
 n.build('out/P1stream.app/Contents/Resources/Info.plist',
         'cp', 'core/native/mac/Info.plist')
