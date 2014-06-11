@@ -716,10 +716,10 @@ def build_mod(name, js=None, src=None, extra_obj=None, cflags='', ldflags=''):
         n.build(o, 'mod_cc', i, variables={ 'cflags': cflags })
     if extra_obj:
         obj += extra_obj
-
-    ldflags = ('-dynamiclib -install_name @rpath/%s'
-              ' -undefined dynamic_lookup %s' % (mod, ldflags))
-    n.build(mod, 'link', obj, variables={ 'ldflags': ldflags })
+    if len(obj) > 0:
+        ldflags = ('-dynamiclib -install_name @rpath/%s'
+                  ' -undefined dynamic_lookup %s' % (mod, ldflags))
+        n.build(mod, 'link', obj, variables={ 'ldflags': ldflags })
 
     if not js:
         js = glob('%s/*.js' % name)
