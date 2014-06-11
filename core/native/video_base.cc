@@ -120,11 +120,11 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
         if (!(ok = (buffer_size > 0)))
             ret = Exception::TypeError(
                 String::New("Invalid or missing buffer size"));
-
     }
 
     if (ok) {
         buffer = new uint8_t[buffer_size];
+        buffer_pos = buffer;
 
         val = params->Get(width_sym);
         if (!(ok = val->IsUint32()))
