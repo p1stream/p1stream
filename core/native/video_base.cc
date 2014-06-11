@@ -87,7 +87,6 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     bool ok;
     Handle<Value> ret;
 
-    Handle<Value> val;
     cl_device_id device_id;
     cl_int cl_err;
     GLenum gl_err;
@@ -95,6 +94,7 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     size_t size;
 
     Handle<Object> params;
+    Handle<Value> val;
     cl_program yuv_program;
 
     Wrap(args.This());
@@ -102,16 +102,13 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     if (!(ok = (args.Length() == 1)))
         ret = Exception::TypeError(
             String::New("Expected one argument"));
-
-    if (ok) {
-        if (!(ok = args[0]->IsObject()))
-            ret = Exception::TypeError(
-                String::New("Expected an object"));
-    }
-
-    if (ok) {
+    else if (!(ok = args[0]->IsObject()))
+        ret = Exception::TypeError(
+            String::New("Expected an object"));
+    else
         params = Local<Object>::Cast(args[0]);
 
+    if (ok) {
         val = params->Get(buffer_size_sym);
         if (!(ok = val->IsUint32()))
             ret = Exception::TypeError(
