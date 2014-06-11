@@ -685,9 +685,11 @@ void video_mixer_base::tick(frame_time_t time)
     }
 
     // Signal main thread.
-    if (uv_async_send(&callback.async)) {
-        const char *err = uv_strerror(uv_last_error(uv_default_loop()));
-        fprintf(stderr, "uv_async_send error: %s", err);
+    if (!ok || buffer_pos != buffer) {
+        if (uv_async_send(&callback.async)) {
+            const char *err = uv_strerror(uv_last_error(uv_default_loop()));
+            fprintf(stderr, "uv_async_send error: %s", err);
+        }
     }
 }
 
