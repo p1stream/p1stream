@@ -670,10 +670,9 @@ void video_mixer_base::tick(frame_time_t time)
             i_ret = x264_encoder_headers(enc, &nals, &nals_len);
             if (!(ok = (i_ret >= 0)))
                 strcpy(last_error, "x264_encoder_headers error");
+            else if (i_ret > 0)
+                ok = buffer_nals(nals, nals_len, NULL);
         }
-
-        if (ok)
-            ok = buffer_nals(nals, nals_len, NULL);
     }
 
     if (ok) {
@@ -681,10 +680,9 @@ void video_mixer_base::tick(frame_time_t time)
         i_ret = x264_encoder_encode(enc, &nals, &nals_len, &out_pic, &enc_pic);
         if (!(ok = (i_ret >= 0)))
             strcpy(last_error, "x264_encoder_encode error");
+        else if (i_ret > 0)
+            ok = buffer_nals(nals, nals_len, &enc_pic);
     }
-
-    if (ok)
-        ok = buffer_nals(nals, nals_len, &enc_pic);
 
     // Signal main thread.
     if (uv_async_send(&callback.async)) {
