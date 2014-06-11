@@ -701,7 +701,7 @@ n.build(node, 'link',
 
 # P1stream
 mod_dir = 'out/P1stream.app/Contents/Modules'
-n.rule('mod_cc', '%s -std=c++11 -Wall -DBUILDING_NODE_EXTENSION '
+n.rule('mod_cc', '%s -std=c++11 -Wall -Werror -DBUILDING_NODE_EXTENSION '
                  '%s $cflags -c -MMD -MF $out.d -o $out $in' %
                  (clang, node_cflags),
         deps='gcc', depfile='$out.d')
