@@ -597,7 +597,7 @@ Handle<Value> video_mixer_base::set_sources(const Arguments &args)
 
 void video_mixer_base::tick(frame_time_t time)
 {
-    bool ok = (last_error[0] != '\0');
+    bool ok = (last_error[0] == '\0');
 
     // Render.
     GLenum gl_err;
