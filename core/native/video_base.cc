@@ -790,8 +790,8 @@ void video_mixer_base::emit_last()
 
         auto nals_len = frame->nals_len;
         auto nals_arr = Array::New(nals_len);
-        frame_obj->Set(pts_sym, Integer::New(frame->pts));
-        frame_obj->Set(dts_sym, Integer::New(frame->dts));
+        frame_obj->Set(pts_sym, Number::New(frame->pts));
+        frame_obj->Set(dts_sym, Number::New(frame->dts));
         frame_obj->Set(nals_sym, nals_arr);
 
         auto *nals = frame->nals;
