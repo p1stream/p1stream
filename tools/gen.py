@@ -5,15 +5,20 @@ from glob import glob
 from ninja_syntax import Writer
 n = Writer(sys.stdout)
 
+if len(sys.argv) == 2 and sys.argv[1] == '--debug':
+    cfg_cflags = '-g'
+else:
+    cfg_cflags = '-O3'
+
 n.variable('builddir', 'out')
 n.rule('cp', 'cp $in $out')
 n.rule('link', 'clang++ $ldflags -mmacosx-version-min=10.8 -fcolor-diagnostics'
                       ' -stdlib=libc++ -arch x86_64 -o $out $in')
-clang = 'clang -mmacosx-version-min=10.8 -stdlib=libc++ -arch x86_64 -O3 ' \
+clang = 'clang -mmacosx-version-min=10.8 -stdlib=libc++ -arch x86_64 %s ' \
         '-DNDEBUG -D__POSIX__ -D_GNU_SOURCE -D_LARGEFILE_SOURCE ' \
         '-D_DARWIN_USE_64_BIT_INODE=1 -D_FILE_OFFSET_BITS=64 ' \
         '-fno-exceptions -fno-rtti -fno-threadsafe-statics ' \
-        '-fno-strict-aliasing -fcolor-diagnostics'
+        '-fno-strict-aliasing -fcolor-diagnostics' % (cfg_cflags)
 
 def removeMany(paths, remove):
     for x in remove:
