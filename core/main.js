@@ -12,9 +12,10 @@ var videoMixer = new core.VideoMixer({
 var clock = new mac_sources.DisplayLink();
 videoMixer.setClock(clock);
 
+setTimeout(finish, 5000);
+
 function onData(e) {
     console.log('data', e);
-    finish();
 }
 
 function onError(e) {
@@ -23,6 +24,13 @@ function onError(e) {
 }
 
 function finish() {
-    videoMixer.destroy();
-    clock.destroy();
+    if (videoMixer) {
+        videoMixer.destroy();
+        videoMixer = null;
+    }
+
+    if (clock) {
+        clock.destroy();
+        clock = null;
+    }
 }
