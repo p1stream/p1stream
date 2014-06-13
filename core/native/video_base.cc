@@ -766,7 +766,7 @@ void video_mixer_base::emit_last()
     }
 
     if (!err.IsEmpty()) {
-        on_error->Call(handle_, 1, &err);
+        MakeCallback(handle_, on_error, 1, &err);
         return;
     }
 
@@ -812,7 +812,7 @@ void video_mixer_base::emit_last()
     }
 
     Handle<Value> arg = obj;
-    on_data->Call(handle_, 1, &arg);
+    MakeCallback(handle_, on_data, 1, &arg);
 }
 
 GLuint video_mixer_base::build_shader(GLuint type, const char *source)
