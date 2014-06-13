@@ -611,7 +611,7 @@ void video_mixer_base::tick(frame_time_t time)
         for (auto &entry : sources) {
             glBindTexture(GL_TEXTURE_RECTANGLE, entry.texture);
             current_source = &entry;
-            entry.source->frame();
+            entry.source->frame(this);
         }
         current_source = nullptr;
         glFinish();

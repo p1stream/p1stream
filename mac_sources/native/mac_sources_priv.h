@@ -47,6 +47,35 @@ public:
 };
 
 
+class display_stream : public video_source, public lockable {
+private:
+    CGDirectDisplayID display_id;
+
+    dispatch_queue_t dispatch;
+    CGDisplayStreamRef cg_handle;
+    bool running;
+
+    IOSurfaceRef last_frame;
+
+    void callback(
+        CGDisplayStreamFrameStatus status,
+        IOSurfaceRef frame);
+
+public:
+    // Public JavaScript methods.
+    Handle<Value> init(const Arguments &args);
+    void destroy(bool unref = true);
+
+    // Video source implementation.
+    virtual void frame(video_mixer *mixer) final;
+    virtual void ref_mixer(video_mixer *mixer) final;
+    virtual void unref_mixer(video_mixer *mixer) final;
+
+    // Module init.
+    static void init_prototype(Handle<FunctionTemplate> func);
+};
+
+
 }  // namespace p1stream
 
 #endif  // p1_mac_sources_priv_h

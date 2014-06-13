@@ -58,6 +58,7 @@ static void init(Handle<Object> e)
 {
     kern_return_t k_ret;
     mach_timebase_info_data_t timebase;
+    Handle<FunctionTemplate> func;
 
     NODE_DEFINE_CONSTANT(e, NAL_UNKNOWN);
     NODE_DEFINE_CONSTANT(e, NAL_SLICE);
@@ -111,7 +112,7 @@ static void init(Handle<Object> e)
     mach_timebase.num = timebase.numer;
     mach_timebase.den = timebase.denom;
 
-    auto func = FunctionTemplate::New(video_mixer_constructor);
+    func = FunctionTemplate::New(video_mixer_constructor);
     func->InstanceTemplate()->SetInternalFieldCount(1);
     video_mixer_base::init_prototype(func);
     e->Set(String::NewSymbol("VideoMixer"), func->GetFunction());

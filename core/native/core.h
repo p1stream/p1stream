@@ -102,7 +102,7 @@ class video_source : public ObjectWrap {
 public:
     // Called when the mixer is rendering a frame. Should call one of the
     // render_*() callbacks of the mixer.
-    virtual void frame() = 0;
+    virtual void frame(video_mixer *mixer) = 0;
 
     // Reference a mixer, it will start calling frame().
     virtual void ref_mixer(video_mixer *mixer) = 0;

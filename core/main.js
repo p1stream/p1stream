@@ -1,7 +1,7 @@
 var core = require('./core.node');
 var mac_sources = require('../mac_sources');
 
-var videoMixer = new core.VideoMixer({
+var mixer = new core.VideoMixer({
     bufferSize: 1 * 1024 * 1024,
     width: 1280,
     height: 720,
@@ -9,8 +9,19 @@ var videoMixer = new core.VideoMixer({
     onError: onError
 });
 
+var source = new mac_sources.DisplayStream();
+mixer.setSources([
+    {
+        source: source,
+        x1: -1, y1: -1,
+        x2: +1, y2: +1,
+        u1: 0, v1: 0,
+        u2: 1, v2: 1
+    }
+]);
+
 var clock = new mac_sources.DisplayLink();
-videoMixer.setClock(clock);
+mixer.setClock(clock);
 
 setTimeout(finish, 5000);
 
@@ -24,9 +35,14 @@ function onError(e) {
 }
 
 function finish() {
-    if (videoMixer) {
-        videoMixer.destroy();
-        videoMixer = null;
+    if (mixer) {
+        mixer.destroy();
+        mixer = null;
+    }
+
+    if (source) {
+        source.destroy();
+        source = null;
     }
 
     if (clock) {

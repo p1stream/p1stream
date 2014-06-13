@@ -13,15 +13,28 @@ static Handle<Value> display_link_constructor(const Arguments &args)
     return link->init(args);
 }
 
+static Handle<Value> display_stream_constructor(const Arguments &args)
+{
+    auto link = new display_stream();
+    return link->init(args);
+}
+
 static void init(Handle<Object> e)
 {
+    Handle<FunctionTemplate> func;
+
     display_id_sym = NODE_PSYMBOL("displayId");
     divisor_sym = NODE_PSYMBOL("divisor");
 
-    auto func = FunctionTemplate::New(display_link_constructor);
+    func = FunctionTemplate::New(display_link_constructor);
     func->InstanceTemplate()->SetInternalFieldCount(1);
     display_link::init_prototype(func);
     e->Set(String::NewSymbol("DisplayLink"), func->GetFunction());
+
+    func = FunctionTemplate::New(display_stream_constructor);
+    func->InstanceTemplate()->SetInternalFieldCount(1);
+    display_link::init_prototype(func);
+    e->Set(String::NewSymbol("DisplayStream"), func->GetFunction());
 }
 
 
