@@ -334,7 +334,7 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     }
 
     if (ok) {
-        enc_params.i_log_level = X264_LOG_DEBUG;
+        enc_params.i_log_level = X264_LOG_INFO;
 
         enc_params.i_timebase_num = mach_timebase.num;
         enc_params.i_timebase_den = mach_timebase.den;
