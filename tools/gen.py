@@ -9,16 +9,17 @@ from ninja_syntax import Writer
 n = Writer(sys.stdout)
 
 if len(sys.argv) == 2 and sys.argv[1] == '--debug':
-    cfg_cflags = '-g'
+    cfg_cflags = '-g -DDEBUG -D_DEBUG -DENABLE_DISASSEMBLER' \
+                ' -DV8_ENABLE_CHECKS -DOBJECT_PRINT -DVERIFY_HEAP'
 else:
-    cfg_cflags = '-O3'
+    cfg_cflags = '-O3 -DNDEBUG'
 
 n.variable('builddir', 'out')
 n.rule('cp', 'cp $in $out')
 n.rule('link', 'clang++ $ldflags -mmacosx-version-min=10.8 -fcolor-diagnostics'
                       ' -stdlib=libc++ -arch x86_64 -o $out $in')
 clang = 'clang -mmacosx-version-min=10.8 -stdlib=libc++ -arch x86_64 %s ' \
-        '-DNDEBUG -D__POSIX__ -D_GNU_SOURCE -D_LARGEFILE_SOURCE ' \
+        '-D__POSIX__ -D_GNU_SOURCE -D_LARGEFILE_SOURCE ' \
         '-D_DARWIN_USE_64_BIT_INODE=1 -D_FILE_OFFSET_BITS=64 ' \
         '-fno-exceptions -fno-rtti -fno-threadsafe-statics ' \
         '-fno-strict-aliasing -fcolor-diagnostics' % (cfg_cflags)
