@@ -666,10 +666,13 @@ n.rule('node_cc', '%s -std=c++11 -w %s -I out/deps/node %s %s %s '
 node_js2c = 'deps/node/node/tools/js2c.py'
 n.rule('node_js2c', '%s $out $in' % node_js2c)
 
-node_in_lib = glob('deps/node/node/lib/*.js') + \
-              glob('deps/node/node/src/*.js') + \
-              ['deps/node/config.gypi'] + \
-              ['core/native/mac/_third_party_main.js']
+node_in_lib = [
+    'deps/node/config.gypi',
+    'deps/node/node/src/macros.py',
+    'deps/node/node/src/perfctr_macros.py',
+    'core/native/mac/_third_party_main.js'
+] + glob('deps/node/node/lib/*.js') + \
+    glob('deps/node/node/src/*.js')
 node_out_lib = ['out/deps/node/node_natives.h']
 n.build(node_out_lib, 'node_js2c', node_in_lib, implicit=node_js2c)
 
