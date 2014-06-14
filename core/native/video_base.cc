@@ -753,41 +753,39 @@ void video_mixer_base::emit_last()
 {
     HandleScope scope;
     Handle<Value> err;
-    Buffer *buf = NULL;
+    uint8_t *copy = NULL;
+    size_t size = 0;
 
     // With lock, extract a copy of buffer (or error).
     {
         lock_handle lock(clock);
         err = pop_last_error();
         if (err.IsEmpty()) {
-            size_t size = buffer_pos - buffer;
-            if (size > 0) {
-                buf = Buffer::New((const char *) buffer, size);
+            size = buffer_pos - buffer;
+            if (size != 0) {
+                copy = new uint8_t[size];
+                memcpy(copy, buffer, size);
                 buffer_pos = buffer;
             }
         }
     }
 
-    if (!err.IsEmpty()) {
+    if (!err.IsEmpty())
         MakeCallback(handle_, on_error, 1, &err);
+    if (size == 0)
         return;
-    }
-    else if (buf == NULL) {
-        return;
-    }
 
     // Create meta structure from buffer.
     auto obj = Object::New();
 
-    auto frames_arr = Array::New();
+    auto *buf = Buffer::New((char *) copy, size, free_callback, NULL);
     obj->Set(buf_sym, buf->handle_);
+
+    auto frames_arr = Array::New();
     obj->Set(frames_sym, frames_arr);
 
-    size_t len = Buffer::Length(buf);
-    auto *start = Buffer::Data(buf);
-    auto *end = start + len;
-
-    auto *p = start;
+    auto *p = copy;
+    auto *end = p + size;
     uint32_t i_frame = 0;
     while (p != end) {
         auto *frame = (video_mixer_frame *) p;
@@ -802,7 +800,7 @@ void video_mixer_base::emit_last()
 
         auto *nals = frame->nals;
         size_t nals_size = nals_len * sizeof(x264_nal_t);
-        p = ((char *) nals) + nals_size;
+        p = ((uint8_t *) nals) + nals_size;
 
         for (uint32_t i_nal = 0; i_nal < nals_len; i_nal++) {
             auto &nal = frame->nals[i_nal];
@@ -811,7 +809,7 @@ void video_mixer_base::emit_last()
 
             nal_obj->Set(type_sym, Integer::New(nal.i_type));
             nal_obj->Set(priority_sym, Integer::New(nal.i_ref_idc));
-            nal_obj->Set(offset_sym, Uint32::New(p - start));
+            nal_obj->Set(offset_sym, Uint32::New(p - copy));
             nal_obj->Set(size_sym, Uint32::New(nal.i_payload));
             p += nal.i_payload;
         }
@@ -896,6 +894,12 @@ bool video_mixer_base::build_program()
     }
 
     return true;
+}
+
+void video_mixer_base::free_callback(char *data, void *hint)
+{
+    auto *p = (uint8_t *) data;
+    delete[] p;
 }
 
 void video_mixer_base::init_prototype(Handle<FunctionTemplate> func)

@@ -109,6 +109,8 @@ class video_mixer_base : public video_mixer {
     bool build_program();
     bool buffer_nals(x264_nal_t *nals, int nals_len, x264_picture_t *pic);
 
+    static void free_callback(char *data, void *hint);
+
 protected:
     // These are initialized by platform support.
     cl_context cl;
