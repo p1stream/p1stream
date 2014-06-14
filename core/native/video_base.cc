@@ -753,20 +753,26 @@ void video_mixer_base::emit_last()
 {
     HandleScope scope;
     Handle<Value> err;
-    Buffer *buf;
+    Buffer *buf = NULL;
 
     // With lock, extract a copy of buffer (or error).
     {
         lock_handle lock(clock);
         err = pop_last_error();
         if (err.IsEmpty()) {
-            buf = Buffer::New((const char *) buffer, buffer_pos - buffer);
-            buffer_pos = buffer;
+            size_t size = buffer_pos - buffer;
+            if (size > 0) {
+                buf = Buffer::New((const char *) buffer, size);
+                buffer_pos = buffer;
+            }
         }
     }
 
     if (!err.IsEmpty()) {
         MakeCallback(handle_, on_error, 1, &err);
+        return;
+    }
+    else if (buf == NULL) {
         return;
     }
 
