@@ -1,8 +1,2 @@
-# Configure output
-*.pyc
-
-# Build output.
+/tools/*.pyc
 /out
-
-# Configuration files.
-/*.plist
