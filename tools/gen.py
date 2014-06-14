@@ -730,7 +730,7 @@ n.rule('mod_cc', '%s -std=c++11 -Wall -Werror -DBUILDING_NODE_EXTENSION '
                  (clang, node_cflags),
         deps='gcc', depfile='$out.d')
 
-def build_mod(name, res=['*.js'], src=None, extra_obj=None, cflags='', ldflags=''):
+def build_mod(name, res=['*.html', '*.css', '*.js'], src=None, extra_obj=None, cflags='', ldflags=''):
     mod = '%s/%s/%s.node' % (mod_dir, name, name)
 
     if not src:
@@ -762,6 +762,10 @@ build_mod('core',
         '-framework IOSurface '
         '-framework OpenGL '
         '-framework OpenCL')
+
+build_mod('api')
+
+build_mod('webui')
 
 build_mod('mac_sources',
     cflags =

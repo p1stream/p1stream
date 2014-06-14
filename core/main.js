@@ -1,5 +1,9 @@
 var core = require('./core.node');
+
+var api = require('../api');
+var webui = require('../webui');
 var mac_sources = require('../mac_sources');
+
 
 var mixer = new core.VideoMixer({
     bufferSize: 1 * 1024 * 1024,
@@ -23,10 +27,7 @@ mixer.setSources([
 var clock = new mac_sources.DisplayLink();
 mixer.setClock(clock);
 
-setTimeout(finish, 5000);
-
 function onData(e) {
-    console.log('data', e);
 }
 
 function onError(e) {
@@ -50,3 +51,7 @@ function finish() {
         clock = null;
     }
 }
+
+var app = api.createApp();
+webui(app);
+app.listen(53311, '127.0.0.1');
