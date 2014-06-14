@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
+import os
+import os.path
 import sys
 from glob import glob
+from fnmatch import fnmatch
 from ninja_syntax import Writer
 n = Writer(sys.stdout)
 
@@ -42,6 +45,18 @@ def outof(paths, ext='.o', outdir='out', flatten=False):
     if ext:
         res = setext(ext, res)
     return res
+
+def copytree(srcdir, outdir, pattern):
+    for (base, dirs, files) in os.walk(srcdir):
+        if 'native' in base:
+            continue
+        reldir = os.path.relpath(base, srcdir)
+        for f in files:
+            if not fnmatch(f, pattern):
+                continue
+            i = os.path.join(base, f)
+            o = os.path.join(outdir, reldir, f)
+            n.build(o, 'cp', i)
 
 
 # FraunhoferAAC
@@ -711,7 +726,7 @@ n.rule('mod_cc', '%s -std=c++11 -Wall -Werror -DBUILDING_NODE_EXTENSION '
                  (clang, node_cflags),
         deps='gcc', depfile='$out.d')
 
-def build_mod(name, js=None, src=None, extra_obj=None, cflags='', ldflags=''):
+def build_mod(name, res=['*.js'], src=None, extra_obj=None, cflags='', ldflags=''):
     mod = '%s/%s/%s.node' % (mod_dir, name, name)
 
     if not src:
@@ -726,10 +741,8 @@ def build_mod(name, js=None, src=None, extra_obj=None, cflags='', ldflags=''):
                   ' -undefined dynamic_lookup %s' % (mod, ldflags))
         n.build(mod, 'link', obj, variables={ 'ldflags': ldflags })
 
-    if not js:
-        js = glob('%s/*.js' % name)
-    for (i, o) in zip(js, outof(js, ext=None, outdir=mod_dir)):
-        n.build(o, 'cp', i)
+    for pattern in res:
+        copytree(name, '%s/%s' % (mod_dir, name), pattern)
 
 build_mod('core',
     src =
