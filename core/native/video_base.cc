@@ -734,10 +734,12 @@ bool video_mixer_base::buffer_nals(x264_nal_t *nals, int nals_len, x264_picture_
     if (pic != NULL) {
         frame->pts = pic->i_pts;
         frame->dts = pic->i_dts;
+        frame->keyframe = pic->b_keyframe ? true : false;
     }
     else {
         frame->pts = 0;
         frame->dts = 0;
+        frame->keyframe = false;
     }
 
     frame->nals_len = nals_len;
@@ -792,26 +794,26 @@ void video_mixer_base::emit_last()
         auto frame_obj = Object::New();
         frames_arr->Set(i_frame++, frame_obj);
 
+        auto *nals = frame->nals;
         auto nals_len = frame->nals_len;
         auto nals_arr = Array::New(nals_len);
         frame_obj->Set(pts_sym, Number::New(frame->pts));
         frame_obj->Set(dts_sym, Number::New(frame->dts));
+        frame_obj->Set(keyframe_sym, frame->keyframe ? True() : False());
         frame_obj->Set(nals_sym, nals_arr);
-
-        auto *nals = frame->nals;
-        size_t nals_size = nals_len * sizeof(x264_nal_t);
-        p = ((uint8_t *) nals) + nals_size;
+        p = ((uint8_t *) nals) + nals_len * sizeof(x264_nal_t);
 
         for (uint32_t i_nal = 0; i_nal < nals_len; i_nal++) {
-            auto &nal = frame->nals[i_nal];
+            auto &nal = nals[i_nal];
             auto nal_obj = Object::New();
             nals_arr->Set(i_nal, nal_obj);
 
             nal_obj->Set(type_sym, Integer::New(nal.i_type));
             nal_obj->Set(priority_sym, Integer::New(nal.i_ref_idc));
-            nal_obj->Set(offset_sym, Uint32::New(p - copy));
-            nal_obj->Set(size_sym, Uint32::New(nal.i_payload));
+
+            nal_obj->Set(start_sym, Uint32::New(p - copy));
             p += nal.i_payload;
+            nal_obj->Set(end_sym, Uint32::New(p - copy));
         }
     }
 

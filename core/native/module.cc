@@ -37,11 +37,12 @@ Persistent<String> buf_sym;
 Persistent<String> frames_sym;
 Persistent<String> pts_sym;
 Persistent<String> dts_sym;
+Persistent<String> keyframe_sym;
 Persistent<String> nals_sym;
 Persistent<String> type_sym;
 Persistent<String> priority_sym;
-Persistent<String> offset_sym;
-Persistent<String> size_sym;
+Persistent<String> start_sym;
+Persistent<String> end_sym;
 Persistent<String> on_data_sym;
 Persistent<String> on_error_sym;
 
@@ -97,11 +98,12 @@ static void init(Handle<Object> e)
     frames_sym = NODE_PSYMBOL("frames");
     pts_sym = NODE_PSYMBOL("pts");
     dts_sym = NODE_PSYMBOL("dts");
+    keyframe_sym = NODE_PSYMBOL("keyframe");
     nals_sym = NODE_PSYMBOL("nals");
     type_sym = NODE_PSYMBOL("type");
     priority_sym = NODE_PSYMBOL("priority");
-    offset_sym = NODE_PSYMBOL("offset");
-    size_sym = NODE_PSYMBOL("size");
+    start_sym = NODE_PSYMBOL("start");
+    end_sym = NODE_PSYMBOL("end");
     on_data_sym = NODE_PSYMBOL("onData");
     on_error_sym = NODE_PSYMBOL("onError");
 

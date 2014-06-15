@@ -43,11 +43,12 @@ extern Persistent<String> buf_sym;
 extern Persistent<String> frames_sym;
 extern Persistent<String> pts_sym;
 extern Persistent<String> dts_sym;
+extern Persistent<String> keyframe_sym;
 extern Persistent<String> nals_sym;
 extern Persistent<String> type_sym;
 extern Persistent<String> priority_sym;
-extern Persistent<String> offset_sym;
-extern Persistent<String> size_sym;
+extern Persistent<String> start_sym;
+extern Persistent<String> end_sym;
 extern Persistent<String> on_data_sym;
 extern Persistent<String> on_error_sym;
 
@@ -89,6 +90,7 @@ struct video_mixer_callback {
 struct video_mixer_frame {
     int64_t pts;
     int64_t dts;
+    bool keyframe;
 
     int nals_len;
     x264_nal_t nals[0];
