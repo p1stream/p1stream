@@ -19,7 +19,7 @@ exports.create = function() {
             var fn = middleware[i++];
             if (!fn) {
                 res.send(400, 'Cannot ' + req.method + ' ' +
-                              req.parsed.pathname + '\n');
+                              req.parsed.pathname);
                 return;
             }
 
@@ -35,6 +35,8 @@ exports.create = function() {
     ['get', 'post', 'put', 'delete'].forEach(function(method) {
         var httpMethod = method.toUpperCase();
         app[method] = function(re, fn) {
+            if (typeof(re) === 'string')
+                re = new RegExp('^' + re + '$');
             app.use(function(req, res, next) {
                 var match = req.method === httpMethod &&
                             re.exec(req.parsed.pathname);
@@ -56,20 +58,31 @@ exports.create = function() {
 };
 
 // `req.send` helper.
-function send(code, data) {
-    var contentType = 'application/octet-stream';
-    if (typeof(data) === 'string') {
-        contentType = 'text/plain; charset=utf-8';
-        data = new Buffer(data);
-    }
-    else if (!Buffer.isBuffer(data)) {
-        contentType = 'application/json';
-        data = new Buffer(JSON.stringify(data));
+function send(code, data, headers) {
+    if (!headers)
+        headers = {};
+
+    if (data) {
+        var contentType;
+        if (typeof(data) === 'string') {
+            contentType = 'text/plain; charset=utf-8';
+            data = new Buffer(data);
+        }
+        else if (!Buffer.isBuffer(data)) {
+            contentType = 'application/json';
+            data = new Buffer(JSON.stringify(data));
+        }
+        else {
+            contentType = 'application/octet-stream';
+        }
+
+        if (typeof(headers) === 'string')
+            headers = { 'Content-Type': headers };
+        else if (!headers['Content-Type'])
+            headers['Content-Type'] = contentType;
+        headers['Content-Length'] = data.length;
     }
 
-    this.writeHead(code, {
-        'Content-Type': contentType,
-        'Content-Length': data.length
-    });
+    this.writeHead(code, headers);
     this.end(data);
 }
