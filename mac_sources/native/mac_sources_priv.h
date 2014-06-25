@@ -18,10 +18,11 @@ private:
     uint32_t divisor;
 
     CVDisplayLinkRef cv_handle;
+    lockable_mutex mutex;
     bool running;
     int skip_counter;
 
-    video_mixer *mixer;
+    video_clock_context *ctx;
 
     static CVReturn callback(
         CVDisplayLinkRef display_link,
@@ -37,22 +38,26 @@ public:
     Handle<Value> init(const Arguments &args);
     void destroy(bool unref = true);
 
+    // Lockable implementation.
+    virtual lockable *lock() final;
+
     // Video clock implementation.
-    virtual fraction_t ticks_per_second() final;
-    virtual void ref_mixer(video_mixer *mixer) final;
-    virtual void unref_mixer(video_mixer *mixer) final;
+    virtual void link_video_clock(video_clock_context &ctx_) final;
+    virtual void unlink_video_clock(video_clock_context &ctx_) final;
+    virtual fraction_t video_ticks_per_second(video_clock_context &ctx) final;
 
     // Module init.
     static void init_prototype(Handle<FunctionTemplate> func);
 };
 
 
-class display_stream : public video_source, public lockable {
+class display_stream : public video_source {
 private:
     CGDirectDisplayID display_id;
 
     dispatch_queue_t dispatch;
     CGDisplayStreamRef cg_handle;
+    lockable_mutex mutex;
     bool running;
 
     IOSurfaceRef last_frame;
@@ -67,9 +72,7 @@ public:
     void destroy(bool unref = true);
 
     // Video source implementation.
-    virtual void frame(video_mixer *mixer) final;
-    virtual void ref_mixer(video_mixer *mixer) final;
-    virtual void unref_mixer(video_mixer *mixer) final;
+    virtual void produce_video_frame(video_source_context &ctx) final;
 
     // Module init.
     static void init_prototype(Handle<FunctionTemplate> func);

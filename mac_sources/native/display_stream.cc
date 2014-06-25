@@ -110,27 +110,19 @@ void display_stream::destroy(bool unref)
         Unref();
 }
 
-void display_stream::frame(video_mixer *mixer)
+void display_stream::produce_video_frame(video_source_context &ctx)
 {
-    lock_handle lock(this);
+    lock_handle lock(mutex);
 
     if (last_frame != NULL)
-        mixer->render_iosurface(last_frame);
-}
-
-void display_stream::ref_mixer(video_mixer *mixer)
-{
-}
-
-void display_stream::unref_mixer(video_mixer *mixer)
-{
+        ctx.render_iosurface(last_frame);
 }
 
 void display_stream::callback(
     CGDisplayStreamFrameStatus status,
     IOSurfaceRef frame)
 {
-    lock_handle lock(this);
+    lock_handle lock(mutex);
 
     // Ditch any previous frame, unless it's the same.
     // This also doubles as cleanup when stopping.

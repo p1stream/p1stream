@@ -3,7 +3,8 @@
 
 #include "core.h"
 
-#include <vector>
+#include <list>
+#include <memory>
 
 extern "C" {
 
@@ -21,7 +22,6 @@ extern "C" {
 }
 
 namespace p1stream {
-
 
 extern Persistent<String> buffer_size_sym;
 extern Persistent<String> width_sym;
@@ -55,32 +55,11 @@ extern Persistent<String> on_error_sym;
 extern fraction_t mach_timebase;
 
 
-// Struct for storing a video source and parameters.
-struct video_source_entry {
-    video_source *source;
 
-    // Texture name.
-    GLuint texture;
+// ----- Video types ----
 
-    // Top left and bottom right coordinates of where to place the image in the
-    // output. These are in the range [-1, +1].
-    GLfloat x1, y1, x2, y2;
-
-    // Top left and bottom right coordinates of the image area to grab, used to
-    // achieve clipping. These are in the range [0, 1].
-    GLfloat u1, v1, u2, v2;
-};
-
-// Wrap uv_async with std::function.
-struct video_mixer_callback {
-    uv_async_t async;
-    std::function<void ()> fn;
-
-    uv_err_code init();
-    void close();
-
-    static void async_cb(uv_async_t* handle, int status);
-};
+class video_clock_context_full;
+class video_source_context_full;
 
 // Data we pass between threads. One of these is created per
 // x264_encoder_{headers|encode} call.
@@ -96,24 +75,17 @@ struct video_mixer_frame {
     x264_nal_t nals[0];
 };
 
-// Video mixer.
+// Lockable is a proxy for the video clock.
 class video_mixer_base : public video_mixer {
-    video_clock *clock;
-    std::vector<video_source_entry> sources;
-    video_source_entry *current_source;
+public:
+    video_mixer_base();
+
+    std::unique_ptr<video_clock_context_full> clock_ctx;
+    std::list<video_source_context_full> source_ctxes;
 
     Persistent<Function> on_data;
     Persistent<Function> on_error;
 
-    void clear_clock();
-    void clear_sources();
-    GLuint build_shader(GLuint type, const char *source);
-    bool build_program();
-    bool buffer_nals(x264_nal_t *nals, int nals_len, x264_picture_t *pic);
-
-    static void free_callback(char *data, void *hint);
-
-protected:
     // These are initialized by platform support.
     cl_context cl;
     GLuint tex;
@@ -149,15 +121,27 @@ protected:
     uint8_t *buffer;
     uint8_t *buffer_pos;
     uint32_t buffer_size;
-    video_mixer_callback callback;
+    main_loop_callback callback;
+
+    // Internal.
     void emit_last();
+    void clear_clock();
+    void clear_sources();
+    void tick(frame_time_t time);
+    GLuint build_shader(GLuint type, const char *source);
+    bool build_program();
+    bool buffer_nals(x264_nal_t *nals, int nals_len, x264_picture_t *pic);
+
+    static void free_callback(char *data, void *hint);
+
+    // Lockable implementation.
+    virtual lockable *lock() final;
 
     // Platform hooks.
     virtual Handle<Value> platform_init(Handle<Object> params) = 0;
     virtual void platform_destroy() = 0;
     virtual bool activate_gl() = 0;
 
-public:
     // Public JavaScript methods.
     Handle<Value> init(const Arguments &args);
     void destroy(bool unref = true);
@@ -165,33 +149,48 @@ public:
     Handle<Value> set_clock(const Arguments &args);
     Handle<Value> set_sources(const Arguments &args);
 
-    // Source callbacks.
-    virtual void tick(frame_time_t time) final;
-    virtual void render_texture() final;
-    virtual void render_buffer(dimensions_t dimensions, void *data) final;
-
     // Module init.
     static void init_prototype(Handle<FunctionTemplate> func);
+};
+
+class video_clock_context_full : public video_clock_context {
+public:
+    video_clock_context_full(video_mixer *mixer, video_clock *clock);
+};
+
+class video_source_context_full : public video_source_context {
+public:
+    video_source_context_full(video_mixer *mixer, video_source *source);
+
+    // Texture name.
+    GLuint texture;
+
+    // Top left and bottom right coordinates of where to place the image in the
+    // output. These are in the range [-1, +1].
+    GLfloat x1, y1, x2, y2;
+
+    // Top left and bottom right coordinates of the image area to grab, used to
+    // achieve clipping. These are in the range [0, 1].
+    GLfloat u1, v1, u2, v2;
 };
 
 
 // ----- Inline implementations -----
 
-inline uv_err_code video_mixer_callback::init()
+inline video_mixer_base::video_mixer_base()
 {
-    auto loop = uv_default_loop();
-    if (uv_async_init(loop, &async, async_cb))
-        return uv_last_error(loop).code;
-    else
-        return UV_OK;
 }
 
-inline void video_mixer_callback::close()
+inline video_clock_context_full::video_clock_context_full(video_mixer *mixer, video_clock *clock)
 {
-    if (async.loop != NULL) {
-        uv_close((uv_handle_t *) &async, NULL);
-        async.loop = NULL;
-    }
+    mixer_ = mixer;
+    clock_ = clock;
+}
+
+inline video_source_context_full::video_source_context_full(video_mixer *mixer, video_source *source)
+{
+    mixer_ = mixer;
+    source_ = source;
 }
 
 

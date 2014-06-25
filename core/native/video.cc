@@ -74,13 +74,6 @@ static const GLsizei vbo_stride = 4 * sizeof(GLfloat);
 static const GLsizei vbo_size = 4 * vbo_stride;
 static const void *vbo_tex_coord_offset = (void *)(2 * sizeof(GLfloat));
 
-void video_mixer_callback::async_cb(uv_async_t *handle, int status)
-{
-    if (status) return;
-    auto *callback = (video_mixer_callback *) handle;
-    callback->fn();
-}
-
 
 Handle<Value> video_mixer_base::init(const Arguments &args)
 {
@@ -273,8 +266,8 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     }
 
     if (ok) {
-        callback.fn = std::bind(&video_mixer_base::emit_last, this);
-        uv_err_code err = callback.init();
+        auto fn = std::bind(&video_mixer_base::emit_last, this);
+        uv_err_code err = callback.init(fn);
         if (!(ok = (err == UV_OK)))
             ret = UVException(err, "uv_async_init");
     }
@@ -359,13 +352,13 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
 
 void video_mixer_base::destroy(bool unref)
 {
-    lock_handle lock(clock);
+    lock_handle lock(*this);
     cl_int cl_err;
 
     clear_clock();
     clear_sources();
 
-    callback.close();
+    callback.destroy();
 
     if (enc != NULL) {
         x264_encoder_close(enc);
@@ -423,6 +416,11 @@ void video_mixer_base::destroy(bool unref)
         Unref();
 }
 
+lockable *video_mixer_base::lock()
+{
+    return clock_ctx ? clock_ctx->clock()->lock() : nullptr;
+}
+
 Handle<Value> video_mixer_base::pop_last_error()
 {
     Handle<Value> ret;
@@ -436,18 +434,18 @@ Handle<Value> video_mixer_base::pop_last_error()
 void video_mixer_base::clear_clock()
 {
     if (clock != nullptr) {
-        clock->unref_mixer(this);
-        clock = nullptr;
+        clock_ctx->clock()->unlink_video_clock(*clock_ctx);
+        clock_ctx = nullptr;
     }
 }
 
 void video_mixer_base::clear_sources()
 {
-    for (auto &entry : sources) {
-        entry.source->unref_mixer(this);
-        glDeleteTextures(1, &entry.texture);
+    for (auto &source_ctx : source_ctxes) {
+        source_ctx.source()->unlink_video_source(source_ctx);
+        glDeleteTextures(1, &source_ctx.texture);
     }
-    sources.clear();
+    source_ctxes.clear();
 }
 
 Handle<Value> video_mixer_base::set_clock(const Arguments &args)
@@ -456,24 +454,27 @@ Handle<Value> video_mixer_base::set_clock(const Arguments &args)
         return ThrowException(Exception::TypeError(
             String::New("Expected one argument")));
 
-    video_clock *new_clock = nullptr;
+    video_clock_context_full *new_clock_ctx = nullptr;
     if (!args[0]->IsNull()) {
         if (!args[0]->IsObject())
             return ThrowException(Exception::TypeError(
                 String::New("Expected an object")));
 
         auto obj = Local<Object>::Cast(args[0]);
-        new_clock = ObjectWrap::Unwrap<video_clock>(obj);
+        auto new_clock = ObjectWrap::Unwrap<video_clock>(obj);
+
+        new_clock_ctx = new video_clock_context_full(this, new_clock);
     }
 
-    lock_handle lock(clock);
-    lock_handle lock2(new_clock);
+    if (clock_ctx) {
+        lock_handle lock(*clock_ctx->clock());
+        clear_clock();
+    }
 
-    clear_clock();
-
-    if (new_clock) {
-        clock = new_clock;
-        clock->ref_mixer(this);
+    if (new_clock_ctx) {
+        lock_handle lock(*new_clock_ctx->clock());
+        clock_ctx.reset(new_clock_ctx);
+        clock_ctx->clock()->link_video_clock(*clock_ctx);
     }
 
     return Undefined();
@@ -489,92 +490,91 @@ Handle<Value> video_mixer_base::set_sources(const Arguments &args)
         return ThrowException(Exception::TypeError(
             String::New("Expected an array")));
 
-    lock_handle lock(clock);
+    lock_handle lock(*this);
 
     bool ok = activate_gl();
 
     Handle<Value> val;
     GLenum gl_err;
 
-    std::vector<video_source_entry> new_sources;
+    std::list<video_source_context_full> new_source_ctxes;
 
     // FIXME: error handling
 
     if (ok) {
         auto arr = Handle<Array>::Cast(args[0]);
         uint32_t len = arr->Length();
-        new_sources.resize(len);
 
         for (uint32_t i = 0; i < len; i++) {
             auto val = arr->Get(i);
             if (!val->IsObject())
                 return ThrowException(Exception::TypeError(
                     String::New("Expected only objects in the array")));
-
             auto obj = Handle<Object>::Cast(val);
-            auto &entry = new_sources[i];
 
             val = obj->Get(source_sym);
             if (!val->IsObject())
                 return ThrowException(Exception::TypeError(
                     String::New("Invalid or missing source")));
+            auto source_obj = Handle<Object>::Cast(val);
+            auto *source = ObjectWrap::Unwrap<video_source>(source_obj);
 
-            auto source = Handle<Object>::Cast(val);
-            entry.source = ObjectWrap::Unwrap<video_source>(source);
+            new_source_ctxes.emplace_back(this, source);
+            auto &ctx = new_source_ctxes.back();
 
             val = obj->Get(x1_sym);
             if (!val->IsNumber())
                 return ThrowException(Exception::TypeError(
                     String::New("Invalid or missing coordinate x1")));
-            entry.x1 = val->NumberValue();
+            ctx.x1 = val->NumberValue();
 
             val = obj->Get(y1_sym);
             if (!val->IsNumber())
                 return ThrowException(Exception::TypeError(
                     String::New("Invalid or missing coordinate y1")));
-            entry.y1 = val->NumberValue();
+            ctx.y1 = val->NumberValue();
 
             val = obj->Get(x2_sym);
             if (!val->IsNumber())
                 return ThrowException(Exception::TypeError(
                     String::New("Invalid or missing coordinate x2")));
-            entry.x2 = val->NumberValue();
+            ctx.x2 = val->NumberValue();
 
             val = obj->Get(y2_sym);
             if (!val->IsNumber())
                 return ThrowException(Exception::TypeError(
                     String::New("Invalid or missing coordinate y2")));
-            entry.y2 = val->NumberValue();
+            ctx.y2 = val->NumberValue();
 
             val = obj->Get(u1_sym);
             if (!val->IsNumber())
                 return ThrowException(Exception::TypeError(
                     String::New("Invalid or missing coordinate u1")));
-            entry.u1 = val->NumberValue();
+            ctx.u1 = val->NumberValue();
 
             val = obj->Get(v1_sym);
             if (!val->IsNumber())
                 return ThrowException(Exception::TypeError(
                     String::New("Invalid or missing coordinate v1")));
-            entry.v1 = val->NumberValue();
+            ctx.v1 = val->NumberValue();
 
             val = obj->Get(u2_sym);
             if (!val->IsNumber())
                 return ThrowException(Exception::TypeError(
                     String::New("Invalid or missing coordinate u2")));
-            entry.u2 = val->NumberValue();
+            ctx.u2 = val->NumberValue();
 
             val = obj->Get(v2_sym);
             if (!val->IsNumber())
                 return ThrowException(Exception::TypeError(
                     String::New("Invalid or missing coordinate v2")));
-            entry.v2 = val->NumberValue();
+            ctx.v2 = val->NumberValue();
 
-            glGenTextures(1, &entry.texture);
+            glGenTextures(1, &ctx.texture);
             if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR))) {
                 sprintf(last_error, "OpenGL error %d", gl_err);
-                for (uint32_t j = 0; j < i; j++)
-                    glDeleteTextures(1, &new_sources[j].texture);
+                for (auto &ctx : new_source_ctxes)
+                    glDeleteTextures(1, &ctx.texture);
                 break;
             }
         }
@@ -583,10 +583,9 @@ Handle<Value> video_mixer_base::set_sources(const Arguments &args)
     if (ok) {
         clear_sources();
 
-        sources = new_sources;
-        for (auto &entry : sources) {
-            entry.source->ref_mixer(this);
-        }
+        source_ctxes = new_source_ctxes;
+        for (auto &ctx : source_ctxes)
+            ctx.source()->link_video_source(ctx);
 
         return Undefined();
     }
@@ -608,12 +607,10 @@ void video_mixer_base::tick(frame_time_t time)
 
     if (ok) {
         glClear(GL_COLOR_BUFFER_BIT);
-        for (auto &entry : sources) {
-            glBindTexture(GL_TEXTURE_RECTANGLE, entry.texture);
-            current_source = &entry;
-            entry.source->frame(this);
+        for (auto &ctx : source_ctxes) {
+            glBindTexture(GL_TEXTURE_RECTANGLE, ctx.texture);
+            ctx.source()->produce_video_frame(ctx);
         }
-        current_source = nullptr;
         glFinish();
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
             sprintf(last_error, "OpenGL error %d", gl_err);
@@ -658,7 +655,7 @@ void video_mixer_base::tick(frame_time_t time)
 
     // Encode.
     if (ok && enc == NULL) {
-        fraction_t fps = clock->ticks_per_second();
+        fraction_t fps = clock_ctx->clock()->video_ticks_per_second(*clock_ctx);
         enc_params.i_fps_num = fps.num;
         enc_params.i_fps_den = fps.den;
 
@@ -685,31 +682,8 @@ void video_mixer_base::tick(frame_time_t time)
     }
 
     // Signal main thread.
-    if (!ok || buffer_pos != buffer) {
-        if (uv_async_send(&callback.async)) {
-            const char *err = uv_strerror(uv_last_error(uv_default_loop()));
-            fprintf(stderr, "uv_async_send error: %s", err);
-        }
-    }
-}
-
-void video_mixer_base::render_texture()
-{
-    video_source_entry &e = *current_source;
-    glBufferData(GL_ARRAY_BUFFER, vbo_size, (GLfloat []) {
-        e.x1, e.y1, e.u1, e.v1,
-        e.x1, e.y2, e.u1, e.v2,
-        e.x2, e.y1, e.u2, e.v1,
-        e.x2, e.y2, e.u2, e.v2
-    }, GL_DYNAMIC_DRAW);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-}
-
-void video_mixer_base::render_buffer(dimensions_t dimensions, void *data)
-{
-    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, dimensions.width, dimensions.height, 0,
-                 GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data);
-    render_texture();
+    if (!ok || buffer_pos != buffer)
+        callback.send();
 }
 
 bool video_mixer_base::buffer_nals(x264_nal_t *nals, int nals_len, x264_picture_t *pic)
@@ -723,8 +697,8 @@ bool video_mixer_base::buffer_nals(x264_nal_t *nals, int nals_len, x264_picture_
     size_t available = buffer + buffer_size - buffer_pos;
 
     if (claim > available) {
-        // FIXME: Better handle this scenario?
-        fprintf(stderr, "main thread stalled, dropping video frames");
+        // FIXME: Improve logging
+        fprintf(stderr, "video mxier overflow, dropping video frames");
         return false;
     }
 
@@ -760,7 +734,7 @@ void video_mixer_base::emit_last()
 
     // With lock, extract a copy of buffer (or error).
     {
-        lock_handle lock(clock);
+        lock_handle lock(*this);
         err = pop_last_error();
         if (err.IsEmpty()) {
             size = buffer_pos - buffer;
@@ -920,5 +894,39 @@ void video_mixer_base::init_prototype(Handle<FunctionTemplate> func)
         return mixer->set_sources(args);
     });
 }
+
+
+void video_clock_context::tick(frame_time_t time)
+{
+    ((video_mixer_base *) mixer_)->tick(time);
+}
+
+void video_source::link_video_source(video_source_context &ctx)
+{
+}
+
+void video_source::unlink_video_source(video_source_context &ctx)
+{
+}
+
+void video_source_context::render_texture()
+{
+    auto &f = *((video_source_context_full *) this);
+    glBufferData(GL_ARRAY_BUFFER, vbo_size, (GLfloat []) {
+        f.x1, f.y1, f.u1, f.v1,
+        f.x1, f.y2, f.u1, f.v2,
+        f.x2, f.y1, f.u2, f.v1,
+        f.x2, f.y2, f.u2, f.v2
+    }, GL_DYNAMIC_DRAW);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
+void video_source_context::render_buffer(dimensions_t dimensions, void *data)
+{
+    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, dimensions.width, dimensions.height, 0,
+                 GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data);
+    render_texture();
+}
+
 
 }  // namespace p1stream

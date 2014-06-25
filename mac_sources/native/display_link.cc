@@ -85,6 +85,11 @@ Handle<Value> display_link::init(const Arguments &args)
     }
 }
 
+lockable *display_link::lock()
+{
+    return mutex.lock();
+}
+
 void display_link::destroy(bool unref)
 {
     CVReturn cv_ret;
@@ -105,7 +110,27 @@ void display_link::destroy(bool unref)
         Unref();
 }
 
-fraction_t display_link::ticks_per_second()
+void display_link::link_video_clock(video_clock_context &ctx_)
+{
+    if (ctx == nullptr) {
+        ctx = &ctx_;
+    }
+    else {
+        // FIXME: error
+    }
+}
+
+void display_link::unlink_video_clock(video_clock_context &ctx_)
+{
+    if (ctx == &ctx_) {
+        ctx = nullptr;
+    }
+    else {
+        // FIXME: error
+    }
+}
+
+fraction_t display_link::video_ticks_per_second(video_clock_context &ctx)
 {
     double period = CVDisplayLinkGetActualOutputVideoRefreshPeriod(cv_handle);
     if (period == 0.0) {
@@ -119,26 +144,6 @@ fraction_t display_link::ticks_per_second()
             .num = (uint32_t) round(1.0 / period),
             .den = divisor
         };
-    }
-}
-
-void display_link::ref_mixer(video_mixer *mixer_)
-{
-    if (mixer == nullptr) {
-        mixer = mixer_;
-    }
-    else {
-        // FIXME: error
-    }
-}
-
-void display_link::unref_mixer(video_mixer *mixer_)
-{
-    if (mixer == mixer_) {
-        mixer = nullptr;
-    }
-    else {
-        // FIXME: error
     }
 }
 
@@ -165,9 +170,9 @@ void display_link::tick(frame_time_t time)
 
     // Call mixer with lock.
     {
-        lock_handle lock(this);
-        if (mixer != nullptr)
-            mixer->tick(time);
+        lock_handle lock(mutex);
+        if (ctx != nullptr)
+            ctx->tick(time);
     }
 }
 

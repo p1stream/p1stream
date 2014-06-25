@@ -112,16 +112,20 @@ bool video_mixer_mac::activate_gl()
     return true;
 }
 
-void video_mixer_mac::render_iosurface(IOSurfaceRef surface)
+
+void video_source_context::render_iosurface(IOSurfaceRef surface)
 {
+    auto &mixer_mac = *((video_mixer_mac *) mixer_);
+
     GLsizei width = (GLsizei) IOSurfaceGetWidth(surface);
     GLsizei height = (GLsizei) IOSurfaceGetHeight(surface);
+
     CGLError err = CGLTexImageIOSurface2D(
-        cglContext, GL_TEXTURE_RECTANGLE,
+        mixer_mac.cglContext, GL_TEXTURE_RECTANGLE,
         GL_RGBA8, width, height,
         GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface, 0);
     if (err != kCGLNoError)
-        sprintf(last_error, "CGLTexImageIOSurface2D error %d", err);
+        sprintf(mixer_mac.last_error, "CGLTexImageIOSurface2D error %d", err);
     else
         render_texture();
 }
