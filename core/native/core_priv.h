@@ -8,6 +8,11 @@
 
 extern "C" {
 
+#undef DEBUG  // libSYS redefines this
+#include <aacenc_lib.h>
+#undef DEBUG
+#define DBEUG 1
+
 #include <x264.h>
 
 #if __APPLE__
@@ -23,6 +28,10 @@ extern "C" {
 
 namespace p1stream {
 
+extern Persistent<String> source_sym;
+extern Persistent<String> on_data_sym;
+extern Persistent<String> on_error_sym;
+
 extern Persistent<String> buffer_size_sym;
 extern Persistent<String> width_sym;
 extern Persistent<String> height_sym;
@@ -30,7 +39,6 @@ extern Persistent<String> x264_preset_sym;
 extern Persistent<String> x264_tuning_sym;
 extern Persistent<String> x264_params_sym;
 extern Persistent<String> x264_profile_sym;
-extern Persistent<String> source_sym;
 extern Persistent<String> x1_sym;
 extern Persistent<String> y1_sym;
 extern Persistent<String> x2_sym;
@@ -49,11 +57,8 @@ extern Persistent<String> type_sym;
 extern Persistent<String> priority_sym;
 extern Persistent<String> start_sym;
 extern Persistent<String> end_sym;
-extern Persistent<String> on_data_sym;
-extern Persistent<String> on_error_sym;
 
-extern fraction_t mach_timebase;
-
+extern Persistent<String> volume_sym;
 
 
 // ----- Video types ----
@@ -175,6 +180,82 @@ public:
 };
 
 
+// ----- Audio types -----
+
+// Data we pass between threads. One of these is created per
+// aacEncEncode call.
+//
+// In memory, this struct lives in the mixer buffer, and is followed by
+// the encoded payload.
+struct audio_mixer_frame {
+    int64_t pts;
+
+    size_t size;
+    uint8_t data[0];
+};
+
+class audio_source_context_full;
+
+class audio_mixer_full : public audio_mixer {
+public:
+    audio_mixer_full();
+
+    std::list<audio_source_context_full> source_ctxes;
+
+    Persistent<Function> on_data;
+    Persistent<Function> on_error;
+
+    // Mix buffer.
+    float *mix;
+    int64_t mix_time;
+
+    // Encoder.
+    HANDLE_AACENCODER enc;
+
+    // Error handling.
+    char last_error[128];
+    Handle<Value> pop_last_error();
+
+    // Callback.
+    uint8_t *buffer;
+    uint8_t *buffer_pos;
+    main_loop_callback callback;
+
+    // Mix thread.
+    threaded_loop thread;
+    bool running;
+
+    // Internal.
+    void emit_last();
+    void clear_sources();
+    void loop();
+    size_t time_to_samples(int64_t time);
+    int64_t samples_to_time(size_t samples);
+
+    static void free_callback(char *data, void *hint);
+
+    // Lockable implementation.
+    virtual lockable *lock() final;
+
+    // Public JavaScript methods.
+    Handle<Value> init(const Arguments &args);
+    void destroy(bool unref = true);
+
+    Handle<Value> set_sources(const Arguments &args);
+
+    // Module init.
+    static void init_prototype(Handle<FunctionTemplate> func);
+};
+
+class audio_source_context_full : public audio_source_context {
+public:
+    audio_source_context_full(audio_mixer *mixer, audio_source *source);
+
+    // Volume in range [0, 1].
+    float volume;
+};
+
+
 // ----- Inline implementations -----
 
 inline video_mixer_base::video_mixer_base()
@@ -188,6 +269,16 @@ inline video_clock_context_full::video_clock_context_full(video_mixer *mixer, vi
 }
 
 inline video_source_context_full::video_source_context_full(video_mixer *mixer, video_source *source)
+{
+    mixer_ = mixer;
+    source_ = source;
+}
+
+inline audio_mixer_full::audio_mixer_full()
+{
+}
+
+inline audio_source_context_full::audio_source_context_full(audio_mixer *mixer, audio_source *source)
 {
     mixer_ = mixer;
     source_ = source;

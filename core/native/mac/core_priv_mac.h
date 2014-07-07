@@ -5,6 +5,7 @@
 
 namespace p1stream {
 
+void module_platform_init();
 
 class video_mixer_mac : public video_mixer_base {
 public:

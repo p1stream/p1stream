@@ -36,6 +36,9 @@ struct dimensions_t {
 
 // ----- Utility types ----
 
+// Access high resolution, monotonic system clock.
+int64_t system_time();
+
 // Base for objects that provide a lock. The lock() method can return another
 // lockable, if the object is proxying, or nullptr if no lock was necessary.
 class lockable {
@@ -192,6 +195,45 @@ public:
 };
 
 
+// ----- Audio types -----
+
+class audio_source_context;
+
+// The audio mixer starts a thread timed with the system clock to do encoding.
+// Sources all run their own thread, and can call into `render_buffer()`
+// without locking.
+
+class audio_mixer : public ObjectWrap, public lockable {
+protected:
+    audio_mixer();
+};
+
+// Base for audio sources.
+class audio_source : public ObjectWrap {
+public:
+    // When a source is linked, it should start calling render_buffer().
+    virtual void link_audio_source(audio_source_context &ctx) = 0;
+    virtual void unlink_audio_source(audio_source_context &ctx) = 0;
+};
+
+// Context object passed to audio sources.
+class audio_source_context {
+protected:
+    audio_source_context();
+
+    audio_source *source_;
+    audio_mixer *mixer_;
+
+public:
+    // Accessors.
+    audio_source *source();
+    audio_mixer *mixer();
+
+    // Render callback that should be called by sources.
+    void render_buffer(int64_t time, float *in, size_t samples);
+};
+
+
 // ----- Inline implementations -----
 
 inline lockable::lockable()
@@ -239,7 +281,11 @@ inline void threaded_loop::destroy()
     if (uv_thread_join(&thread))
         abort();
     uv_cond_destroy(&cond);
-    uv_mutex_destroy(&mutex);
+}
+
+inline bool threaded_loop::wait(uint64_t timeout)
+{
+    return uv_cond_timedwait(&cond, &mutex, timeout) == -1;
 }
 
 inline uv_err_code main_loop_callback::init(std::function<void ()> fn_)
@@ -294,6 +340,24 @@ inline video_source *video_source_context::source()
 }
 
 inline video_mixer *video_source_context::mixer()
+{
+    return mixer_;
+}
+
+inline audio_mixer::audio_mixer()
+{
+}
+
+inline audio_source_context::audio_source_context()
+{
+}
+
+inline audio_source *audio_source_context::source()
+{
+    return source_;
+}
+
+inline audio_mixer *audio_source_context::mixer()
 {
     return mixer_;
 }

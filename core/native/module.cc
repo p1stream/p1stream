@@ -1,8 +1,5 @@
 #include "core_priv.h"
 
-#include <mach/mach_time.h>
-#include <mach/mach_error.h>
-
 #if __APPLE__
 #   include <TargetConditionals.h>
 #   if TARGET_OS_MAC
@@ -17,6 +14,10 @@
 namespace p1stream {
 
 
+Persistent<String> source_sym;
+Persistent<String> on_data_sym;
+Persistent<String> on_error_sym;
+
 Persistent<String> buffer_size_sym;
 Persistent<String> width_sym;
 Persistent<String> height_sym;
@@ -24,7 +25,6 @@ Persistent<String> x264_preset_sym;
 Persistent<String> x264_tuning_sym;
 Persistent<String> x264_params_sym;
 Persistent<String> x264_profile_sym;
-Persistent<String> source_sym;
 Persistent<String> x1_sym;
 Persistent<String> y1_sym;
 Persistent<String> x2_sym;
@@ -43,8 +43,8 @@ Persistent<String> type_sym;
 Persistent<String> priority_sym;
 Persistent<String> start_sym;
 Persistent<String> end_sym;
-Persistent<String> on_data_sym;
-Persistent<String> on_error_sym;
+
+Persistent<String> volume_sym;
 
 fraction_t mach_timebase;
 
@@ -55,10 +55,14 @@ static Handle<Value> video_mixer_constructor(const Arguments &args)
     return mixer->init(args);
 }
 
-static void init(Handle<Object> e)
+static Handle<Value> audio_mixer_constructor(const Arguments &args)
 {
-    kern_return_t k_ret;
-    mach_timebase_info_data_t timebase;
+    auto mixer = new audio_mixer_full();
+    return mixer->init(args);
+}
+
+static void module_init(Handle<Object> e)
+{
     Handle<FunctionTemplate> func;
 
     NODE_DEFINE_CONSTANT(e, NAL_UNKNOWN);
@@ -78,6 +82,10 @@ static void init(Handle<Object> e)
     NODE_DEFINE_CONSTANT(e, NAL_PRIORITY_HIGH);
     NODE_DEFINE_CONSTANT(e, NAL_PRIORITY_HIGHEST);
 
+    source_sym = NODE_PSYMBOL("source");
+    on_data_sym = NODE_PSYMBOL("onData");
+    on_error_sym = NODE_PSYMBOL("onError");
+
     buffer_size_sym = NODE_PSYMBOL("bufferSize");
     width_sym = NODE_PSYMBOL("width");
     height_sym = NODE_PSYMBOL("height");
@@ -85,7 +93,6 @@ static void init(Handle<Object> e)
     x264_tuning_sym = NODE_PSYMBOL("x264Tuning");
     x264_params_sym = NODE_PSYMBOL("x264Params");
     x264_profile_sym = NODE_PSYMBOL("x264Profile");
-    source_sym = NODE_PSYMBOL("source");
     x1_sym = NODE_PSYMBOL("x1");
     y1_sym = NODE_PSYMBOL("y1");
     x2_sym = NODE_PSYMBOL("x2");
@@ -104,20 +111,20 @@ static void init(Handle<Object> e)
     priority_sym = NODE_PSYMBOL("priority");
     start_sym = NODE_PSYMBOL("start");
     end_sym = NODE_PSYMBOL("end");
-    on_data_sym = NODE_PSYMBOL("onData");
-    on_error_sym = NODE_PSYMBOL("onError");
 
-    k_ret = mach_timebase_info(&timebase);
-    if (k_ret != 0)
-        abort();
-
-    mach_timebase.num = timebase.numer;
-    mach_timebase.den = timebase.denom;
+    volume_sym = NODE_PSYMBOL("volume");
 
     func = FunctionTemplate::New(video_mixer_constructor);
     func->InstanceTemplate()->SetInternalFieldCount(1);
     video_mixer_base::init_prototype(func);
     e->Set(String::NewSymbol("VideoMixer"), func->GetFunction());
+
+    func = FunctionTemplate::New(audio_mixer_constructor);
+    func->InstanceTemplate()->SetInternalFieldCount(1);
+    audio_mixer_full::init_prototype(func);
+    e->Set(String::NewSymbol("AudioMixer"), func->GetFunction());
+
+    module_platform_init();
 }
 
 
@@ -125,7 +132,7 @@ static void init(Handle<Object> e)
 
 extern "C" void init(v8::Handle<v8::Object> e)
 {
-    p1stream::init(e);
+    p1stream::module_init(e);
 }
 
 NODE_MODULE(core, init)

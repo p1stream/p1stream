@@ -7,6 +7,7 @@ var core = require('../core');
 
 exports = module.exports = function(app) {
     var video = new core.Video();
+    var audio = new core.Audio();
 
     var headers = null;
     var mstream = new events.EventEmitter();

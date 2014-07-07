@@ -329,8 +329,8 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     if (ok) {
         enc_params.i_log_level = X264_LOG_INFO;
 
-        enc_params.i_timebase_num = mach_timebase.num;
-        enc_params.i_timebase_den = mach_timebase.den;
+        enc_params.i_timebase_num = 1;
+        enc_params.i_timebase_den = 1000000000;
 
         enc_params.b_aud = 1;
         enc_params.b_annexb = 0;
@@ -441,9 +441,9 @@ void video_mixer_base::clear_clock()
 
 void video_mixer_base::clear_sources()
 {
-    for (auto &source_ctx : source_ctxes) {
-        source_ctx.source()->unlink_video_source(source_ctx);
-        glDeleteTextures(1, &source_ctx.texture);
+    for (auto &ctx : source_ctxes) {
+        ctx.source()->unlink_video_source(ctx);
+        glDeleteTextures(1, &ctx.texture);
     }
     source_ctxes.clear();
 }
@@ -698,7 +698,7 @@ bool video_mixer_base::buffer_nals(x264_nal_t *nals, int nals_len, x264_picture_
 
     if (claim > available) {
         // FIXME: Improve logging
-        fprintf(stderr, "video mxier overflow, dropping video frames");
+        fprintf(stderr, "video mixer overflow, dropping video frames");
         return false;
     }
 

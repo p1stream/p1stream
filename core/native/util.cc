@@ -33,4 +33,4 @@ void threaded_loop::thread_cb(void *arg)
 }
 
 
-}
+} // namespace p1stream

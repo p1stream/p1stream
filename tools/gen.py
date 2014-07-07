@@ -751,12 +751,14 @@ def build_mod(name, res=['*.html', '*.css', '*.js'], src=None, extra_obj=None, c
 build_mod('core',
     src =
         glob('core/native/*.cc') +
+        glob('core/native/mac/*.cc') +
         glob('core/native/mac/*.mm'),
     extra_obj =
         aac_out + x264_out,
     cflags =
         '-I core/native '
-        '-I core/native/mac ',
+        '-I core/native/mac ' +
+        aac_cflags + ' ' + x264_cflags,
     ldflags =
         '-framework Cocoa '
         '-framework IOSurface '
