@@ -14,7 +14,6 @@ extern Persistent<String> divisor_sym;
 
 class display_link : public video_clock {
 private:
-    CGDirectDisplayID display_id;
     uint32_t divisor;
 
     CVDisplayLinkRef cv_handle;
@@ -53,8 +52,6 @@ public:
 
 class display_stream : public video_source {
 private:
-    CGDirectDisplayID display_id;
-
     dispatch_queue_t dispatch;
     CGDisplayStreamRef cg_handle;
     lockable_mutex mutex;

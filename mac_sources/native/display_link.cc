@@ -16,7 +16,7 @@ Handle<Value> display_link::init(const Arguments &args)
 
     Wrap(args.This());
 
-    display_id = kCGDirectMainDisplay;
+    CGDirectDisplayID display_id = kCGDirectMainDisplay;
     divisor = 1;
 
     if (args.Length() == 1) {
@@ -85,11 +85,6 @@ Handle<Value> display_link::init(const Arguments &args)
     }
 }
 
-lockable *display_link::lock()
-{
-    return mutex.lock();
-}
-
 void display_link::destroy(bool unref)
 {
     CVReturn cv_ret;
@@ -108,6 +103,11 @@ void display_link::destroy(bool unref)
 
     if (unref)
         Unref();
+}
+
+lockable *display_link::lock()
+{
+    return mutex.lock();
 }
 
 void display_link::link_video_clock(video_clock_context &ctx_)

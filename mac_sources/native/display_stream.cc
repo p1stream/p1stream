@@ -18,7 +18,7 @@ Handle<Value> display_stream::init(const Arguments &args)
 
     Wrap(args.This());
 
-    display_id = kCGDirectMainDisplay;
+    CGDirectDisplayID display_id = kCGDirectMainDisplay;
 
     if (args.Length() == 1) {
         if (!(ok = args[0]->IsObject()))
