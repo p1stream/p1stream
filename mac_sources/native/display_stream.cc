@@ -45,7 +45,7 @@ Handle<Value> display_stream::init(const Arguments &args)
 
         dispatch = dispatch_queue_create("display_stream", DISPATCH_QUEUE_SERIAL);
         if (!(ok = (dispatch != NULL)))
-            sprintf(err, "dispatch_queue_create error");
+            strcpy(err, "dispatch_queue_create error");
     }
 
     if (ok) {
@@ -59,7 +59,7 @@ Handle<Value> display_stream::init(const Arguments &args)
                 this->callback(status, frameSurface);
             });
         if (!(ok = (cg_handle != NULL)))
-            sprintf(err, "CGDisplayStreamCreateWithDispatchQueue error");
+            strcpy(err, "CGDisplayStreamCreateWithDispatchQueue error");
     }
 
     if (ok) {
@@ -90,7 +90,7 @@ void display_stream::destroy(bool unref)
     if (running) {
         cg_ret = CGDisplayStreamStop(cg_handle);
         if (cg_ret != kCGErrorSuccess)
-            fprintf(stderr, "CGDisplayStreamStop error %d", cg_ret);
+            fprintf(stderr, "CGDisplayStreamStop error %d\n", cg_ret);
         running = false;
     }
 

@@ -368,21 +368,21 @@ void video_mixer_base::destroy(bool unref)
     if (yuv_kernel != NULL) {
         cl_err = clReleaseKernel(yuv_kernel);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseKernel error %d", cl_err);
+            fprintf(stderr, "clReleaseKernel error %d\n", cl_err);
         yuv_kernel = NULL;
     }
 
     if (out_mem != NULL) {
         cl_err = clReleaseMemObject(out_mem);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseMemObject error %d", cl_err);
+            fprintf(stderr, "clReleaseMemObject error %d\n", cl_err);
         out_mem = NULL;
     }
 
     if (tex_mem != NULL) {
         cl_err = clReleaseMemObject(tex_mem);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseMemObject error %d", cl_err);
+            fprintf(stderr, "clReleaseMemObject error %d\n", cl_err);
         tex_mem = NULL;
     }
 
@@ -391,7 +391,7 @@ void video_mixer_base::destroy(bool unref)
     if (clq != NULL) {
         cl_err = clReleaseCommandQueue(clq);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseCommandQueue error %d", cl_err);
+            fprintf(stderr, "clReleaseCommandQueue error %d\n", cl_err);
         clq = NULL;
     }
 
@@ -698,7 +698,7 @@ bool video_mixer_base::buffer_nals(x264_nal_t *nals, int nals_len, x264_picture_
 
     if (claim > available) {
         // FIXME: Improve logging
-        fprintf(stderr, "video mixer overflow, dropping video frames");
+        fprintf(stderr, "video mixer overflow, dropping video frames\n");
         return false;
     }
 

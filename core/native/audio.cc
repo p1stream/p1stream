@@ -69,7 +69,7 @@ Handle<Value> audio_mixer_full::init(const Arguments &args)
 
         aac_err = aacEncOpen(&enc, 0x01, 2);
         if (!(ok = (aac_err == AACENC_OK)))
-            sprintf(last_error, "FDK AAC error: %d", aac_err);
+            sprintf(last_error, "FDK AAC error %d", aac_err);
     }
 
     if (ok) {
@@ -84,7 +84,7 @@ Handle<Value> audio_mixer_full::init(const Arguments &args)
         for (auto &param : params) {
             aac_err = aacEncoder_SetParam(enc, param.first, param.second);
             if (!(ok = (aac_err == AACENC_OK))) {
-                sprintf(last_error, "FDK AAC error: %d", aac_err);
+                sprintf(last_error, "FDK AAC error %d", aac_err);
                 break;
             }
         }
@@ -93,7 +93,7 @@ Handle<Value> audio_mixer_full::init(const Arguments &args)
     if (ok) {
         aac_err = aacEncEncode(enc, NULL, NULL, NULL, NULL);
         if (!(ok = (aac_err == AACENC_OK)))
-            sprintf(last_error, "FDK AAC error: %d", aac_err);
+            sprintf(last_error, "FDK AAC error %d", aac_err);
     }
 
     if (ok) {
@@ -151,7 +151,7 @@ void audio_mixer_full::destroy(bool unref)
         AACENC_ERROR aac_err = aacEncClose(&enc);
         enc = NULL;
         if (aac_err != AACENC_OK)
-            fprintf(stderr, "FDK AAC error: %d", aac_err);
+            fprintf(stderr, "FDK AAC error %d\n", aac_err);
     }
 
     if (unref)
@@ -244,7 +244,7 @@ void audio_source_context::render_buffer(int64_t time, float *in, size_t samples
     size_t mix_pos = 0;
     if (time < m.mix_time) {
         // FIXME: Improve logging
-        fprintf(stderr, "audio mixer underflow, dropping audio frames");
+        fprintf(stderr, "audio mixer underflow, dropping audio frames\n");
 
         size_t to_drop = m.time_to_samples(m.mix_time - time);
         if (to_drop >= samples)
@@ -262,7 +262,7 @@ void audio_source_context::render_buffer(int64_t time, float *in, size_t samples
     size_t mix_end = mix_pos + samples;
     if (mix_end > mix_samples) {
         // FIXME: Improve logging
-        fprintf(stderr, "audio mixer overflow, dropping audio frames");
+        fprintf(stderr, "audio mixer overflow, dropping audio frames\n");
 
         size_t to_drop = mix_end - mix_samples;
         if (to_drop >= samples)
@@ -349,7 +349,7 @@ void audio_mixer_full::loop()
 
                 if (claim > available) {
                     // FIXME: Improve logging
-                    fprintf(stderr, "audio mixer overflow, dropping audio frames");
+                    fprintf(stderr, "audio mixer overflow, dropping audio frames\n");
                 }
                 else {
                     auto *frame = (audio_mixer_frame *) buffer_pos;

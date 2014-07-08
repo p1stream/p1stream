@@ -92,7 +92,7 @@ void display_link::destroy(bool unref)
     if (running) {
         cv_ret = CVDisplayLinkStop(cv_handle);
         if (cv_ret != kCVReturnSuccess)
-            fprintf(stderr, "CVDisplayLinkStop error %d", cv_ret);
+            fprintf(stderr, "CVDisplayLinkStop error %d\n", cv_ret);
         running = false;
     }
 
