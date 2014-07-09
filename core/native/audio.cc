@@ -104,7 +104,7 @@ Handle<Value> audio_mixer_full::init(const Arguments &args)
     }
 
     if (ok) {
-        mix = new float[mix_samples];
+        mix_buffer = new float[mix_samples];
         mix_time = system_time() - samples_to_time(mix_half_samples);
 
         buffer = new uint8_t[buffer_size];
@@ -137,9 +137,9 @@ void audio_mixer_full::destroy(bool unref)
 
     callback.destroy();
 
-    if (mix != nullptr) {
-        delete[] mix;
-        mix = nullptr;
+    if (mix_buffer != nullptr) {
+        delete[] mix_buffer;
+        mix_buffer = nullptr;
     }
 
     if (buffer != nullptr) {
@@ -272,7 +272,7 @@ void audio_source_context::render_buffer(int64_t time, float *in, size_t samples
     }
 
     // Mix samples into the buffer.
-    float *p = m.mix + mix_pos;
+    float *p = m.mix_buffer + mix_pos;
     float v = ((audio_source_context_full *) this)->volume;
     while (samples--)
         *(p++) += *(in++) * v;
@@ -320,7 +320,7 @@ void audio_mixer_full::loop()
     while (!thread.wait(mix_interval)) {
         // Process mixed samples until the mix buffer is roughly recentered.
         // Take steps forward in encoder frame sized chunks.
-        float *mixp = mix;
+        float *mixp = mix_buffer;
         size_t processed = 0;
         int64_t target_mix_time = system_time() - samples_to_time(mix_half_samples);
         int64_t mixp_time = mix_time;
@@ -372,8 +372,8 @@ void audio_mixer_full::loop()
             // Shift processed samples off the mix buffer.
             size_t mix_remaining = mix_samples - processed;
             if (mix_remaining)
-                memmove(mix, mixp, mix_remaining * sizeof(float));
-            memset(mix + mix_remaining, 0, processed * sizeof(float));
+                memmove(mix_buffer, mixp, mix_remaining * sizeof(float));
+            memset(mix_buffer + mix_remaining, 0, processed * sizeof(float));
 
             // Adjust mix buffer time.
             mix_time = mixp_time;

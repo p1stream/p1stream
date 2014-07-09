@@ -206,7 +206,7 @@ public:
     Persistent<Function> on_error;
 
     // Mix buffer.
-    float *mix;
+    float *mix_buffer;
     int64_t mix_time;
 
     // Encoder.
