@@ -285,7 +285,7 @@ inline void threaded_loop::destroy()
 
 inline bool threaded_loop::wait(uint64_t timeout)
 {
-    return uv_cond_timedwait(&cond, &mutex, timeout) == -1;
+    return uv_cond_timedwait(&cond, &mutex, timeout) == 0;
 }
 
 inline uv_err_code main_loop_callback::init(std::function<void ()> fn_)

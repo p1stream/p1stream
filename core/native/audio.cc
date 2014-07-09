@@ -325,7 +325,7 @@ void audio_mixer_full::loop()
         int64_t target_mix_time = system_time() - samples_to_time(mix_half_samples);
         int64_t mixp_time = mix_time;
         size_t available = buffer + buffer_size - buffer_pos;
-        while (target_mix_time > mix_time) {
+        while (target_mix_time > mixp_time) {
             // Resample to signed integer.
             INT_PCM *resp = resbuf;
             int count = enc_frame_samples;
@@ -368,7 +368,7 @@ void audio_mixer_full::loop()
 
         // FIXME: Handle lag, where processed >= mix_samples
 
-        if (processed) {
+        if (processed > 0) {
             // Shift processed samples off the mix buffer.
             size_t mix_remaining = mix_samples - processed;
             if (mix_remaining)
@@ -377,10 +377,11 @@ void audio_mixer_full::loop()
 
             // Adjust mix buffer time.
             mix_time = mixp_time;
-
-            // Signal main thread.
-            callback.send();
         }
+
+        // Signal main thread.
+        if (processed > 0 || last_error[0] != '\0')
+            callback.send();
     }
 }
 
