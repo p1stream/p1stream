@@ -258,7 +258,8 @@ public:
 
 // ----- Inline implementations -----
 
-inline video_mixer_base::video_mixer_base()
+inline video_mixer_base::video_mixer_base() :
+    cl(), out_pic(), clq(), tex_mem(), out_mem(), yuv_kernel(), enc(), last_error(), buffer()
 {
 }
 
@@ -274,7 +275,8 @@ inline video_source_context_full::video_source_context_full(video_mixer *mixer, 
     source_ = source;
 }
 
-inline audio_mixer_full::audio_mixer_full()
+inline audio_mixer_full::audio_mixer_full() :
+    mix_buffer(), enc(), last_error(), buffer(), running()
 {
 }
 
