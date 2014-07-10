@@ -83,6 +83,14 @@ var Audio = function() {
         onError: onError
     });
 
+    self._source = new mac_sources.AudioQueue();
+    self._mixer.setSources([
+        {
+            source: self._source,
+            volume: 1.0
+        }
+    ]);
+
     function onData(e) {
         var buf = e.buf;
         e.frames.forEach(function(frame) {
@@ -103,6 +111,11 @@ Audio.prototype.destroy = function() {
     if (this._mixer) {
         this._mixer.destroy();
         this._mixer = null;
+    }
+
+    if (this._source) {
+        this._source.destroy();
+        this._source = null;
     }
 };
 

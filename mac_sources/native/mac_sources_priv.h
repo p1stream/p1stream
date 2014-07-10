@@ -4,12 +4,14 @@
 #include "core.h"
 
 #include <CoreVideo/CoreVideo.h>
+#include <AudioToolbox/AudioToolbox.h>
 
 namespace p1stream {
 
 
 extern Persistent<String> display_id_sym;
 extern Persistent<String> divisor_sym;
+extern Persistent<String> device_sym;
 
 
 class display_link : public video_clock {
@@ -70,6 +72,37 @@ public:
 
     // Video source implementation.
     virtual void produce_video_frame(video_source_context &ctx) final;
+
+    // Module init.
+    static void init_prototype(Handle<FunctionTemplate> func);
+};
+
+
+class audio_queue : public audio_source {
+private:
+    static const UInt32 num_buffers = 3;
+
+    AudioQueueRef queue;
+    AudioQueueBufferRef buffers[num_buffers];
+
+    audio_source_context *ctx;
+
+    static void input_callback(
+        void *inUserData,
+        AudioQueueRef inAQ,
+        AudioQueueBufferRef inBuffer,
+        const AudioTimeStamp *inStartTime,
+        UInt32 inNumberPacketDescriptions,
+        const AudioStreamPacketDescription *inPacketDescs);
+
+public:
+    // Public JavaScript methods.
+    Handle<Value> init(const Arguments &args);
+    void destroy(bool unref = true);
+
+    // Audio source implementation.
+    virtual void link_audio_source(audio_source_context &ctx) final;
+    virtual void unlink_audio_source(audio_source_context &ctx) final;
 
     // Module init.
     static void init_prototype(Handle<FunctionTemplate> func);
