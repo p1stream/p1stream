@@ -51,6 +51,9 @@ var T = {
     FlagInterlaced: tag(0x9A, 'u'),
     PixelWidth: tag(0xB0, 'u'),
     PixelHeight: tag(0xBA, 'u'),
+    Audio: tag(0xE1, 'm'),
+    SamplingFrequency: tag(0xB5, 'u'),
+    Channels: tag(0x9F, 'u'),
     Cluster: tag(0x1F43B675, 'm'),
     Timecode: tag(0xE7, 'u'),
     SimpleBlock: tag(0xA3, 'b')
@@ -58,7 +61,7 @@ var T = {
 
 
 
-exports.headers = function(frame) {
+exports.headers = function(videoHeader, audioHeader) {
     return native.buildEBML([
         T.EBML([
             T.EBMLVersion(1),
@@ -87,13 +90,32 @@ exports.headers = function(frame) {
                     T.MinCache(0),
                     T.MaxBlockAdditionID(0),
                     T.CodecID('V_MPEG4/ISO/AVC'),
-                    T.CodecPrivate(codecPrivate(frame)),
+                    T.CodecPrivate(videoPrivate(videoHeader)),
                     T.CodecDecodeAll(1),
                     T.SeekPreRoll(0),
                     T.Video([
                         T.FlagInterlaced(0),
                         T.PixelWidth(1280),
-                        T.PixelHeight(720),
+                        T.PixelHeight(720)
+                    ])
+                ]),
+                T.TrackEntry([
+                    T.TrackNumber(2),
+                    T.TrackUID(2),
+                    T.TrackType(0x2),
+                    T.FlagEnabled(1),
+                    T.FlagDefault(1),
+                    T.FlagForced(1),
+                    T.FlagLacing(0),
+                    T.MinCache(0),
+                    T.MaxBlockAdditionID(0),
+                    T.CodecID('A_AAC'),
+                    T.CodecPrivate(audioPrivate(audioHeader)),
+                    T.CodecDecodeAll(1),
+                    T.SeekPreRoll(0),
+                    T.Audio([
+                        T.SamplingFrequency(44100),
+                        T.Channels(2)
                     ])
                 ])
             ])
@@ -101,14 +123,14 @@ exports.headers = function(frame) {
     ]);
 };
 
-function codecPrivate(frame) {
+function videoPrivate(videoHeader) {
     var parts = [];
     var b;
 
-    var sps = frame.nals.filter(function(nal) {
+    var sps = videoHeader.nals.filter(function(nal) {
         return nal.type === 7;
     });
-    var pps = frame.nals.filter(function(nal) {
+    var pps = videoHeader.nals.filter(function(nal) {
         return nal.type === 8;
     });
 
@@ -142,7 +164,11 @@ function codecPrivate(frame) {
     return Buffer.concat(parts);
 }
 
-exports.frame = function(frame) {
+function audioPrivate(audioHeader) {
+    return audioHeader.buf;
+}
+
+exports.videoFrame = function(frame) {
     var b;
     var block = [];
 
@@ -162,6 +188,26 @@ exports.frame = function(frame) {
     return native.buildEBML([
         T.Cluster([
             T.Timecode(frame.dts),
+            T.SimpleBlock(Buffer.concat(block))
+        ])
+    ]);
+};
+
+exports.audioFrame = function(frame) {
+    var b;
+    var block = [];
+
+    b = new Buffer(4);
+    b.writeUInt8(2 | 0x80, 0);  // Track number as varint
+    b.writeInt16BE(0, 1);  // Timecode
+    b.writeUInt8(0x00, 3);  // Flags
+    block.push(b);
+
+    block.push(frame.buf);
+
+    return native.buildEBML([
+        T.Cluster([
+            T.Timecode(frame.pts),
             T.SimpleBlock(Buffer.concat(block))
         ])
     ]);

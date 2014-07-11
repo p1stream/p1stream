@@ -91,11 +91,20 @@ var Audio = function() {
         }
     ]);
 
+    self.headers = null;
+
     function onData(e) {
         var buf = e.buf;
         e.frames.forEach(function(frame) {
             frame.buf = buf.slice(frame.start, frame.end);
-            self.emit('frame', frame);
+
+            if (self.headers) {
+                self.emit('frame', frame);
+            }
+            else {
+                self.headers = frame;
+                self.emit('headers', frame);
+            }
         });
     }
 

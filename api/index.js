@@ -8,14 +8,31 @@ var core = require('../core');
 exports = module.exports = function(app) {
     var video = new core.Video();
     var audio = new core.Audio();
+    var mstream = new events.EventEmitter();
+
+    var videoHeaders = null;
+    var audioHeaders = null;
+    video.once('headers', function(frame) {
+        videoHeaders = frame;
+        buildHeaders();
+    });
+    audio.once('headers', function(frame) {
+        audioHeaders = frame;
+        buildHeaders();
+    });
 
     var headers = null;
-    var mstream = new events.EventEmitter();
-    video.on('headers', function(frame) {
-        headers = matroska.headers(frame);
-    });
+    function buildHeaders() {
+        if (videoHeaders && audioHeaders)
+            headers = matroska.headers(videoHeaders, audioHeaders);
+    }
+
     video.on('frame', function(frame) {
-        mstream.emit('frame', matroska.frame(frame), frame.keyframe);
+        mstream.emit('frame', matroska.videoFrame(frame), frame.keyframe);
+    });
+
+    audio.on('frame', function(frame) {
+        mstream.emit('frame', matroska.audioFrame(frame));
     });
 
     app.get('/api/stream.mkv', function(req, res, next) {
@@ -25,6 +42,8 @@ exports = module.exports = function(app) {
         });
 
         function onFrame(frame, keyframe) {
+            if (!headers) return;
+
             if (!res.headersSent) {
                 if (!keyframe) return;
 
