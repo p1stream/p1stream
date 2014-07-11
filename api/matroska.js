@@ -52,7 +52,7 @@ var T = {
     PixelWidth: tag(0xB0, 'u'),
     PixelHeight: tag(0xBA, 'u'),
     Audio: tag(0xE1, 'm'),
-    SamplingFrequency: tag(0xB5, 'u'),
+    SamplingFrequency: tag(0xB5, 'f'),
     Channels: tag(0x9F, 'u'),
     Cluster: tag(0x1F43B675, 'm'),
     Timecode: tag(0xE7, 'u'),

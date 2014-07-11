@@ -116,6 +116,14 @@ static Handle<Value> calc_ebml_content_size(char type, Handle<Value> contentVal,
                             String::New("Invalid unsigned value")));
             break;
         }
+        case 'f': {
+            size = 4;
+            break;
+        }
+        case 'F': {  // double
+            size = 8;
+            break;
+        }
         case 's':
         case '8': {
             size = contentVal->ToString()->Utf8Length();
@@ -226,29 +234,52 @@ static Handle<Value> write_ebml(Handle<Value> val, uint8_t *dst)
             }
             case 'u': {
                 uint64_t number = contentVal->NumberValue();
+                auto *p = (uint8_t *) &number;
                 if (number <= 0xFF) {
-                    dst[0] = number;
+                    dst[0] = p[0];
                 }
                 else if (number <= 0xFFFF) {
-                    dst[0] = (number & 0xFF00) >> 8;
-                    dst[1] = (number & 0x00FF);
+                    dst[0] = p[1];
+                    dst[1] = p[0];
                 }
                 else if (number <= 0xFFFFFFFF) {
-                    dst[0] = (number & 0xFF000000) >> 24;
-                    dst[1] = (number & 0x00FF0000) >> 16;
-                    dst[2] = (number & 0x0000FF00) >> 8;
-                    dst[3] = (number & 0x000000FF);
+                    dst[0] = p[3];
+                    dst[1] = p[2];
+                    dst[2] = p[1];
+                    dst[3] = p[0];
                 }
-                else if (number <= 0xFFFFFFFFFFFFFFFF) {
-                    dst[0] = (number & 0xFF00000000000000) >> 56;
-                    dst[1] = (number & 0x00FF000000000000) >> 48;
-                    dst[2] = (number & 0x0000FF0000000000) >> 40;
-                    dst[3] = (number & 0x000000FF00000000) >> 32;
-                    dst[4] = (number & 0x00000000FF000000) >> 24;
-                    dst[5] = (number & 0x0000000000FF0000) >> 16;
-                    dst[6] = (number & 0x000000000000FF00) >> 8;
-                    dst[7] = (number & 0x00000000000000FF);
+                else {
+                    dst[0] = p[7];
+                    dst[1] = p[6];
+                    dst[2] = p[5];
+                    dst[3] = p[4];
+                    dst[4] = p[3];
+                    dst[5] = p[2];
+                    dst[6] = p[1];
+                    dst[7] = p[0];
                 }
+                break;
+            }
+            case 'f': {
+                float number = contentVal->NumberValue();
+                auto *p = (uint8_t *) &number;
+                dst[0] = p[3];
+                dst[1] = p[2];
+                dst[2] = p[1];
+                dst[3] = p[0];
+                break;
+            }
+            case 'F': {  // double
+                double number = contentVal->NumberValue();
+                auto *p = (uint8_t *) &number;
+                dst[0] = p[7];
+                dst[1] = p[6];
+                dst[2] = p[5];
+                dst[3] = p[4];
+                dst[4] = p[3];
+                dst[5] = p[2];
+                dst[6] = p[1];
+                dst[7] = p[0];
                 break;
             }
             case 's':
