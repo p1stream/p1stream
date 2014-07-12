@@ -327,6 +327,20 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     }
 
     if (ok) {
+        val = params->Get(clock_sym);
+        if (!val->IsObject())
+            return ThrowException(Exception::TypeError(
+                String::New("Invalid clock")));
+
+        auto obj = Handle<Object>::Cast(val);
+        auto clock = ObjectWrap::Unwrap<video_clock>(obj);
+        lock_handle lock(*clock);
+
+        clock_ctx = new video_clock_context_full(this, clock);
+        clock->link_video_clock(*clock_ctx);
+    }
+
+    if (ok) {
         enc_params.i_log_level = X264_LOG_INFO;
 
         enc_params.i_timebase_num = 1;
@@ -355,7 +369,13 @@ void video_mixer_base::destroy(bool unref)
     lock_handle lock(*this);
     cl_int cl_err;
 
-    clear_clock();
+    if (clock_ctx != nullptr) {
+        clock_ctx->clock()->unlink_video_clock(*clock_ctx);
+
+        delete clock_ctx;
+        clock_ctx = nullptr;
+    }
+
     clear_sources();
 
     callback.destroy();
@@ -431,14 +451,6 @@ Handle<Value> video_mixer_base::pop_last_error()
     return ret;
 }
 
-void video_mixer_base::clear_clock()
-{
-    if (clock != nullptr) {
-        clock_ctx->clock()->unlink_video_clock(*clock_ctx);
-        clock_ctx = nullptr;
-    }
-}
-
 void video_mixer_base::clear_sources()
 {
     for (auto &ctx : source_ctxes) {
@@ -446,38 +458,6 @@ void video_mixer_base::clear_sources()
         glDeleteTextures(1, &ctx.texture);
     }
     source_ctxes.clear();
-}
-
-Handle<Value> video_mixer_base::set_clock(const Arguments &args)
-{
-    if (args.Length() != 1)
-        return ThrowException(Exception::TypeError(
-            String::New("Expected one argument")));
-
-    video_clock_context_full *new_clock_ctx = nullptr;
-    if (!args[0]->IsNull()) {
-        if (!args[0]->IsObject())
-            return ThrowException(Exception::TypeError(
-                String::New("Expected an object")));
-
-        auto obj = Local<Object>::Cast(args[0]);
-        auto new_clock = ObjectWrap::Unwrap<video_clock>(obj);
-
-        new_clock_ctx = new video_clock_context_full(this, new_clock);
-    }
-
-    if (clock_ctx) {
-        lock_handle lock(*clock_ctx->clock());
-        clear_clock();
-    }
-
-    if (new_clock_ctx) {
-        lock_handle lock(*new_clock_ctx->clock());
-        clock_ctx.reset(new_clock_ctx);
-        clock_ctx->clock()->link_video_clock(*clock_ctx);
-    }
-
-    return Undefined();
 }
 
 Handle<Value> video_mixer_base::set_sources(const Arguments &args)
@@ -884,10 +864,6 @@ void video_mixer_base::init_prototype(Handle<FunctionTemplate> func)
         auto mixer = ObjectWrap::Unwrap<video_mixer_base>(args.This());
         mixer->destroy();
         return Undefined();
-    });
-    SetPrototypeMethod(func, "setClock", [](const Arguments &args) -> Handle<Value> {
-        auto mixer = ObjectWrap::Unwrap<video_mixer_base>(args.This());
-        return mixer->set_clock(args);
     });
     SetPrototypeMethod(func, "setSources", [](const Arguments &args) -> Handle<Value> {
         auto mixer = ObjectWrap::Unwrap<video_mixer_base>(args.This());

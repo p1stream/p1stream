@@ -4,7 +4,6 @@
 #include "core.h"
 
 #include <list>
-#include <memory>
 
 extern "C" {
 
@@ -42,6 +41,7 @@ extern Persistent<String> x264_preset_sym;
 extern Persistent<String> x264_tuning_sym;
 extern Persistent<String> x264_params_sym;
 extern Persistent<String> x264_profile_sym;
+extern Persistent<String> clock_sym;
 extern Persistent<String> x1_sym;
 extern Persistent<String> y1_sym;
 extern Persistent<String> x2_sym;
@@ -88,7 +88,7 @@ class video_mixer_base : public video_mixer {
 public:
     video_mixer_base();
 
-    std::unique_ptr<video_clock_context_full> clock_ctx;
+    video_clock_context_full *clock_ctx;
     std::list<video_source_context_full> source_ctxes;
 
     Persistent<Function> on_data;
@@ -133,7 +133,6 @@ public:
 
     // Internal.
     void emit_last();
-    void clear_clock();
     void clear_sources();
     void tick(frame_time_t time);
     GLuint build_shader(GLuint type, const char *source);
@@ -154,7 +153,6 @@ public:
     Handle<Value> init(const Arguments &args);
     void destroy(bool unref = true);
 
-    Handle<Value> set_clock(const Arguments &args);
     Handle<Value> set_sources(const Arguments &args);
 
     // Module init.
@@ -262,7 +260,7 @@ public:
 // ----- Inline implementations -----
 
 inline video_mixer_base::video_mixer_base() :
-    cl(), out_pic(), clq(), tex_mem(), out_mem(), yuv_kernel(), enc(), last_error(), buffer()
+    clock_ctx(), cl(), out_pic(), clq(), tex_mem(), out_mem(), yuv_kernel(), enc(), last_error(), buffer()
 {
 }
 

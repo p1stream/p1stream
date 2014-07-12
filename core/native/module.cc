@@ -25,6 +25,7 @@ Persistent<String> x264_preset_sym;
 Persistent<String> x264_tuning_sym;
 Persistent<String> x264_params_sym;
 Persistent<String> x264_profile_sym;
+Persistent<String> clock_sym;
 Persistent<String> x1_sym;
 Persistent<String> y1_sym;
 Persistent<String> x2_sym;
@@ -93,6 +94,7 @@ static void module_init(Handle<Object> e)
     x264_tuning_sym = NODE_PSYMBOL("x264Tuning");
     x264_params_sym = NODE_PSYMBOL("x264Params");
     x264_profile_sym = NODE_PSYMBOL("x264Profile");
+    clock_sym = NODE_PSYMBOL("clock");
     x1_sym = NODE_PSYMBOL("x1");
     y1_sym = NODE_PSYMBOL("y1");
     x2_sym = NODE_PSYMBOL("x2");

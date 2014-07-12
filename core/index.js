@@ -6,16 +6,15 @@ var mac_sources = require('../mac_sources');
 var Video = function() {
     var self = this;
 
+    self._clock = new mac_sources.DisplayLink();
     self._mixer = new native.VideoMixer({
         bufferSize: 1 * 1024 * 1024,
         width: 1280,
         height: 720,
+        clock: self._clock,
         onData: onData,
         onError: onError
     });
-
-    self._clock = new mac_sources.DisplayLink();
-    self._mixer.setClock(self._clock);
 
     self._source = new mac_sources.DisplayStream();
     self._mixer.setSources([
