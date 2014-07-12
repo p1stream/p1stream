@@ -2,7 +2,7 @@
 #include <node.h>
 #include <node_buffer.h>
 
-namespace p1stream {
+namespace p1_api {
 
 using namespace v8;
 using namespace node;
@@ -341,11 +341,11 @@ static void init(Handle<Object> e)
 }
 
 
-} // namespace p1stream;
+}  // namespace p1_api
 
 extern "C" void init(v8::Handle<v8::Object> e)
 {
-    p1stream::init(e);
+    p1_api::init(e);
 }
 
 NODE_MODULE(api, init)

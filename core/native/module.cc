@@ -11,7 +11,7 @@
 #   error Platform not supported
 #endif
 
-namespace p1stream {
+namespace p1_core {
 
 
 Persistent<String> source_sym;
@@ -128,11 +128,11 @@ static void module_init(Handle<Object> e)
 }
 
 
-} // namespace p1stream;
+} // namespace p1_core;
 
 extern "C" void init(v8::Handle<v8::Object> e)
 {
-    p1stream::module_init(e);
+    p1_core::module_init(e);
 }
 
 NODE_MODULE(core, init)

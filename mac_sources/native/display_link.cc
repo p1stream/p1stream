@@ -1,6 +1,6 @@
 #include "mac_sources_priv.h"
 
-namespace p1stream {
+namespace p1_mac_sources {
 
 
 Handle<Value> display_link::init(const Arguments &args)
@@ -186,4 +186,4 @@ void display_link::init_prototype(Handle<FunctionTemplate> func)
 }
 
 
-}  // namespace p1stream
+}  // namespace p1_mac_sources

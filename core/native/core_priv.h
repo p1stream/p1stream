@@ -26,7 +26,10 @@ extern "C" {
 
 }
 
-namespace p1stream {
+namespace p1_core {
+
+using namespace v8;
+using namespace node;
 
 extern Persistent<String> source_sym;
 extern Persistent<String> on_data_sym;
@@ -287,6 +290,6 @@ inline audio_source_context_full::audio_source_context_full(audio_mixer *mixer, 
 }
 
 
-}  // namespace p1stream
+}  // namespace p1_core
 
 #endif  // p1_core_priv_h

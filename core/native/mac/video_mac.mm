@@ -2,7 +2,7 @@
 
 #include <Foundation/Foundation.h>
 
-namespace p1stream {
+namespace p1_core {
 
 
 Handle<Value> video_mixer_mac::platform_init(Handle<Object> params)
@@ -131,4 +131,4 @@ void video_source_context::render_iosurface(IOSurfaceRef surface)
 }
 
 
-}  // namespace p1stream
+}  // namespace p1_core

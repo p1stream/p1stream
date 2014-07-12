@@ -3,7 +3,7 @@
 
 #include "core_priv.h"
 
-namespace p1stream {
+namespace p1_core {
 
 void module_platform_init();
 
@@ -18,6 +18,6 @@ public:
 };
 
 
-}  // namespace p1stream
+}  // namespace p1_core
 
 #endif  // p1_core_priv_mac_h

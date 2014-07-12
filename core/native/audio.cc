@@ -4,7 +4,7 @@
 #include <utility>
 #include <node_buffer.h>
 
-namespace p1stream {
+namespace p1_core {
 
 // Hardcoded format parameters.
 static const int sample_rate = 44100;
@@ -490,4 +490,4 @@ void audio_mixer_full::init_prototype(Handle<FunctionTemplate> func)
 }
 
 
-} // namespace p1stream
+} // namespace p1_core

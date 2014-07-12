@@ -2,7 +2,7 @@
 
 #include <node_buffer.h>
 
-namespace p1stream {
+namespace p1_core {
 
 static const char *simple_vertex_shader =
     "#version 150\n"
@@ -929,4 +929,4 @@ void video_source_context::render_buffer(dimensions_t dimensions, void *data)
 }
 
 
-}  // namespace p1stream
+}  // namespace p1_core

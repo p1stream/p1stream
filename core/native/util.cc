@@ -1,6 +1,6 @@
 #include "core_priv.h"
 
-namespace p1stream {
+namespace p1_core {
 
 
 void lockable::unlock()
@@ -33,4 +33,4 @@ void threaded_loop::thread_cb(void *arg)
 }
 
 
-} // namespace p1stream
+} // namespace p1_core

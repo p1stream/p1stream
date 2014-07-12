@@ -12,10 +12,7 @@
 #   endif
 #endif
 
-namespace p1stream {
-
-using namespace v8;
-using namespace node;
+namespace p1_core {
 
 
 // ----- PODs----
@@ -125,14 +122,14 @@ class video_source_context;
 // Sources may introduce their own threads, but will have to manage them on
 // their own as well.
 
-class video_mixer : public ObjectWrap, public lockable {
+class video_mixer : public node::ObjectWrap, public lockable {
 protected:
     video_mixer();
 };
 
 // Base for video clocks. The clock should start a thread and call back
 // once per frame. All video processing will happen on this thread.
-class video_clock : public ObjectWrap, public lockable {
+class video_clock : public node::ObjectWrap, public lockable {
 public:
     // When a clock is linked, it should start calling tick().
     virtual void link_video_clock(video_clock_context &ctx) = 0;
@@ -161,7 +158,7 @@ public:
 };
 
 // Base for video sources.
-class video_source : public ObjectWrap {
+class video_source : public node::ObjectWrap {
 public:
     // When a clock is linked, it will receive produce_video_frame() calls.
     virtual void link_video_source(video_source_context &ctx);
@@ -203,13 +200,13 @@ class audio_source_context;
 // Sources all run their own thread, and can call into `render_buffer()`
 // without locking.
 
-class audio_mixer : public ObjectWrap, public lockable {
+class audio_mixer : public node::ObjectWrap, public lockable {
 protected:
     audio_mixer();
 };
 
 // Base for audio sources.
-class audio_source : public ObjectWrap {
+class audio_source : public node::ObjectWrap {
 public:
     // When a source is linked, it should start calling render_buffer().
     virtual void link_audio_source(audio_source_context &ctx) = 0;
@@ -363,6 +360,6 @@ inline audio_mixer *audio_source_context::mixer()
 }
 
 
-}  // namespace p1stream
+}  // namespace p1_core
 
 #endif  // p1_core_h

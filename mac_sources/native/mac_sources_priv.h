@@ -6,7 +6,11 @@
 #include <CoreVideo/CoreVideo.h>
 #include <AudioToolbox/AudioToolbox.h>
 
-namespace p1stream {
+namespace p1_mac_sources {
+
+using namespace v8;
+using namespace node;
+using namespace p1_core;
 
 
 extern Persistent<String> display_id_sym;
@@ -109,6 +113,6 @@ public:
 };
 
 
-}  // namespace p1stream
+}  // namespace p1_mac_sources
 
 #endif  // p1_mac_sources_priv_h

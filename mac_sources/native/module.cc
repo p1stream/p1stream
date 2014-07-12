@@ -1,6 +1,6 @@
 #include "mac_sources_priv.h"
 
-namespace p1stream {
+namespace p1_mac_sources {
 
 
 Persistent<String> display_id_sym;
@@ -51,11 +51,11 @@ static void init(Handle<Object> e)
 }
 
 
-} // namespace p1stream;
+} // namespace p1_mac_sources;
 
 extern "C" void init(v8::Handle<v8::Object> e)
 {
-    p1stream::init(e);
+    p1_mac_sources::init(e);
 }
 
 NODE_MODULE(mac_sources, init)
