@@ -47,7 +47,7 @@ public:
     virtual lockable *lock() final;
 
     // Video clock implementation.
-    virtual void link_video_clock(video_clock_context &ctx_) final;
+    virtual Handle<Value> link_video_clock(video_clock_context &ctx_) final;
     virtual void unlink_video_clock(video_clock_context &ctx_) final;
     virtual fraction_t video_ticks_per_second(video_clock_context &ctx) final;
 
@@ -105,7 +105,7 @@ public:
     void destroy(bool unref = true);
 
     // Audio source implementation.
-    virtual void link_audio_source(audio_source_context &ctx) final;
+    virtual Handle<Value> link_audio_source(audio_source_context &ctx) final;
     virtual void unlink_audio_source(audio_source_context &ctx) final;
 
     // Module init.

@@ -110,24 +110,19 @@ lockable *display_link::lock()
     return mutex.lock();
 }
 
-void display_link::link_video_clock(video_clock_context &ctx_)
+Handle<Value> display_link::link_video_clock(video_clock_context &ctx_)
 {
-    if (ctx == nullptr) {
-        ctx = &ctx_;
-    }
-    else {
-        // FIXME: error
-    }
+    if (ctx != nullptr)
+        return Exception::Error(String::New("DisplayLink can only link to one mixer"));
+
+    ctx = &ctx_;
+    return Handle<Value>();
 }
 
 void display_link::unlink_video_clock(video_clock_context &ctx_)
 {
-    if (ctx == &ctx_) {
+    if (ctx == &ctx_)
         ctx = nullptr;
-    }
-    else {
-        // FIXME: error
-    }
 }
 
 fraction_t display_link::video_ticks_per_second(video_clock_context &ctx)

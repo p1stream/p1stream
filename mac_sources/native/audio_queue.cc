@@ -118,24 +118,19 @@ void audio_queue::destroy(bool unref)
         Unref();
 }
 
-void audio_queue::link_audio_source(audio_source_context &ctx_)
+Handle<Value> audio_queue::link_audio_source(audio_source_context &ctx_)
 {
-    if (ctx == nullptr) {
-        ctx = &ctx_;
-    }
-    else {
-        // FIXME: error
-    }
+    if (ctx != nullptr)
+        return Exception::Error(String::New("AudioQueue can only link to one mixer"));
+
+    ctx = &ctx_;
+    return Handle<Value>();
 }
 
 void audio_queue::unlink_audio_source(audio_source_context &ctx_)
 {
-    if (ctx == &ctx_) {
+    if (ctx == &ctx_)
         ctx = nullptr;
-    }
-    else {
-        // FIXME: error
-    }
 }
 
 void audio_queue::input_callback(

@@ -132,7 +132,8 @@ protected:
 class video_clock : public node::ObjectWrap, public lockable {
 public:
     // When a clock is linked, it should start calling tick().
-    virtual void link_video_clock(video_clock_context &ctx) = 0;
+    // If the link method returns a value, it will be thrown.
+    virtual v8::Handle<v8::Value> link_video_clock(video_clock_context &ctx) = 0;
     virtual void unlink_video_clock(video_clock_context &ctx) = 0;
 
     // Get the clock rate. The clock should not call back on tick() unless it
@@ -161,7 +162,8 @@ public:
 class video_source : public node::ObjectWrap {
 public:
     // When a clock is linked, it will receive produce_video_frame() calls.
-    virtual void link_video_source(video_source_context &ctx);
+    // If the link method returns a value, it will be thrown.
+    virtual v8::Handle<v8::Value> link_video_source(video_source_context &ctx);
     virtual void unlink_video_source(video_source_context &ctx);
 
     // Called when the mixer is rendering a frame. Should call one of the
@@ -209,7 +211,8 @@ protected:
 class audio_source : public node::ObjectWrap {
 public:
     // When a source is linked, it should start calling render_buffer().
-    virtual void link_audio_source(audio_source_context &ctx) = 0;
+    // If the link method returns a value, it will be thrown.
+    virtual v8::Handle<v8::Value> link_audio_source(audio_source_context &ctx) = 0;
     virtual void unlink_audio_source(audio_source_context &ctx) = 0;
 };
 

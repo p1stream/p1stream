@@ -208,46 +208,55 @@ Handle<Value> audio_mixer_full::set_sources(const Arguments &args)
 
     lock_handle lock(thread);
 
+    clear_sources();
+
+    Handle<Value> ret;
+
     Handle<Value> val;
-
-    std::list<audio_source_context_full> new_source_ctxes;
-
-    // FIXME: error handling
 
     auto arr = Handle<Array>::Cast(args[0]);
     uint32_t len = arr->Length();
 
     for (uint32_t i = 0; i < len; i++) {
         auto val = arr->Get(i);
-        if (!val->IsObject())
-            return ThrowException(Exception::TypeError(
-                String::New("Expected only objects in the array")));
+        if (!val->IsObject()) {
+            ret = Exception::TypeError(
+                String::New("Expected only objects in the array"));
+            break;
+        }
+
         auto obj = Handle<Object>::Cast(val);
 
         val = obj->Get(source_sym);
-        if (!val->IsObject())
-            return ThrowException(Exception::TypeError(
-                String::New("Invalid or missing source")));
+        if (!val->IsObject()) {
+            ret = Exception::TypeError(
+                String::New("Invalid or missing source"));
+            break;
+
+        }
         auto source_obj = Handle<Object>::Cast(val);
         auto *source = ObjectWrap::Unwrap<audio_source>(source_obj);
 
-        new_source_ctxes.emplace_back(this, source);
-        auto &ctx = new_source_ctxes.back();
+        source_ctxes.emplace_back(this, source);
+        auto &ctx = source_ctxes.back();
 
-        val = obj->Get(volume_sym);
-        if (!val->IsNumber())
-            return ThrowException(Exception::TypeError(
-                String::New("Invalid or missing volume")));
-        ctx.volume = val->NumberValue();
+        ctx.volume = obj->Get(volume_sym)->NumberValue();
+
+        ret = ctx.source()->link_audio_source(ctx);
+        if (!ret.IsEmpty()) {
+            source_ctxes.pop_back();
+            break;
+        }
     }
 
-    clear_sources();
+    if (ret.IsEmpty()) {
+        return Undefined();
+    }
+    else {
+        clear_sources();
 
-    source_ctxes = new_source_ctxes;
-    for (auto &ctx : source_ctxes)
-        ctx.source()->link_audio_source(ctx);
-
-    return Undefined();
+        return ThrowException(ret);
+    }
 }
 
 void audio_source_context::render_buffer(int64_t time, float *in, size_t samples)

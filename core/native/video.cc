@@ -337,7 +337,11 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
         lock_handle lock(*clock);
 
         clock_ctx = new video_clock_context_full(this, clock);
-        clock->link_video_clock(*clock_ctx);
+        ret = clock->link_video_clock(*clock_ctx);
+        if (!(ok = ret.IsEmpty())) {
+            delete clock_ctx;
+            clock_ctx = nullptr;
+        }
     }
 
     if (ok) {
@@ -472,14 +476,13 @@ Handle<Value> video_mixer_base::set_sources(const Arguments &args)
 
     lock_handle lock(*this);
 
+    clear_sources();
+
     bool ok = activate_gl();
+    Handle<Value> ret;
 
     Handle<Value> val;
     GLenum gl_err;
-
-    std::list<video_source_context_full> new_source_ctxes;
-
-    // FIXME: error handling
 
     if (ok) {
         auto arr = Handle<Array>::Cast(args[0]);
@@ -487,90 +490,61 @@ Handle<Value> video_mixer_base::set_sources(const Arguments &args)
 
         for (uint32_t i = 0; i < len; i++) {
             auto val = arr->Get(i);
-            if (!val->IsObject())
-                return ThrowException(Exception::TypeError(
-                    String::New("Expected only objects in the array")));
+            if (!val->IsObject()) {
+                ret = Exception::TypeError(
+                    String::New("Expected only objects in the array"));
+                break;
+            }
+
             auto obj = Handle<Object>::Cast(val);
 
             val = obj->Get(source_sym);
-            if (!val->IsObject())
-                return ThrowException(Exception::TypeError(
-                    String::New("Invalid or missing source")));
+            if (!val->IsObject()) {
+                ret = Exception::TypeError(
+                    String::New("Invalid or missing source"));
+                break;
+            }
+
             auto source_obj = Handle<Object>::Cast(val);
             auto *source = ObjectWrap::Unwrap<video_source>(source_obj);
 
-            new_source_ctxes.emplace_back(this, source);
-            auto &ctx = new_source_ctxes.back();
+            source_ctxes.emplace_back(this, source);
+            auto &ctx = source_ctxes.back();
 
-            val = obj->Get(x1_sym);
-            if (!val->IsNumber())
-                return ThrowException(Exception::TypeError(
-                    String::New("Invalid or missing coordinate x1")));
-            ctx.x1 = val->NumberValue();
-
-            val = obj->Get(y1_sym);
-            if (!val->IsNumber())
-                return ThrowException(Exception::TypeError(
-                    String::New("Invalid or missing coordinate y1")));
-            ctx.y1 = val->NumberValue();
-
-            val = obj->Get(x2_sym);
-            if (!val->IsNumber())
-                return ThrowException(Exception::TypeError(
-                    String::New("Invalid or missing coordinate x2")));
-            ctx.x2 = val->NumberValue();
-
-            val = obj->Get(y2_sym);
-            if (!val->IsNumber())
-                return ThrowException(Exception::TypeError(
-                    String::New("Invalid or missing coordinate y2")));
-            ctx.y2 = val->NumberValue();
-
-            val = obj->Get(u1_sym);
-            if (!val->IsNumber())
-                return ThrowException(Exception::TypeError(
-                    String::New("Invalid or missing coordinate u1")));
-            ctx.u1 = val->NumberValue();
-
-            val = obj->Get(v1_sym);
-            if (!val->IsNumber())
-                return ThrowException(Exception::TypeError(
-                    String::New("Invalid or missing coordinate v1")));
-            ctx.v1 = val->NumberValue();
-
-            val = obj->Get(u2_sym);
-            if (!val->IsNumber())
-                return ThrowException(Exception::TypeError(
-                    String::New("Invalid or missing coordinate u2")));
-            ctx.u2 = val->NumberValue();
-
-            val = obj->Get(v2_sym);
-            if (!val->IsNumber())
-                return ThrowException(Exception::TypeError(
-                    String::New("Invalid or missing coordinate v2")));
-            ctx.v2 = val->NumberValue();
+            ctx.x1 = obj->Get(x1_sym)->NumberValue();
+            ctx.y1 = obj->Get(y1_sym)->NumberValue();
+            ctx.x2 = obj->Get(x2_sym)->NumberValue();
+            ctx.y2 = obj->Get(y2_sym)->NumberValue();
+            ctx.u1 = obj->Get(u1_sym)->NumberValue();
+            ctx.v1 = obj->Get(v1_sym)->NumberValue();
+            ctx.u2 = obj->Get(u2_sym)->NumberValue();
+            ctx.v2 = obj->Get(v2_sym)->NumberValue();
 
             glGenTextures(1, &ctx.texture);
             if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR))) {
                 sprintf(last_error, "OpenGL error %d", gl_err);
-                for (auto &ctx : new_source_ctxes)
-                    glDeleteTextures(1, &ctx.texture);
+                source_ctxes.pop_back();
+                break;
+            }
+
+            ret = ctx.source()->link_video_source(ctx);
+            if (!(ok = ret.IsEmpty())) {
+                glDeleteTextures(1, &ctx.texture);
+                source_ctxes.pop_back();
                 break;
             }
         }
     }
 
     if (ok) {
-        clear_sources();
-
-        source_ctxes = new_source_ctxes;
-        for (auto &ctx : source_ctxes)
-            ctx.source()->link_video_source(ctx);
-
         return Undefined();
     }
     else {
-        return ThrowException(pop_last_error());
+        clear_sources();
+
+        if (ret.IsEmpty())
+            ret = pop_last_error();
+        return ThrowException(ret);
     }
 }
 
@@ -877,8 +851,9 @@ void video_clock_context::tick(frame_time_t time)
     ((video_mixer_base *) mixer_)->tick(time);
 }
 
-void video_source::link_video_source(video_source_context &ctx)
+Handle<Value> video_source::link_video_source(video_source_context &ctx)
 {
+    return Handle<Value>();
 }
 
 void video_source::unlink_video_source(video_source_context &ctx)
