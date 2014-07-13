@@ -1,5 +1,7 @@
+var path = require('path');
 var api = require('../api');
 
 module.exports = function(app) {
-    app.use(api.staticFiles('/ui', __dirname));
+    var docroot = path.join(__dirname, 'web');
+    app.use(api.staticFiles('/', docroot));
 };

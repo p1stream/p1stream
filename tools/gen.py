@@ -4,11 +4,11 @@ import os
 import os.path
 import sys
 from glob import glob
-from fnmatch import fnmatch
 from ninja_syntax import Writer
 n = Writer(sys.stdout)
 
-if len(sys.argv) == 2 and sys.argv[1] == '--debug':
+debug = len(sys.argv) == 2 and sys.argv[1] == '--debug'
+if debug:
     cfg_cflags = '-g -DDEBUG -D_DEBUG -DENABLE_DISASSEMBLER' \
                 ' -DV8_ENABLE_CHECKS -DOBJECT_PRINT -DVERIFY_HEAP'
 else:
@@ -16,6 +16,7 @@ else:
 
 n.variable('builddir', 'out')
 n.rule('cp', 'cp $in $out')
+n.rule('sym', 'ln -s %s/$in $out' % os.getcwd())
 n.rule('link', 'clang++ $ldflags -mmacosx-version-min=10.8 -fcolor-diagnostics'
                       ' -stdlib=libc++ -arch x86_64 -o $out $in')
 clang = 'clang -mmacosx-version-min=10.8 -stdlib=libc++ -arch x86_64 %s ' \
@@ -33,7 +34,7 @@ def indir(name, paths):
     return ['%s/%s' % (name, path) for path in paths]
 
 def setext(ext, paths):
-    return ['%s%s' % (path.rsplit('.', 1)[0], ext) for path in paths]
+    return ['%s%s' % (os.path.splitext(path)[0], ext) for path in paths]
 
 def outof(paths, ext='.o', outdir='out', flatten=False):
     res = []
@@ -47,17 +48,20 @@ def outof(paths, ext='.o', outdir='out', flatten=False):
         res = setext(ext, res)
     return res
 
-def copytree(srcdir, outdir, pattern):
+def copytree(srcdir, outdir):
     for (base, dirs, files) in os.walk(srcdir):
-        if 'native' in base:
-            continue
         reldir = os.path.relpath(base, srcdir)
         for f in files:
-            if not fnmatch(f, pattern):
-                continue
             i = os.path.join(base, f)
             o = os.path.join(outdir, reldir, f)
             n.build(o, 'cp', i)
+
+def symtree(srcdir, outdir):
+    if debug:
+        if os.path.exists(srcdir):
+            n.build(outdir, 'sym', srcdir)
+    else:
+        copytree(srcdir, outdir)
 
 
 # FraunhoferAAC
@@ -730,14 +734,21 @@ n.rule('mod_cc', '%s -std=c++11 -Wall -Werror -DBUILDING_NODE_EXTENSION '
                  (clang, node_cflags),
         deps='gcc', depfile='$out.d')
 
-def build_mod(name, res=['*.html', '*.css', '*.js'], src=None, extra_obj=None, cflags='', ldflags=''):
+def build_mod(name, extra_obj=None, cflags='', ldflags=''):
     mod = '%s/%s/%s.node' % (mod_dir, name, name)
 
-    if not src:
-        src = glob('%s/native/*.cc' % name)
+    srcdir = '%s/native' % name
+    src = []
+    for (base, dirs, files) in os.walk(srcdir):
+        for f in files:
+            if os.path.splitext(f)[1] in ('.c', '.cc', '.m', '.mm'):
+                i = os.path.join(base, f)
+                src.append(i)
+
     obj = outof(src)
     for (i, o) in zip(src, obj):
         n.build(o, 'mod_cc', i, variables={ 'cflags': cflags })
+
     if extra_obj:
         obj += extra_obj
     if len(obj) > 0:
@@ -745,14 +756,17 @@ def build_mod(name, res=['*.html', '*.css', '*.js'], src=None, extra_obj=None, c
                   ' -undefined dynamic_lookup %s' % (mod, ldflags))
         n.build(mod, 'link', obj, variables={ 'ldflags': ldflags })
 
-    for pattern in res:
-        copytree(name, '%s/%s' % (mod_dir, name), pattern)
+    libdir = '%s/lib' % name
+    copytree(libdir, '%s/%s/lib' % (mod_dir, name))
+
+    modindex = '%s/index.js' % name
+    if os.path.exists(modindex):
+        n.build('%s/%s/index.js' % (mod_dir, name), 'cp', modindex)
+
+    docroot = '%s/web' % name
+    symtree(docroot, '%s/%s/web' % (mod_dir, name))
 
 build_mod('core',
-    src =
-        glob('core/native/*.cc') +
-        glob('core/native/mac/*.cc') +
-        glob('core/native/mac/*.mm'),
     extra_obj =
         aac_out + x264_out,
     cflags =

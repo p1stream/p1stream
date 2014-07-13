@@ -8,11 +8,18 @@ var mimeTypes = {
 };
 
 // Static file serving middleware.
-// `base` is the base request path, with no trailing slash.
+// `base` is the base request path.
 // `docroot` is the file system path.
 module.exports = function(base, docroot) {
     var map = Object.create(null);
-    map[base] = { redir: base + '/' };
+    if (base.slice(-1) === '/')
+        base = base.slice(0, -1);
+
+    if (base)
+        map[base] = { redir: base + '/' };
+    else
+        base = '/';
+
     function walk(subdir) {
         var dir = path.join(docroot, subdir);
         fs.readdirSync(dir).forEach(function(entry) {
