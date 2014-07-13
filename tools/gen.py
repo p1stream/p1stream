@@ -52,6 +52,7 @@ def copytree(srcdir, outdir):
     for (base, dirs, files) in os.walk(srcdir):
         reldir = os.path.relpath(base, srcdir)
         for f in files:
+            if f[0] == '.': continue
             i = os.path.join(base, f)
             o = os.path.join(outdir, reldir, f)
             n.build(o, 'cp', i)
