@@ -1,8 +1,11 @@
 var events = require('events');
+var config = require('./config');
 var matroska = require('./matroska');
 var core = require('../../core');
 
 module.exports = function(app) {
+    app.cfg = config();
+
     var video = new core.Video();
     var audio = new core.Audio();
     var mstream = new events.EventEmitter();
