@@ -1,4 +1,4 @@
-var native = require('../api.node');
+var native = require('../../build/Release/api.node');
 
 
 function tag(id, type) {

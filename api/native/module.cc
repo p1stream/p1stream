@@ -1,3 +1,4 @@
+#include <memory.h>
 #include <v8.h>
 #include <node.h>
 #include <node_buffer.h>
@@ -7,12 +8,7 @@ namespace p1_api {
 using namespace v8;
 using namespace node;
 
-static size_t calc_varint_size(uint64_t val);
-static size_t write_varint(uint64_t val, uint8_t *p);
-static Handle<Value> calc_ebml_content_size(char type, Handle<Value> contentVal, size_t &size);
-static Handle<Value> calc_ebml_size(Handle<Value> val, size_t &size);
-static Handle<Value> write_ebml(Handle<Value> tags, uint8_t *dst);
-static Handle<Value> build_ebml(const Arguments &args);
+static bool calc_ebml_size(Isolate *isolate, Handle<Value> val, size_t &size);
 
 static Persistent<Function> fast_buffer_constructor;
 
@@ -95,108 +91,117 @@ static size_t write_varint(uint64_t val, uint8_t *p)
 }
 
 
-static Handle<Value> calc_ebml_content_size(char type, Handle<Value> contentVal, size_t &size)
+static inline void throw_error(Isolate *isolate, const char *msg)
+{
+    isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, msg)));
+}
+
+
+static bool calc_ebml_content_size(Isolate *isolate, char type, Handle<Value> contentVal, size_t &size)
 {
     switch (type) {
-        case 'm': {
-            size = 0;
-            return calc_ebml_size(contentVal, size);
-        }
+        case 'm':
+            return calc_ebml_size(isolate, contentVal, size);
         case 'u': {
             double number = contentVal->NumberValue();
-            if (number < 0)
-                return ThrowException(Exception::TypeError(
-                            String::New("Invalid unsigned value")));
+            if (number < 0) {
+                throw_error(isolate, "Invalid unsigned value");
+                return false;
+            }
             else if (number <= 0xFF) size = 1;
             else if (number <= 0xFFFF) size = 2;
             else if (number <= 0xFFFFFFFF) size = 4;
             else if (number <= 0xFFFFFFFFFFFFFFFF) size = 8;
-            else
-                return ThrowException(Exception::TypeError(
-                            String::New("Invalid unsigned value")));
-            break;
+            else {
+                throw_error(isolate, "Invalid unsigned value");
+                return false;
+            }
+            return true;
         }
-        case 'f': {
+        case 'f':
             size = 4;
-            break;
-        }
-        case 'F': {  // double
+            return true;
+        case 'F':  // double
             size = 8;
-            break;
-        }
+            return true;
         case 's':
-        case '8': {
+        case '8':
             size = contentVal->ToString()->Utf8Length();
-            break;
-        }
-        case 'b': {
-            if (!Buffer::HasInstance(contentVal))
-                return ThrowException(Exception::TypeError(
-                            String::New("Invalid buffer value")));
+            return true;
+        case 'b':
+            if (!Buffer::HasInstance(contentVal)) {
+                throw_error(isolate, "Invalid buffer value");
+                return false;
+            }
             size = Buffer::Length(contentVal);
-            break;
-        }
+            return true;
         default:
-            return ThrowException(Exception::TypeError(
-                        String::New("Invalid tag type")));
+            throw_error(isolate, "Invalid tag type");
+            return false;
     }
-
-    return Handle<Value>();
 }
 
 
-static Handle<Value> calc_ebml_size(Handle<Value> val, size_t &size)
+static bool calc_ebml_size(Isolate *isolate, Handle<Value> val, size_t &size)
 {
-    if (!val->IsArray())
-        return ThrowException(Exception::TypeError(
-                    String::New("Expected an array of tags")));
+    size = 0;
+
+    if (!val->IsArray()) {
+        throw_error(isolate, "Expected an array of tags");
+        return false;
+    }
 
     auto tags = Handle<Array>::Cast(val);
     uint32_t length = tags->Length();
     for (uint32_t i = 0; i < length; i++) {
         auto tagVal = tags->Get(i);
-        if (!tagVal->IsArray())
-            return ThrowException(Exception::TypeError(
-                        String::New("Invalid tag")));
+        if (!tagVal->IsArray()) {
+            throw_error(isolate, "Invalid tag");
+            return false;
+        }
 
         auto tag = Handle<Array>::Cast(tagVal);
         auto tagLength = tag->Length();
-        if (tagLength < 3 || tagLength > 4)
-            return ThrowException(Exception::TypeError(
-                        String::New("Invalid tag")));
+        if (tagLength < 3 || tagLength > 4) {
+            throw_error(isolate, "Invalid tag");
+            return false;
+        }
 
         auto idVal = tag->Get(0);
         auto typeVal = tag->Get(1);
         auto contentVal = tag->Get(2);
 
-        if (!Buffer::HasInstance(idVal))
-            return ThrowException(Exception::TypeError(
-                        String::New("Invalid tag ID")));
+        if (!Buffer::HasInstance(idVal)) {
+            throw_error(isolate, "Invalid tag ID");
+            return false;
+        }
 
         auto idSize = Buffer::Length(idVal);
-        if (idSize < 1 || idSize > 4)
-            return ThrowException(Exception::TypeError(
-                        String::New("Invalid tag ID")));
+        if (idSize < 1 || idSize > 4) {
+            throw_error(isolate, "Invalid tag ID");
+            return false;
+        }
 
-        String::AsciiValue typeStr(typeVal);
-        if (typeStr.length() != 1)
-            return ThrowException(Exception::TypeError(
-                        String::New("Invalid tag type")));
+        String::Utf8Value typeStr(typeVal);
+        if (typeStr.length() != 1) {
+            throw_error(isolate, "Invalid tag type");
+            return false;
+        }
 
         size_t contentSize;
-        auto ret = calc_ebml_content_size(**typeStr, contentVal, contentSize);
-        if (!ret.IsEmpty())
-            return ret;
+        if (!calc_ebml_content_size(isolate, **typeStr, contentVal, contentSize))
+            return false;
 
         size_t sizeSize = tag->Get(3)->IsTrue() ? 1 : calc_varint_size(contentSize);
 
         size += idSize + sizeSize + contentSize;
     }
 
-    return Handle<Value>();
+    return true;
 }
 
-static Handle<Value> write_ebml(Handle<Value> val, uint8_t *dst)
+
+static bool write_ebml(Isolate *isolate, Handle<Value> val, uint8_t *dst)
 {
     auto tags = Handle<Array>::Cast(val);
     uint32_t length = tags->Length();
@@ -212,10 +217,9 @@ static Handle<Value> write_ebml(Handle<Value> val, uint8_t *dst)
         dst += idSize;
 
         size_t contentSize;
-        String::AsciiValue typeStr(typeVal);
-        auto ret = calc_ebml_content_size(**typeStr, contentVal, contentSize);
-        if (!ret.IsEmpty())
-            return ret;
+        String::Utf8Value typeStr(typeVal);
+        if (!calc_ebml_content_size(isolate, **typeStr, contentVal, contentSize))
+            return false;
 
         if (tag->Get(3)->IsTrue()) {
             *dst = 0xFF;
@@ -227,9 +231,8 @@ static Handle<Value> write_ebml(Handle<Value> val, uint8_t *dst)
 
         switch (**typeStr) {
             case 'm': {
-                auto ret = write_ebml(contentVal, dst);
-                if (!ret.IsEmpty())
-                    return ret;
+                if (!write_ebml(isolate, contentVal, dst))
+                    return false;
                 break;
             }
             case 'u': {
@@ -297,55 +300,48 @@ static Handle<Value> write_ebml(Handle<Value> val, uint8_t *dst)
         dst += contentSize;
     }
 
-    return Handle<Value>();
+    return true;
 }
 
 
-static Handle<Value> build_ebml(const Arguments &args)
+static void build_ebml(const FunctionCallbackInfo<Value>& args)
 {
-    HandleScope scope;
-    Handle<Value> ret;
+    auto *isolate = args.GetIsolate();
+    HandleScope scope(isolate);
 
     if (args.Length() != 1)
-        return ThrowException(Exception::TypeError(
-                    String::New("Expected one argument")));
+        return throw_error(isolate, "Expected one argument");
 
-    size_t size = 0;
-    ret = calc_ebml_size(args[0], size);
-    if (!ret.IsEmpty())
-        return ret;
+    size_t size;
+    if (!calc_ebml_size(isolate, args[0], size))
+        return;
 
-    Handle<Value> arg = Number::New(size);
-    auto bufobj = fast_buffer_constructor->NewInstance(1, &arg);
+    Handle<Value> arg = Number::New(isolate, size);
+    auto fn = Local<Function>::New(isolate, fast_buffer_constructor);
+    auto bufobj = fn->NewInstance(1, &arg);
     uint8_t *dst = (uint8_t *) Buffer::Data(bufobj);
 
-    ret = write_ebml(args[0], dst);
-    if (!ret.IsEmpty())
-        return ret;
+    if (!write_ebml(isolate, args[0], dst))
+        return;
 
-    return scope.Close(bufobj);
+    args.GetReturnValue().Set(bufobj);
 }
 
 
-static void init(Handle<Object> e)
+static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Value> module,
+    v8::Handle<v8::Context> context, void* priv)
 {
-    Handle<FunctionTemplate> func;
+    auto *isolate = Isolate::GetCurrent();
 
-    auto global = Context::GetCurrent()->Global();
-    auto val = global->Get(String::NewSymbol("Buffer"));
+    auto global = context->Global();
+    auto val = global->Get(String::NewFromUtf8(isolate, "Buffer"));
     auto fn = Handle<Function>::Cast(val);
-    fast_buffer_constructor = Persistent<Function>::New(fn);
+    fast_buffer_constructor.Reset(isolate, fn);
 
-    func = FunctionTemplate::New(build_ebml);
-    e->Set(String::NewSymbol("buildEBML"), func->GetFunction());
+    NODE_SET_METHOD(exports, "buildEBML", build_ebml);
 }
 
 
 }  // namespace p1_api
 
-extern "C" void init(v8::Handle<v8::Object> e)
-{
-    p1_api::init(e);
-}
-
-NODE_MODULE(api, init)
+NODE_MODULE_CONTEXT_AWARE(api, p1_api::init)
