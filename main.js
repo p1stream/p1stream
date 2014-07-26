@@ -1,11 +1,12 @@
 var app = require('app');
+var express = require('express');
 var BrowserWindow = require('browser-window');
 
 var webapp = null;
 var mainWindow = null;
 
 app.on('will-finish-launching', function() {
-    webapp = require('./api').createApp();
+    webapp = express();
     require('./webui')(webapp);
 });
 
