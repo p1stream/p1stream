@@ -1,6 +1,7 @@
 #ifndef p1_core_h
 #define p1_core_h
 
+#include <uv.h>
 #include <node.h>
 #include <functional>
 
