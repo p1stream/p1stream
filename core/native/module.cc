@@ -6,6 +6,9 @@
 #       include "core_priv_mac.h"
 #       define video_mixer_platform video_mixer_mac
 #   endif
+#elif __linux
+#   include "core_priv_linux.h"
+#   define video_mixer_platform video_mixer_linux
 #endif
 #ifndef video_mixer_platform
 #   error Platform not supported
