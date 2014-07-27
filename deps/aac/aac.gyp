@@ -16,7 +16,14 @@
         'conditions': [
             ['OS != "win"', {
                 'cflags': ['-std=c++98', '-w'],
-                'cflags!': ['-Wextra', '-Wall', '-Wno-unused-parameter']
+                'cflags!': [
+                    '-Wextra', '-Wall', '-Wno-unused-parameter',
+                    '-fno-omit-frame-pointer',
+                    '-ffunction-sections',
+                    '-fdata-sections',
+                    '-fno-tree-vrp',
+                    '-fno-tree-sink'
+                ]
             }]
         ]
     },

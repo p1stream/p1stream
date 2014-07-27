@@ -2,7 +2,8 @@
     'target_defaults': {
         'conditions': [
             ['OS != "win"', {
-                'cflags': ['-std=c++11']
+                'cflags': ['-std=c++11'],
+                'ldflags': ['-Wl,-Bsymbolic']
             }]
         ]
     },
@@ -18,11 +19,9 @@
                 'deps/aac/aac.gyp:libSYS',
                 'deps/aac/aac.gyp:libMpegTPEnc',
                 'deps/aac/aac.gyp:libSBRenc',
-                'deps/aac/aac.gyp:libAACenc'
-            ],
-            'include_dirs': [
-                'deps/x264/generated/<(OS)',
-                'deps/x264/x264'
+                'deps/aac/aac.gyp:libAACenc',
+                'deps/x264/x264.gyp:libx264common',
+                'deps/x264/x264.gyp:libx264encoder'
             ],
             'sources': [
                 'core/native/audio.cc',

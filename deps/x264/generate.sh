@@ -28,13 +28,14 @@ git clone --shared ../../deps/x264/x264 _scratch
 pushd _scratch
 ./configure \
     --disable-cli \
-    --enable-static
+    --enable-shared
+make common/oclobj.h
 popd
 
 # Copy generated files.
-OUT="generated/${1}"
-mkdir -p "${OUT}"
-cp _scratch/config.h _scratch/x264_config.h "${OUT}/"
+mkdir -p "generated/${1}" generated/common
+cp _scratch/config.h _scratch/x264_config.h "generated/${1}/"
+cp _scratch/common/oclobj.h generated/common/
 
 # Clean up
 rm -fr _scratch
