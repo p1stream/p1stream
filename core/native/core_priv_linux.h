@@ -9,7 +9,7 @@ void module_platform_init();
 
 class video_mixer_linux : public video_mixer_base {
 public:
-    virtual Handle<Value> platform_init(Handle<Object> params) final;
+    virtual bool platform_init(Handle<Object> params) final;
     virtual void platform_destroy() final;
     virtual bool activate_gl() final;
 };

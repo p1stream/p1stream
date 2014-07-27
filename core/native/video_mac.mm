@@ -5,7 +5,7 @@
 namespace p1_core {
 
 
-Handle<Value> video_mixer_mac::platform_init(Handle<Object> params)
+bool video_mixer_mac::platform_init(Handle<Object> params)
 {
     bool ok;
     CGLError cgl_err;
@@ -79,7 +79,7 @@ Handle<Value> video_mixer_mac::platform_init(Handle<Object> params)
             sprintf(last_error, "glFramebufferTexture2D error %d", gl_err);
     }
 
-    return ok ? Handle<Value>() : pop_last_error();
+    return ok;
 }
 
 void video_mixer_mac::platform_destroy()

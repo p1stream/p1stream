@@ -3,6 +3,7 @@
 
 #include <uv.h>
 #include <node.h>
+#include <node_object_wrap.h>
 #include <functional>
 
 #if __APPLE__
@@ -95,10 +96,10 @@ private:
     uv_async_t async;
     std::function<void ()> fn;
 
-    static void async_cb(uv_async_t* handle, int status);
+    static void async_cb(uv_async_t* handle);
 
 public:
-    uv_err_code init(std::function<void ()> fn_);
+    void init(std::function<void ()> fn_);
     void destroy();
 
     void send();
@@ -133,8 +134,8 @@ protected:
 class video_clock : public node::ObjectWrap, public lockable {
 public:
     // When a clock is linked, it should start calling tick().
-    // If the link method returns a value, it will be thrown.
-    virtual v8::Handle<v8::Value> link_video_clock(video_clock_context &ctx) = 0;
+    // If the link method throws, it should return false.
+    virtual bool link_video_clock(video_clock_context &ctx) = 0;
     virtual void unlink_video_clock(video_clock_context &ctx) = 0;
 
     // Get the clock rate. The clock should not call back on tick() unless it
@@ -163,8 +164,8 @@ public:
 class video_source : public node::ObjectWrap {
 public:
     // When a clock is linked, it will receive produce_video_frame() calls.
-    // If the link method returns a value, it will be thrown.
-    virtual v8::Handle<v8::Value> link_video_source(video_source_context &ctx);
+    // If the link method throws, it should return false.
+    virtual bool link_video_source(video_source_context &ctx);
     virtual void unlink_video_source(video_source_context &ctx);
 
     // Called when the mixer is rendering a frame. Should call one of the
@@ -212,8 +213,8 @@ protected:
 class audio_source : public node::ObjectWrap {
 public:
     // When a source is linked, it should start calling render_buffer().
-    // If the link method returns a value, it will be thrown.
-    virtual v8::Handle<v8::Value> link_audio_source(audio_source_context &ctx) = 0;
+    // If the link method throws, it should return false.
+    virtual bool link_audio_source(audio_source_context &ctx) = 0;
     virtual void unlink_audio_source(audio_source_context &ctx) = 0;
 };
 
@@ -289,14 +290,12 @@ inline bool threaded_loop::wait(uint64_t timeout)
     return uv_cond_timedwait(&cond, &mutex, timeout) == 0;
 }
 
-inline uv_err_code main_loop_callback::init(std::function<void ()> fn_)
+inline void main_loop_callback::init(std::function<void ()> fn_)
 {
     fn = fn_;
     auto loop = uv_default_loop();
     if (uv_async_init(loop, &async, async_cb))
-        return uv_last_error(loop).code;
-    else
-        return UV_OK;
+        abort();
 }
 
 inline void main_loop_callback::destroy()

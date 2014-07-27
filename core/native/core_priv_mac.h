@@ -12,7 +12,7 @@ public:
     CGLContextObj cglContext;
     IOSurfaceRef surface;
 
-    virtual Handle<Value> platform_init(Handle<Object> params) final;
+    virtual bool platform_init(Handle<Object> params) final;
     virtual void platform_destroy() final;
     virtual bool activate_gl() final;
 };

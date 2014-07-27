@@ -17,117 +17,125 @@
 namespace p1_core {
 
 
-Persistent<String> source_sym;
-Persistent<String> on_data_sym;
-Persistent<String> on_error_sym;
+Eternal<String> source_sym;
+Eternal<String> on_data_sym;
+Eternal<String> on_error_sym;
 
-Persistent<String> buffer_size_sym;
-Persistent<String> width_sym;
-Persistent<String> height_sym;
-Persistent<String> x264_preset_sym;
-Persistent<String> x264_tuning_sym;
-Persistent<String> x264_params_sym;
-Persistent<String> x264_profile_sym;
-Persistent<String> clock_sym;
-Persistent<String> x1_sym;
-Persistent<String> y1_sym;
-Persistent<String> x2_sym;
-Persistent<String> y2_sym;
-Persistent<String> u1_sym;
-Persistent<String> v1_sym;
-Persistent<String> u2_sym;
-Persistent<String> v2_sym;
-Persistent<String> buf_sym;
-Persistent<String> frames_sym;
-Persistent<String> pts_sym;
-Persistent<String> dts_sym;
-Persistent<String> keyframe_sym;
-Persistent<String> nals_sym;
-Persistent<String> type_sym;
-Persistent<String> priority_sym;
-Persistent<String> start_sym;
-Persistent<String> end_sym;
+Eternal<String> buffer_size_sym;
+Eternal<String> width_sym;
+Eternal<String> height_sym;
+Eternal<String> x264_preset_sym;
+Eternal<String> x264_tuning_sym;
+Eternal<String> x264_params_sym;
+Eternal<String> x264_profile_sym;
+Eternal<String> clock_sym;
+Eternal<String> x1_sym;
+Eternal<String> y1_sym;
+Eternal<String> x2_sym;
+Eternal<String> y2_sym;
+Eternal<String> u1_sym;
+Eternal<String> v1_sym;
+Eternal<String> u2_sym;
+Eternal<String> v2_sym;
+Eternal<String> buf_sym;
+Eternal<String> frames_sym;
+Eternal<String> pts_sym;
+Eternal<String> dts_sym;
+Eternal<String> keyframe_sym;
+Eternal<String> nals_sym;
+Eternal<String> type_sym;
+Eternal<String> priority_sym;
+Eternal<String> start_sym;
+Eternal<String> end_sym;
 
-Persistent<String> volume_sym;
-
-fraction_t mach_timebase;
+Eternal<String> volume_sym;
 
 
-static Handle<Value> video_mixer_constructor(const Arguments &args)
+static void video_mixer_constructor(const FunctionCallbackInfo<Value>& args)
 {
     auto mixer = new video_mixer_platform();
-    return mixer->init(args);
+    mixer->init(args);
 }
 
-static Handle<Value> audio_mixer_constructor(const Arguments &args)
+static void audio_mixer_constructor(const FunctionCallbackInfo<Value>& args)
 {
     auto mixer = new audio_mixer_full();
-    return mixer->init(args);
+    mixer->init(args);
 }
 
-static void module_init(Handle<Object> e)
+static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Value> module,
+    v8::Handle<v8::Context> context, void* priv)
 {
+    auto *isolate = context->GetIsolate();
+    Handle<String> name;
     Handle<FunctionTemplate> func;
 
-    NODE_DEFINE_CONSTANT(e, NAL_UNKNOWN);
-    NODE_DEFINE_CONSTANT(e, NAL_SLICE);
-    NODE_DEFINE_CONSTANT(e, NAL_SLICE_DPA);
-    NODE_DEFINE_CONSTANT(e, NAL_SLICE_DPB);
-    NODE_DEFINE_CONSTANT(e, NAL_SLICE_DPC);
-    NODE_DEFINE_CONSTANT(e, NAL_SLICE_IDR);
-    NODE_DEFINE_CONSTANT(e, NAL_SEI);
-    NODE_DEFINE_CONSTANT(e, NAL_SPS);
-    NODE_DEFINE_CONSTANT(e, NAL_PPS);
-    NODE_DEFINE_CONSTANT(e, NAL_AUD);
-    NODE_DEFINE_CONSTANT(e, NAL_FILLER);
+    NODE_DEFINE_CONSTANT(exports, NAL_UNKNOWN);
+    NODE_DEFINE_CONSTANT(exports, NAL_SLICE);
+    NODE_DEFINE_CONSTANT(exports, NAL_SLICE_DPA);
+    NODE_DEFINE_CONSTANT(exports, NAL_SLICE_DPB);
+    NODE_DEFINE_CONSTANT(exports, NAL_SLICE_DPC);
+    NODE_DEFINE_CONSTANT(exports, NAL_SLICE_IDR);
+    NODE_DEFINE_CONSTANT(exports, NAL_SEI);
+    NODE_DEFINE_CONSTANT(exports, NAL_SPS);
+    NODE_DEFINE_CONSTANT(exports, NAL_PPS);
+    NODE_DEFINE_CONSTANT(exports, NAL_AUD);
+    NODE_DEFINE_CONSTANT(exports, NAL_FILLER);
 
-    NODE_DEFINE_CONSTANT(e, NAL_PRIORITY_DISPOSABLE);
-    NODE_DEFINE_CONSTANT(e, NAL_PRIORITY_LOW);
-    NODE_DEFINE_CONSTANT(e, NAL_PRIORITY_HIGH);
-    NODE_DEFINE_CONSTANT(e, NAL_PRIORITY_HIGHEST);
+    NODE_DEFINE_CONSTANT(exports, NAL_PRIORITY_DISPOSABLE);
+    NODE_DEFINE_CONSTANT(exports, NAL_PRIORITY_LOW);
+    NODE_DEFINE_CONSTANT(exports, NAL_PRIORITY_HIGH);
+    NODE_DEFINE_CONSTANT(exports, NAL_PRIORITY_HIGHEST);
 
-    source_sym = NODE_PSYMBOL("source");
-    on_data_sym = NODE_PSYMBOL("onData");
-    on_error_sym = NODE_PSYMBOL("onError");
+    // FIXME: Create our own environment, like node.
+#define SYM(handle, value) handle.Set(isolate, String::NewFromUtf8(isolate, value))
+    SYM(source_sym, "source");
+    SYM(on_data_sym, "onData");
+    SYM(on_error_sym, "onError");
 
-    buffer_size_sym = NODE_PSYMBOL("bufferSize");
-    width_sym = NODE_PSYMBOL("width");
-    height_sym = NODE_PSYMBOL("height");
-    x264_preset_sym = NODE_PSYMBOL("x264Preset");
-    x264_tuning_sym = NODE_PSYMBOL("x264Tuning");
-    x264_params_sym = NODE_PSYMBOL("x264Params");
-    x264_profile_sym = NODE_PSYMBOL("x264Profile");
-    clock_sym = NODE_PSYMBOL("clock");
-    x1_sym = NODE_PSYMBOL("x1");
-    y1_sym = NODE_PSYMBOL("y1");
-    x2_sym = NODE_PSYMBOL("x2");
-    y2_sym = NODE_PSYMBOL("y2");
-    u1_sym = NODE_PSYMBOL("u1");
-    v1_sym = NODE_PSYMBOL("v1");
-    u2_sym = NODE_PSYMBOL("u2");
-    v2_sym = NODE_PSYMBOL("v2");
-    buf_sym = NODE_PSYMBOL("buf");
-    frames_sym = NODE_PSYMBOL("frames");
-    pts_sym = NODE_PSYMBOL("pts");
-    dts_sym = NODE_PSYMBOL("dts");
-    keyframe_sym = NODE_PSYMBOL("keyframe");
-    nals_sym = NODE_PSYMBOL("nals");
-    type_sym = NODE_PSYMBOL("type");
-    priority_sym = NODE_PSYMBOL("priority");
-    start_sym = NODE_PSYMBOL("start");
-    end_sym = NODE_PSYMBOL("end");
+    SYM(buffer_size_sym, "bufferSize");
+    SYM(width_sym, "width");
+    SYM(height_sym, "height");
+    SYM(x264_preset_sym, "x264Preset");
+    SYM(x264_tuning_sym, "x264Tuning");
+    SYM(x264_params_sym, "x264Params");
+    SYM(x264_profile_sym, "x264Profile");
+    SYM(clock_sym, "clock");
+    SYM(x1_sym, "x1");
+    SYM(y1_sym, "y1");
+    SYM(x2_sym, "x2");
+    SYM(y2_sym, "y2");
+    SYM(u1_sym, "u1");
+    SYM(v1_sym, "v1");
+    SYM(u2_sym, "u2");
+    SYM(v2_sym, "v2");
+    SYM(buf_sym, "buf");
+    SYM(frames_sym, "frames");
+    SYM(pts_sym, "pts");
+    SYM(dts_sym, "dts");
+    SYM(keyframe_sym, "keyframe");
+    SYM(nals_sym, "nals");
+    SYM(type_sym, "type");
+    SYM(priority_sym, "priority");
+    SYM(start_sym, "start");
+    SYM(end_sym, "end");
 
-    volume_sym = NODE_PSYMBOL("volume");
+    SYM(volume_sym, "volume");
+#undef SYM
 
-    func = FunctionTemplate::New(video_mixer_constructor);
+    name = String::NewFromUtf8(isolate, "VideoMixer");
+    func = FunctionTemplate::New(isolate, video_mixer_constructor);
     func->InstanceTemplate()->SetInternalFieldCount(1);
+    func->SetClassName(name);
     video_mixer_base::init_prototype(func);
-    e->Set(String::NewSymbol("VideoMixer"), func->GetFunction());
+    exports->Set(name, func->GetFunction());
 
-    func = FunctionTemplate::New(audio_mixer_constructor);
+    name = String::NewFromUtf8(isolate, "AudioMixer");
+    func = FunctionTemplate::New(isolate, audio_mixer_constructor);
     func->InstanceTemplate()->SetInternalFieldCount(1);
+    func->SetClassName(name);
     audio_mixer_full::init_prototype(func);
-    e->Set(String::NewSymbol("AudioMixer"), func->GetFunction());
+    exports->Set(name, func->GetFunction());
 
     module_platform_init();
 }
@@ -135,9 +143,4 @@ static void module_init(Handle<Object> e)
 
 } // namespace p1_core;
 
-extern "C" void init(v8::Handle<v8::Object> e)
-{
-    p1_core::module_init(e);
-}
-
-NODE_MODULE(core, init)
+NODE_MODULE_CONTEXT_AWARE(core, p1_core::init)

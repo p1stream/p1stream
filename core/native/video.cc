@@ -1,5 +1,6 @@
 #include "core_priv.h"
 
+#include <string.h>
 #include <node_buffer.h>
 
 namespace p1_core {
@@ -75,11 +76,9 @@ static const GLsizei vbo_size = 4 * vbo_stride;
 static const void *vbo_tex_coord_offset = (void *)(2 * sizeof(GLfloat));
 
 
-Handle<Value> video_mixer_base::init(const Arguments &args)
+void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
 {
     bool ok;
-    Handle<Value> ret;
-
     cl_device_id device_id;
     cl_int cl_err;
     GLenum gl_err;
@@ -91,72 +90,66 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     cl_program yuv_program;
 
     Wrap(args.This());
+    args.GetReturnValue().Set(handle());
+    isolate = args.GetIsolate();
+    context.Reset(isolate, isolate->GetCurrentContext());
 
     if (!(ok = (args.Length() == 1)))
-        ret = Exception::TypeError(
-            String::New("Expected one argument"));
+        strcpy(last_error, "Expected one argument");
     else if (!(ok = args[0]->IsObject()))
-        ret = Exception::TypeError(
-            String::New("Expected an object"));
+        strcpy(last_error, "Expected an object");
     else
-        params = Local<Object>::Cast(args[0]);
+        params = args[0].As<Object>();
 
     if (ok) {
-        val = params->Get(buffer_size_sym);
+        val = params->Get(buffer_size_sym.Get(isolate));
         if (!(ok = val->IsUint32()))
-            ret = Exception::TypeError(
-                String::New("Invalid or missing buffer size"));
+            strcpy(last_error, "Invalid or missing buffer size");
     }
 
     if (ok) {
         buffer_size = val->Uint32Value();
         if (!(ok = (buffer_size > 0)))
-            ret = Exception::TypeError(
-                String::New("Invalid or missing buffer size"));
+            strcpy(last_error, "Invalid or missing buffer size");
     }
 
     if (ok) {
         buffer = new uint8_t[buffer_size];
         buffer_pos = buffer;
 
-        val = params->Get(width_sym);
+        val = params->Get(width_sym.Get(isolate));
         if (!(ok = val->IsUint32()))
-            ret = Exception::TypeError(
-                String::New("Invalid or missing width"));
+            strcpy(last_error, "Invalid or missing width");
     }
 
     if (ok) {
         out_dimensions.width = val->Uint32Value();
 
-        val = params->Get(height_sym);
+        val = params->Get(height_sym.Get(isolate));
         if (!(ok = val->IsUint32()))
-            ret = Exception::TypeError(
-                String::New("Invalid or missing height"));
+            strcpy(last_error, "Invalid or missing height");
     }
 
     if (ok) {
         out_dimensions.height = val->Uint32Value();
 
-        val = params->Get(on_data_sym);
+        val = params->Get(on_data_sym.Get(isolate));
         if (!(ok = val->IsFunction()))
-            ret = Exception::TypeError(
-                String::New("Invalid or missing onData handler"));
+            strcpy(last_error, "Invalid or missing onData handler");
     }
 
     if (ok) {
-        on_data = Persistent<Function>::New(Handle<Function>::Cast(val));
+        on_data.Reset(isolate, val.As<Function>());
 
-        val = params->Get(on_error_sym);
+        val = params->Get(on_error_sym.Get(isolate));
         if (!(ok = val->IsFunction()))
-            ret = Exception::TypeError(
-                String::New("Invalid or missing onError handler"));
+            strcpy(last_error, "Invalid or missing onError handler");
     }
 
     if (ok) {
-        on_error = Persistent<Function>::New(Handle<Function>::Cast(val));
+        on_error.Reset(isolate, val.As<Function>());
 
-        ret = platform_init(params);
-        ok = ret.IsEmpty();
+        ok = platform_init(params);
     }
 
     if (ok) {
@@ -266,18 +259,11 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     }
 
     if (ok) {
-        auto fn = std::bind(&video_mixer_base::emit_last, this);
-        uv_err_code err = callback.init(fn);
-        if (!(ok = (err == UV_OK)))
-            ret = UVException(err, "uv_async_init");
-    }
-
-    if (ok) {
         x264_param_default(&enc_params);
 
-        val = params->Get(x264_preset_sym);
+        val = params->Get(x264_preset_sym.Get(isolate));
         if (val->IsString()) {
-            String::AsciiValue v(val);
+            String::Utf8Value v(val);
             if (!(ok = (*v != NULL &&
                         x264_param_default_preset(&enc_params, *v, NULL) != 0)))
                 strcpy(last_error, "Invalid x264 preset");
@@ -285,9 +271,9 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     }
 
     if (ok) {
-        val = params->Get(x264_tuning_sym);
+        val = params->Get(x264_tuning_sym.Get(isolate));
         if (val->IsString()) {
-            String::AsciiValue v(val);
+            String::Utf8Value v(val);
             if (!(ok = (*v != NULL &&
                         x264_param_default_preset(&enc_params, NULL, *v) != 0)))
                 strcpy(last_error, "Invalid x264 tuning");
@@ -295,15 +281,15 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     }
 
     if (ok) {
-        val = params->Get(x264_params_sym);
+        val = params->Get(x264_params_sym.Get(isolate));
         if (val->IsObject()) {
-            auto obj = Handle<Object>::Cast(val);
+            auto obj = val.As<Object>();
             auto arr = obj->GetPropertyNames();
             uint32_t len = arr->Length();
             for (uint32_t i = 0; i < len; i++) {
                 auto key = arr->Get(i);
-                String::AsciiValue k(key);
-                String::AsciiValue v(obj->Get(key));
+                String::Utf8Value k(key);
+                String::Utf8Value v(obj->Get(key));
                 if (!(ok = (*k != NULL && *v != NULL &&
                             x264_param_parse(&enc_params, *k, *v) != 0))) {
                     strcpy(last_error, "Invalid x264 parameters");
@@ -317,9 +303,9 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
         x264_param_apply_fastfirstpass(&enc_params);
 
         // Apply profile.
-        val = params->Get(x264_profile_sym);
+        val = params->Get(x264_profile_sym.Get(isolate));
         if (val->IsString()) {
-            String::AsciiValue v(val);
+            String::Utf8Value v(val);
             if (!(ok = (*v != NULL &&
                         x264_param_apply_profile(&enc_params, *v) != 0)))
                 strcpy(last_error, "Invalid x264 profile");
@@ -327,24 +313,25 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
     }
 
     if (ok) {
-        val = params->Get(clock_sym);
+        val = params->Get(clock_sym.Get(isolate));
         if (!val->IsObject())
-            return ThrowException(Exception::TypeError(
-                String::New("Invalid clock")));
+            strcpy(last_error, "Invalid clock");
 
-        auto obj = Handle<Object>::Cast(val);
+        auto obj = val.As<Object>();
         auto clock = ObjectWrap::Unwrap<video_clock>(obj);
         lock_handle lock(*clock);
 
         clock_ctx = new video_clock_context_full(this, clock);
-        ret = clock->link_video_clock(*clock_ctx);
-        if (!(ok = ret.IsEmpty())) {
+        ok = clock->link_video_clock(*clock_ctx);
+        if (!ok) {
             delete clock_ctx;
             clock_ctx = nullptr;
         }
     }
 
     if (ok) {
+        callback.init(std::bind(&video_mixer_base::emit_last, this));
+
         enc_params.i_log_level = X264_LOG_INFO;
 
         enc_params.i_timebase_num = 1;
@@ -357,14 +344,10 @@ Handle<Value> video_mixer_base::init(const Arguments &args)
         enc_params.i_height = out_dimensions.height;
 
         Ref();
-        return handle_;
     }
     else {
         destroy(false);
-
-        if (ret.IsEmpty())
-            ret = pop_last_error();
-        return ThrowException(ret);
+        isolate->ThrowException(pop_last_error());
     }
 }
 
@@ -421,20 +404,14 @@ void video_mixer_base::destroy(bool unref)
 
     platform_destroy();
 
-    if (!on_data.IsEmpty()) {
-        on_data.Dispose();
-        on_data.Clear();
-    }
-
-    if (!on_error.IsEmpty()) {
-        on_error.Dispose();
-        on_error.Clear();
-    }
-
     if (buffer != nullptr) {
         delete[] buffer;
         buffer = nullptr;
     }
+
+    on_data.Reset();
+    on_error.Reset();
+    context.Reset();
 
     if (unref)
         Unref();
@@ -449,7 +426,7 @@ Handle<Value> video_mixer_base::pop_last_error()
 {
     Handle<Value> ret;
     if (last_error[0] != '\0') {
-        ret = Exception::Error(String::New(last_error));
+        ret = Exception::Error(String::NewFromUtf8(isolate, last_error));
         last_error[0] = '\0';
     }
     return ret;
@@ -464,15 +441,13 @@ void video_mixer_base::clear_sources()
     source_ctxes.clear();
 }
 
-Handle<Value> video_mixer_base::set_sources(const Arguments &args)
+void video_mixer_base::set_sources(const FunctionCallbackInfo<Value>& args)
 {
     if (args.Length() != 1)
-        return ThrowException(Exception::TypeError(
-            String::New("Expected one argument")));
+        return throw_type_error("Expected one argument");
 
     if (!args[0]->IsArray())
-        return ThrowException(Exception::TypeError(
-            String::New("Expected an array")));
+        return throw_type_error("Expected an array");
 
     lock_handle lock(*this);
 
@@ -485,50 +460,58 @@ Handle<Value> video_mixer_base::set_sources(const Arguments &args)
     GLenum gl_err;
 
     if (ok) {
-        auto arr = Handle<Array>::Cast(args[0]);
+        auto arr = args[0].As<Array>();
         uint32_t len = arr->Length();
+
+        auto l_source_sym = source_sym.Get(isolate);
+        auto l_x1_sym = x1_sym.Get(isolate);
+        auto l_y1_sym = y1_sym.Get(isolate);
+        auto l_x2_sym = x2_sym.Get(isolate);
+        auto l_y2_sym = y2_sym.Get(isolate);
+        auto l_u1_sym = u1_sym.Get(isolate);
+        auto l_v1_sym = v1_sym.Get(isolate);
+        auto l_u2_sym = u2_sym.Get(isolate);
+        auto l_v2_sym = v2_sym.Get(isolate);
 
         for (uint32_t i = 0; i < len; i++) {
             auto val = arr->Get(i);
-            if (!val->IsObject()) {
-                ret = Exception::TypeError(
-                    String::New("Expected only objects in the array"));
+            if (!(ok = val->IsObject())) {
+                throw_type_error("Expected only objects in the array");
                 break;
             }
 
-            auto obj = Handle<Object>::Cast(val);
+            auto obj = val.As<Object>();
 
-            val = obj->Get(source_sym);
-            if (!val->IsObject()) {
-                ret = Exception::TypeError(
-                    String::New("Invalid or missing source"));
+            val = obj->Get(l_source_sym);
+            if (!(ok = val->IsObject())) {
+                throw_type_error("Invalid or missing source");
                 break;
             }
 
-            auto source_obj = Handle<Object>::Cast(val);
+            auto source_obj = val.As<Object>();
             auto *source = ObjectWrap::Unwrap<video_source>(source_obj);
 
             source_ctxes.emplace_back(this, source);
             auto &ctx = source_ctxes.back();
 
-            ctx.x1 = obj->Get(x1_sym)->NumberValue();
-            ctx.y1 = obj->Get(y1_sym)->NumberValue();
-            ctx.x2 = obj->Get(x2_sym)->NumberValue();
-            ctx.y2 = obj->Get(y2_sym)->NumberValue();
-            ctx.u1 = obj->Get(u1_sym)->NumberValue();
-            ctx.v1 = obj->Get(v1_sym)->NumberValue();
-            ctx.u2 = obj->Get(u2_sym)->NumberValue();
-            ctx.v2 = obj->Get(v2_sym)->NumberValue();
+            ctx.x1 = obj->Get(l_x1_sym)->NumberValue();
+            ctx.y1 = obj->Get(l_y1_sym)->NumberValue();
+            ctx.x2 = obj->Get(l_x2_sym)->NumberValue();
+            ctx.y2 = obj->Get(l_y2_sym)->NumberValue();
+            ctx.u1 = obj->Get(l_u1_sym)->NumberValue();
+            ctx.v1 = obj->Get(l_v1_sym)->NumberValue();
+            ctx.u2 = obj->Get(l_u2_sym)->NumberValue();
+            ctx.v2 = obj->Get(l_v2_sym)->NumberValue();
 
             glGenTextures(1, &ctx.texture);
             if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR))) {
                 sprintf(last_error, "OpenGL error %d", gl_err);
+                isolate->ThrowException(pop_last_error());
                 source_ctxes.pop_back();
                 break;
             }
 
-            ret = ctx.source()->link_video_source(ctx);
-            if (!(ok = ret.IsEmpty())) {
+            if (!(ok = ctx.source()->link_video_source(ctx))) {
                 glDeleteTextures(1, &ctx.texture);
                 source_ctxes.pop_back();
                 break;
@@ -536,16 +519,8 @@ Handle<Value> video_mixer_base::set_sources(const Arguments &args)
         }
     }
 
-    if (ok) {
-        return Undefined();
-    }
-    else {
+    if (!ok)
         clear_sources();
-
-        if (ret.IsEmpty())
-            ret = pop_last_error();
-        return ThrowException(ret);
-    }
 }
 
 void video_mixer_base::tick(frame_time_t time)
@@ -681,7 +656,9 @@ bool video_mixer_base::buffer_nals(x264_nal_t *nals, int nals_len, x264_picture_
 
 void video_mixer_base::emit_last()
 {
-    HandleScope scope;
+    HandleScope handle_scope(isolate);
+    Context::Scope context_scope(Local<Context>::New(isolate, context));
+
     Handle<Value> err;
     uint8_t *copy = NULL;
     size_t size = 0;
@@ -700,53 +677,66 @@ void video_mixer_base::emit_last()
         }
     }
 
-    if (!err.IsEmpty())
-        MakeCallback(handle_, on_error, 1, &err);
+    if (!err.IsEmpty()) {
+        auto l_on_error = Local<Function>::New(isolate, on_error);
+        MakeCallback(isolate, handle(isolate), l_on_error, 1, &err);
+    }
     if (size == 0)
         return;
 
     // Create meta structure from buffer.
-    auto obj = Object::New();
+    auto obj = Object::New(isolate);
 
-    auto *buf = Buffer::New((char *) copy, size, free_callback, NULL);
-    obj->Set(buf_sym, buf->handle_);
+    auto buf = Buffer::New(isolate, (char *) copy, size, free_callback, NULL);
+    obj->Set(buf_sym.Get(isolate), buf);
 
-    auto frames_arr = Array::New();
-    obj->Set(frames_sym, frames_arr);
+    auto frames_arr = Array::New(isolate);
+    obj->Set(frames_sym.Get(isolate), frames_arr);
+
+    auto l_pts_sym = pts_sym.Get(isolate);
+    auto l_dts_sym = dts_sym.Get(isolate);
+    auto l_keyframe_sym = keyframe_sym.Get(isolate);
+    auto l_nals_sym = nals_sym.Get(isolate);
+    auto l_type_sym = type_sym.Get(isolate);
+    auto l_priority_sym = priority_sym.Get(isolate);
+    auto l_start_sym = start_sym.Get(isolate);
+    auto l_end_sym = end_sym.Get(isolate);
 
     auto *p = copy;
     auto *end = p + size;
     uint32_t i_frame = 0;
     while (p != end) {
         auto *frame = (video_mixer_frame *) p;
-        auto frame_obj = Object::New();
+        auto frame_obj = Object::New(isolate);
         frames_arr->Set(i_frame++, frame_obj);
 
         auto *nals = frame->nals;
         auto nals_len = frame->nals_len;
-        auto nals_arr = Array::New(nals_len);
-        frame_obj->Set(pts_sym, Number::New(frame->pts));
-        frame_obj->Set(dts_sym, Number::New(frame->dts));
-        frame_obj->Set(keyframe_sym, frame->keyframe ? True() : False());
-        frame_obj->Set(nals_sym, nals_arr);
+        auto nals_arr = Array::New(isolate, nals_len);
+        frame_obj->Set(l_pts_sym, Number::New(isolate, frame->pts));
+        frame_obj->Set(l_dts_sym, Number::New(isolate, frame->dts));
+        frame_obj->Set(l_keyframe_sym, frame->keyframe ?
+                                       True(isolate) : False(isolate));
+        frame_obj->Set(l_nals_sym, nals_arr);
         p = ((uint8_t *) nals) + nals_len * sizeof(x264_nal_t);
 
         for (uint32_t i_nal = 0; i_nal < nals_len; i_nal++) {
             auto &nal = nals[i_nal];
-            auto nal_obj = Object::New();
+            auto nal_obj = Object::New(isolate);
             nals_arr->Set(i_nal, nal_obj);
 
-            nal_obj->Set(type_sym, Integer::New(nal.i_type));
-            nal_obj->Set(priority_sym, Integer::New(nal.i_ref_idc));
+            nal_obj->Set(l_type_sym, Integer::New(isolate, nal.i_type));
+            nal_obj->Set(l_priority_sym, Integer::New(isolate, nal.i_ref_idc));
 
-            nal_obj->Set(start_sym, Uint32::New(p - copy));
+            nal_obj->Set(l_start_sym, Uint32::New(isolate, p - copy));
             p += nal.i_payload;
-            nal_obj->Set(end_sym, Uint32::New(p - copy));
+            nal_obj->Set(l_end_sym, Uint32::New(isolate, p - copy));
         }
     }
 
+    auto l_on_data = Local<Function>::New(isolate, on_data);
     Handle<Value> arg = obj;
-    MakeCallback(handle_, on_data, 1, &arg);
+    MakeCallback(isolate, handle(isolate), l_on_data, 1, &arg);
 }
 
 GLuint video_mixer_base::build_shader(GLuint type, const char *source)
@@ -834,14 +824,13 @@ void video_mixer_base::free_callback(char *data, void *hint)
 
 void video_mixer_base::init_prototype(Handle<FunctionTemplate> func)
 {
-    SetPrototypeMethod(func, "destroy", [](const Arguments &args) -> Handle<Value> {
+    NODE_SET_PROTOTYPE_METHOD(func, "destroy", [](const FunctionCallbackInfo<Value>& args) {
         auto mixer = ObjectWrap::Unwrap<video_mixer_base>(args.This());
         mixer->destroy();
-        return Undefined();
     });
-    SetPrototypeMethod(func, "setSources", [](const Arguments &args) -> Handle<Value> {
+    NODE_SET_PROTOTYPE_METHOD(func, "setSources", [](const FunctionCallbackInfo<Value>& args) {
         auto mixer = ObjectWrap::Unwrap<video_mixer_base>(args.This());
-        return mixer->set_sources(args);
+        mixer->set_sources(args);
     });
 }
 
@@ -851,9 +840,9 @@ void video_clock_context::tick(frame_time_t time)
     ((video_mixer_base *) mixer_)->tick(time);
 }
 
-Handle<Value> video_source::link_video_source(video_source_context &ctx)
+bool video_source::link_video_source(video_source_context &ctx)
 {
-    return Handle<Value>();
+    return true;
 }
 
 void video_source::unlink_video_source(video_source_context &ctx)
@@ -863,12 +852,13 @@ void video_source::unlink_video_source(video_source_context &ctx)
 void video_source_context::render_texture()
 {
     auto &f = *((video_source_context_full *) this);
-    glBufferData(GL_ARRAY_BUFFER, vbo_size, (GLfloat []) {
+    GLfloat data[] = {
         f.x1, f.y1, f.u1, f.v1,
         f.x1, f.y2, f.u1, f.v2,
         f.x2, f.y1, f.u2, f.v1,
         f.x2, f.y2, f.u2, f.v2
-    }, GL_DYNAMIC_DRAW);
+    };
+    glBufferData(GL_ARRAY_BUFFER, vbo_size, data, GL_DYNAMIC_DRAW);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 

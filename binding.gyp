@@ -20,14 +20,24 @@
                 'deps/x264/x264'
             ],
             'sources': [
+                'core/native/audio.cc',
                 'core/native/module.cc',
                 'core/native/util.cc',
-                'core/native/util_mac.cc',
-                'core/native/util_linux.cc',
-                'core/native/audio.cc',
-                'core/native/video.cc',
-                'core/native/video_mac.mm'
-                'core/native/video_linux.cc'
+                'core/native/video.cc'
+            ],
+            'conditions': [
+                ['OS == "mac"', {
+                    'sources': [
+                        'core/native/util_mac.cc',
+                        'core/native/video_mac.mm'
+                    ]
+                }],
+                ['OS == "linux"', {
+                    'sources': [
+                        'core/native/util_linux.cc',
+                        'core/native/video_linux.mm'
+                    ]
+                }]
             ]
         }
     ]

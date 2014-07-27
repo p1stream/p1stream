@@ -18,9 +18,8 @@ void lockable_mutex::unlock()
     uv_mutex_unlock(&mutex);
 }
 
-void main_loop_callback::async_cb(uv_async_t *handle, int status)
+void main_loop_callback::async_cb(uv_async_t *handle)
 {
-    if (status) return;
     auto *callback = (main_loop_callback *) handle;
     callback->fn();
 }

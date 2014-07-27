@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <utility>
+#include <string.h>
 #include <node_buffer.h>
 
 namespace p1_core {
@@ -28,45 +29,43 @@ static const int enc_out_bytes = 6144 / 8 * num_channels;
 static const int buffer_size = enc_out_bytes * 128;
 
 
-Handle<Value> audio_mixer_full::init(const Arguments &args)
+void audio_mixer_full::init(const FunctionCallbackInfo<Value>& args)
 {
     bool ok;
     AACENC_ERROR aac_err;
     AACENC_InfoStruct aac_info;
-    Handle<Value> ret;
 
     Handle<Object> params;
     Handle<Value> val;
 
     Wrap(args.This());
+    args.GetReturnValue().Set(handle());
+    isolate = args.GetIsolate();
+    context.Reset(isolate, isolate->GetCurrentContext());
 
     if (!(ok = (args.Length() == 1)))
-        ret = Exception::TypeError(
-            String::New("Expected one argument"));
+        strcpy(last_error, "Expected one argument");
     else if (!(ok = args[0]->IsObject()))
-        ret = Exception::TypeError(
-            String::New("Expected an object"));
+        strcpy(last_error, "Expected an object");
     else
-        params = Local<Object>::Cast(args[0]);
+        params = args[0].As<Object>();
 
     if (ok) {
-        val = params->Get(on_data_sym);
+        val = params->Get(on_data_sym.Get(isolate));
         if (!(ok = val->IsFunction()))
-            ret = Exception::TypeError(
-                String::New("Invalid or missing onData handler"));
+            strcpy(last_error, "Invalid or missing onData handler");
     }
 
     if (ok) {
-        on_data = Persistent<Function>::New(Handle<Function>::Cast(val));
+        on_data.Reset(isolate, val.As<Function>());
 
-        val = params->Get(on_error_sym);
+        val = params->Get(on_error_sym.Get(isolate));
         if (!(ok = val->IsFunction()))
-            ret = Exception::TypeError(
-                String::New("Invalid or missing onError handler"));
+            strcpy(last_error, "Invalid or missing onError handler");
     }
 
     if (ok) {
-        on_error = Persistent<Function>::New(Handle<Function>::Cast(val));
+        on_error.Reset(isolate, val.As<Function>());
 
         aac_err = aacEncOpen(&enc, 0x01, 2);
         if (!(ok = (aac_err == AACENC_OK)))
@@ -119,26 +118,16 @@ Handle<Value> audio_mixer_full::init(const Arguments &args)
     }
 
     if (ok) {
-        auto fn = std::bind(&audio_mixer_full::emit_last, this);
-        uv_err_code err = callback.init(fn);
-        if (!(ok = (err == UV_OK)))
-            ret = UVException(err, "uv_async_init");
-    }
+        callback.init(std::bind(&audio_mixer_full::emit_last, this));
+        thread.init(std::bind(&audio_mixer_full::loop, this));
 
-    if (ok) {
-        auto fn = std::bind(&audio_mixer_full::loop, this);
-        thread.init(fn);
         running = true;
 
         Ref();
-        return handle_;
     }
     else {
         destroy(false);
-
-        if (ret.IsEmpty())
-            ret = pop_last_error();
-        return ThrowException(ret);
+        isolate->ThrowException(pop_last_error());
     }
 }
 
@@ -170,6 +159,10 @@ void audio_mixer_full::destroy(bool unref)
             fprintf(stderr, "aacEncClose error %d\n", aac_err);
     }
 
+    on_data.Reset();
+    on_error.Reset();
+    context.Reset();
+
     if (unref)
         Unref();
 }
@@ -183,7 +176,7 @@ Handle<Value> audio_mixer_full::pop_last_error()
 {
     Handle<Value> ret;
     if (last_error[0] != '\0') {
-        ret = Exception::Error(String::New(last_error));
+        ret = Exception::Error(String::NewFromUtf8(isolate, last_error));
         last_error[0] = '\0';
     }
     return ret;
@@ -196,67 +189,58 @@ void audio_mixer_full::clear_sources()
     source_ctxes.clear();
 }
 
-Handle<Value> audio_mixer_full::set_sources(const Arguments &args)
+void audio_mixer_full::set_sources(const FunctionCallbackInfo<Value>& args)
 {
     if (args.Length() != 1)
-        return ThrowException(Exception::TypeError(
-            String::New("Expected one argument")));
+        return throw_type_error("Expected one argument");
 
     if (!args[0]->IsArray())
-        return ThrowException(Exception::TypeError(
-            String::New("Expected an array")));
+        return throw_type_error("Expected an array");
 
     lock_handle lock(thread);
 
     clear_sources();
 
-    Handle<Value> ret;
-
+    bool ok = true;
     Handle<Value> val;
 
-    auto arr = Handle<Array>::Cast(args[0]);
+    auto arr = args[0].As<Array>();
     uint32_t len = arr->Length();
+
+    auto l_source_sym = source_sym.Get(isolate);
+    auto l_volume_sym = volume_sym.Get(isolate);
 
     for (uint32_t i = 0; i < len; i++) {
         auto val = arr->Get(i);
-        if (!val->IsObject()) {
-            ret = Exception::TypeError(
-                String::New("Expected only objects in the array"));
+        if (!(ok = val->IsObject())) {
+            throw_type_error("Expected only objects in the array");
             break;
         }
 
-        auto obj = Handle<Object>::Cast(val);
+        auto obj = val.As<Object>();
 
-        val = obj->Get(source_sym);
-        if (!val->IsObject()) {
-            ret = Exception::TypeError(
-                String::New("Invalid or missing source"));
+        val = obj->Get(l_source_sym);
+        if (!(ok = val->IsObject())) {
+            throw_type_error("Invalid or missing source");
             break;
 
         }
-        auto source_obj = Handle<Object>::Cast(val);
+        auto source_obj = val.As<Object>();
         auto *source = ObjectWrap::Unwrap<audio_source>(source_obj);
 
         source_ctxes.emplace_back(this, source);
         auto &ctx = source_ctxes.back();
 
-        ctx.volume = obj->Get(volume_sym)->NumberValue();
+        ctx.volume = obj->Get(l_volume_sym)->NumberValue();
 
-        ret = ctx.source()->link_audio_source(ctx);
-        if (!ret.IsEmpty()) {
+        if (!(ok = ctx.source()->link_audio_source(ctx))) {
             source_ctxes.pop_back();
             break;
         }
     }
 
-    if (ret.IsEmpty()) {
-        return Undefined();
-    }
-    else {
+    if (!ok)
         clear_sources();
-
-        return ThrowException(ret);
-    }
 }
 
 void audio_source_context::render_buffer(int64_t time, float *in, size_t samples)
@@ -412,7 +396,9 @@ void audio_mixer_full::loop()
 
 void audio_mixer_full::emit_last()
 {
-    HandleScope scope;
+    HandleScope handle_scope(isolate);
+    Context::Scope context_scope(Local<Context>::New(isolate, context));
+
     Handle<Value> err;
     uint8_t *copy = NULL;
     size_t size = 0;
@@ -431,40 +417,47 @@ void audio_mixer_full::emit_last()
         }
     }
 
-    if (!err.IsEmpty())
-        MakeCallback(handle_, on_error, 1, &err);
+    if (!err.IsEmpty()) {
+        auto l_on_error = Local<Function>::New(isolate, on_error);
+        MakeCallback(isolate, handle(isolate), l_on_error, 1, &err);
+    }
     if (size == 0)
         return;
 
     // Create meta structure from buffer.
-    auto obj = Object::New();
+    auto obj = Object::New(isolate);
 
-    auto *buf = Buffer::New((char *) copy, size, free_callback, NULL);
-    obj->Set(buf_sym, buf->handle_);
+    auto buf = Buffer::New(isolate, (char *) copy, size, free_callback, NULL);
+    obj->Set(buf_sym.Get(isolate), buf);
 
-    auto frames_arr = Array::New();
-    obj->Set(frames_sym, frames_arr);
+    auto frames_arr = Array::New(isolate);
+    obj->Set(frames_sym.Get(isolate), frames_arr);
+
+    auto l_pts_sym = pts_sym.Get(isolate);
+    auto l_start_sym = start_sym.Get(isolate);
+    auto l_end_sym = end_sym.Get(isolate);
 
     auto *p = copy;
     auto *end = p + size;
     uint32_t i_frame = 0;
     while (p != end) {
         auto *frame = (audio_mixer_frame *) p;
-        auto frame_obj = Object::New();
+        auto frame_obj = Object::New(isolate);
         frames_arr->Set(i_frame++, frame_obj);
 
         off_t start = frame->data - copy;
         off_t end = start + frame->size;
 
-        frame_obj->Set(pts_sym, Number::New(frame->pts));
-        frame_obj->Set(start_sym, Uint32::New(start));
-        frame_obj->Set(end_sym, Uint32::New(end));
+        frame_obj->Set(l_pts_sym, Number::New(isolate, frame->pts));
+        frame_obj->Set(l_start_sym, Uint32::New(isolate, start));
+        frame_obj->Set(l_end_sym, Uint32::New(isolate, end));
 
         p = copy + end;
     }
 
+    auto l_on_data = Local<Function>::New(isolate, on_data);
     Handle<Value> arg = obj;
-    MakeCallback(handle_, on_data, 1, &arg);
+    MakeCallback(isolate, handle(isolate), l_on_data, 1, &arg);
 }
 
 // Convert amount of samples to relative time they represent.
@@ -487,14 +480,13 @@ void audio_mixer_full::free_callback(char *data, void *hint)
 
 void audio_mixer_full::init_prototype(Handle<FunctionTemplate> func)
 {
-    SetPrototypeMethod(func, "destroy", [](const Arguments &args) -> Handle<Value> {
+    NODE_SET_PROTOTYPE_METHOD(func, "destroy", [](const FunctionCallbackInfo<Value>& args) {
         auto mixer = ObjectWrap::Unwrap<audio_mixer_full>(args.This());
         mixer->destroy();
-        return Undefined();
     });
-    SetPrototypeMethod(func, "setSources", [](const Arguments &args) -> Handle<Value> {
+    NODE_SET_PROTOTYPE_METHOD(func, "setSources", [](const FunctionCallbackInfo<Value>& args) {
         auto mixer = ObjectWrap::Unwrap<audio_mixer_full>(args.This());
-        return mixer->set_sources(args);
+        mixer->set_sources(args);
     });
 }
 

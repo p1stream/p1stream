@@ -15,12 +15,13 @@ extern "C" {
 #include <x264.h>
 
 #if __APPLE__
-#   include <TargetConditionals.h>
-#   if TARGET_OS_MAC
-#       include <OpenGL/OpenGL.h>
-#       include <OpenGL/gl3.h>
-#       include <OpenCL/opencl.h>
-#   endif
+#   include <OpenGL/OpenGL.h>
+#   include <OpenGL/gl3.h>
+#   include <OpenCL/opencl.h>
+#else
+#   define GL_GLEXT_PROTOTYPES
+#   include <GL/gl.h>
+#   include <CL/opencl.h>
 #endif
 
 }
@@ -30,38 +31,44 @@ namespace p1_core {
 using namespace v8;
 using namespace node;
 
-extern Persistent<String> source_sym;
-extern Persistent<String> on_data_sym;
-extern Persistent<String> on_error_sym;
+extern Eternal<String> source_sym;
+extern Eternal<String> on_data_sym;
+extern Eternal<String> on_error_sym;
 
-extern Persistent<String> buffer_size_sym;
-extern Persistent<String> width_sym;
-extern Persistent<String> height_sym;
-extern Persistent<String> x264_preset_sym;
-extern Persistent<String> x264_tuning_sym;
-extern Persistent<String> x264_params_sym;
-extern Persistent<String> x264_profile_sym;
-extern Persistent<String> clock_sym;
-extern Persistent<String> x1_sym;
-extern Persistent<String> y1_sym;
-extern Persistent<String> x2_sym;
-extern Persistent<String> y2_sym;
-extern Persistent<String> u1_sym;
-extern Persistent<String> v1_sym;
-extern Persistent<String> u2_sym;
-extern Persistent<String> v2_sym;
-extern Persistent<String> buf_sym;
-extern Persistent<String> frames_sym;
-extern Persistent<String> pts_sym;
-extern Persistent<String> dts_sym;
-extern Persistent<String> keyframe_sym;
-extern Persistent<String> nals_sym;
-extern Persistent<String> type_sym;
-extern Persistent<String> priority_sym;
-extern Persistent<String> start_sym;
-extern Persistent<String> end_sym;
+extern Eternal<String> buffer_size_sym;
+extern Eternal<String> width_sym;
+extern Eternal<String> height_sym;
+extern Eternal<String> x264_preset_sym;
+extern Eternal<String> x264_tuning_sym;
+extern Eternal<String> x264_params_sym;
+extern Eternal<String> x264_profile_sym;
+extern Eternal<String> clock_sym;
+extern Eternal<String> x1_sym;
+extern Eternal<String> y1_sym;
+extern Eternal<String> x2_sym;
+extern Eternal<String> y2_sym;
+extern Eternal<String> u1_sym;
+extern Eternal<String> v1_sym;
+extern Eternal<String> u2_sym;
+extern Eternal<String> v2_sym;
+extern Eternal<String> buf_sym;
+extern Eternal<String> frames_sym;
+extern Eternal<String> pts_sym;
+extern Eternal<String> dts_sym;
+extern Eternal<String> keyframe_sym;
+extern Eternal<String> nals_sym;
+extern Eternal<String> type_sym;
+extern Eternal<String> priority_sym;
+extern Eternal<String> start_sym;
+extern Eternal<String> end_sym;
 
-extern Persistent<String> volume_sym;
+extern Eternal<String> volume_sym;
+
+
+// ----- Utility types ----
+
+void throw_error(const char *msg);
+void throw_type_error(const char *msg);
 
 
 // ----- Video types ----
@@ -130,6 +137,8 @@ public:
     uint8_t *buffer_pos;
     uint32_t buffer_size;
     main_loop_callback callback;
+    Isolate *isolate;
+    Persistent<Context> context;
 
     // Internal.
     void emit_last();
@@ -145,15 +154,15 @@ public:
     virtual lockable *lock() final;
 
     // Platform hooks.
-    virtual Handle<Value> platform_init(Handle<Object> params) = 0;
+    virtual bool platform_init(Handle<Object> params) = 0;
     virtual void platform_destroy() = 0;
     virtual bool activate_gl() = 0;
 
     // Public JavaScript methods.
-    Handle<Value> init(const Arguments &args);
+    void init(const FunctionCallbackInfo<Value>& args);
     void destroy(bool unref = true);
 
-    Handle<Value> set_sources(const Arguments &args);
+    void set_sources(const FunctionCallbackInfo<Value>& args);
 
     // Module init.
     static void init_prototype(Handle<FunctionTemplate> func);
@@ -221,6 +230,8 @@ public:
     uint8_t *buffer;
     uint8_t *buffer_pos;
     main_loop_callback callback;
+    Isolate *isolate;
+    Persistent<Context> context;
 
     // Mix thread.
     threaded_loop thread;
@@ -239,10 +250,10 @@ public:
     virtual lockable *lock() final;
 
     // Public JavaScript methods.
-    Handle<Value> init(const Arguments &args);
+    void init(const FunctionCallbackInfo<Value>& args);
     void destroy(bool unref = true);
 
-    Handle<Value> set_sources(const Arguments &args);
+    void set_sources(const FunctionCallbackInfo<Value>& args);
 
     // Module init.
     static void init_prototype(Handle<FunctionTemplate> func);
@@ -258,6 +269,18 @@ public:
 
 
 // ----- Inline implementations -----
+
+inline void throw_error(const char *msg)
+{
+    auto *isolate = Isolate::GetCurrent();
+    isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, msg)));
+}
+
+inline void throw_type_error(const char *msg)
+{
+    auto *isolate = Isolate::GetCurrent();
+    isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, msg)));
+}
 
 inline video_mixer_base::video_mixer_base() :
     clock_ctx(), cl(), out_pic(), clq(), tex_mem(), out_mem(), yuv_kernel(), enc(), last_error(), buffer()
