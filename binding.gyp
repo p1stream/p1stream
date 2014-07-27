@@ -13,9 +13,14 @@
         },
         {
             'target_name': 'core',
+            'dependencies': [
+                'deps/aac/aac.gyp:libFDK',
+                'deps/aac/aac.gyp:libSYS',
+                'deps/aac/aac.gyp:libMpegTPEnc',
+                'deps/aac/aac.gyp:libSBRenc',
+                'deps/aac/aac.gyp:libAACenc'
+            ],
             'include_dirs': [
-                'deps/aac/aac/libAACenc/include',
-                'deps/aac/aac/libSYS/include',
                 'deps/x264/generated/<(OS)',
                 'deps/x264/x264'
             ],
