@@ -1,6 +1,6 @@
 var events = require('events');
 var native = require('../../build/Release/core.node');
-var mac_sources = require('../../mac_sources');
+var defaults = require('./defaults');
 
 var Audio = function() {
     var self = this;
@@ -10,7 +10,7 @@ var Audio = function() {
         onError: onError
     });
 
-    self._source = new mac_sources.AudioQueue();
+    self._source = new defaults.AudioSource();
     self._mixer.setSources([
         {
             source: self._source,

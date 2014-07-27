@@ -1,11 +1,11 @@
 var events = require('events');
 var native = require('../../build/Release/core.node');
-var mac_sources = require('../../mac_sources');
+var defaults = require('./defaults');
 
 var Video = function() {
     var self = this;
 
-    self._clock = new mac_sources.DisplayLink();
+    self._clock = new defaults.VideoClock();
     self._mixer = new native.VideoMixer({
         bufferSize: 1 * 1024 * 1024,
         width: 1280,
@@ -15,7 +15,7 @@ var Video = function() {
         onError: onError
     });
 
-    self._source = new mac_sources.DisplayStream();
+    self._source = new defaults.VideoSource();
     self._mixer.setSources([
         {
             source: self._source,
