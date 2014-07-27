@@ -10,7 +10,7 @@ extern "C" {
 #undef DEBUG  // libSYS redefines this
 #include <aacenc_lib.h>
 #undef DEBUG
-#define DBEUG 1
+#define DEBUG 1
 
 #include <x264.h>
 
