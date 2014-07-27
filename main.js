@@ -7,6 +7,7 @@ var mainWindow = null;
 
 app.on('will-finish-launching', function() {
     webapp = express();
+    require('./api')(webapp);
     require('./webui')(webapp);
 });
 

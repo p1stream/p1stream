@@ -1,5 +1,5 @@
 var events = require('events');
-var native = require('../core.node');
+var native = require('../../build/Release/core.node');
 var mac_sources = require('../../mac_sources');
 
 var Video = function() {

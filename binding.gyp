@@ -35,7 +35,7 @@
                 ['OS == "linux"', {
                     'sources': [
                         'core/native/util_linux.cc',
-                        'core/native/video_linux.mm'
+                        'core/native/video_linux.cc'
                     ]
                 }]
             ]
