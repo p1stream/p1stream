@@ -720,7 +720,7 @@ void video_mixer_base::emit_last()
         frame_obj->Set(l_nals_sym, nals_arr);
         p = ((uint8_t *) nals) + nals_len * sizeof(x264_nal_t);
 
-        for (uint32_t i_nal = 0; i_nal < nals_len; i_nal++) {
+        for (int32_t i_nal = 0; i_nal < nals_len; i_nal++) {
             auto &nal = nals[i_nal];
             auto nal_obj = Object::New(isolate);
             nals_arr->Set(i_nal, nal_obj);
@@ -749,10 +749,8 @@ GLuint video_mixer_base::build_shader(GLuint type, const char *source)
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &log_size);
     if (log_size) {
         GLchar log[log_size];
-        if (log) {
-            glGetShaderInfoLog(shader, log_size, NULL, log);
-            fprintf(stderr, "%s", log);
-        }
+        glGetShaderInfoLog(shader, log_size, NULL, log);
+        fprintf(stderr, "%s", log);
     }
 
     GLint success = GL_FALSE;
@@ -794,10 +792,8 @@ bool video_mixer_base::build_program()
     glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_size);
     if (log_size) {
         GLchar log[log_size];
-        if (log) {
-            glGetProgramInfoLog(program, log_size, NULL, log);
-            fprintf(stderr, "%s", log);
-        }
+        glGetProgramInfoLog(program, log_size, NULL, log);
+        fprintf(stderr, "%s", log);
     }
 
     GLint success = GL_FALSE;
