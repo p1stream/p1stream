@@ -26,6 +26,7 @@
             'sources': [
                 'core/native/audio.cc',
                 'core/native/module.cc',
+                'core/native/software_clock.cc',
                 'core/native/util.cc',
                 'core/native/video.cc'
             ],

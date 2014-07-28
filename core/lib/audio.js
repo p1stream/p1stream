@@ -1,6 +1,5 @@
 var events = require('events');
 var native = require('../../build/Release/core.node');
-var defaults = require('./defaults');
 
 var Audio = function() {
     var self = this;
@@ -9,14 +8,6 @@ var Audio = function() {
         onData: onData,
         onError: onError
     });
-
-    self._source = new defaults.AudioSource();
-    self._mixer.setSources([
-        {
-            source: self._source,
-            volume: 1.0
-        }
-    ]);
 
     self.headers = null;
 

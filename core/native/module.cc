@@ -48,6 +48,9 @@ Eternal<String> priority_sym;
 Eternal<String> start_sym;
 Eternal<String> end_sym;
 
+Eternal<String> numerator_sym;
+Eternal<String> denominator_sym;
+
 Eternal<String> volume_sym;
 
 
@@ -55,6 +58,12 @@ static void video_mixer_constructor(const FunctionCallbackInfo<Value>& args)
 {
     auto mixer = new video_mixer_platform();
     mixer->init(args);
+}
+
+static void software_clock_constructor(const FunctionCallbackInfo<Value>& args)
+{
+    auto clock = new software_clock();
+    clock->init(args);
 }
 
 static void audio_mixer_constructor(const FunctionCallbackInfo<Value>& args)
@@ -120,6 +129,9 @@ static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Value> module,
     SYM(start_sym, "start");
     SYM(end_sym, "end");
 
+    SYM(numerator_sym, "numerator");
+    SYM(denominator_sym, "denominator");
+
     SYM(volume_sym, "volume");
 #undef SYM
 
@@ -128,6 +140,13 @@ static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Value> module,
     func->InstanceTemplate()->SetInternalFieldCount(1);
     func->SetClassName(name);
     video_mixer_base::init_prototype(func);
+    exports->Set(name, func->GetFunction());
+
+    name = String::NewFromUtf8(isolate, "SoftwareClock");
+    func = FunctionTemplate::New(isolate, software_clock_constructor);
+    func->InstanceTemplate()->SetInternalFieldCount(1);
+    func->SetClassName(name);
+    software_clock::init_prototype(func);
     exports->Set(name, func->GetFunction());
 
     name = String::NewFromUtf8(isolate, "AudioMixer");

@@ -62,6 +62,9 @@ extern Eternal<String> priority_sym;
 extern Eternal<String> start_sym;
 extern Eternal<String> end_sym;
 
+extern Eternal<String> numerator_sym;
+extern Eternal<String> denominator_sym;
+
 extern Eternal<String> volume_sym;
 
 
@@ -190,6 +193,39 @@ public:
 };
 
 
+// ----- Software video clock -----
+
+class software_clock : public video_clock {
+public:
+    software_clock();
+
+    fraction_t rate;
+
+    threaded_loop thread;
+    bool running;
+
+    video_clock_context *ctx;
+
+    // Internal.
+    void loop();
+
+    // Public JavaScript methods.
+    void init(const FunctionCallbackInfo<Value>& args);
+    void destroy(bool unref = true);
+
+    // Lockable implementation.
+    virtual lockable *lock() final;
+
+    // Video clock implementation.
+    virtual bool link_video_clock(video_clock_context &ctx_) final;
+    virtual void unlink_video_clock(video_clock_context &ctx_) final;
+    virtual fraction_t video_ticks_per_second(video_clock_context &ctx) final;
+
+    // Module init.
+    static void init_prototype(Handle<FunctionTemplate> func);
+};
+
+
 // ----- Audio types -----
 
 // Data we pass between threads. One of these is created per
@@ -297,6 +333,11 @@ inline video_source_context_full::video_source_context_full(video_mixer *mixer, 
 {
     mixer_ = mixer;
     source_ = source;
+}
+
+inline software_clock::software_clock() :
+    running(), ctx()
+{
 }
 
 inline audio_mixer_full::audio_mixer_full() :

@@ -1,11 +1,13 @@
 var events = require('events');
 var native = require('../../build/Release/core.node');
-var defaults = require('./defaults');
 
 var Video = function() {
     var self = this;
 
-    self._clock = new defaults.VideoClock();
+    self._clock = new native.SoftwareClock({
+        numerator: 1,
+        denominator: 30
+    });
     self._mixer = new native.VideoMixer({
         bufferSize: 1 * 1024 * 1024,
         width: 1280,
@@ -14,17 +16,6 @@ var Video = function() {
         onData: onData,
         onError: onError
     });
-
-    self._source = new defaults.VideoSource();
-    self._mixer.setSources([
-        {
-            source: self._source,
-            x1: -1, y1: -1,
-            x2: +1, y2: +1,
-            u1: 0, v1: 0,
-            u2: 1, v2: 1
-        }
-    ]);
 
     self.headers = null;
 
