@@ -5,17 +5,28 @@
 
 namespace p1_core {
 
+
 void module_platform_init();
 
 class video_mixer_mac : public video_mixer_base {
 public:
-    CGLContextObj cglContext;
+    video_mixer_mac();
+
+    CGLContextObj cgl_ontext;
     IOSurfaceRef surface;
 
     virtual bool platform_init(Handle<Object> params) final;
     virtual void platform_destroy() final;
     virtual bool activate_gl() final;
 };
+
+
+// ----- Inline implementations -----
+
+inline video_mixer_mac::video_mixer_mac() :
+    cgl_context(), surface()
+{
+}
 
 
 }  // namespace p1_core
