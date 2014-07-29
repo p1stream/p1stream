@@ -94,6 +94,8 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
     isolate = args.GetIsolate();
     context.Reset(isolate, isolate->GetCurrentContext());
 
+    callback.init(std::bind(&video_mixer_base::emit_last, this));
+
     if (!(ok = (args.Length() == 1)))
         strcpy(last_error, "Expected one argument");
     else if (!(ok = args[0]->IsObject()))
@@ -330,8 +332,6 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
     }
 
     if (ok) {
-        callback.init(std::bind(&video_mixer_base::emit_last, this));
-
         enc_params.i_log_level = X264_LOG_INFO;
 
         enc_params.i_timebase_num = 1;

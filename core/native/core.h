@@ -300,10 +300,8 @@ inline void main_loop_callback::init(std::function<void ()> fn_)
 
 inline void main_loop_callback::destroy()
 {
-    if (async.loop != NULL) {
-        uv_close((uv_handle_t *) &async, NULL);
-        async.loop = NULL;
-    }
+    uv_close((uv_handle_t *) &async, NULL);
+    async.loop = NULL;
 }
 
 inline void main_loop_callback::send()
