@@ -41,18 +41,6 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
             sprintf(last_error, "clCreateContext error %d", cl_err);
     }
 
-    if (ok) {
-        @autoreleasepool {
-            surface = IOSurfaceCreate((__bridge CFDictionaryRef) @{
-                (__bridge NSString *) kIOSurfaceWidth:  [NSNumber numberWithInt:out_dimensions.width],
-                (__bridge NSString *) kIOSurfaceHeight: [NSNumber numberWithInt:out_dimensions.height],
-                (__bridge NSString *) kIOSurfaceBytesPerElement: @4
-            });
-        }
-        if (!(ok = (surface != nullptr)))
-            strcpy(last_error, "IOSurfaceCreate error");
-    }
-
     if (ok)
         ok = activate_gl();
 
@@ -61,16 +49,11 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
         glGenFramebuffers(1, &fbo);
         glBindTexture(GL_TEXTURE_RECTANGLE, tex);
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glTexImage2D(GL_TEXTURE_RECTANGLE, 0,
+            GL_RGBA8, out_dimensions.width, out_dimensions.height, 0,
+            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
             sprintf(last_error, "OpenGL error %d", gl_err);
-    }
-
-    if (ok) {
-        cgl_err = CGLTexImageIOSurface2D(cgl_context, GL_TEXTURE_RECTANGLE,
-            GL_RGBA8, out_dimensions.width, out_dimensions.height,
-            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface, 0);
-        if (!(ok = (cgl_err == kCGLNoError)))
-            sprintf(last_error, "CGLTexImageIOSurface2D error %d", cgl_err);
     }
 
     if (ok) {
@@ -84,11 +67,6 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
 
 void video_mixer_mac::platform_destroy()
 {
-    if (surface != nullptr) {
-        CFRelease(surface);
-        surface = nullptr;
-    }
-
     if (cl != nullptr) {
         cl_int cl_err = clReleaseContext(cl);
         if (cl_err != CL_SUCCESS)
