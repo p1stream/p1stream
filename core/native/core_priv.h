@@ -104,10 +104,9 @@ public:
     Persistent<Function> on_data;
     Persistent<Function> on_error;
 
-    // These are initialized by platform support.
+    // The OpenGL and OpenCL contexts should be set up
+    // by platform support in the same share group.
     cl_context cl;
-    GLuint tex;
-    GLuint fbo;
 
     // Render output.
     size_t out_size;
@@ -115,6 +114,8 @@ public:
     x264_picture_t out_pic;
 
     // OpenGL objects.
+    GLuint tex;
+    GLuint fbo;
     GLuint vao;
     GLuint vbo;
     GLuint program;

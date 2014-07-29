@@ -41,27 +41,6 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
             sprintf(last_error, "clCreateContext error %d", cl_err);
     }
 
-    if (ok)
-        ok = activate_gl();
-
-    if (ok) {
-        glGenTextures(1, &tex);
-        glGenFramebuffers(1, &fbo);
-        glBindTexture(GL_TEXTURE_RECTANGLE, tex);
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        glTexImage2D(GL_TEXTURE_RECTANGLE, 0,
-            GL_RGBA8, out_dimensions.width, out_dimensions.height, 0,
-            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
-        if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
-            sprintf(last_error, "OpenGL error %d", gl_err);
-    }
-
-    if (ok) {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, tex, 0);
-        if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
-            sprintf(last_error, "glFramebufferTexture2D error %d", gl_err);
-    }
-
     return ok;
 }
 

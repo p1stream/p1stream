@@ -83,7 +83,6 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
     cl_int cl_err;
     GLenum gl_err;
     int i_ret;
-    size_t size;
 
     Handle<Object> params;
     Handle<Value> val;
@@ -151,7 +150,7 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
     if (ok) {
         on_error.Reset(isolate, val.As<Function>());
 
-        ok = platform_init(params);
+        ok = platform_init(params) && activate_gl();
     }
 
     if (ok) {
@@ -159,13 +158,11 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
         yuv_work_size[0] = out_dimensions.width / 2;
         yuv_work_size[1] = out_dimensions.height / 2;
 
+        size_t size;
         cl_err = clGetContextInfo(cl, CL_CONTEXT_DEVICES, sizeof(cl_device_id), &device_id, &size);
         if (!(ok = (cl_err == CL_SUCCESS)))
             sprintf(last_error, "clGetContextInfo error %d", cl_err);
-    }
-
-    if (ok) {
-        if (!(ok = (size != 0)))
+        else if (!(ok = (size != 0)))
             strcpy(last_error, "No suitable OpenCL devices");
     }
 
@@ -182,8 +179,16 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
     }
 
     if (ok) {
+        glGenTextures(1, &tex);
+        glGenFramebuffers(1, &fbo);
         glGenVertexArrays(1, &vao);
         glGenBuffers(1, &vbo);
+        glBindTexture(GL_TEXTURE_RECTANGLE, tex);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glTexImage2D(GL_TEXTURE_RECTANGLE, 0,
+            GL_RGBA8, out_dimensions.width, out_dimensions.height, 0,
+            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, tex, 0);
         program = glCreateProgram();
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
             sprintf(last_error, "OpenGL error %d", gl_err);
