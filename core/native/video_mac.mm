@@ -10,7 +10,6 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
     bool ok;
     CGLError cgl_err;
     cl_int cl_err;
-    GLenum gl_err;
 
     CGLPixelFormatObj pixel_format;
     const CGLPixelFormatAttribute attribs[] = {
