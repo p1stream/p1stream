@@ -41,6 +41,9 @@
                     'sources': [
                         'core/native/util_linux.cc',
                         'core/native/video_linux.cc'
+                    ],
+                    'libraries': [
+                        '-lEGL', '-lOpenCL'
                     ]
                 }]
             ]
