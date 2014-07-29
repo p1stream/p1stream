@@ -45,13 +45,6 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
 
 void video_mixer_mac::platform_destroy()
 {
-    if (cl != nullptr) {
-        cl_int cl_err = clReleaseContext(cl);
-        if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseContext error %d", cl_err);
-        cl = nullptr;
-    }
-
     if (cgl_context) {
         CGLReleaseContext(cgl_context);
         cgl_context = nullptr;

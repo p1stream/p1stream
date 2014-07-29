@@ -104,8 +104,9 @@ public:
     Persistent<Function> on_data;
     Persistent<Function> on_error;
 
-    // The OpenGL and OpenCL contexts should be set up
-    // by platform support in the same share group.
+    // The GL and CL contexts should be set up by platform support in the same
+    // share group. Only the CL context is cleaned up by common code. GL must
+    // be cleaned up in platform_destroy.
     cl_context cl;
 
     // Render output.
