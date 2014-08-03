@@ -1,16 +1,14 @@
+#include "p1stream_priv.h"
+
 #include <memory.h>
 #include <v8.h>
 #include <node.h>
 #include <node_buffer.h>
 
-namespace p1_api {
+namespace p1stream {
 
 using namespace v8;
 using namespace node;
-
-static bool calc_ebml_size(Isolate *isolate, Handle<Value> val, size_t &size);
-
-static Persistent<Function> fast_buffer_constructor;
 
 
 static size_t calc_varint_size(uint64_t val)
@@ -96,6 +94,8 @@ static inline void throw_error(Isolate *isolate, const char *msg)
     isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, msg)));
 }
 
+
+static bool calc_ebml_size(Isolate *isolate, Handle<Value> val, size_t &size);
 
 static bool calc_ebml_content_size(Isolate *isolate, char type, Handle<Value> contentVal, size_t &size)
 {
@@ -304,7 +304,7 @@ static bool write_ebml(Isolate *isolate, Handle<Value> val, uint8_t *dst)
 }
 
 
-static void build_ebml(const FunctionCallbackInfo<Value>& args)
+void build_ebml(const FunctionCallbackInfo<Value>& args)
 {
     auto *isolate = args.GetIsolate();
     HandleScope scope(isolate);
@@ -317,8 +317,7 @@ static void build_ebml(const FunctionCallbackInfo<Value>& args)
         return;
 
     Handle<Value> arg = Number::New(isolate, size);
-    auto fn = Local<Function>::New(isolate, fast_buffer_constructor);
-    auto bufobj = fn->NewInstance(1, &arg);
+    auto bufobj = fast_buffer_constructor.Get(isolate)->NewInstance(1, &arg);
     uint8_t *dst = (uint8_t *) Buffer::Data(bufobj);
 
     if (!write_ebml(isolate, args[0], dst))
@@ -328,20 +327,4 @@ static void build_ebml(const FunctionCallbackInfo<Value>& args)
 }
 
 
-static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Value> module,
-    v8::Handle<v8::Context> context, void* priv)
-{
-    auto *isolate = Isolate::GetCurrent();
-
-    auto global = context->Global();
-    auto val = global->Get(String::NewFromUtf8(isolate, "Buffer"));
-    auto fn = Handle<Function>::Cast(val);
-    fast_buffer_constructor.Reset(isolate, fn);
-
-    NODE_SET_METHOD(exports, "buildEBML", build_ebml);
-}
-
-
-}  // namespace p1_api
-
-NODE_MODULE_CONTEXT_AWARE(api, p1_api::init)
+}  // namespace p1stream

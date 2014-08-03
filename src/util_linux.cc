@@ -1,6 +1,6 @@
-#include "core_priv_linux.h"
+#include "p1stream_priv_linux.h"
 
-namespace p1_core {
+namespace p1stream {
 
 
 int64_t system_time()
@@ -16,4 +16,4 @@ void module_platform_init()
 }
 
 
-} // namespace p1_core
+} // namespace p1stream

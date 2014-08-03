@@ -1,13 +1,13 @@
-#ifndef p1_core_priv_linux_h
-#define p1_core_priv_linux_h
+#ifndef p1stream_priv_linux_h
+#define p1stream_priv_linux_h
 
-#include "core_priv.h"
+#include "p1stream_priv.h"
 
 #define MESA_EGL_NO_X11_HEADERS
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
-namespace p1_core {
+namespace p1stream {
 
 
 void module_platform_init();
@@ -33,6 +33,6 @@ inline video_mixer_linux::video_mixer_linux() :
 }
 
 
-}  // namespace p1_core
+}  // namespace p1stream
 
-#endif  // p1_core_priv_linux_h
+#endif  // p1stream_priv_linux_h

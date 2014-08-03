@@ -1,11 +1,11 @@
-#include "core_priv.h"
+#include "p1stream_priv.h"
 
 #include <vector>
 #include <utility>
 #include <string.h>
 #include <node_buffer.h>
 
-namespace p1_core {
+namespace p1stream {
 
 // Hardcoded format parameters.
 static const int sample_rate = 44100;
@@ -491,4 +491,4 @@ void audio_mixer_full::init_prototype(Handle<FunctionTemplate> func)
 }
 
 
-} // namespace p1_core
+} // namespace p1stream

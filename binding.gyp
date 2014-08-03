@@ -1,19 +1,7 @@
 {
-    'target_defaults': {
-        'conditions': [
-            ['OS != "win"', {
-                'cflags': ['-std=c++11'],
-                'ldflags': ['-Wl,-Bsymbolic']
-            }]
-        ]
-    },
     'targets': [
         {
-            'target_name': 'api',
-            'sources': [ 'api/native/module.cc' ]
-        },
-        {
-            'target_name': 'core',
+            'target_name': 'p1stream',
             'dependencies': [
                 'deps/aac/aac.gyp:libFDK',
                 'deps/aac/aac.gyp:libSYS',
@@ -23,24 +11,32 @@
                 'deps/x264/x264.gyp:libx264common',
                 'deps/x264/x264.gyp:libx264encoder'
             ],
+            'include_dirs': [
+                'include'
+            ],
             'sources': [
-                'core/native/audio.cc',
-                'core/native/module.cc',
-                'core/native/software_clock.cc',
-                'core/native/util.cc',
-                'core/native/video.cc'
+                'src/audio.cc',
+                'src/ebml.cc',
+                'src/module.cc',
+                'src/software_clock.cc',
+                'src/util.cc',
+                'src/video.cc'
             ],
             'conditions': [
+                ['OS != "win"', {
+                    'cflags': ['-std=c++11'],
+                    'ldflags': ['-Wl,-Bsymbolic']
+                }],
                 ['OS == "mac"', {
                     'sources': [
-                        'core/native/util_mac.cc',
-                        'core/native/video_mac.mm'
+                        'src/util_mac.cc',
+                        'src/video_mac.mm'
                     ]
                 }],
                 ['OS == "linux"', {
                     'sources': [
-                        'core/native/util_linux.cc',
-                        'core/native/video_linux.cc'
+                        'src/util_linux.cc',
+                        'src/video_linux.cc'
                     ],
                     'libraries': [
                         '-lEGL', '-lOpenCL'

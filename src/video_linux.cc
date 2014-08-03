@@ -1,8 +1,8 @@
-#include "core_priv_linux.h"
+#include "p1stream_priv_linux.h"
 
 #include <string.h>
 
-namespace p1_core {
+namespace p1stream {
 
 
 bool video_mixer_linux::platform_init(Handle<Object> params)
@@ -106,4 +106,4 @@ bool video_mixer_linux::activate_gl()
 }
 
 
-}  // namespace p1_core
+}  // namespace p1stream

@@ -1,5 +1,5 @@
-#ifndef p1_core_h
-#define p1_core_h
+#ifndef p1stream_h
+#define p1stream_h
 
 #include <uv.h>
 #include <node.h>
@@ -14,7 +14,7 @@
 #   endif
 #endif
 
-namespace p1_core {
+namespace p1stream {
 
 
 // ----- PODs----
@@ -361,6 +361,6 @@ inline audio_mixer *audio_source_context::mixer()
 }
 
 
-}  // namespace p1_core
+}  // namespace p1stream
 
-#endif  // p1_core_h
+#endif  // p1stream_h

@@ -1,9 +1,9 @@
-#include "core_priv_mac.h"
+#include "p1stream_priv_mac.h"
 
 #include <mach/mach_time.h>
 #include <mach/mach_error.h>
 
-namespace p1_core {
+namespace p1stream {
 
 
 static mach_timebase_info_data_t timebase;
@@ -21,4 +21,4 @@ void module_platform_init()
 }
 
 
-} // namespace p1_core
+} // namespace p1stream

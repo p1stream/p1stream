@@ -1,9 +1,9 @@
-#ifndef p1_core_priv_mac_h
-#define p1_core_priv_mac_h
+#ifndef p1stream_priv_mac_h
+#define p1stream_priv_mac_h
 
-#include "core_priv.h"
+#include "p1stream_priv.h"
 
-namespace p1_core {
+namespace p1stream {
 
 
 void module_platform_init();
@@ -28,6 +28,6 @@ inline video_mixer_mac::video_mixer_mac() :
 }
 
 
-}  // namespace p1_core
+}  // namespace p1stream
 
-#endif  // p1_core_priv_mac_h
+#endif  // p1stream_priv_mac_h

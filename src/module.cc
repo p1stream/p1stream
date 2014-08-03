@@ -1,20 +1,20 @@
-#include "core_priv.h"
+#include "p1stream_priv.h"
 
 #if __APPLE__
 #   include <TargetConditionals.h>
 #   if TARGET_OS_MAC
-#       include "core_priv_mac.h"
+#       include "p1stream_priv_mac.h"
 #       define video_mixer_platform video_mixer_mac
 #   endif
 #elif __linux
-#   include "core_priv_linux.h"
+#   include "p1stream_priv_linux.h"
 #   define video_mixer_platform video_mixer_linux
 #endif
 #ifndef video_mixer_platform
 #   error Platform not supported
 #endif
 
-namespace p1_core {
+namespace p1stream {
 
 
 Eternal<String> source_sym;
@@ -53,6 +53,8 @@ Eternal<String> denominator_sym;
 
 Eternal<String> volume_sym;
 
+Eternal<Function> fast_buffer_constructor;
+
 
 static void video_mixer_constructor(const FunctionCallbackInfo<Value>& args)
 {
@@ -76,6 +78,7 @@ static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Value> module,
     v8::Handle<v8::Context> context, void* priv)
 {
     auto *isolate = context->GetIsolate();
+    auto global = context->Global();
     Handle<String> name;
     Handle<FunctionTemplate> func;
 
@@ -156,10 +159,15 @@ static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Value> module,
     audio_mixer_full::init_prototype(func);
     exports->Set(name, func->GetFunction());
 
+    auto val = global->Get(String::NewFromUtf8(isolate, "Buffer"));
+    fast_buffer_constructor.Set(isolate, val.As<Function>());
+
+    NODE_SET_METHOD(exports, "buildEBML", build_ebml);
+
     module_platform_init();
 }
 
 
-} // namespace p1_core;
+} // namespace p1stream;
 
-NODE_MODULE_CONTEXT_AWARE(core, p1_core::init)
+NODE_MODULE_CONTEXT_AWARE(p1stream, p1stream::init)

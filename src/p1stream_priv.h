@@ -1,7 +1,7 @@
-#ifndef p1_core_priv_h
-#define p1_core_priv_h
+#ifndef p1stream_priv_h
+#define p1stream_priv_h
 
-#include "core.h"
+#include "p1stream.h"
 
 #include <list>
 
@@ -26,7 +26,7 @@ extern "C" {
 
 }
 
-namespace p1_core {
+namespace p1stream {
 
 using namespace v8;
 using namespace node;
@@ -66,6 +66,8 @@ extern Eternal<String> numerator_sym;
 extern Eternal<String> denominator_sym;
 
 extern Eternal<String> volume_sym;
+
+extern Eternal<Function> fast_buffer_constructor;
 
 
 // ----- Utility types ----
@@ -306,6 +308,11 @@ public:
 };
 
 
+// ----- EBML -----
+
+void build_ebml(const FunctionCallbackInfo<Value>& args);
+
+
 // ----- Inline implementations -----
 
 inline void throw_error(const char *msg)
@@ -354,6 +361,6 @@ inline audio_source_context_full::audio_source_context_full(audio_mixer *mixer, 
 }
 
 
-}  // namespace p1_core
+}  // namespace p1stream
 
-#endif  // p1_core_priv_h
+#endif  // p1stream_priv_h

@@ -1,8 +1,8 @@
-#include "core_priv_mac.h"
+#include "p1stream_priv_mac.h"
 
 #include <Foundation/Foundation.h>
 
-namespace p1_core {
+namespace p1stream {
 
 
 bool video_mixer_mac::platform_init(Handle<Object> params)
@@ -80,4 +80,4 @@ void video_source_context::render_iosurface(IOSurfaceRef surface)
 }
 
 
-}  // namespace p1_core
+}  // namespace p1stream

@@ -1,6 +1,6 @@
-#include "core_priv.h"
+#include "p1stream_priv.h"
 
-namespace p1_core {
+namespace p1stream {
 
 
 void software_clock::init(const FunctionCallbackInfo<Value>& args)
@@ -111,4 +111,4 @@ void software_clock::init_prototype(Handle<FunctionTemplate> func)
 }
 
 
-}  // namespace p1_core
+}  // namespace p1stream
