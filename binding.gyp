@@ -12,7 +12,7 @@
                 'deps/x264/x264.gyp:libx264encoder'
             ],
             'include_dirs': [
-                'include'
+                'node_modules/p1-build/include'
             ],
             'sources': [
                 'src/audio.cc',
