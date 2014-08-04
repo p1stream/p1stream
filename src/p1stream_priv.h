@@ -67,8 +67,6 @@ extern Eternal<String> denominator_sym;
 
 extern Eternal<String> volume_sym;
 
-extern Eternal<Function> fast_buffer_constructor;
-
 
 // ----- Utility types ----
 
@@ -306,11 +304,6 @@ public:
     // Volume in range [0, 1].
     float volume;
 };
-
-
-// ----- EBML -----
-
-void build_ebml(const FunctionCallbackInfo<Value>& args);
 
 
 // ----- Inline implementations -----

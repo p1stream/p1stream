@@ -4,6 +4,7 @@
     "private": true,
     "main": "main.js",
     "dependencies": {
-        "express": "4"
+        "express": "4",
+        "write-ebml": "p1stream/write-ebml"
     }
 }

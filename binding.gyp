@@ -16,7 +16,6 @@
             ],
             'sources': [
                 'src/audio.cc',
-                'src/ebml.cc',
                 'src/module.cc',
                 'src/software_clock.cc',
                 'src/util.cc',

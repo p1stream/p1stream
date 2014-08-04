@@ -1,68 +1,40 @@
-var native = require('../../build/Release/api.node');
+var writeEBML = require('write-ebml');
+var tag = writeEBML.tag;
 
-
-function tag(id, type) {
-    var b = new Buffer(4);
-    b.writeUInt32BE(id, 0);
-    if (id <= 0xFF)
-        b = b.slice(3, 4);
-    else if (id <= 0xFFFF)
-        b = b.slice(2, 4);
-    else if (id <= 0xFFFFFF)
-        b = b.slice(1, 4);
-    else if (id > 0xFFFFFFFF)
-        throw new Error('Invalid ID');
-
-    return function(val, sizeUnknown) {
-        return [b, type, val, sizeUnknown];
-    };
-}
-
-var T = {
-    EBML: tag(0x1A45DFA3, 'm'),
-    EBMLVersion: tag(0x4286, 'u'),
-    EBMLReadVersion: tag(0x42F7, 'u'),
-    EBMLMaxIDLength: tag(0x42F2, 'u'),
-    EBMLMaxSizeLength: tag(0x42F3, 'u'),
-    DocType: tag(0x4282, 's'),
-    DocTypeVersion: tag(0x4287, 'u'),
-    DocTypeReadVersion: tag(0x4285, 'u'),
-    Segment: tag(0x18538067, 'm'),
-    Info: tag(0x1549A966, 'm'),
-    TimecodeScale: tag(0x2AD7B1, 'u'),
-    MuxingApp: tag(0x4D80, '8'),
-    WritingApp: tag(0x5741, '8'),
-    Tracks: tag(0x1654AE6B, 'm'),
-    TrackEntry: tag(0xAE, 'm'),
-    TrackNumber: tag(0xD7, 'u'),
-    TrackUID: tag(0x73C5, 'u'),
-    TrackType: tag(0x83, 'u'),
-    FlagEnabled: tag(0xB9, 'u'),
-    FlagDefault: tag(0x88, 'u'),
-    FlagForced: tag(0x55AA, 'u'),
-    FlagLacing: tag(0x9C, 'u'),
-    MinCache: tag(0x6DE7, 'u'),
-    MaxBlockAdditionID: tag(0x55EE, 'u'),
-    CodecID: tag(0x86, 's'),
-    CodecPrivate: tag(0x63A2, 'b'),
-    CodecDecodeAll: tag(0xAA, 'u'),
-    SeekPreRoll: tag(0x56BB, 'u'),
-    Video: tag(0xE0, 'm'),
-    FlagInterlaced: tag(0x9A, 'u'),
-    PixelWidth: tag(0xB0, 'u'),
-    PixelHeight: tag(0xBA, 'u'),
-    Audio: tag(0xE1, 'm'),
-    SamplingFrequency: tag(0xB5, 'f'),
-    Channels: tag(0x9F, 'u'),
-    Cluster: tag(0x1F43B675, 'm'),
-    Timecode: tag(0xE7, 'u'),
-    SimpleBlock: tag(0xA3, 'b')
-};
-
-
+var T = Object.create(writeEBML.standardTags);
+T.Segment = tag(0x18538067, 'm');
+T.Info = tag(0x1549A966, 'm');
+T.TimecodeScale = tag(0x2AD7B1, 'u');
+T.MuxingApp = tag(0x4D80, '8');
+T.WritingApp = tag(0x5741, '8');
+T.Tracks = tag(0x1654AE6B, 'm');
+T.TrackEntry = tag(0xAE, 'm');
+T.TrackNumber = tag(0xD7, 'u');
+T.TrackUID = tag(0x73C5, 'u');
+T.TrackType = tag(0x83, 'u');
+T.FlagEnabled = tag(0xB9, 'u');
+T.FlagDefault = tag(0x88, 'u');
+T.FlagForced = tag(0x55AA, 'u');
+T.FlagLacing = tag(0x9C, 'u');
+T.MinCache = tag(0x6DE7, 'u');
+T.MaxBlockAdditionID = tag(0x55EE, 'u');
+T.CodecID = tag(0x86, 's');
+T.CodecPrivate = tag(0x63A2, 'b');
+T.CodecDecodeAll = tag(0xAA, 'u');
+T.SeekPreRoll = tag(0x56BB, 'u');
+T.Video = tag(0xE0, 'm');
+T.FlagInterlaced = tag(0x9A, 'u');
+T.PixelWidth = tag(0xB0, 'u');
+T.PixelHeight = tag(0xBA, 'u');
+T.Audio = tag(0xE1, 'm');
+T.SamplingFrequency = tag(0xB5, 'f');
+T.Channels = tag(0x9F, 'u');
+T.Cluster = tag(0x1F43B675, 'm');
+T.Timecode = tag(0xE7, 'u');
+T.SimpleBlock = tag(0xA3, 'b')
 
 exports.headers = function(videoHeader, audioHeader) {
-    return native.buildEBML([
+    return writeEBML([
         T.EBML([
             T.EBMLVersion(1),
             T.EBMLReadVersion(1),
@@ -185,7 +157,7 @@ exports.videoFrame = function(frame) {
         block.push(nal.buf.slice(4));
     });
 
-    return native.buildEBML([
+    return writeEBML([
         T.Cluster([
             T.Timecode(frame.dts),
             T.SimpleBlock(Buffer.concat(block))
@@ -205,7 +177,7 @@ exports.audioFrame = function(frame) {
 
     block.push(frame.buf);
 
-    return native.buildEBML([
+    return writeEBML([
         T.Cluster([
             T.Timecode(frame.pts),
             T.SimpleBlock(Buffer.concat(block))
