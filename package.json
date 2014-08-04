@@ -4,7 +4,6 @@
     "private": true,
     "main": "main.js",
     "dependencies": {
-        "express": "4",
-        "p1-build": "p1stream/p1-build"
+        "express": "4"
     }
 }
