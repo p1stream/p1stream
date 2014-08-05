@@ -1,7 +1,7 @@
 ## P1stream
 
-This is early work on a utility to livestream your desktop and camera sources
-on a Mac. It's compatible with 10.8 (Mountain Lion) and up.
+This is early work on a utility to livestream your desktop and camera sources.
+It currently targets Mac OS X 10.8 (Mountain Lion) and up.
 
 There's [a Trello board][todo] with a rough to-do list.
 
@@ -9,15 +9,16 @@ There's [a Trello board][todo] with a rough to-do list.
 
 ### Build
 
-The only requirement is the Xcode 5 command line tools.
+You need the [Xcode] command line tools, [node.js] and [atom-shell].
 
-Install dependencies with:
+To build, run `make`, then hand the entire source directory to atom-shell.
 
-    git submodule update --init
+For fine-grained builds, look into [p1-build].
 
-Then use `build.sh` to build and run. For usage, see:
-
-    ./build.sh -h
+ [Xcode]: https://developer.apple.com/xcode/
+ [node.js]: http://nodejs.org/
+ [atom-shell]: https://github.com/atom/atom-shell
+ [p1-build]: https://github.com/p1stream/p1-build
 
 ### License
 
