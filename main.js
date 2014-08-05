@@ -1,4 +1,5 @@
 var app = require('app');
+var path = require('path');
 var express = require('express');
 var BrowserWindow = require('browser-window');
 
@@ -7,8 +8,11 @@ var mainWindow = null;
 
 app.on('will-finish-launching', function() {
     webapp = express();
+
     require('./api')(webapp);
-    require('./webui')(webapp);
+
+    var docroot = path.join(__dirname, 'web');
+    app.use(express.static(docroot));
 });
 
 app.on('ready', function() {
