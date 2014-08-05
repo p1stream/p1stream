@@ -1,5 +1,5 @@
 var events = require('events');
-var native = require('../../build/Release/core.node');
+var native = require('../../build/Release/p1stream.node');
 
 var Audio = function() {
     var self = this;
