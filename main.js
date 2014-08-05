@@ -12,7 +12,7 @@ app.on('will-finish-launching', function() {
     require('./api')(webapp);
 
     var docroot = path.join(__dirname, 'web');
-    app.use(express.static(docroot));
+    webapp.use(express.static(docroot));
 });
 
 app.on('ready', function() {
