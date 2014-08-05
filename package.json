@@ -4,7 +4,12 @@
     "private": true,
     "main": "main.js",
     "dependencies": {
+        "bower": "1",
         "express": "4",
+        "p1-build": "p1stream/p1-build",
         "write-ebml": "p1stream/write-ebml"
+    },
+    "scripts": {
+        "postinstall": "bower install"
     }
 }
