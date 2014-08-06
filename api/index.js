@@ -51,10 +51,10 @@ module.exports = function() {
     app.post('/streams/new/:id', function(req, res, next) {
         var video, audio, mstream;
         var stream = app.data.streams[req.params.id] = {
-            video: video = new core.Video(),
-            audio: audio = new core.Audio(),
-            mstream: mstream = new events.EventEmitter(),
-            headers: null
+            $video: video = new core.Video(),
+            $audio: audio = new core.Audio(),
+            $mstream: mstream = new events.EventEmitter(),
+            $headers: null
         };
 
         var videoHeaders = null;
@@ -70,7 +70,7 @@ module.exports = function() {
 
         function buildHeaders() {
             if (videoHeaders && audioHeaders)
-                stream.headers = matroska.headers(videoHeaders, audioHeaders);
+                stream.$headers = matroska.headers(videoHeaders, audioHeaders);
         }
 
         video.on('frame', function(frame) {
@@ -88,13 +88,13 @@ module.exports = function() {
         if (!stream)
             return res.send(404);
 
-        stream.mstream.addListener('frame', onFrame);
+        stream.$mstream.addListener('frame', onFrame);
         res.on('close', function() {
-            stream.mstream.removeListener('frame', onFrame);
+            stream.$mstream.removeListener('frame', onFrame);
         });
 
         function onFrame(frame, keyframe) {
-            if (!stream.headers) return;
+            if (!stream.$headers) return;
 
             if (!res.headersSent) {
                 if (!keyframe) return;
@@ -104,7 +104,7 @@ module.exports = function() {
                     'Connection': 'close',
                     'Content-Type': 'video/x-matroska'
                 });
-                res.write(stream.headers);
+                res.write(stream.$headers);
             }
 
             res.write(frame);
