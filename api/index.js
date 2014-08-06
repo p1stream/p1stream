@@ -1,19 +1,56 @@
 var events = require('events');
 var express = require('express');
+var symmetry = require('symmetry');
+
 var config = require('./config');
 var matroska = require('./matroska');
+var eventSource = require('./eventSource');
+
 var core = require('../core');
 
 module.exports = function() {
     var app = express();
-
     app.cfg = config();
+    app.data = symmetry.scope({
+        streams: Object.create(null)
+    });
 
-    var streams = Object.create(null);
+    // Wrap digest, emit update events.
+    app.data.$origDigest = app.data.$digest;
+    app.data.$digest = function() {
+        var patch = this.$origDigest();
+        if (patch !== 'none')
+            app.emit('update', patch);
+        return patch;
+    };
 
+    // Retrieve data.
+    app.get('/data', function(req, res, next) {
+        res.send(app.data.$last);
+    });
+
+    // Retrieve and monitor data, using server-sent events.
+    app.get('/data.sse', function(req, res, next) {
+        var source = eventSource(res);
+        source.send('reset', app.data.$last);
+
+        function onUpdate(patch) {
+            if (patch === 'reset')
+                source.send('reset', app.data.$last);
+            else
+                source.send('patch', patch);
+        }
+
+        app.addListener('update', onUpdate);
+        source.on('close', function() {
+            app.removeListener('update', onUpdate);
+        });
+    });
+
+    // Create a new stream.
     app.post('/streams/new/:id', function(req, res, next) {
         var video, audio, mstream;
-        var stream = streams[req.params.id] = {
+        var stream = app.data.streams[req.params.id] = {
             video: video = new core.Video(),
             audio: audio = new core.Audio(),
             mstream: mstream = new events.EventEmitter(),
@@ -45,8 +82,9 @@ module.exports = function() {
         });
     });
 
+    // Open stream as matroska,
     app.get('/streams/:id.mkv', function(req, res, next) {
-        var stream = streams[req.params.id];
+        var stream = app.data.streams[req.params.id];
         if (!stream)
             return res.send(404);
 
