@@ -1,22 +1,20 @@
-var app = require('app');
+var atomApp = require('app');
 var path = require('path');
 var express = require('express');
 var BrowserWindow = require('browser-window');
 
-var webapp = null;
-var mainWindow = null;
+var app, mainWindow;
 
-app.on('will-finish-launching', function() {
-    webapp = express();
-
-    require('./api')(webapp);
-
+atomApp.on('will-finish-launching', function() {
     var docroot = path.join(__dirname, 'web');
-    webapp.use(express.static(docroot));
+
+    app = express();
+    app.use('/api', require('./api')());
+    app.use(express.static(docroot));
 });
 
-app.on('ready', function() {
-    var server = webapp.listen(53311, '127.0.0.1', function() {
+atomApp.on('ready', function() {
+    var server = app.listen(53311, '127.0.0.1', function() {
         mainWindow = new BrowserWindow({ width: 800, height: 600 });
         mainWindow.loadUrl('http://localhost:53311/');
         mainWindow.on('closed', function() {
@@ -25,7 +23,7 @@ app.on('ready', function() {
     });
 });
 
-app.on('window-all-closed', function() {
+atomApp.on('window-all-closed', function() {
     if (process.platform !== 'darwin')
-        app.quit();
+        atomApp.quit();
 });

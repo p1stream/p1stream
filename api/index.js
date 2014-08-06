@@ -1,14 +1,17 @@
 var events = require('events');
+var express = require('express');
 var config = require('./config');
 var matroska = require('./matroska');
 var core = require('../core');
 
-module.exports = function(app) {
+module.exports = function() {
+    var app = express();
+
     app.cfg = config();
 
     var streams = Object.create(null);
 
-    app.post('/api/streams/new/:id', function(req, res, next) {
+    app.post('/streams/new/:id', function(req, res, next) {
         var video, audio, mstream;
         var stream = streams[req.params.id] = {
             video: video = new core.Video(),
@@ -42,7 +45,7 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/api/streams/:id.mkv', function(req, res, next) {
+    app.get('/streams/:id.mkv', function(req, res, next) {
         var stream = streams[req.params.id];
         if (!stream)
             return res.send(404);
@@ -69,4 +72,6 @@ module.exports = function(app) {
             res.write(frame);
         }
     });
+
+    return app;
 };
