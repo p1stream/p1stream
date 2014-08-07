@@ -14,7 +14,20 @@
             'include_dirs': ['<@(aac_include_dirs)']
         },
         'conditions': [
-            ['OS != "win"', {
+            ['OS == "mac"', {
+                'xcode_settings': {
+                    'OTHER_CFLAGS': ['-std=c++98', '-w'],
+                    'OTHER_CFLAGS!': [
+                        '-Wextra', '-Wall', '-Wno-unused-parameter',
+                        '-fno-omit-frame-pointer',
+                        '-ffunction-sections',
+                        '-fdata-sections',
+                        '-fno-tree-vrp',
+                        '-fno-tree-sink'
+                    ]
+                }
+            }],
+            ['OS == "linux"', {
                 'cflags': ['-std=c++98', '-w'],
                 'cflags!': [
                     '-Wextra', '-Wall', '-Wno-unused-parameter',

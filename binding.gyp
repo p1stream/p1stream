@@ -22,17 +22,19 @@
                 'src/video.cc'
             ],
             'conditions': [
-                ['OS != "win"', {
-                    'cflags': ['-std=c++11'],
-                    'ldflags': ['-Wl,-Bsymbolic']
-                }],
                 ['OS == "mac"', {
+                    'xcode_settings': {
+                        'OTHER_CFLAGS': ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.8'],
+                        'OTHER_CFLAGS!': ['-mmacosx-version-min=10.5']
+                    },
                     'sources': [
                         'src/util_mac.cc',
                         'src/video_mac.mm'
                     ]
                 }],
                 ['OS == "linux"', {
+                    'cflags': ['-std=c++11'],
+                    'ldflags': ['-Wl,-Bsymbolic'],
                     'sources': [
                         'src/util_linux.cc',
                         'src/video_linux.cc'

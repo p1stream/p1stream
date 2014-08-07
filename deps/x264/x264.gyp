@@ -37,7 +37,20 @@
             'include_dirs': ['<@(x264_include_dirs)']
         },
         'conditions': [
-            ['OS != "win"', {
+            ['OS == "mac"', {
+                'xcode_settings': {
+                    'OTHER_CFLAGS': ['-std=gnu99', '-w', '-ffast-math', '-fno-tree-vectorize'],
+                    'OTHER_CFLAGS!': [
+                        '-Wextra', '-Wall', '-Wno-unused-parameter',
+                        '-fno-omit-frame-pointer',
+                        '-ffunction-sections',
+                        '-fdata-sections',
+                        '-fno-tree-vrp',
+                        '-fno-tree-sink'
+                    ]
+                }
+            }],
+            ['OS == "linux"', {
                 'cflags': ['-std=gnu99', '-w', '-ffast-math', '-mpreferred-stack-boundary=5', '-fno-tree-vectorize'],
                 'cflags!': [
                     '-Wextra', '-Wall', '-Wno-unused-parameter',
