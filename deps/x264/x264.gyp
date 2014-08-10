@@ -39,15 +39,10 @@
         'conditions': [
             ['OS == "mac"', {
                 'xcode_settings': {
-                    'OTHER_CFLAGS': ['-std=gnu99', '-w', '-ffast-math', '-fno-tree-vectorize'],
-                    'OTHER_CFLAGS!': [
-                        '-Wextra', '-Wall', '-Wno-unused-parameter',
-                        '-fno-omit-frame-pointer',
-                        '-ffunction-sections',
-                        '-fdata-sections',
-                        '-fno-tree-vrp',
-                        '-fno-tree-sink'
-                    ]
+                    # 'MACOSX_DEPLOYMENT_TARGET': '10.8',  # FIXME: This doesn't work
+                    'OTHER_CFLAGS': ['-mmacosx-version-min=10.8', '-std=gnu99', '-ffast-math', '-fno-tree-vectorize'],
+                    'WARNING_CFLAGS': ['-w'],
+                    'WARNING_CFLAGS!': ['-Wall', '-Wendif-labels', '-W', '-Wno-unused-parameter']
                 }
             }],
             ['OS == "linux"', {
