@@ -7,14 +7,15 @@ var bu = require('./tools/build_util');
 process.chdir(path.dirname(process.mainModule.filename));
 // Add our own npm bin dir to path.
 process.env.PATH = [
-    path.join(process.cwd(), 'node_modules', '.bin'),
+    path.join(process.cwd(), 'tools', 'node_modules', '.bin'),
     process.env.PATH
 ].join(':');
 
 bu.taskRunner({
 
     'install-tools': function(cb) {
-        bu.run('npm install p1stream/p1-build node-gyp bower', cb);
+        bu.run('npm --prefix=tools ' +
+            'install p1stream/p1-build node-gyp bower', cb);
     },
 
     'sync-submodules': function(cb) {
