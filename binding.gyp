@@ -1,7 +1,7 @@
 {
     'targets': [
         {
-            'target_name': 'p1stream',
+            'target_name': 'native',
             'dependencies': [
                 'deps/aac/aac.gyp:libFDK',
                 'deps/aac/aac.gyp:libSYS',

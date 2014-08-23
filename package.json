@@ -8,7 +8,7 @@
         "type": "git",
         "url": "http://github.com/p1stream/p1stream.git"
     },
-    "main": "main.js",
+    "main": "lib/main.js",
     "dependencies": {
         "express": "4",
         "symmetry": "0.3",
