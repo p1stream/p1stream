@@ -1,7 +1,13 @@
 {
     "name": "p1stream",
     "version": "0.0.0",
+    "description": "Live streaming tool",
     "private": true,
+    "author": "Stéphan Kochen <stephan@kochen.nl>",
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/p1stream/p1stream.git"
+    },
     "main": "main.js",
     "dependencies": {
         "express": "4",
