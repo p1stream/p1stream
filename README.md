@@ -9,17 +9,14 @@ There's [a Trello board][todo] with a rough to-do list.
 
 ### Build
 
-You need the [Xcode] command line tools, [yasm], [node.js] and [atom-shell].
+You need the [Xcode] command line tools, [yasm] and [node.js].
 
-To build, run `make`, then hand the entire source directory to atom-shell.
-
-For fine-grained builds, look into [p1-build].
+    node build.js all  # Do everything to run in atom-shell.
+    node build.js run  # Download atom-shell and run.
 
  [Xcode]: https://developer.apple.com/xcode/
  [yasm]: http://yasm.tortall.net/
  [node.js]: http://nodejs.org/
- [atom-shell]: https://github.com/atom/atom-shell
- [p1-build]: https://github.com/p1stream/p1-build
 
 ### License
 
