@@ -22,6 +22,8 @@
         "bitwise": false,
         "curly": false,
         "es3": false,
-        "node": true
+        "node": true,
+        "browser": true,
+        "predef": ["angular", "EventSource", "Symmetry"]
     }
 }

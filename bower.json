@@ -3,6 +3,7 @@
     "private": true,
     "dependencies": {
         "jquery": "2",
+        "symmetry": "0.3",
         "bootstrap": "3.2",
         "angular": "1.2",
         "angular-ui-router": "0.2"
