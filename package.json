@@ -13,5 +13,8 @@
         "express": "4",
         "symmetry": "0.3",
         "write-ebml": "p1stream/write-ebml"
+    },
+    "devDependencies": {
+        "request": "2"
     }
 }
