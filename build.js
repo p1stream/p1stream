@@ -41,6 +41,7 @@ bu.taskRunner({
 
         var counter = 0;
         var stream = fs.createWriteStream(file)
+            .on('error', cb)
             .on('finish', cb);
         request(params.atomShellPackageUrl)
             .on('error', cb)
