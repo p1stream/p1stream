@@ -14,6 +14,12 @@ process.env.PATH = [
 
 bu.taskRunner({
 
+    //////////
+    // The following are the individual build steps that make up a complete
+    // build, ie. `node build.js all`
+
+    // Install certain build tools locally in `tools/node_modules/`, so that
+    // these don't have to be setup globally.
     'install-tools': function(cb) {
         var deps = require('./package.json').devToolDependencies;
         var tasks = Object.keys(deps).map(function(name) {
@@ -23,6 +29,7 @@ bu.taskRunner({
         bu.chain(tasks, cb);
     },
 
+    // Update submodules.
     'sync-submodules': function(cb) {
         bu.chain([
             [bu.run, 'git submodule init'],
@@ -31,6 +38,43 @@ bu.taskRunner({
         ], cb);
     },
 
+    // Install all our regular npm dependencies. This expects `p1-build` to be
+    // setup using the `install-tools` task.
+    'npm-install': function(cb) {
+        bu.run('p1-build npm install', cb);
+    },
+
+    // Install all our bower dependencies for the web ui.
+    'bower-install': function(cb) {
+        bu.run('bower install', cb);
+    },
+
+    // The meta task to do a complete build.
+    'all': [
+        'install-tools',
+        'sync-submodules',
+        'npm-install',
+        'bower-install'
+    ],
+
+    //////////
+    // The following are tasks that are useful in the addition to the above
+    // individual build steps.
+
+    'npm-update': function(cb) {
+        bu.run('p1-build npm update', cb);
+    },
+
+    'bower-update': function(cb) {
+        bu.run('bower update', cb);
+    },
+
+    // Incremental build of just the core native module.
+    'native': function(cb) {
+        bu.run('p1-build node-gyp build', cb);
+    },
+
+    // Download the atom-shell tarball.
     'download-atom-shell': function(cb) {
         var request = require('request');
 
@@ -63,6 +107,7 @@ bu.taskRunner({
             .pipe(stream);
     },
 
+    // Extract the atom-shell tarball.
     'extract-atom-shell': function(cb) {
         var params = require('./tools/node_modules/p1-build');
         var dir = path.join('atom-shell', 'v' + params.atomShellVersion);
@@ -73,37 +118,8 @@ bu.taskRunner({
         bu.run('unzip -q ' + file + ' -d ' + dir, cb);
     },
 
-    'bootstrap': [
-        'install-tools',
-        'sync-submodules'
-    ],
-
-    'npm-install': function(cb) {
-        bu.run('p1-build npm install', cb);
-    },
-
-    'npm-update': function(cb) {
-        bu.run('p1-build npm update', cb);
-    },
-
-    'bower-install': function(cb) {
-        bu.run('bower install', cb);
-    },
-
-    'bower-update': function(cb) {
-        bu.run('bower update', cb);
-    },
-
-    'all': [
-        'bootstrap',
-        'npm-install',
-        'bower-install'
-    ],
-
-    'native': function(cb) {
-        bu.run('p1-build node-gyp build', cb);
-    },
-
+    // Run atom-shell with the P1stream source directory.
+    // Downloads and extracts atom-shell if it's not already present.
     'run': [
         'download-atom-shell',
         'extract-atom-shell',
