@@ -22,6 +22,9 @@
         "node-gyp": "1",
         "bower": "1"
     },
+    "pluginDependencies": {
+        "p1-mac-sources": "p1stream/p1-mac-sources"
+    },
     "jshintConfig": {
         "enforceall": true,
         "bitwise": false,

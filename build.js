@@ -49,12 +49,23 @@ bu.taskRunner({
         bu.run('bower install', cb);
     },
 
+    // Install our plugin dependencies. These are the ones we bundle.
+    'install-plugins': function(cb) {
+        var deps = require('./package.json').pluginDependencies;
+        var tasks = Object.keys(deps).map(function(name) {
+            var arg = name + '@' + deps[name];
+            return [bu.run, 'p1-build npm install ' + arg];
+        });
+        bu.chain(tasks, cb);
+    },
+
     // The meta task to do a complete build.
     'all': [
         'install-tools',
         'sync-submodules',
         'npm-install',
-        'bower-install'
+        'bower-install',
+        'install-plugins'
     ],
 
     //////////
