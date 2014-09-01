@@ -15,8 +15,12 @@ process.env.PATH = [
 bu.taskRunner({
 
     'install-tools': function(cb) {
-        bu.run('npm --prefix=tools ' +
-            'install p1stream/p1-build node-gyp bower', cb);
+        var deps = require('./package.json').devToolDependencies;
+        var tasks = Object.keys(deps).map(function(name) {
+            var arg = name + '@' + deps[name];
+            return [bu.run, 'npm --prefix=tools install ' + arg];
+        });
+        bu.chain(tasks, cb);
     },
 
     'sync-submodules': function(cb) {

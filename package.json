@@ -17,6 +17,11 @@
     "devDependencies": {
         "request": "2"
     },
+    "devToolDependencies": {
+        "p1-build": "p1stream/p1-build",
+        "node-gyp": "1",
+        "bower": "1"
+    },
     "jshintConfig": {
         "enforceall": true,
         "bitwise": false,
