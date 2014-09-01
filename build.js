@@ -2,7 +2,6 @@
 
 var fs = require('fs');
 var path = require('path');
-var request = require('request');
 var bu = require('./tools/build_util');
 
 // Ensure correct directory.
@@ -29,6 +28,8 @@ bu.taskRunner({
     },
 
     'download-atom-shell': function(cb) {
+        var request = require('request');
+
         var params = require('./tools/node_modules/p1-build');
         var file = path.join('atom-shell', params.atomShellPackage);
 
