@@ -60,21 +60,15 @@ lockable *software_clock::lock()
     return thread.lock();
 }
 
-bool software_clock::link_video_clock(video_clock_context &ctx_)
+bool software_clock::link_video_clock(video_clock_context &ctx)
 {
-    if (ctx != nullptr) {
-        throw_error("SoftwareClock can only link to one mixer");
-        return false;
-    }
-
-    ctx = &ctx_;
+    ctxes.push_back(&ctx);
     return true;
 }
 
-void software_clock::unlink_video_clock(video_clock_context &ctx_)
+void software_clock::unlink_video_clock(video_clock_context &ctx)
 {
-    if (ctx == &ctx_)
-        ctx = nullptr;
+    ctxes.remove(&ctx);
 }
 
 fraction_t software_clock::video_ticks_per_second(video_clock_context &ctx)
@@ -92,7 +86,7 @@ void software_clock::loop()
         if (thread.wait(time_next - time_now))
             break;
 
-        if (ctx)
+        for (auto ctx : ctxes)
             ctx->tick(time_next);
 
         time_now = system_time();
