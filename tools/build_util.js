@@ -1,3 +1,14 @@
+// Simply extend utility like underscore.
+exports.extend = function(obj) {
+    Array.prototype.slice.call(arguments, 1).forEach(function(o) {
+        if (!o) return;
+        Object.keys(o).forEach(function(key) {
+            obj[key] = o[key];
+        });
+    });
+    return obj;
+};
+
 // Our basic task runner.
 exports.taskRunner = function(commands) {
     var args = process.argv.slice(2);

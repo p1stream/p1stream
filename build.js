@@ -52,6 +52,7 @@ bu.taskRunner({
     // Install our plugin dependencies. These are the ones we bundle.
     'install-plugins': function(cb) {
         var deps = require('./package.json').pluginDependencies;
+        deps = bu.extend({}, deps.all, deps[process.platform]);
         var tasks = Object.keys(deps).map(function(name) {
             var arg = name + '@' + deps[name];
             return [bu.run, 'p1-build npm install ' + arg];
