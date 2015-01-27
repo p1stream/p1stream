@@ -33,6 +33,7 @@
         "enforceall": true,
         "bitwise": false,
         "curly": false,
+        "singleGroups": false,
         "es3": false,
         "node": true,
         "browser": true,
