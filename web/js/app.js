@@ -7,7 +7,7 @@ function($rootScope) {
     var symmetryOptions = { preserve: true };
 
     var data = $rootScope.data = {};
-    var source = new EventSource('http://localhost:53311/api/data.sse');
+    var source = new EventSource('/api/data.sse');
 
     source.addEventListener('reset', function(ev) {
         var val = JSON.parse(ev.data);
