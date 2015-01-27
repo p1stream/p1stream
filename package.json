@@ -10,13 +10,14 @@
     },
     "main": "lib/main.js",
     "dependencies": {
+        "clone": "0.2",
         "express": "4",
+        "underscore": "1",
         "symmetry": "0.3",
         "write-ebml": "p1stream/write-ebml"
     },
     "devDependencies": {
-        "request": "2",
-        "underscore": "1"
+        "request": "2"
     },
     "devToolDependencies": {
         "p1-build": "p1stream/p1-build",
