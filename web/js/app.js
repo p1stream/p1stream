@@ -6,20 +6,20 @@ module.run(['$rootScope',
 function($rootScope) {
     var symmetryOptions = { preserve: true };
 
-    var data = $rootScope.data = {};
-    var source = new EventSource('/api/data.sse');
+    var objects = $rootScope.objects = Object.create(null);
+    var source = new EventSource('/api/objects.sse');
 
     source.addEventListener('reset', function(ev) {
-        var val = JSON.parse(ev.data);
         $rootScope.$apply(function() {
-            Symmetry.resetObject(data, val, symmetryOptions);
+            var val = JSON.parse(ev.data);
+            Symmetry.resetObject(objects, val, symmetryOptions);
         });
     });
 
     source.addEventListener('patch', function(ev) {
         $rootScope.$apply(function() {
             var patch = JSON.parse(ev.data);
-            Symmetry.patch(data, patch, symmetryOptions);
+            Symmetry.patch(objects, patch, symmetryOptions);
         });
     });
 }]);
