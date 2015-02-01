@@ -11,9 +11,10 @@
     "main": "lib/main.js",
     "dependencies": {
         "clone": "0.2",
+        "node-uuid": "1",
         "express": "4",
         "underscore": "1",
-        "symmetry": "0.3",
+        "symmetry": "0.4",
         "write-ebml": "p1stream/write-ebml"
     },
     "devDependencies": {
