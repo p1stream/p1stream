@@ -43,7 +43,8 @@ exports.taskRunner = function(commands) {
     }
 
     exports.chain(arr, function(err) {
-        console.error(err.stack);
+        if (err)
+            console.error(err.stack || err.message || err);
     });
 };
 
