@@ -43,8 +43,7 @@ exports.taskRunner = function(commands) {
     }
 
     exports.chain(arr, function(err) {
-        if (err)
-            throw err;
+        console.error(err.stack);
     });
 };
 
@@ -110,7 +109,7 @@ exports.chain = function(arr, cb) {
         }
 
         args.push(cmdCb);
-        fn.apply(ctx, args);
+        exports.safeApplyAsync(fn, ctx, args);
     }
 
     function cmdCb(err) {
@@ -118,5 +117,15 @@ exports.chain = function(arr, cb) {
             cb(err);
         else
             next();
+    }
+};
+
+// Call an async function in a try-catch block.
+exports.safeApplyAsync = function(fn, ctx, args) {
+    try {
+        return fn.apply(ctx, args);
+    }
+    catch (err) {
+        args[args.length - 1](err);
     }
 };
