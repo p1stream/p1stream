@@ -12,6 +12,24 @@ process.env.PATH = [
     process.env.PATH
 ].join(':');
 
+// Build the command to run the app.
+function runCmd() {
+    var params = require('./tools/node_modules/p1-build');
+    var dir = path.join('atom-shell', 'v' + params.atomShellVersion);
+
+    var cmd;
+    if (process.platform === 'darwin')
+        cmd = path.join(dir, 'Atom.app', 'Contents', 'MacOS', 'Atom');
+    else if (process.platform === 'linux')
+        cmd = path.join(dir, 'atom');
+    else if (process.platform === 'win32')
+        cmd = path.join(dir, 'atom.exe');
+    else
+        throw new Error("Unsupported platform");
+
+    return cmd + ' ' + process.cwd();
+}
+
 bu.taskRunner({
 
     //////////
@@ -130,26 +148,25 @@ bu.taskRunner({
         bu.run('unzip -q ' + file + ' -d ' + dir, cb);
     },
 
+    // Meta task to prepare atom-shell.
+    'prepare-atom-shell': [
+        'download-atom-shell',
+        'extract-atom-shell'
+    ],
+
     // Run atom-shell with the P1stream source directory.
     // Downloads and extracts atom-shell if it's not already present.
     'run': [
-        'download-atom-shell',
-        'extract-atom-shell',
+        'prepare-atom-shell',
         function(cb) {
-            var params = require('./tools/node_modules/p1-build');
-            var dir = path.join('atom-shell', 'v' + params.atomShellVersion);
+            bu.run(runCmd(), cb);
+        }
+    ],
 
-            var cmd;
-            if (process.platform === 'darwin')
-                cmd = path.join(dir, 'Atom.app', 'Contents', 'MacOS', 'Atom');
-            else if (process.platform === 'linux')
-                cmd = path.join(dir, 'atom');
-            else if (process.platform === 'win32')
-                cmd = path.join(dir, 'atom.exe');
-            else
-                cb(new Error("Unsupported platform"));
-
-            bu.run(cmd + ' ' + process.cwd(), cb);
+    'debug': [
+        'prepare-atom-shell',
+        function(cb) {
+            bu.run('lldb -- ' + runCmd(), cb);
         }
     ]
 
