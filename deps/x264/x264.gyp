@@ -18,7 +18,7 @@
                 'yasm_format': 'macho64',
                 'yasm_defines': [
                     '-DPREFIX',
-                    '-DHAVE_ALIGNED_STACK=1',
+                    '-DHAVE_ALIGNED_STACK=1'
                 ]
             }
         }],
