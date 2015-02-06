@@ -10,7 +10,7 @@
     },
     "main": "lib/index.js",
     "bin": {
-        "p1stream": "main.js"
+        "p1stream": "p1stream.js"
     },
     "dependencies": {
         "clone": "0.2",
@@ -19,9 +19,6 @@
         "underscore": "1",
         "symmetry": "0.4",
         "write-ebml": "p1stream/write-ebml"
-    },
-    "devDependencies": {
-        "request": "2"
     },
     "devToolDependencies": {
         "p1-build": "p1stream/p1-build",

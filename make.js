@@ -16,7 +16,7 @@ bu.taskRunner({
 
     //////////
     // The following are the individual build steps that make up a complete
-    // build, ie. `./build.js full`
+    // build, ie. `./make.js full`
 
     // Install certain build tools locally in `tools/node_modules/`, so that
     // these don't have to be setup globally.
