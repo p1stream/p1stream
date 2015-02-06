@@ -8,7 +8,10 @@
         "type": "git",
         "url": "http://github.com/p1stream/p1stream.git"
     },
-    "main": "lib/main.js",
+    "main": "lib/index.js",
+    "bin": {
+        "p1stream": "main.js"
+    },
     "dependencies": {
         "clone": "0.2",
         "node-uuid": "1",

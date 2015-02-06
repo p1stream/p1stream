@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env iojs
 
 var fs = require('fs');
 var path = require('path');
@@ -12,29 +12,11 @@ process.env.PATH = [
     process.env.PATH
 ].join(':');
 
-// Build the command to run the app.
-function runCmd() {
-    var params = require('./tools/node_modules/p1-build');
-    var dir = path.join('atom-shell', 'v' + params.atomShellVersion);
-
-    var cmd;
-    if (process.platform === 'darwin')
-        cmd = path.join(dir, 'Atom.app', 'Contents', 'MacOS', 'Atom');
-    else if (process.platform === 'linux')
-        cmd = path.join(dir, 'atom');
-    else if (process.platform === 'win32')
-        cmd = path.join(dir, 'atom.exe');
-    else
-        throw new Error("Unsupported platform");
-
-    return cmd + ' ' + process.cwd();
-}
-
 bu.taskRunner({
 
     //////////
     // The following are the individual build steps that make up a complete
-    // build, ie. `node build.js all`
+    // build, ie. `./build.js all`
 
     // Install certain build tools locally in `tools/node_modules/`, so that
     // these don't have to be setup globally.
@@ -102,72 +84,6 @@ bu.taskRunner({
     // Incremental build of just the core native module.
     'native': function(cb) {
         bu.run('p1-build node-gyp build', cb);
-    },
-
-    // Download the atom-shell tarball.
-    'download-atom-shell': function(cb) {
-        var request = require('request');
-
-        var params = require('./tools/node_modules/p1-build');
-        var file = path.join('atom-shell', params.atomShellPackage);
-
-        if (fs.existsSync(file)) return cb();
-
-        bu.logStep('downloading ' + file);
-
-        try { fs.mkdirSync('atom-shell'); }
-        catch (err) { if (err.code !== 'EEXIST') return cb(err); }
-
-        var counter = 0;
-        var stream = fs.createWriteStream(file)
-            .on('error', cb)
-            .on('finish', cb);
-        request(params.atomShellPackageUrl)
-            .on('error', cb)
-            .on('data', function(chunk) {
-                counter += chunk.length;
-                while (counter > 102400) {
-                    counter %= 102400;
-                    process.stdout.write('.');
-                }
-            })
-            .on('end', function() {
-                process.stdout.write('\n');
-            })
-            .pipe(stream);
-    },
-
-    // Extract the atom-shell tarball.
-    'extract-atom-shell': function(cb) {
-        var params = require('./tools/node_modules/p1-build');
-        var dir = path.join('atom-shell', 'v' + params.atomShellVersion);
-        var file = path.join('atom-shell', params.atomShellPackage);
-
-        if (fs.existsSync(dir)) return cb();
-
-        bu.run('unzip -q ' + file + ' -d ' + dir, cb);
-    },
-
-    // Meta task to prepare atom-shell.
-    'prepare-atom-shell': [
-        'download-atom-shell',
-        'extract-atom-shell'
-    ],
-
-    // Run atom-shell with the P1stream source directory.
-    // Downloads and extracts atom-shell if it's not already present.
-    'run': [
-        'prepare-atom-shell',
-        function(cb) {
-            bu.run(runCmd(), cb);
-        }
-    ],
-
-    'debug': [
-        'prepare-atom-shell',
-        function(cb) {
-            bu.run('lldb -- ' + runCmd(), cb);
-        }
-    ]
+    }
 
 });

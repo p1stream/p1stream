@@ -9,14 +9,14 @@ There's [a Trello board][todo] with a rough to-do list.
 
 ### Build
 
-You need the [Xcode] command line tools, [yasm] and [node.js].
+You need the [Xcode] command line tools, [yasm] and [io.js].
 
-    node build.js all  # Do everything to run in atom-shell.
-    node build.js run  # Download atom-shell and run.
+    ./build.js all
+    ./main.js
 
  [Xcode]: https://developer.apple.com/xcode/
  [yasm]: http://yasm.tortall.net/
- [node.js]: http://nodejs.org/
+ [io.js]: https://iojs.org/
 
 ### License
 
