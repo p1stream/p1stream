@@ -11,7 +11,7 @@ There's [a Trello board][todo] with a rough to-do list.
 
 You need the [Xcode] command line tools, [yasm] and [io.js].
 
-    ./build.js all
+    ./build.js full
     ./main.js
 
  [Xcode]: https://developer.apple.com/xcode/

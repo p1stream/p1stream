@@ -16,7 +16,7 @@ bu.taskRunner({
 
     //////////
     // The following are the individual build steps that make up a complete
-    // build, ie. `./build.js all`
+    // build, ie. `./build.js full`
 
     // Install certain build tools locally in `tools/node_modules/`, so that
     // these don't have to be setup globally.
@@ -61,7 +61,7 @@ bu.taskRunner({
     },
 
     // The meta task to do a complete build.
-    'all': [
+    'full': [
         'install-tools',
         'sync-submodules',
         'npm-install',
