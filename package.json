@@ -18,6 +18,7 @@
         "express": "4",
         "underscore": "1",
         "symmetry": "0.4",
+        "jmsg": "0.1",
         "write-ebml": "p1stream/write-ebml"
     },
     "devToolDependencies": {
