@@ -730,7 +730,9 @@ void video_mixer_base::emit_last()
         frame_obj->Set(l_keyframe_sym, frame->keyframe ?
                                        True(isolate) : False(isolate));
         frame_obj->Set(l_nals_sym, nals_arr);
+
         p = ((uint8_t *) nals) + nals_len * sizeof(x264_nal_t);
+        frame_obj->Set(l_start_sym, Uint32::New(isolate, p - copy));
 
         for (int32_t i_nal = 0; i_nal < nals_len; i_nal++) {
             auto &nal = nals[i_nal];
@@ -744,6 +746,8 @@ void video_mixer_base::emit_last()
             p += nal.i_payload;
             nal_obj->Set(l_end_sym, Uint32::New(isolate, p - copy));
         }
+
+        frame_obj->Set(l_end_sym, Uint32::New(isolate, p - copy));
     }
 
     auto l_on_data = Local<Function>::New(isolate, on_data);

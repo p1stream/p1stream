@@ -19,6 +19,7 @@
         "underscore": "1",
         "symmetry": "0.4",
         "jmsg": "0.1",
+        "crc-32": "0.2",
         "write-ebml": "p1stream/write-ebml"
     },
     "devToolDependencies": {
