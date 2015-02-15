@@ -78,6 +78,7 @@ void throw_type_error(const char *msg);
 
 class video_clock_context_full;
 class video_source_context_full;
+class video_hook_context_full;
 
 // Data we pass between threads. One of these is created per
 // x264_encoder_{headers|encode} call.
@@ -100,6 +101,7 @@ public:
 
     video_clock_context_full *clock_ctx;
     std::list<video_source_context_full> source_ctxes;
+    std::list<video_hook_context_full> hook_ctxes;
 
     Persistent<Function> on_data;
     Persistent<Function> on_error;
@@ -149,6 +151,7 @@ public:
     // Internal.
     void emit_last();
     void clear_sources();
+    void clear_hooks();
     void tick(frame_time_t time);
     GLuint build_shader(GLuint type, const char *source);
     bool build_program();
@@ -169,6 +172,7 @@ public:
     void destroy(bool unref = true);
 
     void set_sources(const FunctionCallbackInfo<Value>& args);
+    void set_hooks(const FunctionCallbackInfo<Value>& args);
 
     // Module init.
     static void init_prototype(Handle<FunctionTemplate> func);
@@ -193,6 +197,11 @@ public:
     // Top left and bottom right coordinates of the image area to grab, used to
     // achieve clipping. These are in the range [0, 1].
     GLfloat u1, v1, u2, v2;
+};
+
+class video_hook_context_full : public video_hook_context {
+public:
+    video_hook_context_full(video_mixer *mixer, video_hook *hook);
 };
 
 
@@ -336,6 +345,12 @@ inline video_source_context_full::video_source_context_full(video_mixer *mixer, 
 {
     mixer_ = mixer;
     source_ = source;
+}
+
+inline video_hook_context_full::video_hook_context_full(video_mixer *mixer, video_hook *hook)
+{
+    mixer_ = mixer;
+    hook_ = hook;
 }
 
 inline software_clock::software_clock() :

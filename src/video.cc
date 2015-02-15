@@ -438,6 +438,52 @@ Handle<Value> video_mixer_base::pop_last_error()
     return ret;
 }
 
+void video_mixer_base::clear_hooks()
+{
+    for (auto &ctx : hook_ctxes)
+        ctx.hook()->unlink_video_hook(ctx);
+    hook_ctxes.clear();
+}
+
+void video_mixer_base::set_hooks(const FunctionCallbackInfo<Value>& args)
+{
+    if (args.Length() != 1)
+        return throw_type_error("Expected one argument");
+
+    if (!args[0]->IsArray())
+        return throw_type_error("Expected an array");
+
+    lock_handle lock(*this);
+
+    clear_hooks();
+
+    bool ok = true;
+    auto arr = args[0].As<Array>();
+    uint32_t len = arr->Length();
+
+    for (uint32_t i = 0; i < len; i++) {
+        auto val = arr->Get(i);
+        if (!(ok = val->IsObject())) {
+            throw_type_error("Expected only objects in the array");
+            break;
+        }
+
+        auto hook_obj = val.As<Object>();
+        auto *hook = ObjectWrap::Unwrap<video_hook>(hook_obj);
+
+        hook_ctxes.emplace_back(this, hook);
+        auto &ctx = hook_ctxes.back();
+
+        if (!(ok = ctx.hook()->link_video_hook(ctx))) {
+            hook_ctxes.pop_back();
+            break;
+        }
+    }
+
+    if (!ok)
+        clear_hooks();
+}
+
 void video_mixer_base::clear_sources()
 {
     for (auto &ctx : source_ctxes) {
@@ -460,10 +506,6 @@ void video_mixer_base::set_sources(const FunctionCallbackInfo<Value>& args)
     clear_sources();
 
     bool ok = activate_gl();
-    Handle<Value> ret;
-
-    Handle<Value> val;
-    GLenum gl_err;
 
     if (ok) {
         auto arr = args[0].As<Array>();
@@ -509,6 +551,7 @@ void video_mixer_base::set_sources(const FunctionCallbackInfo<Value>& args)
             ctx.u2 = obj->Get(l_u2_sym)->NumberValue();
             ctx.v2 = obj->Get(l_v2_sym)->NumberValue();
 
+            GLenum gl_err;
             glGenTextures(1, &ctx.texture);
             if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR))) {
                 sprintf(last_error, "OpenGL error %d", gl_err);
@@ -549,6 +592,11 @@ void video_mixer_base::tick(frame_time_t time)
         glFinish();
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
             sprintf(last_error, "OpenGL error %d", gl_err);
+    }
+
+    if (ok) {
+        for (auto &ctx : hook_ctxes)
+            ctx.hook()->video_post_render(ctx);
     }
 
     // Convert colorspace.
@@ -838,6 +886,10 @@ void video_mixer_base::init_prototype(Handle<FunctionTemplate> func)
         auto mixer = ObjectWrap::Unwrap<video_mixer_base>(args.This());
         mixer->set_sources(args);
     });
+    NODE_SET_PROTOTYPE_METHOD(func, "setHooks", [](const FunctionCallbackInfo<Value>& args) {
+        auto mixer = ObjectWrap::Unwrap<video_mixer_base>(args.This());
+        mixer->set_hooks(args);
+    });
 }
 
 
@@ -852,6 +904,15 @@ bool video_source::link_video_source(video_source_context &ctx)
 }
 
 void video_source::unlink_video_source(video_source_context &ctx)
+{
+}
+
+bool video_hook::link_video_hook(video_hook_context &ctx)
+{
+    return true;
+}
+
+void video_hook::unlink_video_hook(video_hook_context &ctx)
 {
 }
 
