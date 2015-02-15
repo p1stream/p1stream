@@ -150,7 +150,7 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
     if (ok) {
         on_error.Reset(isolate, val.As<Function>());
 
-        ok = platform_init(params) && activate_gl();
+        ok = platform_init(params);
     }
 
     if (ok) {
@@ -179,15 +179,10 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
     }
 
     if (ok) {
-        glGenTextures(1, &tex);
         glGenFramebuffers(1, &fbo);
         glGenVertexArrays(1, &vao);
         glGenBuffers(1, &vbo);
-        glBindTexture(GL_TEXTURE_RECTANGLE, tex);
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        glTexImage2D(GL_TEXTURE_RECTANGLE, 0,
-            GL_RGBA8, out_dimensions.width, out_dimensions.height, 0,
-            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, tex, 0);
         program = glCreateProgram();
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
@@ -240,7 +235,6 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
         // GL state init. Most of this is up here because we can.
         glViewport(0, 0, out_dimensions.width, out_dimensions.height);
         glClearColor(0, 0, 0, 1);
-        glActiveTexture(GL_TEXTURE0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glUseProgram(program);
         glUniform1i(tex_u, 0);

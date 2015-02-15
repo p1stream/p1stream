@@ -70,6 +70,20 @@ bool video_mixer_linux::platform_init(Handle<Object> params)
             sprintf(last_error, "clCreateContext error %d", cl_err);
     }
 
+    if (ok) {
+        ok = activate_gl();
+    }
+
+    if (ok) {
+        glGenTextures(1, &tex);
+        glBindTexture(GL_TEXTURE_RECTANGLE, tex);
+        glTexImage2D(GL_TEXTURE_RECTANGLE, 0,
+            GL_RGBA8, out_dimensions.width, out_dimensions.height, 0,
+            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
+        if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
+            sprintf(last_error, "OpenGL error %d", gl_err);
+    }
+
     return ok;
 }
 

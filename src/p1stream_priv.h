@@ -104,9 +104,11 @@ public:
     Persistent<Function> on_data;
     Persistent<Function> on_error;
 
-    // The GL and CL contexts should be set up by platform support in the same
-    // share group. Only the CL context is cleaned up by common code. GL must
-    // be cleaned up in platform_destroy.
+    // Objects set up by platform_init. The GL and CL contexts must be in the
+    // same share group. The CL context is cleaned up by common code and
+    // doesn't need handling in platform_destroy. After platform_init, the GL
+    // context should be active and the output texture bound.
+    GLuint tex;
     cl_context cl;
 
     // Render output.
@@ -115,7 +117,6 @@ public:
     x264_picture_t out_pic;
 
     // OpenGL objects.
-    GLuint tex;
     GLuint fbo;
     GLuint vao;
     GLuint vbo;
