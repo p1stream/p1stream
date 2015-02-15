@@ -34,7 +34,7 @@
                     },
                     'sources': [
                         'src/util_mac.cc',
-                        'src/video_mac.mm'
+                        'src/video_mac.cc'
                     ]
                 }],
                 ['OS == "linux"', {

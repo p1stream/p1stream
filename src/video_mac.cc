@@ -1,6 +1,6 @@
 #include "p1stream_priv_mac.h"
 
-#include <Foundation/Foundation.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 namespace p1stream {
 
