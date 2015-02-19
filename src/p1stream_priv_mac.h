@@ -12,7 +12,6 @@ class video_mixer_mac : public video_mixer_base {
 public:
     video_mixer_mac();
 
-    IOSurfaceRef surface;
     CGLContextObj cgl_context;
 
     virtual bool platform_init(Handle<Object> params) final;
@@ -24,8 +23,9 @@ public:
 // ----- Inline implementations -----
 
 inline video_mixer_mac::video_mixer_mac() :
-    surface(), cgl_context()
+    cgl_context()
 {
+    surface_ = NULL;
 }
 
 

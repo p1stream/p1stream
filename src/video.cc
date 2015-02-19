@@ -183,7 +183,7 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
         glGenVertexArrays(1, &vao);
         glGenBuffers(1, &vbo);
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, tex, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, texture_, 0);
         program = glCreateProgram();
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
             sprintf(last_error, "OpenGL error %d", gl_err);
@@ -199,7 +199,7 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
     if (ok) {
         tex_u = glGetUniformLocation(program, "u_Texture");
 
-        tex_mem = clCreateFromGLTexture(cl, CL_MEM_READ_ONLY, GL_TEXTURE_RECTANGLE, 0, tex, &cl_err);
+        tex_mem = clCreateFromGLTexture(cl, CL_MEM_READ_ONLY, GL_TEXTURE_RECTANGLE, 0, texture_, &cl_err);
         if (!(ok = (cl_err == CL_SUCCESS)))
             sprintf(last_error, "clCreateFromGLTexture error %d", cl_err);
     }

@@ -75,8 +75,8 @@ bool video_mixer_linux::platform_init(Handle<Object> params)
     }
 
     if (ok) {
-        glGenTextures(1, &tex);
-        glBindTexture(GL_TEXTURE_RECTANGLE, tex);
+        glGenTextures(1, &texture_);
+        glBindTexture(GL_TEXTURE_RECTANGLE, texture_);
         glTexImage2D(GL_TEXTURE_RECTANGLE, 0,
             GL_RGBA8, out_dimensions.width, out_dimensions.height, 0,
             GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);

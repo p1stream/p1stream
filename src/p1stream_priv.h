@@ -16,11 +16,9 @@ extern "C" {
 
 #if __APPLE__
 #   include <OpenGL/OpenGL.h>
-#   include <OpenGL/gl3.h>
 #   include <OpenCL/opencl.h>
 #else
 #   define GL_GLEXT_PROTOTYPES
-#   include <GL/gl.h>
 #   include <CL/opencl.h>
 #endif
 
@@ -110,8 +108,10 @@ public:
     // same share group. The CL context is cleaned up by common code and
     // doesn't need handling in platform_destroy. After platform_init, the GL
     // context should be active and the output texture bound.
-    GLuint tex;
     cl_context cl;
+    // Additional fields defined in the public header:
+    // GLuint texture_;
+    // IOSurfaceRef surface_;  // OS X only
 
     // Render output.
     size_t out_size;

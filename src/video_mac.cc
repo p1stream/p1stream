@@ -52,9 +52,9 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
         CFRelease(surf_attr_values[0]);
 
     if (ok) {
-        surface = IOSurfaceCreate(surf_attr);
+        surface_ = IOSurfaceCreate(surf_attr);
         CFRelease(surf_attr);
-        if (!(ok = (surface != NULL)))
+        if (!(ok = (surface_ != NULL)))
             sprintf(last_error, "IOSurfaceCreate error");
     }
 
@@ -94,8 +94,8 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
     }
 
     if (ok) {
-        glGenTextures(1, &tex);
-        glBindTexture(GL_TEXTURE_RECTANGLE, tex);
+        glGenTextures(1, &texture_);
+        glBindTexture(GL_TEXTURE_RECTANGLE, texture_);
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
             sprintf(last_error, "OpenGL error %d", gl_err);
     }
@@ -104,7 +104,7 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
         CGLError err = CGLTexImageIOSurface2D(
             cgl_context, GL_TEXTURE_RECTANGLE,
             GL_RGBA8, surface_width, surface_height,
-            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface, 0);
+            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface_, 0);
         if (err != kCGLNoError)
             sprintf(last_error, "CGLTexImageIOSurface2D error %d", err);
     }
@@ -119,9 +119,9 @@ void video_mixer_mac::platform_destroy()
         cgl_context = nullptr;
     }
 
-    if (surface) {
-        CFRelease(surface);
-        surface = NULL;
+    if (surface_) {
+        CFRelease(surface_);
+        surface_ = NULL;
     }
 }
 
