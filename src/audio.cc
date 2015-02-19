@@ -69,7 +69,7 @@ void audio_mixer_full::init(const FunctionCallbackInfo<Value>& args)
 
         aac_err = aacEncOpen(&enc, 0x01, 2);
         if (!(ok = (aac_err == AACENC_OK)))
-            sprintf(last_error, "aacEncOpen error %d", aac_err);
+            sprintf(last_error, "aacEncOpen error 0x%x", aac_err);
     }
 
     if (ok) {
@@ -84,7 +84,7 @@ void audio_mixer_full::init(const FunctionCallbackInfo<Value>& args)
         for (auto &param : params) {
             aac_err = aacEncoder_SetParam(enc, param.first, param.second);
             if (!(ok = (aac_err == AACENC_OK))) {
-                sprintf(last_error, "aacEncoder_SetParam error %d", aac_err);
+                sprintf(last_error, "aacEncoder_SetParam error 0x%x", aac_err);
                 break;
             }
         }
@@ -93,7 +93,7 @@ void audio_mixer_full::init(const FunctionCallbackInfo<Value>& args)
     if (ok) {
         aac_err = aacEncEncode(enc, NULL, NULL, NULL, NULL);
         if (!(ok = (aac_err == AACENC_OK)))
-            sprintf(last_error, "aacEncEncode error %d", aac_err);
+            sprintf(last_error, "aacEncEncode error 0x%x", aac_err);
     }
 
     if (ok) {
@@ -105,7 +105,7 @@ void audio_mixer_full::init(const FunctionCallbackInfo<Value>& args)
 
         aac_err = aacEncInfo(enc, &aac_info);
         if (!(ok = (aac_err == AACENC_OK)))
-            sprintf(last_error, "aacEncInfo error %d", aac_err);
+            sprintf(last_error, "aacEncInfo error 0x%x", aac_err);
     }
 
     if (ok) {
@@ -156,7 +156,7 @@ void audio_mixer_full::destroy(bool unref)
         AACENC_ERROR aac_err = aacEncClose(&enc);
         enc = NULL;
         if (aac_err != AACENC_OK)
-            fprintf(stderr, "aacEncClose error %d\n", aac_err);
+            fprintf(stderr, "aacEncClose error 0x%x\n", aac_err);
     }
 
     on_data.Reset();
@@ -348,7 +348,7 @@ void audio_mixer_full::loop()
             // Encode the integer samples.
             AACENC_ERROR err = aacEncEncode(enc, &in_desc, &out_desc, &in_args, &out_args);
             if (err != AACENC_OK) {
-                sprintf(last_error, "aacEncEncode error %d", err);
+                sprintf(last_error, "aacEncEncode error 0x%x", err);
                 out_args.numOutBytes = 0;
             }
 

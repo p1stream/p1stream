@@ -21,13 +21,13 @@ bool video_mixer_linux::platform_init(Handle<Object> params)
     if (ok) {
         egl_ret = eglInitialize(egl_display, NULL, NULL);
         if (!(ok = (egl_ret == EGL_TRUE)))
-            sprintf(last_error, "eglInitialize error %d", eglGetError());
+            sprintf(last_error, "eglInitialize error 0x%x", eglGetError());
     }
 
     if (ok) {
         egl_ret = eglBindAPI(EGL_OPENGL_API);
         if (!(ok = (egl_ret == EGL_TRUE)))
-            sprintf(last_error, "eglBindApi error %d", eglGetError());
+            sprintf(last_error, "eglBindApi error 0x%x", eglGetError());
     }
 
     if (ok) {
@@ -41,7 +41,7 @@ bool video_mixer_linux::platform_init(Handle<Object> params)
         EGLint num_config;
         egl_ret = eglChooseConfig(egl_display, attribs, &egl_config, 1, &num_config);
         if (!(ok = (egl_ret == EGL_TRUE)))
-            sprintf(last_error, "eglChooseConfig error %d", eglGetError());
+            sprintf(last_error, "eglChooseConfig error 0x%x", eglGetError());
         else if (!(ok = (num_config > 0)))
             strcpy(last_error, "eglChooseConfig returned no suitable configurations");
     }
@@ -56,7 +56,7 @@ bool video_mixer_linux::platform_init(Handle<Object> params)
         egl_context = eglCreateContext(egl_display,
             egl_config, EGL_NO_CONTEXT, attribs);
         if (!(ok = (egl_context != EGL_NO_CONTEXT)))
-            sprintf(last_error, "eglCreateContext error %d", eglGetError());
+            sprintf(last_error, "eglCreateContext error 0x%x", eglGetError());
     }
 
     if (ok) {
@@ -67,7 +67,7 @@ bool video_mixer_linux::platform_init(Handle<Object> params)
         };
         cl = clCreateContext(props, 0, NULL, NULL, NULL, &cl_err);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clCreateContext error %d", cl_err);
+            sprintf(last_error, "clCreateContext error 0x%x", cl_err);
     }
 
     if (ok) {
@@ -81,7 +81,7 @@ bool video_mixer_linux::platform_init(Handle<Object> params)
             GL_RGBA8, out_dimensions.width, out_dimensions.height, 0,
             GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
-            sprintf(last_error, "OpenGL error %d", gl_err);
+            sprintf(last_error, "OpenGL error 0x%x", gl_err);
     }
 
     return ok;
@@ -94,14 +94,14 @@ void video_mixer_linux::platform_destroy()
     if (egl_context != EGL_NO_CONTEXT) {
         egl_ret = eglDestroyContext(egl_display, egl_context);
         if (egl_ret == EGL_FALSE)
-            fprintf(stderr, "eglDestroyContext error %d", eglGetError());
+            fprintf(stderr, "eglDestroyContext error 0x%x", eglGetError());
         egl_context = EGL_NO_CONTEXT;
     }
 
     if (egl_display != EGL_NO_DISPLAY) {
         egl_ret = eglTerminate(egl_display);
         if (egl_ret == EGL_FALSE)
-            fprintf(stderr, "eglTerminate error %d", eglGetError());
+            fprintf(stderr, "eglTerminate error 0x%x", eglGetError());
         egl_display = EGL_NO_DISPLAY;
     }
 }
@@ -114,7 +114,7 @@ bool video_mixer_linux::activate_gl()
     egl_ret = eglMakeCurrent(egl_display,
         EGL_NO_SURFACE, EGL_NO_SURFACE, egl_context);
     if (!(ok = egl_ret == EGL_TRUE))
-        sprintf(last_error, "eglMakeCurrent error %d", eglGetError());
+        sprintf(last_error, "eglMakeCurrent error 0x%x", eglGetError());
 
     return ok;
 }

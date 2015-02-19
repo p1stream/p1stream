@@ -161,7 +161,7 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
         size_t size;
         cl_err = clGetContextInfo(cl, CL_CONTEXT_DEVICES, sizeof(cl_device_id), &device_id, &size);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clGetContextInfo error %d", cl_err);
+            sprintf(last_error, "clGetContextInfo error 0x%x", cl_err);
         else if (!(ok = (size != 0)))
             strcpy(last_error, "No suitable OpenCL devices");
     }
@@ -169,7 +169,7 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
     if (ok) {
         clq = clCreateCommandQueue(cl, device_id, 0, &cl_err);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clCreateCommandQueue error %d", cl_err);
+            sprintf(last_error, "clCreateCommandQueue error 0x%x", cl_err);
     }
 
     if (ok) {
@@ -186,7 +186,7 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, texture_, 0);
         program = glCreateProgram();
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
-            sprintf(last_error, "OpenGL error %d", gl_err);
+            sprintf(last_error, "OpenGL error 0x%x", gl_err);
     }
 
     if (ok) {
@@ -201,25 +201,25 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
 
         tex_mem = clCreateFromGLTexture(cl, CL_MEM_READ_ONLY, GL_TEXTURE_RECTANGLE, 0, texture_, &cl_err);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clCreateFromGLTexture error %d", cl_err);
+            sprintf(last_error, "clCreateFromGLTexture error 0x%x", cl_err);
     }
 
     if (ok) {
         out_mem = clCreateBuffer(cl, CL_MEM_WRITE_ONLY, out_size, NULL, &cl_err);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clCreateBuffer error %d", cl_err);
+            sprintf(last_error, "clCreateBuffer error 0x%x", cl_err);
     }
 
     if (ok) {
         yuv_program = clCreateProgramWithSource(cl, 1, &yuv_kernel_source, NULL, &cl_err);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clCreateProgramWithSource error %d", cl_err);
+            sprintf(last_error, "clCreateProgramWithSource error 0x%x", cl_err);
     }
 
     if (ok) {
         cl_err = clBuildProgram(yuv_program, 0, NULL, NULL, NULL, NULL);
         if (!(ok = (cl_err == CL_SUCCESS))) {
-            sprintf(last_error, "clBuildProgram error %d", cl_err);
+            sprintf(last_error, "clBuildProgram error 0x%x", cl_err);
             clReleaseProgram(yuv_program);
         }
     }
@@ -228,7 +228,7 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
         yuv_kernel = clCreateKernel(yuv_program, "yuv", &cl_err);
         clReleaseProgram(yuv_program);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clCreateKernel error %d", cl_err);
+            sprintf(last_error, "clCreateKernel error 0x%x", cl_err);
     }
 
     if (ok) {
@@ -244,19 +244,19 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
-            sprintf(last_error, "OpenGL error %d", gl_err);
+            sprintf(last_error, "OpenGL error 0x%x", gl_err);
     }
 
     if (ok) {
         cl_err = clSetKernelArg(yuv_kernel, 0, sizeof(cl_mem), &tex_mem);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clSetKernelArg error %d", cl_err);
+            sprintf(last_error, "clSetKernelArg error 0x%x", cl_err);
     }
 
     if (ok) {
         cl_err = clSetKernelArg(yuv_kernel, 1, sizeof(cl_mem), &out_mem);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clSetKernelArg error %d", cl_err);
+            sprintf(last_error, "clSetKernelArg error 0x%x", cl_err);
     }
 
     if (ok) {
@@ -374,21 +374,21 @@ void video_mixer_base::destroy(bool unref)
     if (yuv_kernel != NULL) {
         cl_err = clReleaseKernel(yuv_kernel);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseKernel error %d\n", cl_err);
+            fprintf(stderr, "clReleaseKernel error 0x%x\n", cl_err);
         yuv_kernel = NULL;
     }
 
     if (out_mem != NULL) {
         cl_err = clReleaseMemObject(out_mem);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseMemObject error %d\n", cl_err);
+            fprintf(stderr, "clReleaseMemObject error 0x%x\n", cl_err);
         out_mem = NULL;
     }
 
     if (tex_mem != NULL) {
         cl_err = clReleaseMemObject(tex_mem);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseMemObject error %d\n", cl_err);
+            fprintf(stderr, "clReleaseMemObject error 0x%x\n", cl_err);
         tex_mem = NULL;
     }
 
@@ -397,14 +397,14 @@ void video_mixer_base::destroy(bool unref)
     if (clq != NULL) {
         cl_err = clReleaseCommandQueue(clq);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseCommandQueue error %d\n", cl_err);
+            fprintf(stderr, "clReleaseCommandQueue error 0x%x\n", cl_err);
         clq = NULL;
     }
 
     if (cl != nullptr) {
         cl_int cl_err = clReleaseContext(cl);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseContext error %d", cl_err);
+            fprintf(stderr, "clReleaseContext error 0x%x", cl_err);
         cl = nullptr;
     }
 
@@ -554,7 +554,7 @@ void video_mixer_base::set_sources(const FunctionCallbackInfo<Value>& args)
             GLenum gl_err;
             glGenTextures(1, &ctx.texture);
             if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR))) {
-                sprintf(last_error, "OpenGL error %d", gl_err);
+                sprintf(last_error, "OpenGL error 0x%x", gl_err);
                 isolate->ThrowException(pop_last_error());
                 source_ctxes.pop_back();
                 break;
@@ -591,7 +591,7 @@ void video_mixer_base::tick(frame_time_t time)
         }
         glFinish();
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
-            sprintf(last_error, "OpenGL error %d", gl_err);
+            sprintf(last_error, "OpenGL error 0x%x", gl_err);
     }
 
     if (ok) {
@@ -609,31 +609,31 @@ void video_mixer_base::tick(frame_time_t time)
     if (ok) {
         cl_err = clEnqueueAcquireGLObjects(clq, 1, &tex_mem, 0, NULL, NULL);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clEnqueueAcquireGLObjects error %d", cl_err);
+            sprintf(last_error, "clEnqueueAcquireGLObjects error 0x%x", cl_err);
     }
 
     if (ok) {
         cl_err = clEnqueueNDRangeKernel(clq, yuv_kernel, 2, NULL, yuv_work_size, NULL, 0, NULL, NULL);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clEnqueueNDRangeKernel error %d", cl_err);
+            sprintf(last_error, "clEnqueueNDRangeKernel error 0x%x", cl_err);
     }
 
     if (ok) {
         cl_err = clEnqueueReleaseGLObjects(clq, 1, &tex_mem, 0, NULL, NULL);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clEnqueueReleaseGLObjects error %d", cl_err);
+            sprintf(last_error, "clEnqueueReleaseGLObjects error 0x%x", cl_err);
     }
 
     if (ok) {
         cl_err = clEnqueueReadBuffer(clq, out_mem, CL_FALSE, 0, out_size, out_pic.img.plane[0], 0, NULL, NULL);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clEnqueueReadBuffer error %d", cl_err);
+            sprintf(last_error, "clEnqueueReadBuffer error 0x%x", cl_err);
     }
 
     if (ok) {
         cl_err = clFinish(clq);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clFinish error %d", cl_err);
+            sprintf(last_error, "clFinish error 0x%x", cl_err);
     }
 
     // Encode.
@@ -816,7 +816,7 @@ GLuint video_mixer_base::build_shader(GLuint type, const char *source)
 
     GLenum err = glGetError();
     if (err != GL_NO_ERROR) {
-        sprintf(last_error, "glCompileShader error %d", err);
+        sprintf(last_error, "glCompileShader error 0x%x", err);
         return 0;
     }
     if (success != GL_TRUE) {
@@ -859,7 +859,7 @@ bool video_mixer_base::build_program()
 
     GLenum err = glGetError();
     if (err != GL_NO_ERROR) {
-        sprintf(last_error, "glLinkProgram error %d", err);
+        sprintf(last_error, "glLinkProgram error 0x%x", err);
         return false;
     }
     if (success != GL_TRUE) {
