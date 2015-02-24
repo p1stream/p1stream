@@ -22,4 +22,4 @@ You need the [Xcode] command line tools, [yasm] and [io.js].
 
 All original code here is licensed [GPLv3](LICENSE).
 
-© 2014 — Stéphan Kochen
+© 2015 — Stéphan Kochen
