@@ -2,19 +2,29 @@ body {
     margin: 0;
 }
 
+.fixed-aspect {
+    position: relative;
+}
+
 .theater {
     padding: 1px 0;
     background: #1b1b1b;
 }
 
-.video-wrap {
+.theater-wrap {
+    position: relative;
+    min-width: 100px;
     max-width: 1280px;
     margin: 0 auto;
 }
 
-.video-wrap video {
-    width: 100%;
-    height: auto;
+.theater-wrap .mixer-preview {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: 0;
 }
 
 @media (min-width: 768px) {
