@@ -1,3 +1,5 @@
+// FIXME: This code is outdated, and was never fully tested.
+
 #include "p1stream_priv_linux.h"
 
 #include <string.h>

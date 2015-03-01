@@ -18,10 +18,8 @@ namespace p1stream {
 
 
 Eternal<String> source_sym;
-Eternal<String> on_data_sym;
-Eternal<String> on_error_sym;
+Eternal<String> on_event_sym;
 
-Eternal<String> buffer_size_sym;
 Eternal<String> width_sym;
 Eternal<String> height_sym;
 Eternal<String> x264_preset_sym;
@@ -38,6 +36,9 @@ Eternal<String> v1_sym;
 Eternal<String> u2_sym;
 Eternal<String> v2_sym;
 Eternal<String> buf_sym;
+Eternal<String> slice_sym;
+Eternal<String> length_sym;
+Eternal<String> parent_sym;
 Eternal<String> frames_sym;
 Eternal<String> pts_sym;
 Eternal<String> dts_sym;
@@ -45,8 +46,6 @@ Eternal<String> keyframe_sym;
 Eternal<String> nals_sym;
 Eternal<String> type_sym;
 Eternal<String> priority_sym;
-Eternal<String> start_sym;
-Eternal<String> end_sym;
 
 Eternal<String> numerator_sym;
 Eternal<String> denominator_sym;
@@ -96,13 +95,24 @@ static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Value> module,
     NODE_DEFINE_CONSTANT(exports, NAL_PRIORITY_HIGH);
     NODE_DEFINE_CONSTANT(exports, NAL_PRIORITY_HIGHEST);
 
+    NODE_DEFINE_CONSTANT(exports, EV_LOG_TRACE);
+    NODE_DEFINE_CONSTANT(exports, EV_LOG_DEBUG);
+    NODE_DEFINE_CONSTANT(exports, EV_LOG_INFO);
+    NODE_DEFINE_CONSTANT(exports, EV_LOG_WARN);
+    NODE_DEFINE_CONSTANT(exports, EV_LOG_ERROR);
+    NODE_DEFINE_CONSTANT(exports, EV_LOG_FATAL);
+    NODE_DEFINE_CONSTANT(exports, EV_FAILURE);
+    NODE_DEFINE_CONSTANT(exports, EV_STALLED);
+    NODE_DEFINE_CONSTANT(exports, EV_VIDEO_HEADERS);
+    NODE_DEFINE_CONSTANT(exports, EV_VIDEO_FRAME);
+    NODE_DEFINE_CONSTANT(exports, EV_AUDIO_HEADERS);
+    NODE_DEFINE_CONSTANT(exports, EV_AUDIO_FRAME);
+
     // FIXME: Create our own environment, like node.
 #define SYM(handle, value) handle.Set(isolate, String::NewFromUtf8(isolate, value))
     SYM(source_sym, "source");
-    SYM(on_data_sym, "onData");
-    SYM(on_error_sym, "onError");
+    SYM(on_event_sym, "onEvent");
 
-    SYM(buffer_size_sym, "bufferSize");
     SYM(width_sym, "width");
     SYM(height_sym, "height");
     SYM(x264_preset_sym, "x264Preset");
@@ -119,6 +129,9 @@ static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Value> module,
     SYM(u2_sym, "u2");
     SYM(v2_sym, "v2");
     SYM(buf_sym, "buf");
+    SYM(slice_sym, "slice");
+    SYM(length_sym, "length");
+    SYM(parent_sym, "parent");
     SYM(frames_sym, "frames");
     SYM(pts_sym, "pts");
     SYM(dts_sym, "dts");
@@ -126,8 +139,6 @@ static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Value> module,
     SYM(nals_sym, "nals");
     SYM(type_sym, "type");
     SYM(priority_sym, "priority");
-    SYM(start_sym, "start");
-    SYM(end_sym, "end");
 
     SYM(numerator_sym, "numerator");
     SYM(denominator_sym, "denominator");

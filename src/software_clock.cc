@@ -6,53 +6,52 @@ namespace p1stream {
 void software_clock::init(const FunctionCallbackInfo<Value>& args)
 {
     auto *isolate = args.GetIsolate();
-    bool ok;
 
+    if (args.Length() != 1 || !args[0]->IsObject()) {
+        isolate->ThrowException(Exception::TypeError(
+            String::NewFromUtf8(isolate, "Expected an object")));
+        return;
+    }
+    auto params = args[0].As<Object>();
+
+    auto numVal = params->Get(numerator_sym.Get(isolate));
+    auto denVal = params->Get(denominator_sym.Get(isolate));
+    if (!numVal->IsUint32()) {
+        isolate->ThrowException(Exception::TypeError(
+            String::NewFromUtf8(isolate, "Invalid numerator")));
+        return;
+    }
+    if (!denVal->IsUint32()) {
+        isolate->ThrowException(Exception::TypeError(
+            String::NewFromUtf8(isolate, "Invalid denominator")));
+        return;
+    }
+
+    rate.num = numVal->Uint32Value();
+    rate.den = denVal->Uint32Value();
+    if (rate.num == 0 || rate.den == 0) {
+        isolate->ThrowException(Exception::TypeError(
+            String::NewFromUtf8(isolate, "Invalid fraction")));
+        return;
+    }
+
+    // Parameters checked, from here on we no longer throw exceptions.
     Wrap(args.This());
+    Ref();
     args.GetReturnValue().Set(handle());
 
-    if (!(ok = args.Length() == 1 && args[0]->IsObject())) {
-        throw_type_error("Expected an object");
-    }
-    else {
-        auto params = args[0].As<Object>();
-
-        auto numVal = params->Get(numerator_sym.Get(isolate));
-        auto denVal = params->Get(denominator_sym.Get(isolate));
-        if (!(ok = numVal->IsUint32())) {
-            throw_type_error("Invalid numerator");
-        }
-        else if (!(ok = denVal->IsUint32())) {
-            throw_type_error("Invalid denominator");
-        }
-        else {
-            rate.num = numVal->Uint32Value();
-            rate.den = denVal->Uint32Value();
-            if (!(ok = rate.num > 0 && rate.den > 0))
-                throw_type_error("Invalid fraction");
-        }
-    }
-
-    if (ok) {
-        thread.init(std::bind(&software_clock::loop, this));
-        running = true;
-
-        Ref();
-    }
-    else {
-        destroy(false);
-    }
+    thread.init(std::bind(&software_clock::loop, this));
+    running = true;
 }
 
-void software_clock::destroy(bool unref)
+void software_clock::destroy()
 {
     if (running) {
         thread.destroy();
         running = false;
     }
 
-    if (unref)
-        Unref();
+    Unref();
 }
 
 lockable *software_clock::lock()
@@ -60,10 +59,9 @@ lockable *software_clock::lock()
     return thread.lock();
 }
 
-bool software_clock::link_video_clock(video_clock_context &ctx)
+void software_clock::link_video_clock(video_clock_context &ctx)
 {
     ctxes.push_back(&ctx);
-    return true;
 }
 
 void software_clock::unlink_video_clock(video_clock_context &ctx)

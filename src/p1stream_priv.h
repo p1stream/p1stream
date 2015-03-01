@@ -3,6 +3,7 @@
 
 #include "p1stream.h"
 
+#include <vector>
 #include <list>
 
 extern "C" {
@@ -30,10 +31,8 @@ using namespace v8;
 using namespace node;
 
 extern Eternal<String> source_sym;
-extern Eternal<String> on_data_sym;
-extern Eternal<String> on_error_sym;
+extern Eternal<String> on_event_sym;
 
-extern Eternal<String> buffer_size_sym;
 extern Eternal<String> width_sym;
 extern Eternal<String> height_sym;
 extern Eternal<String> x264_preset_sym;
@@ -50,6 +49,9 @@ extern Eternal<String> v1_sym;
 extern Eternal<String> u2_sym;
 extern Eternal<String> v2_sym;
 extern Eternal<String> buf_sym;
+extern Eternal<String> slice_sym;
+extern Eternal<String> length_sym;
+extern Eternal<String> parent_sym;
 extern Eternal<String> frames_sym;
 extern Eternal<String> pts_sym;
 extern Eternal<String> dts_sym;
@@ -57,19 +59,16 @@ extern Eternal<String> keyframe_sym;
 extern Eternal<String> nals_sym;
 extern Eternal<String> type_sym;
 extern Eternal<String> priority_sym;
-extern Eternal<String> start_sym;
-extern Eternal<String> end_sym;
 
 extern Eternal<String> numerator_sym;
 extern Eternal<String> denominator_sym;
 
 extern Eternal<String> volume_sym;
 
-
-// ----- Utility types ----
-
-void throw_error(const char *msg);
-void throw_type_error(const char *msg);
+#define EV_VIDEO_HEADERS 'vhdr'
+#define EV_VIDEO_FRAME   'vfrm'
+#define EV_AUDIO_HEADERS 'ahdr'
+#define EV_AUDIO_FRAME   'afrm'
 
 
 // ----- Video types ----
@@ -78,12 +77,10 @@ class video_clock_context_full;
 class video_source_context_full;
 class video_hook_context_full;
 
-// Data we pass between threads. One of these is created per
-// x264_encoder_{headers|encode} call.
-//
-// In memory, this struct lives in the mixer buffer, and is followed by
-// an array of x264_nals_t, and then the sequential payloads.
-struct video_mixer_frame {
+// Video frame event. One of these is created per x264_encoder_{headers|encode}
+// call. The struct is followed by an array of x264_nals_t, and then the
+// sequential payloads.
+struct video_frame_data {
     int64_t pts;
     int64_t dts;
     bool keyframe;
@@ -97,12 +94,13 @@ class video_mixer_base : public video_mixer {
 public:
     video_mixer_base();
 
-    video_clock_context_full *clock_ctx;
-    std::list<video_source_context_full> source_ctxes;
-    std::list<video_hook_context_full> hook_ctxes;
+    Persistent<Function> on_event;
 
-    Persistent<Function> on_data;
-    Persistent<Function> on_error;
+    bool running;
+
+    video_clock_context_full *clock_ctx;
+    std::vector<video_source_context_full> source_ctxes;
+    std::vector<video_hook_context_full> hook_ctxes;
 
     // Objects set up by platform_init. The GL and CL contexts must be in the
     // same share group. The CL context is cleaned up by common code and
@@ -136,28 +134,20 @@ public:
     x264_param_t enc_params;
     x264_t *enc;
 
-    // Error handling.
-    char last_error[128];
-    Handle<Value> pop_last_error();
-
     // Callback.
-    uint8_t *buffer;
-    uint8_t *buffer_pos;
-    uint32_t buffer_size;
+    event_buffer buffer;
     main_loop_callback callback;
     Isolate *isolate;
     Persistent<Context> context;
 
     // Internal.
-    void emit_last();
+    void emit_events();
     void clear_sources();
     void clear_hooks();
     void tick(frame_time_t time);
     GLuint build_shader(GLuint type, const char *source);
     bool build_program();
-    bool buffer_nals(x264_nal_t *nals, int nals_len, x264_picture_t *pic);
-
-    static void free_callback(char *data, void *hint);
+    void buffer_nals(uint32_t id, x264_nal_t *nals, int nals_len, x264_picture_t *pic);
 
     // Lockable implementation.
     virtual lockable *lock() final;
@@ -169,7 +159,7 @@ public:
 
     // Public JavaScript methods.
     void init(const FunctionCallbackInfo<Value>& args);
-    void destroy(bool unref = true);
+    void destroy();
 
     void set_sources(const FunctionCallbackInfo<Value>& args);
     void set_hooks(const FunctionCallbackInfo<Value>& args);
@@ -223,13 +213,13 @@ public:
 
     // Public JavaScript methods.
     void init(const FunctionCallbackInfo<Value>& args);
-    void destroy(bool unref = true);
+    void destroy();
 
     // Lockable implementation.
     virtual lockable *lock() final;
 
     // Video clock implementation.
-    virtual bool link_video_clock(video_clock_context &ctx) final;
+    virtual void link_video_clock(video_clock_context &ctx) final;
     virtual void unlink_video_clock(video_clock_context &ctx) final;
     virtual fraction_t video_ticks_per_second(video_clock_context &ctx) final;
 
@@ -240,12 +230,9 @@ public:
 
 // ----- Audio types -----
 
-// Data we pass between threads. One of these is created per
-// aacEncEncode call.
-//
-// In memory, this struct lives in the mixer buffer, and is followed by
-// the encoded payload.
-struct audio_mixer_frame {
+// Audio frame event. One of these is created per aacEncEncode call. The struct
+// is directly followed by the payload.
+struct audio_frame_data {
     int64_t pts;
 
     size_t size;
@@ -258,10 +245,9 @@ class audio_mixer_full : public audio_mixer {
 public:
     audio_mixer_full();
 
-    std::list<audio_source_context_full> source_ctxes;
+    std::vector<audio_source_context_full> source_ctxes;
 
-    Persistent<Function> on_data;
-    Persistent<Function> on_error;
+    Persistent<Function> on_event;
 
     // Mix buffer.
     float *mix_buffer;
@@ -270,36 +256,29 @@ public:
     // Encoder.
     HANDLE_AACENCODER enc;
 
-    // Error handling.
-    char last_error[128];
-    Handle<Value> pop_last_error();
-
-    // Callback.
-    uint8_t *buffer;
-    uint8_t *buffer_pos;
-    main_loop_callback callback;
-    Isolate *isolate;
-    Persistent<Context> context;
-
     // Mix thread.
     threaded_loop thread;
     bool running;
 
+    // Callback.
+    event_buffer buffer;
+    main_loop_callback callback;
+    Isolate *isolate;
+    Persistent<Context> context;
+
     // Internal.
-    void emit_last();
+    void emit_events();
     void clear_sources();
     void loop();
     size_t time_to_samples(int64_t time);
     int64_t samples_to_time(size_t samples);
-
-    static void free_callback(char *data, void *hint);
 
     // Lockable implementation.
     virtual lockable *lock() final;
 
     // Public JavaScript methods.
     void init(const FunctionCallbackInfo<Value>& args);
-    void destroy(bool unref = true);
+    void destroy();
 
     void set_sources(const FunctionCallbackInfo<Value>& args);
 
@@ -318,20 +297,9 @@ public:
 
 // ----- Inline implementations -----
 
-inline void throw_error(const char *msg)
-{
-    auto *isolate = Isolate::GetCurrent();
-    isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, msg)));
-}
-
-inline void throw_type_error(const char *msg)
-{
-    auto *isolate = Isolate::GetCurrent();
-    isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, msg)));
-}
-
 inline video_mixer_base::video_mixer_base() :
-    clock_ctx(), cl(), out_pic(), clq(), tex_mem(), out_mem(), yuv_kernel(), enc(), last_error(), buffer()
+    running(), clock_ctx(), cl(), out_pic(), clq(), tex_mem(), out_mem(), yuv_kernel(), enc(),
+    buffer(1048576)  // 1 MiB event buffer
 {
 }
 
@@ -359,7 +327,8 @@ inline software_clock::software_clock() :
 }
 
 inline audio_mixer_full::audio_mixer_full() :
-    mix_buffer(), enc(), last_error(), buffer(), running()
+    mix_buffer(), enc(), running(),
+    buffer(196608)  // 192 KiB event buffer
 {
 }
 

@@ -32,7 +32,7 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
         surf_attr_values[1] != NULL &&
         surf_attr_values[2] != NULL
     )))
-        sprintf(last_error, "CFNumberCreate error");
+        buffer.emitf(EV_LOG_ERROR, "CFNumberCreate error");
 
     CFDictionaryRef surf_attr;
     if (ok) {
@@ -41,7 +41,7 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
             3, NULL, &kCFTypeDictionaryValueCallBacks
         );
         if (!(ok = (surf_attr != NULL)))
-            sprintf(last_error, "CFDictionaryCreate error");
+            buffer.emitf(EV_LOG_ERROR, "CFDictionaryCreate error");
     }
 
     if (surf_attr_values[0] != NULL)
@@ -55,7 +55,7 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
         surface_ = IOSurfaceCreate(surf_attr);
         CFRelease(surf_attr);
         if (!(ok = (surface_ != NULL)))
-            sprintf(last_error, "IOSurfaceCreate error");
+            buffer.emitf(EV_LOG_ERROR, "IOSurfaceCreate error");
     }
 
     CGLPixelFormatObj pixel_format;
@@ -68,14 +68,14 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
         GLint npix;
         cgl_err = CGLChoosePixelFormat(attribs, &pixel_format, &npix);
         if (!(ok = (cgl_err == kCGLNoError)))
-            sprintf(last_error, "CGLChoosePixelFormat error 0x%x", cgl_err);
+            buffer.emitf(EV_LOG_ERROR, "CGLChoosePixelFormat error 0x%x", cgl_err);
     }
 
     if (ok) {
         cgl_err = CGLCreateContext(pixel_format, NULL, &cgl_context);
         CGLReleasePixelFormat(pixel_format);
         if (!(ok = (cgl_err == kCGLNoError)))
-            sprintf(last_error, "CGLCreateContext error 0x%x", cgl_err);
+            buffer.emitf(EV_LOG_ERROR, "CGLCreateContext error 0x%x", cgl_err);
     }
 
     if (ok) {
@@ -86,7 +86,7 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
         };
         cl = clCreateContext(props, 0, NULL, NULL, NULL, &cl_err);
         if (!(ok = (cl_err == CL_SUCCESS)))
-            sprintf(last_error, "clCreateContext error 0x%x", cl_err);
+            buffer.emitf(EV_LOG_ERROR, "clCreateContext error 0x%x", cl_err);
     }
 
     if (ok) {
@@ -97,7 +97,7 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
         glGenTextures(1, &texture_);
         glBindTexture(GL_TEXTURE_RECTANGLE, texture_);
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
-            sprintf(last_error, "OpenGL error 0x%x", gl_err);
+            buffer.emitf(EV_LOG_ERROR, "OpenGL error 0x%x", gl_err);
     }
 
     if (ok) {
@@ -106,7 +106,7 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
             GL_RGBA8, surface_width, surface_height,
             GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface_, 0);
         if (err != kCGLNoError)
-            sprintf(last_error, "CGLTexImageIOSurface2D error 0x%x", err);
+            buffer.emitf(EV_LOG_ERROR, "CGLTexImageIOSurface2D error 0x%x", err);
     }
 
     return ok;
@@ -129,7 +129,7 @@ bool video_mixer_mac::activate_gl()
 {
     CGLError cgl_err = CGLSetCurrentContext(cgl_context);
     if (cgl_err != kCGLNoError) {
-        sprintf(last_error, "CGLSetCurrentContext error 0x%x", cgl_err);
+        buffer.emitf(EV_LOG_ERROR, "CGLSetCurrentContext error 0x%x", cgl_err);
         return false;
     }
     return true;
@@ -148,7 +148,7 @@ void video_source_context::render_iosurface(IOSurfaceRef surface)
         GL_RGBA8, width, height,
         GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface, 0);
     if (err != kCGLNoError)
-        sprintf(mixer_mac.last_error, "CGLTexImageIOSurface2D error 0x%x", err);
+        mixer_mac.buffer.emitf(EV_LOG_ERROR, "CGLTexImageIOSurface2D error 0x%x", err);
     else
         render_texture();
 }
