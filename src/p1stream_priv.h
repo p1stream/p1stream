@@ -77,25 +77,13 @@ class video_clock_context_full;
 class video_source_context_full;
 class video_hook_context_full;
 
-// Video frame event. One of these is created per x264_encoder_{headers|encode}
-// call. The struct is followed by an array of x264_nals_t, and then the
-// sequential payloads.
-struct video_frame_data {
-    int64_t pts;
-    int64_t dts;
-    bool keyframe;
-
-    int nals_len;
-    x264_nal_t nals[0];
-};
-
 // Lockable is a proxy for the video clock.
 class video_mixer_base : public video_mixer {
 public:
     video_mixer_base();
 
-    Persistent<Function> on_event;
-
+    Isolate *isolate;
+    event_buffer buffer;
     bool running;
 
     video_clock_context_full *clock_ctx;
@@ -134,14 +122,7 @@ public:
     x264_param_t enc_params;
     x264_t *enc;
 
-    // Callback.
-    event_buffer buffer;
-    main_loop_callback callback;
-    Isolate *isolate;
-    Persistent<Context> context;
-
     // Internal.
-    void emit_events();
     void clear_sources();
     void clear_hooks();
     void tick(frame_time_t time);
@@ -230,20 +211,14 @@ public:
 
 // ----- Audio types -----
 
-// Audio frame event. One of these is created per aacEncEncode call. The struct
-// is directly followed by the payload.
-struct audio_frame_data {
-    int64_t pts;
-
-    size_t size;
-    uint8_t data[0];
-};
-
 class audio_source_context_full;
 
 class audio_mixer_full : public audio_mixer {
 public:
     audio_mixer_full();
+
+    Isolate *isolate;
+    event_buffer buffer;
 
     std::vector<audio_source_context_full> source_ctxes;
 
@@ -260,14 +235,7 @@ public:
     threaded_loop thread;
     bool running;
 
-    // Callback.
-    event_buffer buffer;
-    main_loop_callback callback;
-    Isolate *isolate;
-    Persistent<Context> context;
-
     // Internal.
-    void emit_events();
     void clear_sources();
     void loop();
     size_t time_to_samples(int64_t time);
@@ -297,12 +265,6 @@ public:
 
 // ----- Inline implementations -----
 
-inline video_mixer_base::video_mixer_base() :
-    running(), clock_ctx(), cl(), out_pic(), clq(), tex_mem(), out_mem(), yuv_kernel(), enc(),
-    buffer(1048576)  // 1 MiB event buffer
-{
-}
-
 inline video_clock_context_full::video_clock_context_full(video_mixer *mixer, video_clock *clock)
 {
     mixer_ = mixer;
@@ -323,12 +285,6 @@ inline video_hook_context_full::video_hook_context_full(video_mixer *mixer, vide
 
 inline software_clock::software_clock() :
     running()
-{
-}
-
-inline audio_mixer_full::audio_mixer_full() :
-    mix_buffer(), enc(), running(),
-    buffer(196608)  // 192 KiB event buffer
 {
 }
 

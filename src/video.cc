@@ -5,6 +5,18 @@
 
 namespace p1stream {
 
+// Video frame event. One of these is created per x264_encoder_{headers|encode}
+// call. The struct is followed by an array of x264_nals_t, and then the
+// sequential payloads.
+struct video_frame_data {
+    int64_t pts;
+    int64_t dts;
+    bool keyframe;
+
+    int nals_len;
+    x264_nal_t nals[0];
+};
+
 static const char *simple_vertex_shader =
     "#version 150\n"
 
@@ -75,9 +87,16 @@ static const GLsizei vbo_stride = 4 * sizeof(GLfloat);
 static const GLsizei vbo_size = 4 * vbo_stride;
 static const void *vbo_tex_coord_offset = (void *)(2 * sizeof(GLfloat));
 
+static Local<Value> video_events_transform(Isolate *isolate, event &ev, buffer_slicer &slicer);
 static Local<Value> video_frame_to_js(Isolate *isolate, video_frame_data &frame, buffer_slicer &slicer);
 static void encoder_log_callback(void *priv, int level, const char *format, va_list ap);
 
+
+video_mixer_base::video_mixer_base() :
+    buffer(this, video_events_transform, 1048576),  // 1 MiB event buffer
+    running(), clock_ctx(), cl(), out_pic(), clq(), tex_mem(), out_mem(), yuv_kernel(), enc()
+{
+}
 
 void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
 {
@@ -125,9 +144,7 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
     Ref();
     args.GetReturnValue().Set(handle(isolate));
 
-    callback.init(std::bind(&video_mixer_base::emit_events, this));
-    context.Reset(isolate, isolate->GetCurrentContext());
-    on_event.Reset(isolate, val.As<Function>());
+    buffer.set_callback(isolate->GetCurrentContext(), val.As<Function>());
 
     ok = platform_init(params);
 
@@ -325,8 +342,6 @@ void video_mixer_base::init(const FunctionCallbackInfo<Value>& args)
     else {
         buffer.emit(EV_FAILURE);
     }
-
-    callback.send();
 }
 
 void video_mixer_base::destroy()
@@ -353,21 +368,21 @@ void video_mixer_base::destroy()
     if (yuv_kernel != NULL) {
         cl_err = clReleaseKernel(yuv_kernel);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseKernel error 0x%x\n", cl_err);
+            buffer.emitf(EV_LOG_ERROR, "clReleaseKernel error 0x%x\n", cl_err);
         yuv_kernel = NULL;
     }
 
     if (out_mem != NULL) {
         cl_err = clReleaseMemObject(out_mem);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseMemObject error 0x%x\n", cl_err);
+            buffer.emitf(EV_LOG_ERROR, "clReleaseMemObject error 0x%x\n", cl_err);
         out_mem = NULL;
     }
 
     if (tex_mem != NULL) {
         cl_err = clReleaseMemObject(tex_mem);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseMemObject error 0x%x\n", cl_err);
+            buffer.emitf(EV_LOG_ERROR, "clReleaseMemObject error 0x%x\n", cl_err);
         tex_mem = NULL;
     }
 
@@ -376,24 +391,20 @@ void video_mixer_base::destroy()
     if (clq != NULL) {
         cl_err = clReleaseCommandQueue(clq);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseCommandQueue error 0x%x\n", cl_err);
+            buffer.emitf(EV_LOG_ERROR, "clReleaseCommandQueue error 0x%x\n", cl_err);
         clq = NULL;
     }
 
     if (cl != nullptr) {
         cl_int cl_err = clReleaseContext(cl);
         if (cl_err != CL_SUCCESS)
-            fprintf(stderr, "clReleaseContext error 0x%x\n", cl_err);
+            buffer.emitf(EV_LOG_ERROR, "clReleaseContext error 0x%x\n", cl_err);
         cl = nullptr;
     }
 
     platform_destroy();
 
-    callback.destroy();
-    emit_events();
-
-    on_event.Reset();
-    context.Reset();
+    buffer.flush();
 
     Unref();
 }
@@ -524,7 +535,6 @@ void video_mixer_base::set_sources(const FunctionCallbackInfo<Value>& args)
     glGenTextures(len, textures);
     if ((gl_err = glGetError()) != GL_NO_ERROR) {
         buffer.emitf(EV_LOG_ERROR, "OpenGL error 0x%x", gl_err);
-        callback.send();
         return;
     }
 
@@ -628,9 +638,6 @@ void video_mixer_base::tick(frame_time_t time)
         else if (i_ret > 0)
             buffer_nals(EV_VIDEO_FRAME, nals, nals_len, &enc_pic);
     }
-
-    // Signal main thread.
-    callback.send();
 }
 
 void video_mixer_base::buffer_nals(uint32_t id, x264_nal_t *nals, int nals_len, x264_picture_t *pic)
@@ -642,7 +649,7 @@ void video_mixer_base::buffer_nals(uint32_t id, x264_nal_t *nals, int nals_len, 
     size_t payload_size = end - start;
     size_t claim = sizeof(video_frame_data) + nals_size + payload_size;
 
-    auto *ev = buffer.emitd(id, claim);
+    auto *ev = buffer.emit(id, claim);
     if (ev == NULL)
         return;
 
@@ -665,31 +672,15 @@ void video_mixer_base::buffer_nals(uint32_t id, x264_nal_t *nals, int nals_len, 
     memcpy(p, nals[0].p_payload, payload_size);
 }
 
-void video_mixer_base::emit_events()
+static Local<Value> video_events_transform(Isolate *isolate, event &ev, buffer_slicer &slicer)
 {
-    event_buffer_copy *copy;
-    {
-        lock_handle lock(*this);
-        copy = buffer.copy_out();
+    switch (ev.id) {
+        case EV_VIDEO_HEADERS:
+        case EV_VIDEO_FRAME:
+            return video_frame_to_js(isolate, *(video_frame_data *) ev.data, slicer);
+        default:
+            return Undefined(isolate);
     }
-    if (copy == NULL)
-        return;
-
-    HandleScope handle_scope(isolate);
-    Context::Scope context_scope(Local<Context>::New(isolate, context));
-
-    copy->callback(
-        isolate, handle(isolate), Local<Function>::New(isolate, on_event),
-        [](Isolate *isolate, event &ev, buffer_slicer &slicer) -> Local<Value> {
-            switch (ev.id) {
-                case EV_VIDEO_HEADERS:
-                case EV_VIDEO_FRAME:
-                    return video_frame_to_js(isolate, *(video_frame_data *) ev.data, slicer);
-                default:
-                    return Undefined(isolate);
-            }
-        }
-    );
 }
 
 static Local<Value> video_frame_to_js(Isolate *isolate, video_frame_data &frame, buffer_slicer &slicer)

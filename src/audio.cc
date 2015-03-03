@@ -7,6 +7,15 @@
 
 namespace p1stream {
 
+// Audio frame event. One of these is created per aacEncEncode call. The struct
+// is directly followed by the payload.
+struct audio_frame_data {
+    int64_t pts;
+
+    size_t size;
+    uint8_t data[0];
+};
+
 // Hardcoded format parameters.
 static const int sample_rate = 44100;
 static const int num_channels = 2;
@@ -26,8 +35,15 @@ static const int enc_frame_samples = enc_frame_size * num_channels;
 static const int enc_out_bytes = 6144 / 8 * num_channels;
 
 // Helper functions.
+static Local<Value> audio_events_transform(Isolate *isolate, event &ev, buffer_slicer &slicer);
 static Local<Value> audio_frame_to_js(Isolate *isolate, audio_frame_data &frame, buffer_slicer &slicer);
 
+
+audio_mixer_full::audio_mixer_full() :
+    buffer(this, audio_events_transform, 196608),  // 192 KiB event buffer
+    mix_buffer(), enc(), running()
+{
+}
 
 void audio_mixer_full::init(const FunctionCallbackInfo<Value>& args)
 {
@@ -56,9 +72,7 @@ void audio_mixer_full::init(const FunctionCallbackInfo<Value>& args)
     Ref();
     args.GetReturnValue().Set(handle(isolate));
 
-    callback.init(std::bind(&audio_mixer_full::emit_events, this));
-    context.Reset(isolate, isolate->GetCurrentContext());
-    on_event.Reset(isolate, val.As<Function>());
+    buffer.set_callback(isolate->GetCurrentContext(), val.As<Function>());
 
     aac_err = aacEncOpen(&enc, 0x01, 2);
     if (!(ok = (aac_err == AACENC_OK)))
@@ -99,11 +113,8 @@ void audio_mixer_full::init(const FunctionCallbackInfo<Value>& args)
 
     if (ok) {
         size_t claim = sizeof(audio_frame_data) + aac_info.confSize;
-        auto *ev = buffer.emitd(EV_AUDIO_HEADERS, claim);
-        if (!(ok = (ev != NULL))) {
-            buffer.emitf(EV_LOG_ERROR, "buffer.emitd error");
-        }
-        else {
+        auto *ev = buffer.emit(EV_AUDIO_HEADERS, claim);
+        if (ev != NULL) {
             auto &headers = *(audio_frame_data *) ev->data;
             headers.pts = 0;
             headers.size = aac_info.confSize;
@@ -118,8 +129,6 @@ void audio_mixer_full::init(const FunctionCallbackInfo<Value>& args)
     else {
         buffer.emit(EV_FAILURE);
     }
-
-    callback.send();
 }
 
 void audio_mixer_full::destroy()
@@ -140,14 +149,10 @@ void audio_mixer_full::destroy()
         AACENC_ERROR aac_err = aacEncClose(&enc);
         enc = NULL;
         if (aac_err != AACENC_OK)
-            fprintf(stderr, "aacEncClose error 0x%x\n", aac_err);
+            buffer.emitf(EV_LOG_ERROR, "aacEncClose error 0x%x\n", aac_err);
     }
 
-    callback.destroy();
-    emit_events();
-
-    on_event.Reset();
-    context.Reset();
+    buffer.flush();
 
     Unref();
 }
@@ -328,7 +333,7 @@ void audio_mixer_full::loop()
             // Push output frame to the buffer.
             if (out_args.numOutBytes != 0) {
                 size_t claim = sizeof(audio_frame_data) + out_args.numOutBytes;
-                auto *ev = buffer.emitd(EV_AUDIO_FRAME, claim);
+                auto *ev = buffer.emit(EV_AUDIO_FRAME, claim);
                 if (ev != NULL) {
                     auto &frame = *(audio_frame_data *) ev->data;
                     frame.pts = mixp_time;
@@ -352,46 +357,8 @@ void audio_mixer_full::loop()
 
             // Adjust mix buffer time.
             mix_time = mixp_time;
-
-            // Signal main thread.
-            callback.send();
         }
     }
-}
-
-void audio_mixer_full::emit_events()
-{
-    event_buffer_copy *copy;
-    {
-        lock_handle lock(*this);
-        copy = buffer.copy_out();
-    }
-    if (copy == NULL)
-        return;
-
-    HandleScope handle_scope(isolate);
-    Context::Scope context_scope(Local<Context>::New(isolate, context));
-
-    copy->callback(
-        isolate, handle(isolate), Local<Function>::New(isolate, on_event),
-        [](Isolate *isolate, event &ev, buffer_slicer &slicer) -> Local<Value> {
-            switch (ev.id) {
-                case EV_AUDIO_HEADERS:
-                case EV_AUDIO_FRAME:
-                    return audio_frame_to_js(isolate, *(audio_frame_data *) ev.data, slicer);
-                default:
-                    return Undefined(isolate);
-            }
-        }
-    );
-}
-
-static Local<Value> audio_frame_to_js(Isolate *isolate, audio_frame_data &frame, buffer_slicer &slicer)
-{
-    auto obj = Object::New(isolate);
-    obj->Set(pts_sym.Get(isolate), Number::New(isolate, frame.pts));
-    obj->Set(buf_sym.Get(isolate), slicer.slice((char *) frame.data, frame.size));
-    return obj;
 }
 
 // Convert amount of samples to relative time they represent.
@@ -416,6 +383,25 @@ void audio_mixer_full::init_prototype(Handle<FunctionTemplate> func)
         auto mixer = ObjectWrap::Unwrap<audio_mixer_full>(args.This());
         mixer->set_sources(args);
     });
+}
+
+static Local<Value> audio_events_transform(Isolate *isolate, event &ev, buffer_slicer &slicer)
+{
+    switch (ev.id) {
+        case EV_AUDIO_HEADERS:
+        case EV_AUDIO_FRAME:
+            return audio_frame_to_js(isolate, *(audio_frame_data *) ev.data, slicer);
+        default:
+            return Undefined(isolate);
+    }
+}
+
+static Local<Value> audio_frame_to_js(Isolate *isolate, audio_frame_data &frame, buffer_slicer &slicer)
+{
+    auto obj = Object::New(isolate);
+    obj->Set(pts_sym.Get(isolate), Number::New(isolate, frame.pts));
+    obj->Set(buf_sym.Get(isolate), slicer.slice((char *) frame.data, frame.size));
+    return obj;
 }
 
 
