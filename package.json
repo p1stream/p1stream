@@ -19,6 +19,8 @@
         "underscore": "1",
         "symmetry": "0.4",
         "jmsg": "0.1",
+        "chalk": "1",
+        "bunyan": "1",
         "write-ebml": "p1stream/write-ebml"
     },
     "devToolDependencies": {
