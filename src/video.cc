@@ -430,7 +430,7 @@ void video_mixer_base::set_hooks(const FunctionCallbackInfo<Value>& args)
         }
         auto hook_obj = val.As<Object>();
         auto *hook = ObjectWrap::Unwrap<video_hook>(hook_obj);
-        hook_ctxes.emplace_back(this, hook);
+        new_ctxes.emplace_back(this, hook);
     }
 
     // Parameters checked, from here on we no longer throw exceptions.
