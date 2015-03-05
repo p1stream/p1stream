@@ -3,7 +3,7 @@
 var module = angular.module('p1stream', []);
 
 function nullReviver(k, v) {
-    if (typeof(v) === 'object' && v !== null)
+    if (typeof(v) === 'object' && v !== null && !Array.isArray(v))
         return angular.extend(Object.create(null), v);
     else
         return v;
