@@ -30,7 +30,7 @@
     },
     "pluginDependencies": {
         "darwin": {
-            "p1-mac-sources": "p1stream/p1-mac-sources",
+            "p1-mac-plugins": "p1stream/p1-mac-plugins",
             "p1-rtmp-plugins": "p1stream/p1-rtmp-plugins"
         }
     },
