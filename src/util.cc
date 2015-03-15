@@ -26,8 +26,20 @@ void threaded_loop::thread_cb(void *arg)
     loop.fn();
 }
 
-buffer_slicer::buffer_slicer(Local<Object> buffer)
-    : buffer_(buffer)
+void async::signal_cb(uv_async_t *handle)
+{
+    auto &fn = ((ctx *) handle)->fn;
+    if (fn != nullptr)
+        fn();
+}
+
+void async::close_cb(uv_handle_t *handle)
+{
+    delete (ctx *) handle;
+}
+
+buffer_slicer::buffer_slicer(Local<Object> buffer) :
+    buffer_(buffer)
 {
     isolate_ = buffer->GetIsolate();
     buffer_proto_ = buffer->GetPrototype();
@@ -47,17 +59,15 @@ Local<Object> buffer_slicer::slice(char *data, uint32_t length)
     return obj;
 }
 
-event_buffer::event_buffer(lockable *lock, event_transform transform, int size)
-    : size_(size), used_(0), stalled_(0), lock_(lock), transform_(transform)
+event_buffer::event_buffer(lockable *lock, event_transform transform, int size) :
+    size_(size), used_(0), stalled_(0), lock_(lock), transform_(transform),
+    async_(std::bind(&event_buffer::flush, this))
 {
     data_ = new char[size];
-    if (uv_async_init(uv_default_loop(), &async_, async_cb))
-        abort();
 }
 
 event_buffer::~event_buffer()
 {
-    uv_close((uv_handle_t *) &async_, NULL);
     callback_.Reset();
     context_.Reset();
     delete[] data_;
@@ -70,7 +80,7 @@ void event_buffer::set_callback(v8::Handle<v8::Context> context, v8::Handle<v8::
     callback_.Reset(isolate_, callback);
 }
 
-void event_buffer::flush() 
+void event_buffer::flush()
 {
     HandleScope handle_scope(isolate_);
 
@@ -140,11 +150,6 @@ void event_buffer::flush()
             Integer::New(isolate_, stalled)
         });
     }
-}
-
-void event_buffer::async_cb(uv_async_t *handle)
-{
-    ((event_buffer *) handle)->flush();
 }
 
 
