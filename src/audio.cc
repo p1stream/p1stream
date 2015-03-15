@@ -123,8 +123,8 @@ void audio_mixer_full::init(const FunctionCallbackInfo<Value>& args)
     }
 
     if (ok) {
-        thread.init(std::bind(&audio_mixer_full::loop, this));
         running = true;
+        thread.init(std::bind(&audio_mixer_full::loop, this));
     }
     else {
         buffer.emit(EV_FAILURE);
@@ -134,8 +134,8 @@ void audio_mixer_full::init(const FunctionCallbackInfo<Value>& args)
 void audio_mixer_full::destroy()
 {
     if (running) {
-        thread.destroy();
         running = false;
+        thread.destroy();
     }
 
     clear_sources();
@@ -305,7 +305,7 @@ void audio_mixer_full::loop()
     AACENC_OutArgs out_args;
 
     // Continue until the thread is stopped.
-    while (!thread.wait(mix_interval)) {
+    while (!thread.wait(mix_interval) && running) {
         // Process mixed samples until the mix buffer is roughly recentered.
         // Take steps forward in encoder frame sized chunks.
         float *mixp = mix_buffer;

@@ -40,15 +40,15 @@ void software_clock::init(const FunctionCallbackInfo<Value>& args)
     Ref();
     args.GetReturnValue().Set(handle());
 
-    thread.init(std::bind(&software_clock::loop, this));
     running = true;
+    thread.init(std::bind(&software_clock::loop, this));
 }
 
 void software_clock::destroy()
 {
     if (running) {
-        thread.destroy();
         running = false;
+        thread.destroy();
     }
 
     Unref();
@@ -80,10 +80,7 @@ void software_clock::loop()
     int64_t time_now = system_time();
     int64_t time_next = time_now + interval;
 
-    do {
-        if (thread.wait(time_next - time_now))
-            break;
-
+    while (!thread.wait(time_next - time_now) && running) {
         for (auto ctx : ctxes)
             ctx->tick(time_next);
 
@@ -91,7 +88,6 @@ void software_clock::loop()
         while (time_next < time_now)
             time_next += interval;
     }
-    while (true);
 }
 
 void software_clock::init_prototype(Handle<FunctionTemplate> func)
