@@ -14,7 +14,6 @@
     },
     "dependencies": {
         "clone": "0.2",
-        "node-uuid": "1",
         "express": "4",
         "lodash": "3",
         "symmetry": "0.4",
