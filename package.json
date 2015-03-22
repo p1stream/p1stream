@@ -21,6 +21,7 @@
         "jmsg": "0.1",
         "chalk": "1",
         "bunyan": "1",
+        "humanize-duration": "2",
         "write-ebml": "p1stream/write-ebml"
     },
     "devToolDependencies": {
