@@ -19,7 +19,6 @@ module.run(function($rootScope) {
         $rootScope.$apply(function() {
             var val = JSON.parse(ev.data, nullReviver);
             Symmetry.resetObject(objects, val, symmetryOptions);
-            setIds();
         });
     });
 
@@ -27,14 +26,8 @@ module.run(function($rootScope) {
         $rootScope.$apply(function() {
             var patch = JSON.parse(ev.data, nullReviver);
             Symmetry.patch(objects, patch, symmetryOptions);
-            setIds();
         });
     });
-
-    function setIds() {
-        for (var id in objects)
-            objects[id].$id = id;
-    }
 });
 
 module.directive('fixedAspect', function($window, $parse) {

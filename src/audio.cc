@@ -193,11 +193,8 @@ void audio_mixer_full::set_sources(const FunctionCallbackInfo<Value>& args)
         auto obj = val.As<Object>();
 
         auto source_obj = obj->Get(l_source_sym);
-        if (!source_obj->IsObject()) {
-            isolate->ThrowException(Exception::TypeError(
-                String::NewFromUtf8(isolate, "Invalid or missing source")));
-            return;
-        }
+        if (!source_obj->IsObject())
+            continue;
         auto *source = ObjectWrap::Unwrap<audio_source>(source_obj.As<Object>());
 
         new_ctxes.emplace_back(this, source);
@@ -205,6 +202,8 @@ void audio_mixer_full::set_sources(const FunctionCallbackInfo<Value>& args)
 
         ctx.volume = obj->Get(l_volume_sym)->NumberValue();
     }
+
+    len = new_ctxes.size();
 
     // Parameters checked, from here on we no longer throw exceptions.
     lock_handle lock(thread);

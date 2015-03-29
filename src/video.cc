@@ -504,11 +504,8 @@ void video_mixer_base::set_sources(const FunctionCallbackInfo<Value>& args)
         auto obj = val.As<Object>();
 
         auto source_obj = obj->Get(l_source_sym);
-        if (!source_obj->IsObject()) {
-            isolate->ThrowException(Exception::TypeError(
-                String::NewFromUtf8(isolate, "Invalid or missing source")));
-            return;
-        }
+        if (!source_obj->IsObject())
+            continue;
         auto *source = ObjectWrap::Unwrap<video_source>(source_obj.As<Object>());
 
         new_ctxes.emplace_back(this, source);
@@ -523,6 +520,8 @@ void video_mixer_base::set_sources(const FunctionCallbackInfo<Value>& args)
         ctx.u2 = obj->Get(l_u2_sym)->NumberValue();
         ctx.v2 = obj->Get(l_v2_sym)->NumberValue();
     }
+
+    len = new_ctxes.size();
 
     // Parameters checked, from here on we no longer throw exceptions.
     lock_handle lock(*this);

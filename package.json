@@ -39,7 +39,7 @@
         "bitwise": false,
         "curly": false,
         "singleGroups": false,
-        "es3": false,
+        "esnext": true,
         "node": true,
         "browser": true,
         "predef": ["angular", "EventSource", "Symmetry"]
