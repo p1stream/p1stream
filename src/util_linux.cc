@@ -11,7 +11,9 @@ int64_t system_time()
     return t.tv_sec * (int64_t) 1e9 + t.tv_nsec;
 }
 
-void module_platform_init()
+void module_platform_init(
+    Handle<Object> exports, Handle<Value> module,
+    Handle<Context> context, void* priv);
 {
 }
 

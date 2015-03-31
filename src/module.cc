@@ -71,8 +71,8 @@ static void audio_mixer_constructor(const FunctionCallbackInfo<Value>& args)
     mixer->init(args);
 }
 
-static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Value> module,
-    v8::Handle<v8::Context> context, void* priv)
+static void init(Handle<Object> exports, Handle<Value> module,
+    Handle<Context> context, void* priv)
 {
     auto *isolate = context->GetIsolate();
     Handle<String> name;
@@ -167,7 +167,7 @@ static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Value> module,
     audio_mixer_full::init_prototype(func);
     exports->Set(name, func->GetFunction());
 
-    module_platform_init();
+    module_platform_init(exports, module, context, priv);
 }
 
 

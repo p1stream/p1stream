@@ -70,6 +70,11 @@ extern Eternal<String> volume_sym;
 #define EV_AUDIO_HEADERS 'ahdr'
 #define EV_AUDIO_FRAME   'afrm'
 
+void module_platform_init(
+    Handle<Object> exports, Handle<Value> module,
+    Handle<Context> context, void* priv);
+
+
 
 // ----- Video types ----
 

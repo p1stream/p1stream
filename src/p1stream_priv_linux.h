@@ -10,8 +10,6 @@
 namespace p1stream {
 
 
-void module_platform_init();
-
 class video_mixer_linux : public video_mixer_base {
 public:
     video_mixer_linux();
