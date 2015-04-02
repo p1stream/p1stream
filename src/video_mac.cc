@@ -72,14 +72,14 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
     }
 
     if (ok) {
-        cgl_err = CGLCreateContext(pixel_format, NULL, &cgl_context);
+        cgl_err = CGLCreateContext(pixel_format, NULL, &cgl_context_);
         CGLReleasePixelFormat(pixel_format);
         if (!(ok = (cgl_err == kCGLNoError)))
             buffer.emitf(EV_LOG_ERROR, "CGLCreateContext error 0x%x", cgl_err);
     }
 
     if (ok) {
-        CGLShareGroupObj share_group = CGLGetShareGroup(cgl_context);
+        CGLShareGroupObj share_group = CGLGetShareGroup(cgl_context_);
         cl_context_properties props[] = {
             CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE, (cl_context_properties) share_group,
             0
@@ -102,7 +102,7 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
 
     if (ok) {
         CGLError err = CGLTexImageIOSurface2D(
-            cgl_context, GL_TEXTURE_RECTANGLE,
+            cgl_context_, GL_TEXTURE_RECTANGLE,
             GL_RGBA8, surface_width, surface_height,
             GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface_, 0);
         if (err != kCGLNoError)
@@ -114,9 +114,9 @@ bool video_mixer_mac::platform_init(Handle<Object> params)
 
 void video_mixer_mac::platform_destroy()
 {
-    if (cgl_context) {
-        CGLReleaseContext(cgl_context);
-        cgl_context = nullptr;
+    if (cgl_context_) {
+        CGLReleaseContext(cgl_context_);
+        cgl_context_ = nullptr;
     }
 
     if (surface_) {
@@ -127,7 +127,7 @@ void video_mixer_mac::platform_destroy()
 
 bool video_mixer_mac::activate_gl()
 {
-    CGLError cgl_err = CGLSetCurrentContext(cgl_context);
+    CGLError cgl_err = CGLSetCurrentContext(cgl_context_);
     if (cgl_err != kCGLNoError) {
         buffer.emitf(EV_LOG_ERROR, "CGLSetCurrentContext error 0x%x", cgl_err);
         return false;
@@ -144,7 +144,7 @@ void video_source_context::render_iosurface(IOSurfaceRef surface)
     GLsizei height = (GLsizei) IOSurfaceGetHeight(surface);
 
     CGLError err = CGLTexImageIOSurface2D(
-        mixer_mac.cgl_context, GL_TEXTURE_RECTANGLE,
+        mixer_mac.cgl_context(), GL_TEXTURE_RECTANGLE,
         GL_RGBA8, width, height,
         GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, surface, 0);
     if (err != kCGLNoError)

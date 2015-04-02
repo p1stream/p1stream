@@ -16,7 +16,6 @@ extern "C" {
 #include <x264.h>
 
 #if __APPLE__
-#   include <OpenGL/OpenGL.h>
 #   include <OpenCL/opencl.h>
 #else
 #   define GL_GLEXT_PROTOTYPES
@@ -102,6 +101,7 @@ public:
     cl_context cl;
     // Additional fields defined in the public header:
     // GLuint texture_;
+    // CGLContextObj cgl_context_;  // OS X only
     // IOSurfaceRef surface_;  // OS X only
 
     // Render output.
