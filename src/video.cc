@@ -463,14 +463,16 @@ void video_mixer_base::clear_sources()
 {
     uint32_t len = source_ctxes.size();
     GLuint textures[len];
+    size_t num_textures = 0;
     for (uint32_t i = 0; i < len; i++) {
         auto &ctx = source_ctxes[i];
         ctx.source()->unlink_video_source(ctx);
-        textures[i] = ctx.texture;
+        if (running && ctx.has_texture())
+            textures[num_textures++] = ctx.texture();
     }
     source_ctxes.clear();
-    if (running)
-        glDeleteTextures(len, textures);
+    if (num_textures != 0)
+        glDeleteTextures(num_textures, textures);
 }
 
 void video_mixer_base::set_sources(const FunctionCallbackInfo<Value>& args)
@@ -529,22 +531,11 @@ void video_mixer_base::set_sources(const FunctionCallbackInfo<Value>& args)
     if (!running || !activate_gl())
         return;
 
-    GLenum gl_err;
-    GLuint textures[len];
-    glGenTextures(len, textures);
-    if ((gl_err = glGetError()) != GL_NO_ERROR) {
-        buffer.emitf(EV_LOG_ERROR, "OpenGL error 0x%x", gl_err);
-        return;
-    }
-
     clear_sources();
     source_ctxes = new_ctxes;
 
-    for (uint32_t i = 0; i < len; i++) {
-        auto &ctx = source_ctxes[i];
-        ctx.texture = textures[i];
+    for (auto &ctx : source_ctxes)
         ctx.source()->link_video_source(ctx);
-    }
 }
 
 void video_mixer_base::tick(frame_time_t time)
@@ -559,10 +550,8 @@ void video_mixer_base::tick(frame_time_t time)
 
     if (ok) {
         glClear(GL_COLOR_BUFFER_BIT);
-        for (auto &ctx : source_ctxes) {
-            glBindTexture(GL_TEXTURE_RECTANGLE, ctx.texture);
+        for (auto &ctx : source_ctxes)
             ctx.source()->produce_video_frame(ctx);
-        }
         glFinish();
         if (!(ok = ((gl_err = glGetError()) == GL_NO_ERROR)))
             buffer.emitf(EV_LOG_ERROR, "OpenGL error 0x%x", gl_err);
@@ -843,6 +832,7 @@ void video_source_context::render_texture()
 
 void video_source_context::render_buffer(dimensions_t dimensions, void *data)
 {
+    glBindTexture(GL_TEXTURE_RECTANGLE, texture());
     glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, dimensions.width, dimensions.height, 0,
                  GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data);
     render_texture();

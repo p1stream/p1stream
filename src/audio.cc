@@ -214,10 +214,8 @@ void audio_mixer_full::set_sources(const FunctionCallbackInfo<Value>& args)
     clear_sources();
     source_ctxes = new_ctxes;
 
-    for (uint32_t i = 0; i < len; i++) {
-        auto &ctx = source_ctxes[i];
+    for (auto &ctx : source_ctxes)
         ctx.source()->link_audio_source(ctx);
-    }
 }
 
 void audio_source_context::render_buffer(int64_t time, float *in, size_t samples)

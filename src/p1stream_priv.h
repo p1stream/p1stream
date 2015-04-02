@@ -163,9 +163,6 @@ class video_source_context_full : public video_source_context {
 public:
     video_source_context_full(video_mixer *mixer, video_source *source);
 
-    // Texture name.
-    GLuint texture;
-
     // Top left and bottom right coordinates of where to place the image in the
     // output. These are in the range [-1, +1].
     GLfloat x1, y1, x2, y2;

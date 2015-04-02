@@ -143,6 +143,7 @@ void video_source_context::render_iosurface(IOSurfaceRef surface)
     GLsizei width = (GLsizei) IOSurfaceGetWidth(surface);
     GLsizei height = (GLsizei) IOSurfaceGetHeight(surface);
 
+    glBindTexture(GL_TEXTURE_RECTANGLE, texture());
     CGLError err = CGLTexImageIOSurface2D(
         mixer_mac.cgl_context(), GL_TEXTURE_RECTANGLE,
         GL_RGBA8, width, height,
