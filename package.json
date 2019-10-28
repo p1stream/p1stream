@@ -15,7 +15,7 @@
     "dependencies": {
         "clone": "0.2",
         "express": "4",
-        "lodash": "3",
+        "lodash": "4",
         "symmetry": "0.4",
         "jmsg": "0.1",
         "chalk": "1",
